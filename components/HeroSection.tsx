@@ -95,7 +95,7 @@ export default function HeroSection() {
             <FadeUp delay={400}>
               <div id="hero-cta" className="flex flex-col items-center gap-3 w-full">
                 {/* Button full width */}
-                <CTAButton text={t("hero.cta")} className="!w-full justify-center" />
+                <CTAButton text={t("hero.cta")} fullWidth />
                 {/* Timer directly below, centered */}
                 <CompactCountdown className="md:hidden" />
                 {/* Checkmarks centered */}

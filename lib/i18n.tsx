@@ -325,7 +325,7 @@ const translations = {
   },
   "target.hero.cta": {
     ru: "Узнать сколько вы могли бы зарабатывать",
-    uz: "Qancha ishlashingiz mumkinligini bilib oling",
+    uz: "Daromadingizni bilib oling",
   },
   "target.hero.income_label": {
     ru: "Рост дохода",
@@ -386,8 +386,8 @@ const translations = {
     uz: "Boshqalar o'sib ketayotganini ko'rib, joyingizda qotib qolgan deb his qilasiz",
   },
   "target.pain.quote": {
-    ru: "Многие думают, что продажи — это талант. На самом деле — это технология, которой можно обучиться за 4 недели.",
-    uz: "Ko'pchilik sotish — bu iste'dod deb o'ylaydi. Aslida — bu 4 haftada o'rganish mumkin bo'lgan texnologiya.",
+    ru: "Многие думают, что продажи — это талант. На самом деле — это **технология**, которой можно обучиться за 4 недели.",
+    uz: "Ko'pchilik sotish — bu iste'dod deb o'ylaydi. Aslida — bu 4 haftada o'rganish mumkin bo'lgan **texnologiya**.",
   },
 
   /* --- Target Myth Reframe --- */
@@ -460,6 +460,18 @@ const translations = {
   "target.loss.chart_year": {
     ru: "Через 1 год",
     uz: "1 yildan keyin",
+  },
+  "target.loss.chart_start": {
+    ru: "Старт",
+    uz: "Start",
+  },
+  "target.loss.chart_3m": {
+    ru: "3 месяца",
+    uz: "3 oy",
+  },
+  "target.loss.chart_12m": {
+    ru: "12 месяцев",
+    uz: "12 oy",
   },
 
   /* --- Target Cases --- */

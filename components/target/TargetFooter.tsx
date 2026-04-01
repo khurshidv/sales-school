@@ -39,7 +39,7 @@ export default function TargetFooter() {
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-6 md:px-8 mt-16 md:mt-20 pt-6 md:pt-8 border-t border-outline-variant/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-on-surface-variant">
-        <div>© 2024 {t("target.footer.rights")}</div>
+        <div>© {new Date().getFullYear()} {t("target.footer.rights")}</div>
         <div className="flex gap-6">
           <span className="material-symbols-outlined cursor-pointer hover:text-primary-container transition-colors">language</span>
           <span className="material-symbols-outlined cursor-pointer hover:text-primary-container transition-colors">share</span>

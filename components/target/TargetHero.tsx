@@ -9,9 +9,9 @@ export default function TargetHero() {
   const { t } = useT();
 
   return (
-    <section className="relative pt-[88px] pb-10 md:pt-32 md:pb-20 mesh-hero overflow-hidden">
+    <section className="relative pt-[88px] pb-10 md:pt-32 md:pb-20 mesh-hero overflow-hidden overflow-x-clip">
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent -z-10 blur-3xl" />
-      <div className="max-w-7xl mx-auto px-6 md:px-8 grid md:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 grid md:grid-cols-2 gap-8 md:gap-12 items-center">
         {/* Left column */}
         <div className="space-y-8">
           <FadeUp>
@@ -23,7 +23,7 @@ export default function TargetHero() {
           </FadeUp>
 
           <FadeUp delay={100}>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold tracking-tight leading-[1.1] text-on-surface">
+            <h1 className="text-3xl sm:text-4xl md:text-[2.75rem] lg:text-5xl font-heading font-bold tracking-tight leading-[1.12] text-on-surface">
               {t("target.hero.heading").split("$800").map((part, i, arr) =>
                 i < arr.length - 1 ? (
                   <span key={i}>

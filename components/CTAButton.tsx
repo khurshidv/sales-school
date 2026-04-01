@@ -23,7 +23,7 @@ export default function CTAButton({
       type="button"
       onClick={openModal}
       className={`
-        group inline-flex items-center gap-3 rounded-full whitespace-nowrap
+        group inline-flex items-center gap-3 rounded-full
         cta-btn text-white cursor-pointer
         transition-all duration-200 active:scale-[0.98]
         hover:scale-[1.03]

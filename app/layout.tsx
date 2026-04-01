@@ -56,17 +56,8 @@ export default function RootLayout({
         {/* DNS-prefetch for image CDNs */}
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        {/* Material Symbols — async loaded via media swap */}
-        <link
-          rel="stylesheet"
-          href={MATERIAL_SYMBOLS_URL}
-          media="print"
-          // @ts-expect-error — media swap pattern for async font loading
-          onLoad="this.media='all'"
-        />
-        <noscript>
-          <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} />
-        </noscript>
+        {/* Material Symbols — loaded directly (async pattern breaks in React) */}
+        <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} />
       </head>
       <body className="min-h-dvh">
         <div className="paper-grain" />

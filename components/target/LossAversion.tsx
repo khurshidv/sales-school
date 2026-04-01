@@ -39,9 +39,9 @@ export default function LossAversion() {
                 </div>
               </div>
               <div className="border-t border-outline-variant/30 pt-4 flex justify-between text-[10px] uppercase tracking-widest text-on-surface-variant">
-                <span>Старт</span>
-                <span>3 месяца</span>
-                <span>12 месяцев</span>
+                <span>{t("target.loss.chart_start")}</span>
+                <span>{t("target.loss.chart_3m")}</span>
+                <span>{t("target.loss.chart_12m")}</span>
               </div>
             </div>
           </div>

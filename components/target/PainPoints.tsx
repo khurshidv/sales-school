@@ -46,12 +46,9 @@ export default function PainPoints() {
             <div className="bg-surface-container rounded-2xl p-8 md:p-12 relative overflow-hidden double-bezel">
               <div className="absolute top-0 right-0 w-32 h-32 bg-error/5 blur-3xl rounded-full" />
               <p className="text-xl md:text-2xl font-light italic leading-relaxed text-on-surface-variant relative z-10">
-                &ldquo;{t("target.pain.quote").split("технология").map((part, i, arr) =>
-                  i < arr.length - 1 ? (
-                    <span key={i}>
-                      {part}
-                      <span className="text-on-surface font-bold">технология</span>
-                    </span>
+                &ldquo;{t("target.pain.quote").split(/\*\*(.*?)\*\*/).map((part, i) =>
+                  i % 2 === 1 ? (
+                    <span key={i} className="text-on-surface font-bold">{part}</span>
                   ) : (
                     <span key={i}>{part}</span>
                   )

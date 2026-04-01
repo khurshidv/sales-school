@@ -396,8 +396,9 @@
 @media (max-width: 767px) {
   .mesh-hero {
     background:
-      radial-gradient(at 50% 30%, #ffdcc6 0%, transparent 60%),
-      #fbf9f5;
+      radial-gradient(at 0% 0%, #ffdcc6 0%, transparent 55%),
+      radial-gradient(at 100% 0%, #d5e8d1 0%, transparent 55%),
+      radial-gradient(at 50% 100%, #fbf9f5 0%, transparent 100%);
   }
 }
 

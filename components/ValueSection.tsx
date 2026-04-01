@@ -237,7 +237,19 @@ export default function ValueSection() {
               </div>
 
               <div className="flex justify-center">
-                <CTAButton text={t("tg.cta")} size="large" glow />
+                <a
+                    href="https://t.me/antigravity_uz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-3 rounded-full whitespace-nowrap text-white cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.03] w-full justify-center px-8 py-5 text-base md:px-10 md:text-lg font-bold tracking-wide"
+                    style={{ background: "linear-gradient(135deg, #2AABEE 0%, #229ED9 100%)", boxShadow: "0 4px 20px rgba(42,171,238,0.4)" }}
+                  >
+                    <span className="w-8 shrink-0" aria-hidden="true" />
+                    <span>{t("tg.cta")}</span>
+                    <span className="bg-white/20 group-hover:bg-white/32 w-8 h-8 rounded-full flex items-center justify-center shrink-0 group-hover:translate-x-1 transition-all duration-200">
+                      <span className="material-symbols-outlined leading-none text-lg">arrow_forward</span>
+                    </span>
+                  </a>
               </div>
             </div>
           </div>

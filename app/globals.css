@@ -312,8 +312,26 @@
 
 /* Auto-playing flash shimmer for buttons */
 @keyframes btn-flash {
-  0%, 75%, 100% { transform: translateX(-220%) skewX(-15deg); }
-  95% { transform: translateX(440%) skewX(-15deg); }
+  0%, 78% {
+    transform: translateX(-220%) skewX(-15deg);
+    opacity: 0;
+  }
+  80% {
+    transform: translateX(-220%) skewX(-15deg);
+    opacity: 1;
+  }
+  95% {
+    transform: translateX(440%) skewX(-15deg);
+    opacity: 1;
+  }
+  97% {
+    transform: translateX(440%) skewX(-15deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-220%) skewX(-15deg);
+    opacity: 0;
+  }
 }
 
 /* Green badge pulse for mobile */
@@ -414,6 +432,9 @@
   }
   .badge-strip-pulse {
     animation: badge-pulse 2s ease-in-out infinite !important;
+  }
+  .badge-strip-pulse .animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
   }
 }
 

@@ -70,7 +70,7 @@ export default function ValueSection() {
             </div>
             <BeforeAfter />
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("hero.cta")} />
+              <CTAButton text={t("hero.cta")} className="w-full md:w-fit justify-center" />
             </div>
           </div>
         </FadeUp>
@@ -93,7 +93,7 @@ export default function ValueSection() {
 
           <FadeUp delay={400}>
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("hero.cta")} />
+              <CTAButton text={t("hero.cta")} className="w-full md:w-fit justify-center" />
             </div>
           </FadeUp>
         </div>
@@ -131,7 +131,7 @@ export default function ValueSection() {
 
           <FadeUp delay={350}>
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("hero.cta")} />
+              <CTAButton text={t("hero.cta")} className="w-full md:w-fit justify-center" />
             </div>
           </FadeUp>
         </div>
@@ -253,7 +253,7 @@ export default function ValueSection() {
           <div className="max-w-4xl mx-auto px-6">
             <FAQAccordion />
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("action.cta")} size="large" glow />
+              <CTAButton text={t("action.cta")} size="large" glow className="w-full md:w-fit justify-center" />
             </div>
           </div>
         </FadeUp>

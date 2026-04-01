@@ -124,61 +124,57 @@ export default function HeroSection() {
               <div className="grid grid-cols-2 gap-3">
 
                 {/* Income card — spans full width, hero emphasis */}
-                <div className="col-span-2 bg-white/95 backdrop-blur-xl p-6 md:p-7 rounded-2xl double-bezel bento-card">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <span className="block text-on-surface-variant font-black uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_income_label")}</span>
-                      <div className="font-[family-name:var(--font-heading)] leading-none">
-                        <span className="text-gradient-orange text-5xl md:text-6xl font-bold">$<CountUp target={800} duration={2000} /></span>
-                        <span className="text-gradient-orange text-2xl md:text-3xl font-bold">/{locale === "ru" ? "мес" : "oy"}</span>
-                      </div>
+                <div className="col-span-2 bg-white/95 backdrop-blur-xl p-5 md:p-7 rounded-2xl double-bezel bento-card">
+                  <span className="block text-on-surface-variant font-black uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_income_label")}</span>
+                  <div className="font-[family-name:var(--font-heading)] leading-none mb-4">
+                    <span className="text-gradient-orange text-4xl md:text-5xl font-bold">$<CountUp target={800} duration={2000} /></span>
+                    <span className="text-gradient-orange text-xl md:text-2xl font-bold">/{locale === "ru" ? "мес" : "oy"}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
+                      <span className="material-symbols-outlined text-primary-container text-base">trending_up</span>
+                      <span className="text-on-surface font-bold text-xs md:text-sm">{locale === "ru" ? "В первый месяц" : "Birinchi oyda"}</span>
                     </div>
-                    <div className="flex flex-col gap-2 shrink-0">
-                      <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
-                        <span className="material-symbols-outlined text-primary-container text-base">trending_up</span>
-                        <span className="text-on-surface font-bold text-sm">{locale === "ru" ? "В первый месяц" : "Birinchi oyda"}</span>
-                      </div>
-                      <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
-                        <span className="material-symbols-outlined text-primary-container text-base">business_center</span>
-                        <span className="text-on-surface font-bold text-sm">{locale === "ru" ? "В топ-компаниях" : "Top kompaniyalarda"}</span>
-                      </div>
+                    <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
+                      <span className="material-symbols-outlined text-primary-container text-base">business_center</span>
+                      <span className="text-on-surface font-bold text-xs md:text-sm">{locale === "ru" ? "В топ-компаниях" : "Top kompaniyalarda"}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Duration card */}
-                <div className="bg-white/95 backdrop-blur-xl p-5 md:p-6 rounded-2xl double-bezel bento-card">
-                  <span className="block text-on-surface-variant font-black uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_days_label")}</span>
-                  <div className="font-[family-name:var(--font-heading)] leading-none mb-4">
-                    <span className="text-gradient-orange text-4xl font-bold">30</span>
-                    <span className="text-gradient-orange text-xl font-bold"> {locale === "ru" ? "дней" : "kun"}</span>
+                <div className="bg-white/95 backdrop-blur-xl p-4 md:p-6 rounded-2xl double-bezel bento-card">
+                  <span className="block text-on-surface-variant font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_days_label")}</span>
+                  <div className="font-[family-name:var(--font-heading)] leading-none mb-3">
+                    <span className="text-gradient-orange text-3xl md:text-4xl font-bold">30</span>
+                    <span className="text-gradient-orange text-lg md:text-xl font-bold"> {locale === "ru" ? "дней" : "kun"}</span>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
-                      <span className="material-symbols-outlined text-primary-container text-base">schedule</span>
-                      <span className="text-on-surface font-bold text-xs">{locale === "ru" ? "1–2 часа в день" : "Kuniga 1–2 soat"}</span>
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-1.5 bg-surface-container/70 px-2.5 py-1.5 rounded-lg">
+                      <span className="material-symbols-outlined text-primary-container text-sm">schedule</span>
+                      <span className="text-on-surface font-bold text-[11px] md:text-xs">{locale === "ru" ? "1–2 часа в день" : "Kuniga 1–2 soat"}</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
-                      <span className="material-symbols-outlined text-primary-container text-base">bolt</span>
-                      <span className="text-on-surface font-bold text-xs">{locale === "ru" ? "Пошаговый план" : "Bosqichma-bosqich"}</span>
+                    <div className="flex items-center gap-1.5 bg-surface-container/70 px-2.5 py-1.5 rounded-lg">
+                      <span className="material-symbols-outlined text-primary-container text-sm">bolt</span>
+                      <span className="text-on-surface font-bold text-[11px] md:text-xs">{locale === "ru" ? "Пошаговый план" : "Bosqichma-bosqich"}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* No experience card */}
-                <div className="bg-white/95 backdrop-blur-xl p-5 md:p-6 rounded-2xl double-bezel bento-card">
-                  <span className="block text-on-surface-variant font-black uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_noexp_label")}</span>
-                  <div className="font-[family-name:var(--font-heading)] leading-none mb-4">
-                    <span className="text-gradient-orange text-2xl font-bold">{t("hero.badge_noexp")}</span>
+                <div className="bg-white/95 backdrop-blur-xl p-4 md:p-6 rounded-2xl double-bezel bento-card">
+                  <span className="block text-on-surface-variant font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_noexp_label")}</span>
+                  <div className="font-[family-name:var(--font-heading)] leading-none mb-3">
+                    <span className="text-gradient-orange text-xl md:text-2xl font-bold">{t("hero.badge_noexp")}</span>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
-                      <span className="material-symbols-outlined text-badge-green text-base">school</span>
-                      <span className="text-on-surface font-bold text-xs">{locale === "ru" ? "Нулевой уровень — ок" : "Noldan boshlanadi"}</span>
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-1.5 bg-surface-container/70 px-2.5 py-1.5 rounded-lg">
+                      <span className="material-symbols-outlined text-badge-green text-sm">school</span>
+                      <span className="text-on-surface font-bold text-[11px] md:text-xs">{locale === "ru" ? "Нулевой уровень — ок" : "Noldan boshlanadi"}</span>
                     </div>
-                    <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">
-                      <span className="material-symbols-outlined text-badge-green text-base">support_agent</span>
-                      <span className="text-on-surface font-bold text-xs">{locale === "ru" ? "Поддержка ментора" : "Mentor bilan"}</span>
+                    <div className="flex items-center gap-1.5 bg-surface-container/70 px-2.5 py-1.5 rounded-lg">
+                      <span className="material-symbols-outlined text-badge-green text-sm">support_agent</span>
+                      <span className="text-on-surface font-bold text-[11px] md:text-xs">{locale === "ru" ? "Поддержка ментора" : "Mentor bilan"}</span>
                     </div>
                   </div>
                 </div>

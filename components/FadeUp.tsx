@@ -33,7 +33,7 @@ export default function FadeUp({
         if (entry.isIntersecting) {
           el.style.animationDelay = `${delay}ms`;
           el.classList.remove("opacity-0");
-          el.classList.add(...animationClasses[direction].split(" "));
+          el.classList.add(animationClasses[direction]);
           observer.unobserve(el);
         }
       },

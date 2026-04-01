@@ -45,7 +45,7 @@ export default function StickyBar() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4 md:h-16">
-        <div className="text-sm font-medium text-on-surface-variant">
+        <div className="text-sm font-semibold text-on-surface-variant">
           <span>{dateLabel}, 19:00</span>
           <span className="hidden md:inline text-on-surface-variant/50">
             {" "}— {t("sticky.free")}

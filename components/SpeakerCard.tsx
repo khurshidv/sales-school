@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 interface SpeakerCardProps {
   name: string;
   role: string;
@@ -5,7 +7,7 @@ interface SpeakerCardProps {
   image: string;
 }
 
-export default function SpeakerCard({ name, role, stats, image }: SpeakerCardProps) {
+export default memo(function SpeakerCard({ name, role, stats, image }: SpeakerCardProps) {
   return (
     <div className="flex items-center gap-6 md:gap-8">
       <div className="relative flex-shrink-0">
@@ -35,4 +37,4 @@ export default function SpeakerCard({ name, role, stats, image }: SpeakerCardPro
       </div>
     </div>
   );
-}
+});

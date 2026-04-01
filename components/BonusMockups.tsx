@@ -20,7 +20,7 @@ export function ChecklistMockup() {
       {/* PDF header bar */}
       <div className="flex items-center gap-2 mb-4">
         <div className="w-8 h-8 rounded-lg bg-[#e74c3c] flex items-center justify-center">
-          <span className="text-white text-[10px] font-black">PDF</span>
+          <span className="text-white text-[10px] font-bold">PDF</span>
         </div>
         <div>
           <div className="text-[11px] font-bold text-on-surface leading-tight">checklist_skills.pdf</div>
@@ -41,7 +41,7 @@ export function ChecklistMockup() {
                 <span className="material-symbols-outlined text-white text-[14px]">check</span>
               )}
             </div>
-            <span className={`text-xs ${item.checked ? "text-on-surface font-medium" : "text-on-surface-variant"}`}>
+            <span className={`text-xs ${item.checked ? "text-on-surface font-semibold" : "text-on-surface-variant"}`}>
               {item.label}
             </span>
           </div>
@@ -99,7 +99,7 @@ export function VideoMockup() {
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-white/60 text-sm">pause</span>
           <span className="material-symbols-outlined text-white/60 text-sm">volume_up</span>
-          <span className="text-[10px] text-white/40 font-medium">4:21 / 12:34</span>
+          <span className="text-[10px] text-white/40 font-semibold">4:21 / 12:34</span>
         </div>
         <span className="material-symbols-outlined text-white/60 text-sm">fullscreen</span>
       </div>

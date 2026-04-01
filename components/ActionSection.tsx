@@ -47,7 +47,7 @@ export default function ActionSection() {
               size="large"
               glow
             />
-            <p className="mt-8 text-on-surface-variant/60 font-medium italic">
+            <p className="mt-8 text-on-surface-variant/60 font-semibold italic">
               {t("action.seats")}
             </p>
           </div>

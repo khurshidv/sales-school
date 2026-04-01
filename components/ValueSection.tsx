@@ -170,7 +170,7 @@ export default function ValueSection() {
               <FadeUp key={i} delay={i * 120} direction={i === 0 ? "left" : i === 2 ? "right" : "scale"}>
                 <div className="bg-surface-container rounded-3xl overflow-hidden">
                   <div className="aspect-[4/3] overflow-hidden rounded-3xl m-2">
-                    <img src={card.img} alt={card.title} loading="lazy" className="w-full h-full object-cover" />
+                    <img src={card.img} alt={card.title} width={600} height={400} loading="lazy" className="w-full h-full object-cover" />
                   </div>
                   <div className="px-5 pt-4 pb-6">
                     <span className="text-primary-container font-[family-name:var(--font-heading)] font-bold text-xs tracking-[0.15em] block mb-2">{card.num}</span>

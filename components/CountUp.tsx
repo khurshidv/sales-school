@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export default function CountUp({
   target,
@@ -13,7 +13,6 @@ export default function CountUp({
   suffix?: string;
   className?: string;
 }) {
-  const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
@@ -31,12 +30,16 @@ export default function CountUp({
             const elapsed = now - start;
             const progress = Math.min(elapsed / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.floor(eased * target));
+            const value = Math.floor(eased * target);
+
+            if (el) {
+              el.textContent = value.toLocaleString("ru-RU") + suffix;
+            }
 
             if (progress < 1) {
               requestAnimationFrame(animate);
-            } else {
-              setCount(target);
+            } else if (el) {
+              el.textContent = target.toLocaleString("ru-RU") + suffix;
             }
           };
 
@@ -49,12 +52,11 @@ export default function CountUp({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [target, duration]);
+  }, [target, duration, suffix]);
 
   return (
     <span ref={ref} className={className}>
-      {count.toLocaleString("ru-RU")}
-      {suffix}
+      0{suffix}
     </span>
   );
 }

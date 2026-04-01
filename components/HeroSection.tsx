@@ -48,7 +48,7 @@ export default function HeroSection() {
                       alt=""
                       width={36}
                       height={36}
-                      loading="lazy"
+                      loading="eager"
                       className="w-9 h-9 rounded-full border-[3px] border-surface-container-low object-cover"
                     />
                   ))}
@@ -83,7 +83,7 @@ export default function HeroSection() {
                   { key: "hero.bullet2", icon: "record_voice_over" },
                   { key: "hero.bullet3", icon: "payments" },
                 ] as const).map(({ key, icon }, i) => (
-                  <li key={i} className="flex items-start gap-3 text-base md:text-lg text-on-surface-variant font-medium">
+                  <li key={i} className="flex items-start gap-3 text-base md:text-lg text-on-surface-variant font-semibold">
                     <span className="material-symbols-outlined text-primary-container text-xl mt-0.5 shrink-0">{icon}</span>
                     {t(key)}
                   </li>
@@ -99,7 +99,7 @@ export default function HeroSection() {
                 {/* Timer directly below, centered */}
                 <CompactCountdown className="md:hidden" />
                 {/* Checkmarks centered */}
-                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] md:text-sm text-on-surface-variant/70 font-medium">
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] md:text-sm text-on-surface-variant/70 font-semibold">
                   <span className="flex items-center gap-1">
                     <span className="material-symbols-outlined text-secondary text-base">check_circle</span>
                     {t("hero.free")}
@@ -125,7 +125,7 @@ export default function HeroSection() {
 
                 {/* Income card — spans full width, hero emphasis */}
                 <div className="col-span-2 bg-white/95 backdrop-blur-xl p-5 md:p-7 rounded-2xl double-bezel bento-card">
-                  <span className="block text-on-surface-variant font-black uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_income_label")}</span>
+                  <span className="block text-on-surface-variant font-bold uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_income_label")}</span>
                   <div className="font-[family-name:var(--font-heading)] leading-none mb-4">
                     <span className="text-gradient-orange text-4xl md:text-5xl font-bold">$<CountUp target={800} duration={2000} /></span>
                     <span className="text-gradient-orange text-xl md:text-2xl font-bold">/{locale === "ru" ? "мес" : "oy"}</span>
@@ -144,7 +144,7 @@ export default function HeroSection() {
 
                 {/* Duration card */}
                 <div className="bg-white/95 backdrop-blur-xl p-4 md:p-6 rounded-2xl double-bezel bento-card">
-                  <span className="block text-on-surface-variant font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_days_label")}</span>
+                  <span className="block text-on-surface-variant font-bold uppercase text-[9px] md:text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_days_label")}</span>
                   <div className="font-[family-name:var(--font-heading)] leading-none mb-3">
                     <span className="text-gradient-orange text-3xl md:text-4xl font-bold">30</span>
                     <span className="text-gradient-orange text-lg md:text-xl font-bold"> {locale === "ru" ? "дней" : "kun"}</span>
@@ -163,7 +163,7 @@ export default function HeroSection() {
 
                 {/* No experience card */}
                 <div className="bg-white/95 backdrop-blur-xl p-4 md:p-6 rounded-2xl double-bezel bento-card">
-                  <span className="block text-on-surface-variant font-black uppercase text-[9px] md:text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_noexp_label")}</span>
+                  <span className="block text-on-surface-variant font-bold uppercase text-[9px] md:text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_noexp_label")}</span>
                   <div className="font-[family-name:var(--font-heading)] leading-none mb-3">
                     <span className="text-gradient-orange text-xl md:text-2xl font-bold">{t("hero.badge_noexp")}</span>
                   </div>

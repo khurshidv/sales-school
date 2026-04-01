@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { WEBINAR_DATE } from "@/lib/constants";
 import { useT } from "@/lib/i18n";
 
@@ -23,7 +23,7 @@ function getTimeLeft(): TimeLeft {
   };
 }
 
-function TimeBox({ value, label }: { value: number; label: string }) {
+const TimeBox = memo(function TimeBox({ value, label }: { value: number; label: string }) {
   const display = String(value).padStart(2, "0");
 
   return (
@@ -31,12 +31,12 @@ function TimeBox({ value, label }: { value: number; label: string }) {
       <span className="text-4xl md:text-5xl font-[family-name:var(--font-heading)] text-primary-container tabular-nums leading-none">
         {display}
       </span>
-      <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-on-surface-variant/50">
+      <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/50">
         {label}
       </span>
     </div>
   );
-}
+});
 
 function useCountdown() {
   const [time, setTime] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -105,7 +105,7 @@ export function CompactCountdown({ className = "" }: { className?: string }) {
           <span className="text-[13px] font-[family-name:var(--font-heading)] font-bold text-primary-container tabular-nums leading-none">
             {pad(value)}
           </span>
-          <span className="text-[7px] font-black uppercase tracking-wide text-on-surface-variant/50 leading-tight mt-[2px]">
+          <span className="text-[7px] font-bold uppercase tracking-wide text-on-surface-variant/50 leading-tight mt-[2px]">
             {label}
           </span>
         </div>

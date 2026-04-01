@@ -40,7 +40,7 @@ export default function BeforeAfter() {
       {/* After */}
       <FadeUp delay={200} direction="right">
         <div className="shimmer-border bg-gradient-to-br from-white via-white to-[#fff8e7] p-8 md:p-10 rounded-3xl double-bezel border-t-4 border-[#d4af37] relative overflow-visible h-full">
-          <div className="absolute -top-3 right-4 bg-gradient-to-r from-[#d4af37] to-[#e8790a] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-lg">
+          <div className="absolute -top-3 right-4 bg-gradient-to-r from-[#d4af37] to-[#e8790a] text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-tighter shadow-lg">
             {t("ba.goal")}
           </div>
           <div className="flex items-center gap-3 mb-6">

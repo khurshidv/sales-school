@@ -8,10 +8,10 @@ import { useT } from "@/lib/i18n";
 export default function ActionSection() {
   const { t } = useT();
   return (
-    <section className="py-[35px] md:py-[50px] bg-surface relative overflow-hidden">
+    <section className="py-[35px] md:py-[50px] bg-surface relative overflow-clip">
       {/* Animated background orbs — larger and more visible */}
-      <div className="glow-orb w-80 h-80 bg-primary-container/25 -top-20 -left-20" />
-      <div className="glow-orb w-64 h-64 bg-secondary-container/40 -bottom-10 -right-16" style={{ animationDelay: "2s" }} />
+      <div className="glow-orb w-80 h-80 bg-primary-container/25 top-20 left-20" />
+      <div className="glow-orb w-64 h-64 bg-secondary-container/40 bottom-10 right-10" style={{ animationDelay: "2s" }} />
       <div className="glow-orb w-48 h-48 bg-primary-fixed/30 top-1/3 right-1/4" style={{ animationDelay: "1s" }} />
 
       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-container via-transparent to-transparent" />

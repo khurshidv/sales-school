@@ -61,12 +61,12 @@ export default function ValueSection() {
         <FadeUp>
           <div className="mb-[70px] md:mb-[100px]">
             <div className="mb-16 md:mb-20">
-              <h2 className="font-[family-name:var(--font-heading)] text-3xl md:text-4xl lg:text-5xl text-on-surface flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-5 mb-4">
+              <h2 className="font-[family-name:var(--font-heading)] text-3xl md:text-4xl lg:text-5xl text-on-surface flex flex-wrap md:flex-nowrap items-baseline gap-3 md:gap-5">
                 <span className="text-on-surface-variant/40 text-4xl md:text-6xl whitespace-nowrap">0 <span className="text-2xl md:text-4xl">{locale === "ru" ? "с нуля" : "dan"}</span></span>
-                <span className="material-symbols-outlined text-primary-container text-3xl md:text-4xl">arrow_forward</span>
+                <span className="material-symbols-outlined text-primary-container text-3xl md:text-4xl !leading-none">arrow_forward</span>
                 <span className="text-gradient-orange">{t("value.before_after_heading")}</span>
+                <span className="text-on-surface-variant text-lg md:text-xl font-normal">{t("value.before_after_desc")}</span>
               </h2>
-              <p className="text-on-surface-variant text-lg md:text-xl">{t("value.before_after_desc")}</p>
             </div>
             <BeforeAfter />
             <div className="mt-10 flex justify-center">

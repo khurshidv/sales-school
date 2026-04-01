@@ -16,6 +16,41 @@ export const AVATAR_IMAGES = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCkqYpIADMEjVD4JLtlh_i55hfrjH7FM6_KC85Z35Jget5b3Y3D2882J7hwzD89ftY1KwoSWuoDyneC8UozYUCOISwIh5vFlhdD007OzE1_pV9X1WA0-PTZzSbgnD8KwIb2hALGVHrbC7vKqkTDedV9_75ZK29Fxgop61_X38Impy0csHobEYngOP8UnKwMZAGSxTr5y2BkZjfGgqaYZ8QGfR7glejI4tsTestaaUHi_6n26lLTLIRCOG0JCF2UIDm26yTb-GahxPDv=w72-h72",
 ];
 
+/* ══════════════════════════ TARGET LANDING DATA ══════════════════════════ */
+
+export const TARGET_PARTNER_LOGOS = [
+  "ETHEREAL",
+  "NEXT-GEN",
+  "TECHFLOW",
+  "GLOBAL.S",
+  "SALES.UP",
+];
+
+export const TARGET_CASE_IMAGES = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAw2zX-1Ne9sOJmpjKnRKtPkS2GB9MuWpRwvuSUK-Zt3eKcXYwCCl6xa8C4KpspHDQK3ToxAy6XCU5LM88HI0lYNOaRaascXmWfFVjQCY_J7VCiKC4YS1lf85ncpSuX2fHF4FR__7U3pBtNPRcF4AdbjH9rJ4v2rfQs6XQ2jo1p7taJne8q_XXkn1z7rfTDn3l2QJFptrdKCSjQAg1l0rchECkiUSfVxKmUF8hm7jDnajBXK1N2yehhh2EHe_l9B7bpb86H3ckRYHvr",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAi7Hj4avuEsN5uZJnaq314nEUgbiBSFCs6GFY24KSGXf_DsHCqSlxKtdGkTdU5D6qm_-yEC7nfYgVkSAd9QTJtFNrK-FOOjcsKbdBFASHk3qy-YU1w79O62hGz0PzM4o920qaw6LgRTS1CT-UoUa1Qa8r2sAIcfHKNaSPGZP_5CXUHbJS0QF76UVv0ojdyCQNb85vqiBS1-SNdvvR6MD8kWjQGed6MTKeApYqnJdumXfKgJk4ISlwK8ZuG87PPsurL_kkv32ZWCZSw",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBb9jR8YTQoYngp7F0HTmwqGGVgxbDZkuQqcdSby1KmhflEPNcyEYSW6zidwCYpRcDfnHckn7964eaDfV_MyZMmiXscuUmJvjyCfbkJOvnfDhGW0eP9ajvBX1GsMXd8r9_wiz7GmGPR0N8FVjo4JzWs7qhT80uKWk8QTJh2Mj_ay_hIM_1qE6JQxE25DjwxvjisOTduqyGp4NY9XhxeVPnIfLOdMDrhIudMnIUSVTOMLzQBoMZSuen7lw6-rwdjKwsPIxzEsOf_78Ro",
+];
+
+export const TARGET_HERO_IMAGE =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuC36glgLHeBVd1DF5I_Q6Z3OzbNrpqlSK4QuiaE2nZuvJCS0d-W4gjrYGsQB-LuFmHqPQ55M8XSpfC9KnvTUnyrYj471Ihs5I5KUHgbmtzdjIHXYz1nXRwA9iUm9i3g2P6kfe7gkBUE7GKTzFNBwug1fdCAbbDGFX8_gCR5WqHM4X24p88U2tjFEUAMjWj1A3cJiegd1NYcw7JCQ5hcdjbebDdSL4rgXgR-3276uX0VxcXYi58HPW3ZcgdvCkRwh8RlM9ACAb1csQMj";
+
+export const TARGET_FOUNDER_IMAGE =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDGfjpPg_dx_ERHFZhCunVJ-aEADoWYRtJnrU4gUxvUW5M-vyc3-cCbpY7Au3h4Pb9ePfqhptvrAt5jdiMVkjMH34hA5hEnrOvEn56MRQuKTeclqx0bKdrLQjKv7US2w0xuhGNhxtKIgtLtxj8nsjCqDGT1vcTZaviRaot1sCiDvLBt3C-wP11mibNkN1lIgtXZ3oDFbJTGROYjau-jhQGW5bMM7et7c3q88d8ui8ZtdDcFmzCYpNmW4WLIaPVureeh1Uy5TiKL7Abm";
+
+export const TARGET_MENTOR_IMAGES = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBfW8blX2PO_TLZ0TYi4JlQc72r1plwdAdo4nkOD7NnsVFympO0a5-TwOV_vstCegu4KOHVTYgkdpg22CvSiRHIShgxdRKs-jmFj60cyuA3eZLFiWWPbdiwx-PLOgEbTm4HFo48vpD-k6gIXdmMHeA5oqvVwNzaO6Safs2a6AZW3c5yfXPi66CiH8-bhbiCGZdfRE6OXuiCaTHExnuTN2xl2eMbDoa7fFMfUw9ee_DOgqLbg968VAPYGMnLclVlnHm9ZjxBVZ51vpvy",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBHW8-tcPtYFNvuL1_Sb8sIKOsUcUveWiwv5o7TuitWya6MEmmPC9lEyciBXo_YOPiloPnNqf8y3vvul82n8_yPzm3wuZVlN76VLDGWvpAAE8OgJnGCahanviPhYfGekMHaYA-B7kDDiHlK2GS4fBMV5pUHo4wZFf1Go0-apLh7v_41zyQ4QhvLmsnbkHjoX38dfqS85UumhTxnc00OGlBGs-3Dq8y1oc409n2TaGEQn62oWbqwnZZKTj0pfBPT71jlk3toEYM48dsb",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDiU3tGm7yi0qoujM9i_NCuCb_U9rNuT4efrd2qyOxxJrjtF8Y1zyepUOoPgcngibws3eT2HBr_xLbgaXuP4Yyr20NMaKb-weuXO8SZZfrIGmhESYyvEXnSjh-CUwsNIqBfQnOE5agNk5EkfTFFznzRKvSo_yrKaUd-jPgxhkxhM4OfQlxPjf88h824c__M4KN7R_0urGgXwB1gASZq3Pzh-IP_elhCaPCbDrdr5kHBqqhEHP68HUghk1dNe-X4xTOQ0SpUGdU3GExs",
+];
+
+export const TARGET_VIDEO_THUMBNAILS = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCX6VEtu10QcXJnDiWTFsHGAe7fLsGWKHHhcmvzUK5A7LU68TKQvL3bu10D7hLdNoX1j3nY-wvp1WYaSq-vy92YHERCMDzYDru6EbWj9P3xxVSE7EYBe-ucB0KUf3laaRfWOqlNAiXIwYmfEG-pFBBwl4hNuacYTGxTp4UZTWsf11n_J5HxTp9h69tUw-BZRD0x0CNp-ll4T9APd4mUA48O32m2mQJQI4LlMmhL6JIjuKmDvoTjqnJpf_xGjhzkk80A04KmDjzZif_h",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCcHbAVBAhKs1hLOEo1DpjWWGYxTwyN8OCJhJ5A8M8L8GXAGRc3mOUJGuGA4mMjObJswF92FLY5LtFTyx6gtCDTxm3TJ_3EclHOX93mZRdS69MTzJx0Z3pTxapQqujOHtxf7UK3AfA5iJVvPcvXN2Hy2-upq6j3451tnRXdCb5ppHN0G6qgdZ4vM17CkbCENku1U2aQZppgqhO-58RCQEi4wmy9d-nToq6LBPtuRDbrgqS_n9YJDmGfN7p1kC3GUzLmQF0hN9dxa6dz",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAFpaPSuskLaidi1cn3CxcFZyUWFWD16CCw6hlli0wAwUUwJqZlD0-0RsrglmaNB7kBUnESauCLabyLIXjRBdc00ZtXgQKvgvNx7RPeZnNbIHKTFLZ0k8Zk9GLa_6y32BOkwEDk60sM9y7Ij1FQA0ImrR-n6WRb3ZxZ0tRNIIh7HCKhqDMlaMKlLZWODuyzZTZbS8dnwcqHWmFwYCx8wY2S1LZw3ySw4X1ivkQqasyT4OcmKNKhpobapX6BvqVPqwcnkZvFusgvUnVS",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCp8s2zDVTVyFhmww1pF14ugyHKtoc9dPVzrGyiC8qGpMKRP9xCcLQ4AO2950wQJl3U9k52gHZ_pQyyulaJWa4jvpVkS6p2il-LWjyqiLdQzg5sc2uKh0-To9IVTEDq2fvIypSHEdE48-Q-SsMVyDOLsFJWo_yOTSPNDKca0ocsS1ZXUO8Q6IxX8kNN0Ev7xskehyTiSkf7f0kYmMvEngL_H9h9Y1EN716yjkGz8Zk4zZUi5AzzQIkg37SMbF9zeVS6OHC_41_SyMBz",
+];
+
 export const NAV_LINKS = [
   { label: "Программа", href: "#value" },
   { label: "Спикеры", href: "#speakers" },

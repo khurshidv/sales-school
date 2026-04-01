@@ -17,7 +17,7 @@ export default function Header() {
   return (
     <header className="fixed top-0 w-full z-50">
       {/* Urgency strip */}
-      <div className="bg-[#22c55e] text-white px-4 py-2 flex items-center justify-center gap-2 text-[11px] md:text-xs font-bold tracking-wide overflow-hidden">
+      <div className="bg-[#22c55e] text-white px-4 py-2 flex items-center justify-center gap-2 text-[11px] md:text-xs font-bold tracking-wide badge-strip-pulse">
         <span className="relative flex h-2 w-2 shrink-0">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />

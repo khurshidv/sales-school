@@ -310,6 +310,18 @@
   to   { transform: translateX(440%) skewX(-15deg); }
 }
 
+/* Auto-playing flash shimmer for buttons */
+@keyframes btn-flash {
+  0%, 100% { transform: translateX(-220%) skewX(-15deg); }
+  20% { transform: translateX(440%) skewX(-15deg); }
+}
+
+/* Green badge pulse for mobile */
+@keyframes badge-pulse {
+  0%, 100% { background-color: #22c55e; }
+  50% { background-color: #16a34a; }
+}
+
 .cta-btn {
   background: linear-gradient(145deg, #b85c00 0%, #e8790a 50%, #f98a28 100%);
   box-shadow:
@@ -337,6 +349,7 @@
   );
   transform: translateX(-220%) skewX(-15deg);
   pointer-events: none;
+  animation: btn-flash 4s ease-in-out infinite;
 }
 
 .cta-btn:hover {
@@ -349,7 +362,7 @@
 }
 
 .cta-btn:hover::before {
-  animation: btn-shimmer 0.65s ease-out forwards;
+  animation: btn-shimmer 0.65s ease-out;
 }
 
 .cta-btn:active {
@@ -399,6 +412,9 @@
       radial-gradient(at 0% 0%, #ffdcc6 0%, transparent 55%),
       radial-gradient(at 100% 0%, #d5e8d1 0%, transparent 55%),
       radial-gradient(at 50% 100%, #fbf9f5 0%, transparent 100%);
+  }
+  .badge-strip-pulse {
+    animation: badge-pulse 2s ease-in-out infinite;
   }
 }
 

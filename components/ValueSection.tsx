@@ -236,7 +236,9 @@ export default function ValueSection() {
                 </div>
               </div>
 
-              <CTAButton text={t("tg.cta")} size="large" glow />
+              <div className="flex justify-center">
+                <CTAButton text={t("tg.cta")} size="large" glow />
+              </div>
             </div>
           </div>
         </FadeUp>

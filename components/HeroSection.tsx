@@ -92,7 +92,7 @@ export default function HeroSection() {
             </FadeUp>
 
             {/* CTA block */}
-            <FadeUp delay={400}>
+            <FadeUp delay={400} className="w-full">
               <div id="hero-cta" className="flex flex-col items-center gap-3 w-full">
                 {/* Button full width */}
                 <CTAButton text={t("hero.cta")} fullWidth />

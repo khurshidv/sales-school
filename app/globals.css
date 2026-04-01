@@ -402,12 +402,18 @@
   box-shadow: 0 12px 36px rgba(232, 121, 10, 0.1), 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
-/* Reduced motion */
+/* Reduced motion — keep CTA flash & badge pulse for conversions */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .cta-btn::before {
+    animation: btn-flash 3s ease-in-out infinite !important;
+  }
+  .badge-strip-pulse {
+    animation: badge-pulse 2s ease-in-out infinite !important;
   }
 }
 

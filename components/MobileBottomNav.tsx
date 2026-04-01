@@ -53,7 +53,7 @@ export default function MobileBottomNav() {
       <button
         type="button"
         onClick={openModal}
-        className="flex items-center gap-2 bg-primary-container text-white rounded-full px-8 py-3 cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
+        className="flex items-center gap-2 cta-btn text-white rounded-full px-8 py-3 cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
       >
         <span className="text-xs font-bold uppercase tracking-widest">
           {t("nav.grab_seat")}

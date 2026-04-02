@@ -20,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 const MATERIAL_SYMBOLS_URL =
-  "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,400,0&icon_names=account_balance_wallet,add,arrow_forward,bolt,business_center,calendar_today,cancel,check,check_circle,close,download,edit_document,error,error_outline,expand_more,folder_open,fullscreen,groups,laptop_mac,language,lightbulb,menu,pause,payments,person,phone_disabled,play_arrow,play_circle,psychology,record_voice_over,schedule,school,search,send,share,shield_with_heart,speed,stars,support_agent,trending_down,trending_up,verified,volume_up,work,workspace_premium&display=swap";
+  "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap";
 
 export const viewport: Viewport = {
   width: "device-width",

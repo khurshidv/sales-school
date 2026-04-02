@@ -20,7 +20,7 @@ export default function TrustBar() {
             {TARGET_PARTNER_LOGOS.map((logo, i) => (
               <span
                 key={i}
-                className={`text-xl md:text-2xl font-black tracking-tighter text-on-surface ${
+                className={`text-xl md:text-2xl font-bold tracking-tighter text-on-surface ${
                   i === 0 ? "italic" : ""
                 } ${i === 1 ? "tracking-widest" : ""} ${
                   i === 4 ? "underline decoration-primary-container" : ""

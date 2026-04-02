@@ -31,6 +31,8 @@ export default function CasesSection() {
                     className="w-full h-full object-cover"
                     src={c.img}
                     alt={t(c.nameKey)}
+                    width={400}
+                    height={192}
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">

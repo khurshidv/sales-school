@@ -58,7 +58,7 @@ export default function ProgramAccordion() {
                     onClick={() => setOpenIndex(isOpen ? null : i)}
                   >
                     <div className="flex gap-4 items-center">
-                      <span className="text-primary-container font-black">{mod.range}</span>
+                      <span className="text-primary-container font-bold">{mod.range}</span>
                       <span className="font-bold text-on-surface">{mod.title}</span>
                     </div>
                     <span

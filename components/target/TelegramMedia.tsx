@@ -35,6 +35,8 @@ export default function TelegramMedia() {
                   className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity duration-300"
                   src={src}
                   alt=""
+                  width={270}
+                  height={480}
                   loading="lazy"
                 />
               </div>

@@ -19,6 +19,8 @@ export default function FounderSection() {
                   className="w-full h-full object-cover"
                   src={TARGET_FOUNDER_IMAGE}
                   alt={t("target.founder.name")}
+                  width={400}
+                  height={500}
                   loading="lazy"
                 />
               </div>

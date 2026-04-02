@@ -24,7 +24,7 @@ export default function ContrastBar() {
               <p className="text-primary-container text-sm uppercase font-bold">
                 {t("target.contrast.junior_label")}
               </p>
-              <p className="text-4xl font-black font-heading text-gradient-orange">$800+</p>
+              <p className="text-4xl font-bold font-heading text-gradient-orange">$800+</p>
             </div>
           </FadeUp>
 

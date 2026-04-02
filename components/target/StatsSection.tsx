@@ -12,7 +12,7 @@ export default function StatsSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 text-center">
         <FadeUp>
           <div className="space-y-2">
-            <p className="text-5xl md:text-7xl font-black text-primary-container">
+            <p className="text-5xl md:text-7xl font-bold text-primary-container">
               <CountUp target={500} suffix="+" />
             </p>
             <p className="text-on-surface-variant uppercase text-xs tracking-widest">
@@ -23,7 +23,7 @@ export default function StatsSection() {
 
         <FadeUp delay={100}>
           <div className="space-y-2">
-            <p className="text-5xl md:text-7xl font-black text-on-surface">
+            <p className="text-5xl md:text-7xl font-bold text-on-surface">
               <CountUp target={9} suffix="+" />
             </p>
             <p className="text-on-surface-variant uppercase text-xs tracking-widest">
@@ -34,7 +34,7 @@ export default function StatsSection() {
 
         <FadeUp delay={200}>
           <div className="space-y-2 col-span-2 md:col-span-1">
-            <p className="text-5xl md:text-7xl font-black text-secondary">
+            <p className="text-5xl md:text-7xl font-bold text-secondary">
               <CountUp target={12} suffix="+" />
             </p>
             <p className="text-on-surface-variant uppercase text-xs tracking-widest">

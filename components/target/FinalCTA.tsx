@@ -17,7 +17,7 @@ export default function FinalCTA() {
       />
       <div className="max-w-7xl mx-auto px-6 md:px-8 text-center relative z-10">
         <FadeUp>
-          <h2 className="text-3xl md:text-4xl lg:text-6xl font-heading font-black mb-6 md:mb-8 leading-tight text-on-surface">
+          <h2 className="text-3xl md:text-4xl lg:text-6xl font-heading font-bold mb-6 md:mb-8 leading-tight text-on-surface">
             {t("target.cta.heading")}
           </h2>
         </FadeUp>

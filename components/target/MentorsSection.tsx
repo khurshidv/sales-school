@@ -42,6 +42,8 @@ export default function MentorsSection() {
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all"
                     src={mentor.img}
                     alt={mentor.name}
+                    width={160}
+                    height={160}
                     loading="lazy"
                   />
                 </div>

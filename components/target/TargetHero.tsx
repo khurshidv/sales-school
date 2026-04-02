@@ -58,7 +58,10 @@ export default function TargetHero() {
                 className="w-full h-auto object-cover"
                 src={TARGET_HERO_IMAGE}
                 alt="Sales School professional"
+                width={600}
+                height={400}
                 loading="eager"
+                fetchPriority="high"
               />
             </div>
             {/* Decorative stat card */}

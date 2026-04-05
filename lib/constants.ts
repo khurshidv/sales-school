@@ -19,11 +19,27 @@ export const AVATAR_IMAGES = [
 /* ══════════════════════════ TARGET LANDING DATA ══════════════════════════ */
 
 export const TARGET_PARTNER_LOGOS = [
-  "ETHEREAL",
-  "NEXT-GEN",
-  "TECHFLOW",
-  "GLOBAL.S",
-  "SALES.UP",
+  "interno edu",
+  "Uspeak",
+  "Kamoljon",
+  "Bisiness bomond",
+  "TABASSUM-CENTER FOR OPPORTUNITIES",
+  "Goalway logistics",
+  "Testbor",
+  "Nonatravel",
+  "ECO TORG",
+  "Qadam",
+  "Tech Wise Solutions",
+  "Khadya Nur",
+  "Actimed",
+  "Umarov Xayotjon",
+  "MCHJ Usma Future",
+  "MCHJ STORE HEALTH",
+  "MCHJ Turon Media",
+  "MCHJ Expert Homes",
+  "MCHJ Yaqqin travel",
+  "CP 555 Elegant Mobile",
+  "Performance Sayohat",
 ];
 
 export const TARGET_CASE_IMAGES = [
@@ -32,8 +48,29 @@ export const TARGET_CASE_IMAGES = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBb9jR8YTQoYngp7F0HTmwqGGVgxbDZkuQqcdSby1KmhflEPNcyEYSW6zidwCYpRcDfnHckn7964eaDfV_MyZMmiXscuUmJvjyCfbkJOvnfDhGW0eP9ajvBX1GsMXd8r9_wiz7GmGPR0N8FVjo4JzWs7qhT80uKWk8QTJh2Mj_ay_hIM_1qE6JQxE25DjwxvjisOTduqyGp4NY9XhxeVPnIfLOdMDrhIudMnIUSVTOMLzQBoMZSuen7lw6-rwdjKwsPIxzEsOf_78Ro",
 ];
 
-export const TARGET_HERO_IMAGE =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuC36glgLHeBVd1DF5I_Q6Z3OzbNrpqlSK4QuiaE2nZuvJCS0d-W4gjrYGsQB-LuFmHqPQ55M8XSpfC9KnvTUnyrYj471Ihs5I5KUHgbmtzdjIHXYz1nXRwA9iUm9i3g2P6kfe7gkBUE7GKTzFNBwug1fdCAbbDGFX8_gCR5WqHM4X24p88U2tjFEUAMjWj1A3cJiegd1NYcw7JCQ5hcdjbebDdSL4rgXgR-3276uX0VxcXYi58HPW3ZcgdvCkRwh8RlM9ACAb1csQMj";
+export const TARGET_STUDENTS = [
+  { slug: "abdullajonova-shirin", name: "Abdullajonova Shirin" },
+  { slug: "anvarova-oyzoda", name: "Anvarova Oyzoda" },
+  { slug: "baxtishod-toyiboyev", name: "Baxtishod Toyiboyev" },
+  { slug: "burxonov-dilmurod", name: "Burxonov Dilmurod" },
+  { slug: "ganiyev-shoxrux", name: "G'aniyev Shoxrux" },
+  { slug: "haytaliev-abdulhamid", name: "Haytaliev Abdulhamid" },
+  { slug: "ibraximova-aynura", name: "Ibraximova Aynura" },
+  { slug: "olimjonov-shavkatjon", name: "Olimjonov Shavkatjon" },
+  { slug: "olimov-abdulbosit", name: "Olimov Abdulbosit" },
+  { slug: "parizoda-shovkatova", name: "Parizoda Shovkatova" },
+  { slug: "saliyeva-robiyaxon", name: "Saliyeva Robiyaxon" },
+  { slug: "samatova-ruxshona", name: "Samatova Ruxshona" },
+  { slug: "saydaliyeva-damira", name: "Saydaliyeva Damira" },
+  { slug: "suhrobjon-shokirjonov", name: "Suhrobjon Shokirjonov" },
+  { slug: "tursunpolatov-ozodbek", name: "Tursunpo'latov Ozodbek" },
+  { slug: "ulxojayev-jaxongir", name: "Ulxojayev Jaxongir" },
+  { slug: "xolmurodov-javohir", name: "Xolmurodov Javohir" },
+  { slug: "kutbiddinov-ramziddin", name: "Кутбиддинов Рамзиддин" },
+  { slug: "pulatova-aziza", name: "Пулатова Азиза" },
+];
+
+export const TARGET_HERO_IMAGE = "/hero-man.jpg";
 
 export const TARGET_FOUNDER_IMAGE =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDGfjpPg_dx_ERHFZhCunVJ-aEADoWYRtJnrU4gUxvUW5M-vyc3-cCbpY7Au3h4Pb9ePfqhptvrAt5jdiMVkjMH34hA5hEnrOvEn56MRQuKTeclqx0bKdrLQjKv7US2w0xuhGNhxtKIgtLtxj8nsjCqDGT1vcTZaviRaot1sCiDvLBt3C-wP11mibNkN1lIgtXZ3oDFbJTGROYjau-jhQGW5bMM7et7c3q88d8ui8ZtdDcFmzCYpNmW4WLIaPVureeh1Uy5TiKL7Abm";

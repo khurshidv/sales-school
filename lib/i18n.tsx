@@ -349,11 +349,18 @@ const translations = {
     ru: "Expert Sales",
     uz: "Expert Sales",
   },
+  "target.contrast.growth_title": {
+    ru: "Рост дохода за первые 3 месяца",
+    uz: "Birinchi 3 oyda daromad o'sishi",
+  },
+  "target.contrast.month1": { ru: "1 месяц", uz: "1-oy" },
+  "target.contrast.month2": { ru: "2 месяц", uz: "2-oy" },
+  "target.contrast.month3": { ru: "3 месяц", uz: "3-oy" },
 
   /* --- Target Trust Bar --- */
   "target.trust.label": {
-    ru: "Наши партнеры & Ethereal Group",
-    uz: "Bizning hamkorlarimiz & Ethereal Group",
+    ru: "Наши партнеры",
+    uz: "Bizning hamkorlarimiz",
   },
 
   /* --- Target Pain Points --- */
@@ -719,6 +726,11 @@ const translations = {
   "target.faq.4.a": {
     ru: "Онлайн-уроки в записи + живые практики с менторами + домашние задания с обратной связью.",
     uz: "Yozuvdagi onlayn darslar + mentorlar bilan jonli amaliyot + qayta aloqa bilan uy vazifalari.",
+  },
+  "target.faq.5.q": { ru: "Можно ли работать студентам?", uz: "Talabalar ishlashi mumkinmi?" },
+  "target.faq.5.a": {
+    ru: "Да, можно. Гибкий график позволяет совмещать обучение с учёбой в университете.",
+    uz: "Ha, mumkin. Moslashuvchan jadval universitetda o'qish bilan birlashtirish imkonini beradi.",
   },
 
   /* --- Target Final CTA --- */

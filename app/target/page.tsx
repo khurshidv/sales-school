@@ -11,9 +11,6 @@ import ProductBenefits from "@/components/target/ProductBenefits";
 import ProgramAccordion from "@/components/target/ProgramAccordion";
 import ForWhom from "@/components/target/ForWhom";
 import StatsSection from "@/components/target/StatsSection";
-import TelegramMedia from "@/components/target/TelegramMedia";
-import FounderSection from "@/components/target/FounderSection";
-import MentorsSection from "@/components/target/MentorsSection";
 import TargetFAQ from "@/components/target/TargetFAQ";
 import FinalCTA from "@/components/target/FinalCTA";
 import TargetFooter from "@/components/target/TargetFooter";
@@ -48,10 +45,7 @@ export default function TargetPage() {
         <ProgramAccordion />
         <ForWhom />
         <StatsSection />
-        <TelegramMedia />
-        <FounderSection />
-        <MentorsSection />
-        <TargetFAQ />
+<TargetFAQ />
         <FinalCTA />
       </main>
       <TargetFooter />

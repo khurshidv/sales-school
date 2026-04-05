@@ -8,7 +8,7 @@ export default function TargetFAQ() {
   const { t } = useT();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const items = [1, 2, 3, 4].map((n) => ({
+  const items = [1, 2, 3, 4, 5].map((n) => ({
     q: t(`target.faq.${n}.q` as TranslationKey),
     a: t(`target.faq.${n}.a` as TranslationKey),
   }));

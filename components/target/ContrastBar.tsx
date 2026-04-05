@@ -37,6 +37,31 @@ export default function ContrastBar() {
             </div>
           </FadeUp>
         </div>
+
+        <FadeUp delay={300}>
+          <div className="mt-8 rounded-2xl bg-white double-bezel p-6">
+            <p className="text-sm uppercase text-on-surface-variant mb-6">
+              {t("target.contrast.growth_title")}
+            </p>
+            <div className="flex items-end gap-4 h-32">
+              <div className="flex-1 flex flex-col items-center gap-2">
+                <span className="text-sm font-bold text-on-surface">$400–500</span>
+                <div className="w-full h-10 rounded-t-lg bg-outline-variant/30" />
+                <span className="text-xs text-on-surface-variant">{t("target.contrast.month1")}</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-2">
+                <span className="text-sm font-bold text-on-surface">$600–800</span>
+                <div className="w-full h-16 rounded-t-lg bg-secondary/40" />
+                <span className="text-xs text-on-surface-variant">{t("target.contrast.month2")}</span>
+              </div>
+              <div className="flex-1 flex flex-col items-center gap-2">
+                <span className="text-sm font-bold text-gradient-orange">$1000+</span>
+                <div className="w-full h-24 rounded-t-lg bg-gradient-to-t from-orange-500 to-amber-400" />
+                <span className="text-xs text-on-surface-variant font-semibold">{t("target.contrast.month3")}</span>
+              </div>
+            </div>
+          </div>
+        </FadeUp>
       </div>
     </section>
   );

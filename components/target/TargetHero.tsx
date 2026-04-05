@@ -59,10 +59,28 @@ export default function TargetHero() {
                 src={TARGET_HERO_IMAGE}
                 alt="Sales School professional"
                 width={600}
-                height={400}
+                height={750}
                 loading="eager"
                 fetchPriority="high"
               />
+            </div>
+            {/* Salary badge — top right */}
+            <div className="absolute -top-6 -right-6 bg-white p-4 rounded-xl double-bezel z-20">
+              <div className="flex items-center gap-3">
+                <div className="bg-error-container rounded-full p-2">
+                  <span className="material-symbols-outlined text-on-error-container">
+                    payments
+                  </span>
+                </div>
+                <div>
+                  <p className="text-xs text-on-surface-variant uppercase tracking-tighter">
+                    Средняя зп в Узб
+                  </p>
+                  <p className="text-xl font-bold text-on-surface">
+                    300–400$
+                  </p>
+                </div>
+              </div>
             </div>
             {/* Decorative stat card */}
             <div className="absolute -bottom-6 -left-6 bg-white p-5 rounded-xl double-bezel z-20">

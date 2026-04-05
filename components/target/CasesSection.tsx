@@ -1,17 +1,70 @@
 "use client";
 
 import FadeUp from "../FadeUp";
-import { useT, type TranslationKey } from "@/lib/i18n";
-import { TARGET_CASE_IMAGES } from "@/lib/constants";
+import { useT } from "@/lib/i18n";
+import { TARGET_STUDENTS } from "@/lib/constants";
+
+const row1 = TARGET_STUDENTS.slice(0, 10);
+const row2 = TARGET_STUDENTS.slice(10);
+
+function StudentCard({ slug, name }: { slug: string; name: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 flex-shrink-0" style={{ width: "140px" }}>
+      <div className="w-[120px] h-[120px] rounded-2xl overflow-hidden double-bezel">
+        <img
+          className="w-full h-full object-cover"
+          src={`/students/${slug}.jpg`}
+          alt={name}
+          width={120}
+          height={120}
+          loading="lazy"
+        />
+      </div>
+      <span className="text-sm font-semibold text-on-surface text-center whitespace-nowrap">
+        {name}
+      </span>
+    </div>
+  );
+}
+
+function MarqueeRow({
+  items,
+  reverse = false,
+}: {
+  items: typeof TARGET_STUDENTS;
+  reverse?: boolean;
+}) {
+  const doubled = [...items, ...items];
+  return (
+    <div
+      style={{
+        overflow: "hidden",
+        maskImage:
+          "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+        WebkitMaskImage:
+          "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          width: "max-content",
+          gap: "24px",
+          animation: reverse
+            ? "marquee-reverse 40s linear infinite"
+            : "marquee-fwd 35s linear infinite",
+        }}
+      >
+        {doubled.map((student, i) => (
+          <StudentCard key={`${student.slug}-${i}`} slug={student.slug} name={student.name} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function CasesSection() {
   const { t } = useT();
-
-  const cases = [
-    { nameKey: "target.case.1.name" as TranslationKey, descKey: "target.case.1.desc" as TranslationKey, tagKey: "target.case.1.tag" as TranslationKey, img: TARGET_CASE_IMAGES[0] },
-    { nameKey: "target.case.2.name" as TranslationKey, descKey: "target.case.2.desc" as TranslationKey, tagKey: "target.case.2.tag" as TranslationKey, img: TARGET_CASE_IMAGES[1] },
-    { nameKey: "target.case.3.name" as TranslationKey, descKey: "target.case.3.desc" as TranslationKey, tagKey: "target.case.3.tag" as TranslationKey, img: TARGET_CASE_IMAGES[2] },
-  ];
 
   return (
     <section id="cases" className="py-20 md:py-24 bg-surface-container-low">
@@ -22,37 +75,12 @@ export default function CasesSection() {
           </h2>
         </FadeUp>
 
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-          {cases.map((c, i) => (
-            <FadeUp key={i} delay={i * 100}>
-              <div className="bg-white rounded-2xl p-5 md:p-6 double-bezel flex flex-col h-full target-card">
-                <div className="relative h-48 mb-5 overflow-hidden rounded-xl">
-                  <img
-                    className="w-full h-full object-cover"
-                    src={c.img}
-                    alt={t(c.nameKey)}
-                    width={400}
-                    height={192}
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                    <span className="text-xs font-bold bg-primary-container text-white px-2 py-1 rounded-md uppercase">
-                      {t(c.tagKey)}
-                    </span>
-                  </div>
-                </div>
-                <h3 className="text-lg md:text-xl font-bold mb-2 text-on-surface">{t(c.nameKey)}</h3>
-                <p className="text-on-surface-variant text-sm mb-4 grow">{t(c.descKey)}</p>
-                <div className="flex items-center gap-2 pt-4 border-t border-outline-variant/20">
-                  <span className="material-symbols-outlined text-secondary">play_circle</span>
-                  <span className="text-xs font-bold uppercase tracking-widest text-secondary">
-                    {t("target.cases.watch")}
-                  </span>
-                </div>
-              </div>
-            </FadeUp>
-          ))}
-        </div>
+        <FadeUp delay={100}>
+          <div className="flex flex-col gap-6">
+            <MarqueeRow items={row1} />
+            <MarqueeRow items={row2} reverse />
+          </div>
+        </FadeUp>
       </div>
     </section>
   );

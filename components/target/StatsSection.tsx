@@ -35,7 +35,7 @@ export default function StatsSection() {
         <FadeUp delay={200}>
           <div className="space-y-2 col-span-2 md:col-span-1">
             <p className="text-5xl md:text-7xl font-bold text-secondary">
-              <CountUp target={12} suffix="+" />
+              <CountUp target={50} suffix="+" />
             </p>
             <p className="text-on-surface-variant uppercase text-xs tracking-widest">
               {t("target.stats.partners")}

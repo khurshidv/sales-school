@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import { I18nProvider } from "@/lib/i18n";
-import { ModalProvider } from "@/lib/modal-context";
-import RegistrationModal from "@/components/RegistrationModal";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -30,16 +28,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Бесплатный вебинар — Как начать зарабатывать в продажах с нуля за 30 дней | Sales School",
-  description:
-    "Покажем пошагово: где искать первую работу, как пройти собеседование и сколько можно зарабатывать уже в первый месяц. Бесплатно. 90 минут. 3 материала сразу.",
-  openGraph: {
-    title: "От 0 до $800/мес за 30 дней — реальный план входа в профессию продажника",
-    description:
-      "Бесплатный живой вебинар от Sales School. Получи чеклист, видео и шаблон резюме сразу после регистрации.",
-    type: "website",
-    locale: "ru_RU",
-  },
+  title: "Sales School",
+  description: "Sales School — обучение продажам",
 };
 
 export default function RootLayout({
@@ -50,22 +40,15 @@ export default function RootLayout({
   return (
     <html lang="ru" className={`${plusJakarta.variable} ${spaceGrotesk.variable} antialiased`}>
       <head>
-        {/* Preconnect to Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* DNS-prefetch for image CDNs */}
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        {/* Material Symbols — loaded directly (async pattern breaks in React) */}
         <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} />
       </head>
       <body className="min-h-dvh">
-        <div className="paper-grain" />
         <I18nProvider>
-          <ModalProvider>
-            {children}
-            <RegistrationModal />
-          </ModalProvider>
+          {children}
         </I18nProvider>
       </body>
     </html>

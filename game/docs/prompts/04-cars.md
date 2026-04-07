@@ -56,8 +56,7 @@ anime, cartoon, blurry, damaged, dirty, people, text, watermark, real photo, old
 ### Промпт:
 ```
 GTA V loading screen vehicle art style, Chevrolet Equinox family SUV,
-midnight black color, 3/4 front view with rear passenger door slightly open
-revealing spacious interior, family-oriented but modern styling, dramatic
+midnight black color, family-oriented but modern styling, dramatic
 studio lighting emphasizing size and safety, glossy paint with deep reflections,
 subtle chrome details, semi-realistic illustration, Rockstar Games concept
 art quality, clean sharp outlines, commanding road presence despite family

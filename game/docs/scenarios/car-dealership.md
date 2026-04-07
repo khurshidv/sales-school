@@ -71,9 +71,14 @@ d1_intro → d1_briefing → d1_client_enters → d1_approach [CHOICE 15с]
 
 ---
 
-**d1_intro** `cutscene`
+**d1_intro** `dialogue`
 ```
-videoUrl: "/assets/scenarios/car-dealership/day1-intro.mp4"
+speaker: "narrator"
+emotion: null
+background: "bg_showroom_entrance"
+transition: "day_intro"
+uz: "Ertalab. Toshkentdagi Chevrolet saloni eshiklari ochilyapti. Quyosh nuri vitrina oynalarida o'ynayapti. Bugun — sizning birinchi ish kuningiz."
+ru: "Утро. Двери Chevrolet-салона в Ташкенте открываются. Солнечные лучи играют на витринных стёклах. Сегодня — ваш первый рабочий день."
 nextNodeId: "d1_briefing"
 ```
 
@@ -534,6 +539,7 @@ fallbackNodeId: "d2_end_fail"
 outcome: "hidden_ending"
 effects: [
   { type: "add_xp", amount: 150 },
+  { type: "gain_life" },
   { type: "unlock_achievement", id: "respect_earns_referrals" },
   { type: "set_flag", flag: "d2_hidden" }
 ]
@@ -819,6 +825,7 @@ fallbackNodeId: "d3_end_fail"
 outcome: "hidden_ending"
 effects: [
   { type: "add_xp", amount: 180 },
+  { type: "gain_life" },
   { type: "unlock_achievement", id: "love_sells" },
   { type: "set_flag", flag: "d3_hidden" }
 ]
@@ -1086,6 +1093,7 @@ fallbackNodeId: "d4_end_fail"
 outcome: "hidden_ending"
 effects: [
   { type: "add_xp", amount: 200 },
+  { type: "gain_life" },
   { type: "unlock_achievement", id: "corporate_king" },
   { type: "set_flag", flag: "d4_hidden" }
 ]

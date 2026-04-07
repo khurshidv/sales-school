@@ -50,19 +50,18 @@ app/
 │
 ├── (game)/               # RPG игра
 │   ├── layout.tsx        # Тёмная тема, fullscreen, без header
-│   ├── game/
-│   │   ├── page.tsx      # Хаб: выбор персонажа → продукта → игра
-│   │   ├── play/page.tsx # Основной экран игры (движок рендерит тут)
-│   │   ├── leaderboard/page.tsx
-│   │   └── profile/page.tsx
-│   └── auth/
-│       ├── login/page.tsx
-│       └── callback/route.ts
+│   └── game/
+│       ├── page.tsx      # Хаб: форма (имя+тел) → выбор персонажа → продукта
+│       ├── play/page.tsx # Основной экран игры (движок рендерит тут)
+│       ├── leaderboard/page.tsx
+│       └── profile/page.tsx
 │
 ├── api/game/
+│   ├── players/route.ts  # POST: создать/найти игрока по телефону
 │   ├── progress/route.ts
 │   ├── leaderboard/route.ts
-│   └── achievements/route.ts
+│   ├── achievements/route.ts
+│   └── events/route.ts   # POST: аналитика (game_events)
 │
 ├── layout.tsx            # Root: html, body, шрифты
 └── globals.css
@@ -115,7 +114,7 @@ components/game/          # React UI компоненты
 │   ├── ChoicePanel.tsx       # Кнопки выбора (+ таймер)
 │   ├── CharacterSprite.tsx   # Портрет с эмоциями
 │   ├── TransitionOverlay.tsx # Переходы (Framer Motion)
-│   └── VideoPlayer.tsx       # Катсцены
+│   └── DayIntroTransition.tsx # Интро дня (Ken Burns на фоне + текст)
 │
 ├── hud/                  # Heads-Up Display
 │   ├── GameHUD.tsx
@@ -162,11 +161,11 @@ lib/
 ### Типы нод (ScenarioNode — discriminated union по полю `type`)
 - **dialogue** — текст от персонажа/рассказчика → nextNodeId
 - **choice** — варианты ответа (с timeLimit?, с hidden choices по условию)
-- **cutscene** — видеоролик → nextNodeId
+- **day_intro** — интро дня (Ken Burns на фоне + текст, Framer Motion) → nextNodeId
 - **condition_branch** — ветвление по условиям → branches + fallback
 - **score** — применить эффекты → nextNodeId
 - **timer_start** — запустить таймер (expireNodeId если время вышло)
-- **end** — конец (success / failure / hidden_ending)
+- **end** — конец (success / partial / failure / hidden_ending)
 
 ### Условия (Condition — discriminated union)
 - `score_gte`, `score_lte`, `has_achievement`, `choice_was`, `lives_gte`, `level_gte`, `flag`
@@ -183,18 +182,27 @@ lib/
 
 ## Supabase схема БД
 
+### Авторизация
+- **Без Supabase Auth** — игра как бесплатная воронка / лид-магнит
+- Вход: форма (имя + телефон) → создание/поиск игрока по phone
+- Сессия: player_id в localStorage
+- Никогда не использовать service key на клиенте
+
 ### Таблицы
-- **players** — профиль (id → auth.users, display_name, avatar_id, level, total_xp, total_score)
+- **players** — лид (id uuid, phone unique, display_name, avatar_id, level, total_xp, total_score, utm_source/medium/campaign, referrer)
 - **game_progress** — сохранения (player_id, scenario_id, day_id, session_state JSONB, is_completed)
 - **player_achievements** — разблокированные достижения (player_id, achievement_id, unlocked_at)
-- **leaderboard** — таблица лидеров (player_id, display_name, level, total_score, scenarios_completed)
-- **completed_scenarios** — история прохождений (player_id, scenario_id, day_id, score, time_taken)
+- **completed_scenarios** — история (player_id, scenario_id, score, rating, time_taken, choices JSONB)
+- **leaderboard** — таблица лидеров (auto-sync через триггер on_player_update)
+- **game_events** — аналитика воронки (player_id, event_type, event_data JSONB, scenario_id, day_id)
 
-### Безопасность
-- RLS на ВСЕХ таблицах
-- Игрок видит/редактирует только свои данные
-- Лидерборд — чтение для всех
-- Никогда не использовать service key на клиенте
+### Аналитика (game_events.event_type)
+- `game_started` — начал игру
+- `day_started` / `day_completed` / `day_failed` — прогресс по дням
+- `choice_made` — каждый выбор (для анализа популярных путей)
+- `achievement_unlocked` — разблокировка ачивки
+- `game_completed` — прошёл все 5 дней
+- `dropped_off` — закрыл/ушёл (отправляется при beforeunload)
 
 ### Realtime
 - `leaderboard` таблица добавлена в publication `supabase_realtime`

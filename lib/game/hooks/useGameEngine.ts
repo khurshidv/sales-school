@@ -76,6 +76,10 @@ export function useGameEngine(scenarioId: string) {
 
   // Track previous day state for transitions
   const previousDayStateRef = useRef<{ lives: number; flags: Record<string, boolean> } | null>(null);
+  // Guard: prevent end-node effect from firing multiple times
+  const endNodeProcessedRef = useRef<string | null>(null);
+  // Guard: prevent double-click on confirmNextDay
+  const transitioningRef = useRef(false);
 
   // Load scenario
   useEffect(() => {
@@ -91,6 +95,9 @@ export function useGameEngine(scenarioId: string) {
   useEffect(() => {
     const node = gameStore.currentNode;
     if (!node || node.type !== 'end' || flowState !== 'playing') return;
+    // Guard: don't process same end node twice
+    if (endNodeProcessedRef.current === node.id) return;
+    endNodeProcessedRef.current = node.id;
 
     const session = gameStore.session;
     if (!session || !scenario) return;
@@ -240,6 +247,8 @@ export function useGameEngine(scenarioId: string) {
 
       setCurrentDayIndex(dayIndex);
       setDayResults(null);
+      endNodeProcessedRef.current = null;
+      transitioningRef.current = false;
 
       const prevState = dayIndex > 0 ? previousDayStateRef.current : undefined;
       gameStore.startDay(scenarioId, day, prevState ?? undefined);
@@ -285,7 +294,8 @@ export function useGameEngine(scenarioId: string) {
   }, [gameStore]);
 
   const confirmNextDay = useCallback(() => {
-    if (!scenario || !dayResults) return;
+    if (!scenario || !dayResults || transitioningRef.current) return;
+    transitioningRef.current = true;
 
     if (dayResults.isLastDay) {
       // Calculate final results
@@ -322,6 +332,10 @@ export function useGameEngine(scenarioId: string) {
     const day = scenario.days[currentDayIndex];
     gameStore.resetDay(day);
     setDayResults(null);
+    // Remove last entry from history (the failed day we're restarting)
+    setDayResultsHistory((prev) => prev.filter((dr) => dr.dayIndex !== currentDayIndex));
+    endNodeProcessedRef.current = null;
+    transitioningRef.current = false;
     setFlowState('day_intro');
   }, [scenario, currentDayIndex, gameStore]);
 

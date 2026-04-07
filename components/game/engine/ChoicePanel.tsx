@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 interface Choice {
@@ -27,6 +27,12 @@ export default function ChoicePanel({
 }: ChoicePanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+
+  // Reset selection when choices change (new choice node)
+  const choiceIds = choices.map((c) => c.id).join(',');
+  useEffect(() => {
+    setSelectedIndices([]);
+  }, [choiceIds]);
 
   const handleToggle = (index: number) => {
     setSelectedIndices((prev) =>

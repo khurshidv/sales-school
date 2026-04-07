@@ -11,6 +11,7 @@ export default function GameOver({
   dayIndex,
   onRestart,
   onExit,
+  canAffordRestart,
 }: GameOverProps) {
   return (
     <div className="fixed inset-0 z-40 bg-black/70 flex items-center justify-center">
@@ -23,9 +24,14 @@ export default function GameOver({
 
         <button
           onClick={onRestart}
-          className="bg-blue-600 hover:bg-blue-700 w-full py-3 rounded-xl text-white font-semibold transition-colors mb-3"
+          disabled={!canAffordRestart}
+          className={`w-full py-3 rounded-xl font-semibold transition-colors mb-3 ${
+            canAffordRestart
+              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-neutral-700 text-neutral-500 cursor-not-allowed'
+          }`}
         >
-          Начать день заново
+          {canAffordRestart ? 'Начать день заново' : 'Нет монет для рестарта'}
         </button>
 
         <button

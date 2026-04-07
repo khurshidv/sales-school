@@ -16,16 +16,16 @@ const ALL_BGM = ['bgm_showroom', 'bgm_tension', 'bgm_summary'] as const;
 
 export function useAudio(eventBus: GameEventBus) {
   const [isMuted, setIsMuted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const unlockedRef = useRef(false);
-  const preloadedRef = useRef(false);
+  const pendingBgmRef = useRef<string | null>(null);
 
   // Initialize mute state
   useEffect(() => {
-    const sm = SoundManager.getInstance();
-    setIsMuted(sm.isMuted());
+    setIsMuted(SoundManager.getInstance().isMuted());
   }, []);
 
-  // Unlock AudioContext on first user interaction
+  // Unlock AudioContext on first user interaction + preload
   useEffect(() => {
     const handleInteraction = async () => {
       if (unlockedRef.current) return;
@@ -34,21 +34,25 @@ export function useAudio(eventBus: GameEventBus) {
       const sm = SoundManager.getInstance();
       await sm.unlock();
 
-      // Preload all sounds after unlock
-      if (!preloadedRef.current) {
-        preloadedRef.current = true;
-        await Promise.all([
-          ...ALL_SFX.map((id) => sm.preload(id)),
-          ...ALL_BGM.map((id) => sm.preload(id)),
-        ]);
-      }
+      // Preload in background — don't block
+      Promise.all([
+        ...ALL_SFX.map((id) => sm.preload(id)),
+        ...ALL_BGM.map((id) => sm.preload(id)),
+      ]).then(() => {
+        setIsReady(true);
+        // Retry pending BGM if any
+        if (pendingBgmRef.current) {
+          sm.playBgMusic(pendingBgmRef.current);
+          pendingBgmRef.current = null;
+        }
+      });
 
       document.removeEventListener('click', handleInteraction);
       document.removeEventListener('touchstart', handleInteraction);
     };
 
-    document.addEventListener('click', handleInteraction, { once: false });
-    document.addEventListener('touchstart', handleInteraction, { once: false });
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
 
     return () => {
       document.removeEventListener('click', handleInteraction);
@@ -61,7 +65,6 @@ export function useAudio(eventBus: GameEventBus) {
     const handler = (event: { type: 'sound_requested'; soundId: string }) => {
       SoundManager.getInstance().play(event.soundId);
     };
-
     eventBus.on('sound_requested', handler);
     return () => eventBus.off('sound_requested', handler);
   }, [eventBus]);
@@ -71,10 +74,16 @@ export function useAudio(eventBus: GameEventBus) {
   }, []);
 
   const playBgMusic = useCallback((soundId: string) => {
+    // If not unlocked yet, store as pending — will play once preload completes
+    if (!unlockedRef.current) {
+      pendingBgmRef.current = soundId;
+      return;
+    }
     SoundManager.getInstance().playBgMusic(soundId);
   }, []);
 
   const stopBgMusic = useCallback(() => {
+    pendingBgmRef.current = null;
     SoundManager.getInstance().stopBgMusic();
   }, []);
 
@@ -85,5 +94,5 @@ export function useAudio(eventBus: GameEventBus) {
     setIsMuted(newMuted);
   }, []);
 
-  return { playSound, playBgMusic, stopBgMusic, toggleMute, isMuted };
+  return { playSound, playBgMusic, stopBgMusic, toggleMute, isMuted, isReady };
 }

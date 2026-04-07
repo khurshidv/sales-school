@@ -17,58 +17,63 @@ export function useTypewriter(
   options: UseTypewriterOptions = {},
 ): UseTypewriterReturn {
   const { speed = 30 } = options;
-  const [charIndex, setCharIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const indexRef = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const prefersReducedMotion = useRef(false);
-
-  useEffect(() => {
-    prefersReducedMotion.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  }, []);
+  const textRef = useRef(fullText);
 
   // Reset when text changes
   useEffect(() => {
-    if (prefersReducedMotion.current) {
-      setCharIndex(fullText.length);
+    // Check reduced motion
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+      setDisplayedText(fullText);
       setIsTyping(false);
       return;
     }
 
-    setCharIndex(1);
+    // Reset state for new text
+    textRef.current = fullText;
+    indexRef.current = 0;
+    setDisplayedText('');
     setIsTyping(true);
-  }, [fullText]);
 
-  // Animate
-  useEffect(() => {
-    if (!isTyping || charIndex >= fullText.length) {
-      setIsTyping(false);
-      return;
-    }
+    // Clear previous interval
+    if (intervalRef.current) clearInterval(intervalRef.current);
 
+    // Start typing
     intervalRef.current = setInterval(() => {
-      setCharIndex((prev) => {
-        if (prev >= fullText.length - 1) {
-          setIsTyping(false);
-          return fullText.length;
-        }
-        return prev + 1;
-      });
+      indexRef.current += 1;
+      const currentIndex = indexRef.current;
+      const currentText = textRef.current;
+
+      if (currentIndex >= currentText.length) {
+        setDisplayedText(currentText);
+        setIsTyping(false);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      } else {
+        setDisplayedText(currentText.slice(0, currentIndex));
+      }
     }, speed);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
-  }, [isTyping, fullText, speed, charIndex]);
+  }, [fullText, speed]);
 
   const skipToEnd = useCallback(() => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setCharIndex(fullText.length);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setDisplayedText(textRef.current);
     setIsTyping(false);
-  }, [fullText]);
+  }, []);
 
-  return {
-    displayedText: fullText.slice(0, charIndex),
-    isTyping,
-    skipToEnd,
-  };
+  return { displayedText, isTyping, skipToEnd };
 }

@@ -54,6 +54,14 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // Detect game over from session
   const isGameOverState = session ? isGameOver(session.lives) : false;
 
+  // Auto-advance past day_intro nodes when in playing state
+  // (day_intro is rendered by DayIntroTransition; once playing starts, skip to next node)
+  useEffect(() => {
+    if (engine.flowState === 'playing' && node?.type === 'day_intro') {
+      engine.advanceDialogue();
+    }
+  }, [engine.flowState, node, engine]);
+
   // BGM control based on flow state
   const prevBgmRef = useRef<string | null>(null);
   useEffect(() => {

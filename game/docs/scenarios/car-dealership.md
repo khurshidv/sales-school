@@ -1194,20 +1194,53 @@ choices:
     ru: "Господин Абдуллаев, добро пожаловать. Прошу в VIP-зону — чай и презентация уже готовы."
     effects: [{ type: "add_score", amount: 15, dimension: "rapport" }, { type: "add_score", amount: 5, dimension: "timing" }]
     flags: [{ type: "set_flag", flag: "vip_greeting" }]
-    nextNodeId: "d4_fleet"
+    nextNodeId: "d4_abdullaev_reacts_vip"
 
   B)
     uz: "Xush kelibsiz! Keling, Malibu larni ko'rsataman."
     ru: "Добро пожаловать! Давайте покажу Malibu."
     effects: [{ type: "add_score", amount: 8, dimension: "timing" }]
-    nextNodeId: "d4_fleet"
+    nextNodeId: "d4_abdullaev_reacts_direct"
 
   C) [boosted_if: { type: "flag", flag: "researched_company" }]
     uz: "Salom! Kompaniyangiz kengayayotganini o'qidim — tabriklayman! Flot uchun maxsus shartlarimiz bor."
     ru: "Здравствуйте! Читал, что компания расширяется — поздравляю! Для флота есть особые условия."
     effects: [{ type: "add_score", amount: 12, dimension: "expertise" }, { type: "add_score", amount: 5, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "showed_research" }]
-    nextNodeId: "d4_fleet"
+    nextNodeId: "d4_abdullaev_reacts_research"
+```
+
+---
+
+**d4_abdullaev_reacts_vip** `dialogue` _(реакция на VIP-протокол)_
+```
+speaker: "abdullaev"
+emotion: "neutral"
+uz: "Yaxshi. Tayyorlanibsiz. Choy ichib, ishga kirishamiz. Vaqtim kam — 20 daqiqa."
+ru: "Хорошо. Подготовились. Попьём чаю и к делу. У меня 20 минут."
+nextNodeId: "d4_fleet"
+```
+
+---
+
+**d4_abdullaev_reacts_direct** `dialogue` _(реакция на прямой подход)_
+```
+speaker: "abdullaev"
+emotion: "impatient"
+uz: "Shunchaki ko'rsatasizmi? Men narx va shart kutayapman. Malibu ko'rganman — taklif nima?"
+ru: "Просто покажете? Я жду цену и условия. Malibu я видел — что предложите?"
+nextNodeId: "d4_fleet"
+```
+
+---
+
+**d4_abdullaev_reacts_research** `dialogue` _(реакция на подготовленность)_
+```
+speaker: "abdullaev"
+emotion: "impressed"
+uz: "O'qibsiz? Yaxshi. Bilimli sotuvchini yoqtiraman. Maxsus shartlar — eshitaman."
+ru: "Читали? Хорошо. Люблю подготовленных продавцов. Особые условия — слушаю."
+nextNodeId: "d4_fleet"
 ```
 
 ---
@@ -1225,20 +1258,20 @@ choices:
     ru: "Пакет флота: 3 Malibu — каждому 2 года сервиса, GPS мониторинг, корпоративная скидка 7%."
     effects: [{ type: "add_score", amount: 15, dimension: "persuasion" }, { type: "add_score", amount: 8, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "fleet_package" }]
-    nextNodeId: "d4_wife_car"
+    nextNodeId: "d4_fleet_react_package"
 
   B)
     uz: "Malibu — biznes segmentda eng ishonchli. Menejerlaringiz uchun ideal. Ranglarni tanlashni boshlaylikmi?"
     ru: "Malibu — самый надёжный в бизнес-сегменте. Идеален для менеджеров. Начнём выбирать цвета?"
     effects: [{ type: "add_score", amount: 10, dimension: "expertise" }, { type: "add_score", amount: 5, dimension: "timing" }]
-    nextNodeId: "d4_wife_car"
+    nextNodeId: "d4_fleet_react_reliable"
 
   C) [boosted_if: { type: "flag", flag: "has_discount_authority" }]
     uz: "3 ta Malibu uchun maxsus fleet narx — har biri $26,000 ($28k o'rniga). Yiliga $6,000 tejaysiz."
     ru: "Специальная fleet-цена на 3 Malibu — $26,000 каждый (вместо $28к). Экономия $6,000 в год."
     effects: [{ type: "add_score", amount: 12, dimension: "persuasion" }, { type: "add_score", amount: 10, dimension: "opportunity" }]
     flags: [{ type: "set_flag", flag: "gave_fleet_price" }]
-    nextNodeId: "d4_wife_car"
+    nextNodeId: "d4_fleet_react_price"
 
 expireNodeId: "d4_fleet_expired"
 ```
@@ -1251,6 +1284,50 @@ effects: [{ type: "add_score", amount: -8, dimension: "timing" }]
 narrator:
   uz: "Abdullaev sabrsiz. Siz tayyorlanmagansiz deb o'yladi."
   ru: "Абдуллаев нетерпелив. Он подумал, что вы не подготовились."
+nextNodeId: "d4_fleet_react_timeout"
+```
+
+---
+
+**d4_fleet_react_package** `dialogue` _(реакция на флот-пакет)_
+```
+speaker: "abdullaev"
+emotion: "neutral"
+uz: "Servis va GPS — bu yaxshi. 7% chegirma... Qabul qilaman. Endi xotinimga Tahoe — gapiring."
+ru: "Сервис и GPS — хорошо. Скидка 7%... Принимается. Теперь про Tahoe для жены."
+nextNodeId: "d4_wife_car"
+```
+
+---
+
+**d4_fleet_react_reliable** `dialogue` _(реакция на надёжность)_
+```
+speaker: "abdullaev"
+emotion: "impatient"
+uz: "Ishonchli — bu yaxshi. Lekin rang emas, narx kerak. Chegirma bormi? Endi Tahoe haqida gapiring."
+ru: "Надёжный — хорошо. Но не цвета, а цену давайте. Скидка есть? И расскажите про Tahoe."
+nextNodeId: "d4_wife_car"
+```
+
+---
+
+**d4_fleet_react_price** `dialogue` _(реакция на fleet-цену)_
+```
+speaker: "abdullaev"
+emotion: "impressed"
+uz: "$6,000 tejash — bu raqam. Tayyorlanibsiz. Yaxshi. Endi Tahoe — xotinimga."
+ru: "Экономия $6,000 — это цифра. Подготовились. Хорошо. Теперь Tahoe — для жены."
+nextNodeId: "d4_wife_car"
+```
+
+---
+
+**d4_fleet_react_timeout** `dialogue` _(реакция на таймаут)_
+```
+speaker: "abdullaev"
+emotion: "impatient"
+uz: "Javob yo'qmi? Yaxshi, Tahoe haqida gapiring — balki u yaxshiroq tayyorlangandirsiz."
+ru: "Нет ответа? Ладно, расскажите про Tahoe — может, там подготовились лучше."
 nextNodeId: "d4_wife_car"
 ```
 
@@ -1385,10 +1462,19 @@ dialogue:
 
 ### Нод-граф
 ```
-d5_intro → d5_morning_check [BRANCH] → d5_sardor_enters
-→ d5_approach [CHOICE 10с] → d5_needs [CHOICE]
-→ d5_objection [CHOICE 10с] → d5_closing [CHOICE 5с]
-→ d5_reveal → d5_final_check [BRANCH]
+d5_intro → d5_morning_check [BRANCH] → d5_sardor_enters → d5_approach [CHOICE 10с]
+  A → d5_needs_soft ────┐
+  B → d5_needs_direct ──┼→ d5_needs_choice [CHOICE]
+  C → d5_needs_cobalt ──┘
+  expired → d5_needs_expired ─┘
+    A → d5_objection_after_family ──┐
+    B → d5_objection_after_budget ──┼→ d5_objection_choice [CHOICE 10с]
+    C → d5_objection_after_pitch ───┘
+      A → d5_sardor_reacts_service ───┐
+      B → d5_sardor_reacts_denial ────┼→ d5_closing [CHOICE 5с]
+      C → d5_sardor_reacts_guarantee ─┘
+      expired → d5_sardor_reacts_timeout ─┘
+→ d5_reveal → d5_team_reaction → d5_final_check [BRANCH]
 → d5_end_success | d5_end_partial | d5_end_fail | d5_end_grandmaster
 ```
 
@@ -1456,20 +1542,20 @@ choices:
     ru: "Здравствуйте! Смотрите спокойно. Если будут вопросы — я рядом."
     effects: [{ type: "add_score", amount: 12, dimension: "empathy" }, { type: "add_score", amount: 8, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "patient_approach" }]
-    nextNodeId: "d5_needs"
+    nextNodeId: "d5_needs_soft"
 
   B)
     uz: "Salom! Qaysi model qiziqtirdi?"
     ru: "Здравствуйте! Какая модель заинтересовала?"
     effects: [{ type: "add_score", amount: 8, dimension: "timing" }, { type: "add_score", amount: 5, dimension: "rapport" }]
-    nextNodeId: "d5_needs"
+    nextNodeId: "d5_needs_direct"
 
   C)
     uz: "Cobalt ko'rayapsizmi? Bu bizning eng mashhur modelimiz."
     ru: "Смотрите Cobalt? Это наша самая популярная модель."
     effects: [{ type: "add_score", amount: 5, dimension: "expertise" }, { type: "add_score", amount: -5, dimension: "empathy" }]
     flags: [{ type: "set_flag", flag: "judged_by_appearance" }]
-    nextNodeId: "d5_needs"
+    nextNodeId: "d5_needs_cobalt"
 
 expireNodeId: "d5_approach_expired"
 ```
@@ -1482,19 +1568,54 @@ effects: [{ type: "add_score", amount: -8, dimension: "timing" }, { type: "lose_
 narrator:
   uz: "Siz hech narsa qilmadingiz. Mijoz e'tiborsiz qoldi."
   ru: "Вы ничего не сделали. Клиент остался без внимания."
-nextNodeId: "d5_needs"
+nextNodeId: "d5_needs_expired"
 ```
 
 ---
 
-**d5_needs** `dialogue`
+**d5_needs_soft** `dialogue` _(после мягкого подхода)_
 ```
 speaker: "sardor"
 emotion: "neutral"
-uz: "Rahmat. Oilam uchun mashina kerak. Lekin... qanday tanlashni bilmayman."
-ru: "Спасибо. Нужна машина для семьи. Но... не знаю как выбрать."
+uz: "Rahmat, biroz qarab chiqdim. Aslida... oilam uchun mashina kerak. Qanday tanlashni bilmayman. Yordam bera olasizmi?"
+ru: "Спасибо, осмотрелся. На самом деле... нужна машина для семьи. Не знаю как выбрать. Можете помочь?"
 nextNodeId: "d5_needs_choice"
 ```
+
+---
+
+**d5_needs_direct** `dialogue` _(после прямого вопроса)_
+```
+speaker: "sardor"
+emotion: "neutral"
+uz: "Hali bilmayman qaysi model. Oilam uchun mashina kerak, lekin qanday tanlashni bilmayman."
+ru: "Пока не определился с моделью. Нужна машина для семьи, но не знаю с чего начать."
+nextNodeId: "d5_needs_choice"
+```
+
+---
+
+**d5_needs_cobalt** `dialogue` _(после предположения о Cobalt)_
+```
+speaker: "sardor"
+emotion: "testing"
+uz: "Cobalt? Yo'q... Oilam uchun kattaroq mashina kerak. Nima tavsiya qilasiz?"
+ru: "Cobalt? Нет... Нужна машина побольше, для семьи. Что порекомендуете?"
+nextNodeId: "d5_needs_choice"
+```
+
+---
+
+**d5_needs_expired** `dialogue` _(клиент сам подходит)_
+```
+speaker: "sardor"
+emotion: "neutral"
+uz: "Kechirasiz... menga maslahat bera olasizmi? Oilam uchun mashina kerak."
+ru: "Извините... можете проконсультировать? Нужна машина для семьи."
+nextNodeId: "d5_needs_choice"
+```
+
+---
 
 **d5_needs_choice** `choice`
 ```
@@ -1509,31 +1630,55 @@ choices:
     ru: "Расскажите о семье — сколько детей, куда часто ездите, что важно?"
     effects: [{ type: "add_score", amount: 15, dimension: "discovery" }, { type: "add_score", amount: 8, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "deep_discovery" }]
-    nextNodeId: "d5_objection"
+    nextNodeId: "d5_objection_after_family"
 
   B)
     uz: "Byudjetingiz qancha? Shunga qarab tanlaymiz."
     ru: "Какой бюджет? Подберём под него."
     effects: [{ type: "add_score", amount: 5, dimension: "discovery" }, { type: "add_score", amount: 3, dimension: "timing" }]
-    nextNodeId: "d5_objection"
+    nextNodeId: "d5_objection_after_budget"
 
   C)
     uz: "Oila uchun Equinox yoki Tracker — keling ko'rsataman."
     ru: "Для семьи — Equinox или Tracker. Давайте покажу."
     effects: [{ type: "add_score", amount: 5, dimension: "expertise" }, { type: "add_score", amount: -3, dimension: "discovery" }]
-    nextNodeId: "d5_objection"
+    nextNodeId: "d5_objection_after_pitch"
 ```
 
 ---
 
-**d5_objection** `dialogue`
+**d5_objection_after_family** `dialogue` _(ответ на вопрос о семье)_
 ```
 speaker: "sardor"
-emotion: "testing"
-uz: "Lekin internetda yozdishgan — Chevrolet ehtiyot qismlari qimmat va uzoq keladi. Bu haqiqatmi?"
-ru: "Но в интернете пишут — запчасти на Chevrolet дорогие и долго ждать. Это правда?"
+emotion: "testing_notes"
+uz: "Yaxshi savol berdingiz. 3 ta farzand, shaharga va qishloqqa tez-tez boramiz. Lekin... internetda yozdishgan — Chevrolet ehtiyot qismlari qimmat. Bu haqiqatmi?"
+ru: "Хороший вопрос задали. 3 детей, часто ездим в город и за город. Но... в интернете пишут — запчасти на Chevrolet дорогие. Это правда?"
 nextNodeId: "d5_objection_choice"
 ```
+
+---
+
+**d5_objection_after_budget** `dialogue` _(ответ на вопрос о бюджете)_
+```
+speaker: "sardor"
+emotion: "testing_notes"
+uz: "Byudjet... 25 mingacha. Lekin narxdan oldin boshqa savol bor — internetda yozdishgan, Chevrolet ehtiyot qismlari qimmat va uzoq keladi. Haqiqatmi?"
+ru: "Бюджет... до 25 тысяч. Но перед ценой другой вопрос — в интернете пишут, запчасти на Chevrolet дорогие и долго ждать. Правда?"
+nextNodeId: "d5_objection_choice"
+```
+
+---
+
+**d5_objection_after_pitch** `dialogue` _(ответ на преждевременный питч)_
+```
+speaker: "sardor"
+emotion: "testing_notes"
+uz: "Kutib turing, modellardan oldin savol bor. Internetda yozdishgan — Chevrolet ehtiyot qismlari qimmat va uzoq keladi. Bu haqiqatmi?"
+ru: "Подождите с моделями, сначала вопрос. В интернете пишут — запчасти на Chevrolet дорогие и долго ждать. Это правда?"
+nextNodeId: "d5_objection_choice"
+```
+
+---
 
 **d5_objection_choice** `choice`
 ```
@@ -1548,22 +1693,66 @@ choices:
     ru: "Правильный вопрос. 2 года бесплатного сервиса — запчасти за наш счёт. Потом — официальные дилеры в Ташкенте."
     effects: [{ type: "add_score", amount: 15, dimension: "persuasion" }, { type: "add_score", amount: 5, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "honest_answer" }]
-    nextNodeId: "d5_closing"
+    nextNodeId: "d5_sardor_reacts_service"
 
   B)
     uz: "Yo'q, bu eski ma'lumot. Hozir barcha ehtiyot qismlar omborda bor."
     ru: "Нет, это старая информация. Сейчас все запчасти есть на складе."
     effects: [{ type: "add_score", amount: 5, dimension: "persuasion" }, { type: "add_score", amount: -5, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "dismissed_concern" }]
-    nextNodeId: "d5_closing"
+    nextNodeId: "d5_sardor_reacts_denial"
 
   C)
     uz: "Tushunaman, bu xavotir. Lekin Chevrolet 5 yillik kafolat beradi — bu ishonchning belgisi."
     ru: "Понимаю, это беспокойство. Но Chevrolet даёт 5 лет гарантии — это знак надёжности."
     effects: [{ type: "add_score", amount: 10, dimension: "persuasion" }, { type: "add_score", amount: 5, dimension: "empathy" }]
-    nextNodeId: "d5_closing"
+    nextNodeId: "d5_sardor_reacts_guarantee"
 
 expireNodeId: "d5_objection_expired"
+```
+
+---
+
+**d5_sardor_reacts_service** `dialogue` _(реакция на 2 года сервиса)_
+```
+speaker: "sardor"
+emotion: "neutral"
+uz: "2 yillik servis — bu konkret javob. Va rasmiy dillerlar ham bor. Yaxshi, ishonchli eshitildi."
+ru: "2 года сервиса — это конкретный ответ. И официальные дилеры есть. Хорошо, звучит надёжно."
+nextNodeId: "d5_closing"
+```
+
+---
+
+**d5_sardor_reacts_denial** `dialogue` _(реакция на отрицание)_
+```
+speaker: "sardor"
+emotion: "testing"
+uz: "Shunchaki 'yo'q' deyish — bu argument emas. Konkret dalillar kerak."
+ru: "Просто сказать 'нет' — это не аргумент. Нужны конкретные доказательства."
+nextNodeId: "d5_closing"
+```
+
+---
+
+**d5_sardor_reacts_guarantee** `dialogue` _(реакция на гарантию)_
+```
+speaker: "sardor"
+emotion: "neutral"
+uz: "5 yillik kafolat — bu jiddiy. Demak, kompaniya o'z mashinasiga ishonadi. Qabul qilaman."
+ru: "5 лет гарантии — это серьёзно. Значит, компания уверена в своих машинах. Принимается."
+nextNodeId: "d5_closing"
+```
+
+---
+
+**d5_sardor_reacts_timeout** `dialogue` _(реакция на таймаут)_
+```
+speaker: "sardor"
+emotion: "testing"
+uz: "Javob yo'q? O'z mahsulotingizga ishonmaysizmi? Bu yaxshi belgi emas."
+ru: "Нет ответа? Не уверены в своём продукте? Это не лучший знак."
+nextNodeId: "d5_closing"
 ```
 
 ---
@@ -1574,7 +1763,7 @@ effects: [{ type: "add_score", amount: -10, dimension: "timing" }, { type: "lose
 narrator:
   uz: "Javob bera olmadingiz. Sardor shubha bilan qaradi."
   ru: "Вы не нашли ответа. Сардор посмотрел с сомнением."
-nextNodeId: "d5_closing"
+nextNodeId: "d5_sardor_reacts_timeout"
 ```
 
 ---

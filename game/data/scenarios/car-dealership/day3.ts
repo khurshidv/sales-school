@@ -125,10 +125,10 @@ export const day3: Day = {
       id: 'd3_anvar_info',
       type: 'dialogue',
       speaker: 'anvar',
-      emotion: 'excited',
+      emotion: 'eager',
       background: 'bg_manager_office',
       characters: [
-        { id: 'anvar', emotion: 'excited', position: 'center' },
+        { id: 'anvar', emotion: 'eager', position: 'center' },
       ],
       text: {
         uz: "Bitta narsa topdim — uning kompaniyasi o'tgan yili 12 ta Cobalt sotib olgan! Katta mijoz.",
@@ -531,10 +531,10 @@ export const day3: Day = {
       id: 'd3_rustam_mid',
       type: 'dialogue',
       speaker: 'rustam',
-      emotion: 'thinking',
+      emotion: 'serious',
       background: 'bg_showroom',
       characters: [
-        { id: 'rustam', emotion: 'thinking', position: 'center' },
+        { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
         uz: "Yaxshi ish. Lekin sezaman, bugun yana bir kutilmagan hodisa bo'ladi.",
@@ -566,10 +566,10 @@ export const day3: Day = {
       id: 'd3_dilnoza_tip',
       type: 'dialogue',
       speaker: 'dilnoza',
-      emotion: 'encouraging',
+      emotion: 'helpful',
       background: 'bg_showroom',
       characters: [
-        { id: 'dilnoza', emotion: 'encouraging', position: 'center' },
+        { id: 'dilnoza', emotion: 'helpful', position: 'center' },
       ],
       text: {
         uz: "Zo'r ishladingiz shu kunlarda. Oxirgi maslahat: eng qiyin mijoz — eng katta imkoniyat.",
@@ -873,12 +873,12 @@ export const day3: Day = {
       id: 'd3_team_reaction',
       type: 'dialogue',
       speaker: 'rustam',
-      emotion: 'surprised',
+      emotion: 'friendly',
       background: 'bg_showroom',
       characters: [
-        { id: 'rustam', emotion: 'surprised', position: 'left' },
+        { id: 'rustam', emotion: 'friendly', position: 'left' },
         { id: 'sardor', emotion: 'revealing', position: 'center' },
-        { id: 'dilnoza', emotion: 'curious', position: 'right' },
+        { id: 'dilnoza', emotion: 'neutral', position: 'right' },
       ],
       text: {
         uz: "Janob Sardor... Sizni kutgan edik. Xo'sh, yangi hamkasbimiz qanday ishladi?",
@@ -960,10 +960,10 @@ export const day3: Day = {
       id: 'd3_gm_sardor2',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'serious',
+      emotion: 'neutral',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'serious', position: 'center' },
+        { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
         uz: "Lekin tizimsiz iste'dod — haydovchisiz sport mashina.",
@@ -976,10 +976,10 @@ export const day3: Day = {
       id: 'd3_gm_sardor3',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'serious',
+      emotion: 'neutral',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'serious', position: 'center' },
+        { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
         uz: "Men yuzlab sotuvchilarni ko'rganman. G'olib bo'lganlar — eng iste'dodlilar emas, eng ko'p mashq qilganlar.",
@@ -992,10 +992,10 @@ export const day3: Day = {
       id: 'd3_gm_sardor4',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'encouraging',
+      emotion: 'satisfied',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'encouraging', position: 'center' },
+        { id: 'sardor', emotion: 'satisfied', position: 'center' },
       ],
       text: {
         uz: "Xom iste'doddan professional yasaydigan joy bor. Sales School.",
@@ -1056,15 +1056,15 @@ export const day3: Day = {
       effects: [],
       dialogue: {
         speaker: 'sardor',
-        emotion: 'proud',
+        emotion: 'impressed',
         text: {
           uz: "Sizda kerakli narsa borligini isbotladingiz. Keyingi qadam: buni har kuni izchil qilishni o'rganing. Bu haqiqiy karyeraning boshlanishi.",
           ru: 'Вы доказали, что у вас есть всё необходимое. Следующий шаг: научиться делать это стабильно, каждый день. Это начало настоящей карьеры.',
         },
         characters: [
           { id: 'rustam', emotion: 'proud', position: 'left' },
-          { id: 'sardor', emotion: 'proud', position: 'center' },
-          { id: 'dilnoza', emotion: 'impressed', position: 'right' },
+          { id: 'sardor', emotion: 'impressed', position: 'center' },
+          { id: 'dilnoza', emotion: 'smirk', position: 'right' },
         ],
       },
     },
@@ -1101,10 +1101,10 @@ export const day3: Day = {
       id: 'd3_s_sardor2',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'serious',
+      emotion: 'neutral',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'serious', position: 'center' },
+        { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
         uz: "Lekin top sotuvchilar intuitsiya PLUS tizim bilan ishlaydi. O'sha tizimni o'rganmoqchimisiz?",
@@ -1133,13 +1133,13 @@ export const day3: Day = {
       effects: [],
       dialogue: {
         speaker: 'sardor',
-        emotion: 'encouraging',
+        emotion: 'satisfied',
         text: {
           uz: "Sizda asos bor. Professional dastur uni ko'paytiradi.",
           ru: 'У вас есть база. Профессиональная программа её умножит.',
         },
         characters: [
-          { id: 'sardor', emotion: 'encouraging', position: 'center' },
+          { id: 'sardor', emotion: 'satisfied', position: 'center' },
         ],
       },
     },
@@ -1175,10 +1175,10 @@ export const day3: Day = {
       id: 'd3_p_sardor2',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'serious',
+      emotion: 'neutral',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'serious', position: 'center' },
+        { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
         uz: "Tajribali mentor va tizimli ta'lim — shu ikkitasini qo'shing, natija o'zgaradi.",
@@ -1207,13 +1207,13 @@ export const day3: Day = {
       effects: [],
       dialogue: {
         speaker: 'sardor',
-        emotion: 'encouraging',
+        emotion: 'satisfied',
         text: {
           uz: "O'rganish istagi — bu allaqachon birinchi qadam.",
           ru: 'Желание учиться — это уже первый шаг.',
         },
         characters: [
-          { id: 'sardor', emotion: 'encouraging', position: 'center' },
+          { id: 'sardor', emotion: 'satisfied', position: 'center' },
         ],
       },
     },
@@ -1234,10 +1234,10 @@ export const day3: Day = {
       id: 'd3_f_sardor1',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'disappointed',
+      emotion: 'neutral_alt',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'disappointed', position: 'center' },
+        { id: 'sardor', emotion: 'neutral_alt', position: 'center' },
       ],
       text: {
         uz: "Natija kuchsiz. Lekin bilasizmi nima? Ko'pchilik umuman sinab ko'rmaydi.",
@@ -1250,10 +1250,10 @@ export const day3: Day = {
       id: 'd3_f_sardor2',
       type: 'dialogue',
       speaker: 'sardor',
-      emotion: 'serious',
+      emotion: 'neutral',
       background: 'bg_showroom',
       characters: [
-        { id: 'sardor', emotion: 'serious', position: 'center' },
+        { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
         uz: "Siz sinab ko'rdingiz. Demak, o'rganishga tayyorsiz.",
@@ -1282,13 +1282,13 @@ export const day3: Day = {
       effects: [],
       dialogue: {
         speaker: 'sardor',
-        emotion: 'encouraging',
+        emotion: 'satisfied',
         text: {
           uz: "Har bir ekspert bir paytlar yangi boshlovchi bo'lgan. Farqi — ular to'g'ri ustozni topgan.",
           ru: 'Каждый эксперт когда-то был новичком. Разница — они нашли правильного учителя.',
         },
         characters: [
-          { id: 'sardor', emotion: 'encouraging', position: 'center' },
+          { id: 'sardor', emotion: 'satisfied', position: 'center' },
         ],
       },
     },

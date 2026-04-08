@@ -327,6 +327,13 @@ export function useGameEngine(scenarioId: string) {
     }
   }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, playerStore.player]);
 
+  const goBack = useCallback(() => {
+    if (flowState !== 'playing') return;
+    gameStore.goBack();
+  }, [flowState, gameStore]);
+
+  const canGoBack = flowState === 'playing' && gameStore.canGoBack();
+
   const restartDay = useCallback(() => {
     if (!scenario) return;
     const day = scenario.days[currentDayIndex];
@@ -381,6 +388,8 @@ export function useGameEngine(scenarioId: string) {
     // Actions
     beginPlaying,
     advanceDialogue,
+    goBack,
+    canGoBack,
     selectChoice,
     selectMultiChoices,
     timerExpired,

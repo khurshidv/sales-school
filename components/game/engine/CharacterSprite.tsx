@@ -40,6 +40,7 @@ export default function CharacterSprite({
         transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
         src={src}
         alt={character.id}
+        style={{ mixBlendMode: 'screen' }}
         className={`absolute bottom-0 max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
       />
     </AnimatePresence>

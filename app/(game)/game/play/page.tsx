@@ -315,6 +315,8 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
             speakerName={speakerName}
             isNarrator={isNarrator}
             onAdvance={engine.advanceDialogue}
+            onGoBack={engine.goBack}
+            canGoBack={engine.canGoBack}
           />
         )}
 

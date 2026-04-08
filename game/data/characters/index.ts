@@ -30,7 +30,7 @@ const dilnoza: CharacterDefinition = {
   id: 'dilnoza',
   name: { uz: 'Dilnoza', ru: 'Dilnoza' },
   role: 'mentor',
-  emotions: ['neutral', 'smirk', 'helpful', 'explaining'],
+  emotions: ['neutral', 'smirk', 'helpful', 'explaining', 'proud'],
   assetPath: makeAssetPath('dilnoza'),
 };
 

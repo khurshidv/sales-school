@@ -81,10 +81,10 @@ export const day1: Day = {
       id: 'd1_meet_dilnoza',
       type: 'dialogue',
       speaker: 'dilnoza',
-      emotion: 'confident',
+      emotion: 'smirk',
       background: 'bg_showroom',
       characters: [
-        { id: 'dilnoza', emotion: 'confident', position: 'center' },
+        { id: 'dilnoza', emotion: 'smirk', position: 'center' },
       ],
       text: {
         uz: '2 yil oldin men ham xuddi siz kabi boshlaganman. Hozir oyiga 15 million ishlayman. Hammasi mumkin.',
@@ -97,9 +97,9 @@ export const day1: Day = {
       id: 'd1_dilnoza_tip',
       type: 'dialogue',
       speaker: 'dilnoza',
-      emotion: 'confident',
+      emotion: 'smirk',
       characters: [
-        { id: 'dilnoza', emotion: 'confident', position: 'center' },
+        { id: 'dilnoza', emotion: 'smirk', position: 'center' },
       ],
       effects: [{ type: 'set_flag', flag: 'met_dilnoza' }],
       text: {
@@ -216,7 +216,7 @@ export const day1: Day = {
       background: 'bg_showroom',
       characters: [
         { id: 'javlon', emotion: 'neutral', position: 'left' },
-        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
         uz: 'Ha, birga ko\'raylik. Lekin men Tracker xohlayman. Tez, kuchli, sport rejim bor.',
@@ -229,10 +229,10 @@ export const day1: Day = {
       id: 'd1_conflict_both_nilufar',
       type: 'dialogue',
       speaker: 'nilufar',
-      emotion: 'concerned',
+      emotion: 'worried',
       characters: [
         { id: 'javlon', emotion: 'neutral', position: 'left' },
-        { id: 'nilufar', emotion: 'concerned', position: 'right' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
         uz: 'Bolalarga joy kerak! Tracker tor. Lekin birga ko\'rsak — yaxshi.',
@@ -247,11 +247,11 @@ export const day1: Day = {
       id: 'd1_conflict_tracker',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'happy',
+      emotion: 'touched',
       background: 'bg_showroom',
       characters: [
-        { id: 'javlon', emotion: 'happy', position: 'left' },
-        { id: 'nilufar', emotion: 'upset', position: 'right' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
         uz: 'Ha! Tracker — zo\'r mashina! 174 ot kuchi, sport rejim. Bu menga yoqadi!',
@@ -264,10 +264,10 @@ export const day1: Day = {
       id: 'd1_conflict_tracker_nilufar',
       type: 'dialogue',
       speaker: 'nilufar',
-      emotion: 'upset',
+      emotion: 'worried',
       characters: [
-        { id: 'javlon', emotion: 'happy', position: 'left' },
-        { id: 'nilufar', emotion: 'upset', position: 'right' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
         uz: 'Javlon, yana sport mashina? Bolalarimiz qaerda o\'tiradi? Menga ham fikrimni so\'rashingizni istayman.',
@@ -285,7 +285,7 @@ export const day1: Day = {
       emotion: 'happy',
       background: 'bg_showroom',
       characters: [
-        { id: 'javlon', emotion: 'upset', position: 'left' },
+        { id: 'javlon', emotion: 'stubborn', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
@@ -299,9 +299,9 @@ export const day1: Day = {
       id: 'd1_conflict_equinox_javlon',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'upset',
+      emotion: 'stubborn',
       characters: [
-        { id: 'javlon', emotion: 'upset', position: 'left' },
+        { id: 'javlon', emotion: 'stubborn', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
@@ -380,9 +380,9 @@ export const day1: Day = {
       id: 'd1_compromise_balanced',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'thoughtful',
+      emotion: 'thinking',
       characters: [
-        { id: 'javlon', emotion: 'thoughtful', position: 'left' },
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
@@ -398,7 +398,7 @@ export const day1: Day = {
       speaker: 'nilufar',
       emotion: 'happy',
       characters: [
-        { id: 'javlon', emotion: 'thoughtful', position: 'left' },
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
@@ -412,10 +412,10 @@ export const day1: Day = {
       id: 'd1_compromise_sport',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'interested',
+      emotion: 'thinking',
       characters: [
-        { id: 'javlon', emotion: 'interested', position: 'left' },
-        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
         uz: 'Sport rejim bormi? Qiziq... Tezligi qancha chiqadi?',
@@ -428,10 +428,10 @@ export const day1: Day = {
       id: 'd1_compromise_sport_nilufar',
       type: 'dialogue',
       speaker: 'nilufar',
-      emotion: 'neutral',
+      emotion: 'thoughtful',
       characters: [
-        { id: 'javlon', emotion: 'interested', position: 'left' },
-        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
         uz: 'Agar ikkalasi ham bo\'lsa — yaxshi. Lekin avval bolalar o\'rindiqlarini ko\'raman.',
@@ -444,10 +444,10 @@ export const day1: Day = {
       id: 'd1_compromise_tradein',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'happy',
+      emotion: 'touched',
       characters: [
-        { id: 'javlon', emotion: 'happy', position: 'left' },
-        { id: 'nilufar', emotion: 'concerned', position: 'right' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
         uz: 'Trade-in — bu variant! Hozir Tracker, keyin Equinox. Yoqdi menga!',
@@ -460,10 +460,10 @@ export const day1: Day = {
       id: 'd1_compromise_tradein_nilufar',
       type: 'dialogue',
       speaker: 'nilufar',
-      emotion: 'concerned',
+      emotion: 'worried',
       characters: [
-        { id: 'javlon', emotion: 'happy', position: 'left' },
-        { id: 'nilufar', emotion: 'concerned', position: 'right' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
         uz: 'Lekin bolalar hozir kerak... Almashguncha nima qilamiz?',
@@ -513,7 +513,7 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
-      background: 'bg_test_drive_city',
+      background: 'bg_city_street_tashkent',
       text: {
         uz: 'Toshkent ko\'chalari. Mashina yo\'lga chiqdi. Oyna tushirilgan, shabada esyapti. Javlon rulda, Nilufar orqa o\'rindiqda.',
         ru: 'Улицы Ташкента. Машина выехала на дорогу. Окна опущены, дует ветерок. Жавлон за рулём, Нилуфар на заднем сиденье.',
@@ -525,11 +525,11 @@ export const day1: Day = {
       id: 'd1_test_drive_javlon',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'excited',
-      background: 'bg_test_drive_city',
+      emotion: 'touched',
+      background: 'bg_city_street_tashkent',
       characters: [
-        { id: 'javlon', emotion: 'excited', position: 'left' },
-        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
+        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
         uz: 'Voy! Tezlashishi yaxshi ekan. Yo\'lni yaxshi ushlaydi. Yoqyapti!',
@@ -544,7 +544,7 @@ export const day1: Day = {
       speaker: 'nilufar',
       emotion: 'happy',
       characters: [
-        { id: 'javlon', emotion: 'excited', position: 'left' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
@@ -602,10 +602,10 @@ export const day1: Day = {
       id: 'd1_test_drive_safety',
       type: 'dialogue',
       speaker: 'nilufar',
-      emotion: 'impressed',
+      emotion: 'happy',
       characters: [
         { id: 'javlon', emotion: 'neutral', position: 'left' },
-        { id: 'nilufar', emotion: 'impressed', position: 'right' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
         uz: '6 ta airbag va bolalar qulfi? Bu menga juda muhim. Rahmat aytganingiz uchun.',
@@ -618,10 +618,10 @@ export const day1: Day = {
       id: 'd1_test_drive_value',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'thoughtful',
+      emotion: 'thinking',
       characters: [
-        { id: 'javlon', emotion: 'thoughtful', position: 'left' },
-        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
         uz: 'Qiymati tushmaslik — bu yaxshi. Demak, investitsiya ham bo\'ladi.',
@@ -634,10 +634,10 @@ export const day1: Day = {
       id: 'd1_test_drive_silent',
       type: 'dialogue',
       speaker: 'javlon',
-      emotion: 'happy',
-      background: 'bg_test_drive_city',
+      emotion: 'touched',
+      background: 'bg_city_street_tashkent',
       characters: [
-        { id: 'javlon', emotion: 'happy', position: 'left' },
+        { id: 'javlon', emotion: 'touched', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
@@ -673,10 +673,10 @@ export const day1: Day = {
       id: 'd1_anniversary_hint',
       type: 'dialogue',
       speaker: 'nilufar',
-      emotion: 'shy',
+      emotion: 'caring',
       characters: [
         { id: 'javlon', emotion: 'neutral', position: 'left' },
-        { id: 'nilufar', emotion: 'shy', position: 'right' },
+        { id: 'nilufar', emotion: 'caring', position: 'right' },
       ],
       text: {
         uz: 'Aytganday... Kelasi hafta bizning 5 yillik to\'y kunimiz.',

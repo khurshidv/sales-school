@@ -42,13 +42,14 @@ export default function DialogueBox({
   return (
     <motion.div
       key={text}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
-      className="absolute bottom-0 left-0 right-0 min-h-[28dvh] border-t-2 border-[#4a90d9] px-5 py-4 z-10"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
+      className="absolute bottom-0 left-0 right-0 min-h-[26dvh] px-6 py-5 z-10 border-t border-white/10"
       style={{
-        backgroundColor: 'rgba(0,0,0,0.88)',
-        backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.8))',
+        background: 'linear-gradient(to top, rgba(10,12,18,0.92) 0%, rgba(15,20,30,0.82) 60%, rgba(20,25,40,0.65) 100%)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
       }}
       onClick={handleClick}
     >
@@ -56,11 +57,11 @@ export default function DialogueBox({
       {canGoBack && onGoBack && (
         <button
           onClick={handleGoBack}
-          className="absolute top-3 left-3 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors z-20"
+          className="absolute top-4 left-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/8 hover:bg-white/15 border border-white/10 transition-all z-20"
           aria-label="Go back"
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M10 12L6 8L10 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
       )}
@@ -68,8 +69,11 @@ export default function DialogueBox({
       {/* Speaker name */}
       {!isNarrator && speakerName && (
         <p
-          className="mb-2 text-base font-extrabold uppercase tracking-wider text-[#4a90d9]"
-          style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.9)' }}
+          className="mb-2 text-lg font-bold uppercase tracking-[0.15em]"
+          style={{
+            color: '#6cb4ee',
+            textShadow: '0 0 12px rgba(108,180,238,0.3), 1px 1px 2px rgba(0,0,0,0.8)',
+          }}
         >
           {speakerName}
         </p>
@@ -77,18 +81,32 @@ export default function DialogueBox({
 
       {/* Dialogue text */}
       <p
-        className={`text-lg leading-relaxed ${
+        className={`leading-[1.7] ${
           isNarrator
-            ? 'text-center italic text-[#ffd700]'
-            : 'text-white'
+            ? 'text-center italic text-[#ffd700] text-lg'
+            : 'text-[#e8eaed] text-[1.15rem]'
         }`}
-        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
+        style={{
+          textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
+          fontWeight: isNarrator ? 400 : 500,
+        }}
       >
         {displayedText}
         {isTyping && (
-          <span className="animate-pulse">&#9612;</span>
+          <span className="animate-pulse ml-0.5 text-white/60">|</span>
         )}
       </p>
+
+      {/* Tap indicator */}
+      {!isTyping && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute bottom-3 right-5 text-white/30 text-xs tracking-wider"
+        >
+          ▼
+        </motion.div>
+      )}
     </motion.div>
   );
 }

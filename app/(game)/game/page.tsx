@@ -14,7 +14,7 @@ export default function GameHub() {
   const router = useRouter();
   const player = usePlayerStore((s) => s.player);
   const createPlayer = usePlayerStore((s) => s.createPlayer);
-  const { setLang } = useLang();
+  const { lang, setLang } = useLang();
 
   const handleFormSubmit = async (name: string, phone: string, lang: Language, avatarId: 'male' | 'female') => {
     createPlayer(name, phone, avatarId);
@@ -47,6 +47,7 @@ export default function GameHub() {
           playerLevel={player.level}
           playerCoins={player.coins}
           onSelectScenario={handleSelectScenario}
+          lang={lang}
         />
       )}
     </>

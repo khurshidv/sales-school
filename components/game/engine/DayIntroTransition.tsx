@@ -7,7 +7,14 @@ interface DayIntroTransitionProps {
   teaser?: string;
   backgroundId: string;
   onComplete: () => void;
+  lang?: 'uz' | 'ru';
 }
+
+const t = {
+  day: { uz: 'Kun', ru: 'День' },
+  tapToContinue: { uz: 'Davom etish uchun bosing', ru: 'Нажмите, чтобы продолжить' },
+  start: { uz: 'Boshlash', ru: 'Начать' },
+} as const;
 
 const kenBurnsKeyframes = `
 @keyframes kenBurns {
@@ -31,6 +38,7 @@ export default function DayIntroTransition({
   teaser,
   backgroundId,
   onComplete,
+  lang = 'uz',
 }: DayIntroTransitionProps) {
   return (
     <>
@@ -63,7 +71,7 @@ export default function DayIntroTransition({
               animation: 'fadeIn 1s ease-out 0s forwards',
             }}
           >
-            День {dayNumber}
+            {t.day[lang]} {dayNumber}
           </h1>
 
           <p
@@ -112,7 +120,7 @@ export default function DayIntroTransition({
               animation: 'fadeIn 1s ease-out 5s forwards, blink 2s ease-in-out 6s infinite',
             }}
           >
-            Нажмите, чтобы продолжить
+            {t.tapToContinue[lang]}
           </span>
 
           {/* Reduced motion: show button instead */}
@@ -120,7 +128,7 @@ export default function DayIntroTransition({
             onClick={onComplete}
             className="hidden motion-reduce:!block px-6 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-sm hover:bg-white/30 transition-colors"
           >
-            Начать
+            {t.start[lang]}
           </button>
         </div>
       </div>

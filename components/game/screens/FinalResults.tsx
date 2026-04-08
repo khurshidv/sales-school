@@ -19,6 +19,7 @@ interface FinalResultsProps {
   strongestDimension: string;
   weakestDimension: string;
   onExit: () => void;
+  lang?: 'uz' | 'ru';
 }
 
 const RATING_COLORS: Record<Rating, string> = {
@@ -30,15 +31,26 @@ const RATING_COLORS: Record<Rating, string> = {
   F: '#ef4444',
 };
 
-const DIMENSION_LABELS: Record<string, string> = {
-  empathy: 'Эмпатия',
-  rapport: 'Раппорт',
-  timing: 'Тайминг',
-  expertise: 'Экспертиза',
-  persuasion: 'Убеждение',
-  discovery: 'Выявление потребностей',
-  opportunity: 'Работа с возможностями',
+const DIMENSION_LABELS: Record<string, { uz: string; ru: string }> = {
+  empathy: { uz: 'Empatiya', ru: 'Эмпатия' },
+  rapport: { uz: 'Rapport', ru: 'Раппорт' },
+  timing: { uz: 'Tayming', ru: 'Тайминг' },
+  expertise: { uz: 'Ekspertiza', ru: 'Экспертиза' },
+  persuasion: { uz: 'Ishontirish', ru: 'Убеждение' },
+  discovery: { uz: 'Ehtiyojlarni aniqlash', ru: 'Выявление потребностей' },
+  opportunity: { uz: 'Imkoniyatlar bilan ishlash', ru: 'Работа с возможностями' },
 };
+
+const t = {
+  title: { uz: 'Stajirovka natijalari', ru: 'Итоги стажировки' },
+  day: { uz: 'Kun', ru: 'День' },
+  totalScore: { uz: 'Umumiy ball', ru: 'Общий счёт' },
+  strongest: { uz: 'Kuchli tomon', ru: 'Сильная сторона' },
+  growthZone: { uz: "O'sish zonasi", ru: 'Зона роста' },
+  downloadGuide: { uz: 'Gidni yuklab oling', ru: 'Скачай гайд по' },
+  talkToExpert: { uz: 'Ekspert bilan gaplashing', ru: 'Поговори с экспертом' },
+  toMenu: { uz: 'Menyuga', ru: 'В меню' },
+} as const;
 
 export default function FinalResults({
   totalScore,
@@ -47,19 +59,20 @@ export default function FinalResults({
   strongestDimension,
   weakestDimension,
   onExit,
+  lang = 'uz',
 }: FinalResultsProps) {
   const entries = Object.entries(dimensions) as [string, number][];
   const maxVal = Math.max(...entries.map(([, v]) => v), 1);
 
   const weakestLabel =
-    DIMENSION_LABELS[weakestDimension] || weakestDimension;
+    DIMENSION_LABELS[weakestDimension]?.[lang] || weakestDimension;
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white overflow-y-auto p-6">
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <h1 className="text-3xl font-bold text-center mb-8">
-          Итоги стажировки
+          {t.title[lang]}
         </h1>
 
         {/* Day ratings row */}
@@ -67,7 +80,7 @@ export default function FinalResults({
           {dayRatings.map((r, i) => (
             <div key={i} className="text-center">
               <span className="text-xs text-neutral-400 block">
-                День {i + 1}
+                {t.day[lang]} {i + 1}
               </span>
               <span
                 className="text-2xl font-bold"
@@ -81,7 +94,7 @@ export default function FinalResults({
 
         {/* Total score */}
         <div className="text-center mb-8">
-          <p className="text-neutral-400 text-sm">Общий счёт</p>
+          <p className="text-neutral-400 text-sm">{t.totalScore[lang]}</p>
           <p className="text-5xl font-bold">{totalScore}</p>
         </div>
 
@@ -107,15 +120,15 @@ export default function FinalResults({
                     {isWeakest && (
                       <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
                     )}
-                    {DIMENSION_LABELS[key]}
+                    {DIMENSION_LABELS[key]?.[lang] ?? key}
                   </span>
                   {isStrongest && (
                     <span className="text-xs text-green-400">
-                      Сильная сторона
+                      {t.strongest[lang]}
                     </span>
                   )}
                   {isWeakest && (
-                    <span className="text-xs text-yellow-400">Зона роста</span>
+                    <span className="text-xs text-yellow-400">{t.growthZone[lang]}</span>
                   )}
                 </div>
                 <div className="bg-white/10 rounded-full h-2">
@@ -135,8 +148,8 @@ export default function FinalResults({
 
         {/* CTA Block */}
         <CTABlock
-          primaryTitle={`Скачай гайд по ${weakestLabel}`}
-          secondaryTitle="Поговори с экспертом"
+          primaryTitle={`${t.downloadGuide[lang]} ${weakestLabel}`}
+          secondaryTitle={t.talkToExpert[lang]}
           onPrimaryClick={() => alert('CTA clicked')}
           onSecondaryClick={() => alert('CTA clicked')}
         />
@@ -146,7 +159,7 @@ export default function FinalResults({
           onClick={onExit}
           className="bg-white/10 hover:bg-white/15 w-full py-3 rounded-xl text-neutral-300 transition-colors mt-6"
         >
-          В меню
+          {t.toMenu[lang]}
         </button>
       </div>
     </div>

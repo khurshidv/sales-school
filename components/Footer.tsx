@@ -6,9 +6,9 @@ export default function Footer() {
   const { t } = useT();
 
   const links = [
-    { label: t("footer.privacy"), href: "#" },
-    { label: t("footer.terms"), href: "#" },
-    { label: t("footer.support"), href: "#" },
+    { label: t("footer.privacy"), href: "/privacy" },
+    { label: t("footer.terms"), href: "/terms" },
+    { label: t("footer.support"), href: "https://t.me/sales_school_support" },
   ];
 
   return (

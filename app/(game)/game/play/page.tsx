@@ -83,8 +83,12 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // Track drop-off on page leave
   useEffect(() => {
     const handler = () => {
-      if (player && engine.flowState === 'playing') {
-        trackEvent(player.id, 'dropped_off', { dayIndex: engine.currentDayIndex }, scenarioId);
+      try {
+        if (player && engine.flowState === 'playing') {
+          trackEvent(player.id, 'dropped_off', { dayIndex: engine.currentDayIndex }, scenarioId);
+        }
+      } catch {
+        // Never crash on page unload
       }
     };
     window.addEventListener('beforeunload', handler);
@@ -165,6 +169,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
             })()
           }
           onComplete={engine.beginPlaying}
+          lang={lang}
         />
       </>
     );
@@ -191,6 +196,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           onNextDay={engine.confirmNextDay}
           onReplayDay={engine.restartDay}
           canReplay={player ? canReplay(player.coins) : false}
+          lang={lang}
         />
       </>
     );
@@ -209,6 +215,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           strongestDimension={fr.strongestDimension}
           weakestDimension={fr.weakestDimension}
           onExit={() => router.push('/game')}
+          lang={lang}
         />
       </>
     );
@@ -278,6 +285,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           onExit={() => router.push('/game')}
           isMuted={audio.isMuted}
           onToggleMute={audio.toggleMute}
+          lang={lang}
         />
       )}
 
@@ -291,6 +299,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           }}
           onExit={() => router.push('/game')}
           canAffordRestart={player ? canReplay(player.coins) : true}
+          lang={lang}
         />
       )}
     </>
@@ -301,7 +310,7 @@ export default function GamePlay() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center h-dvh">
-        <p className="text-neutral-400">Загрузка...</p>
+        <p className="text-neutral-400">Yuklanmoqda...</p>
       </div>
     }>
       <GamePlayInner />

@@ -5,9 +5,19 @@ interface PauseMenuProps {
   onExit: () => void;
   isMuted?: boolean;
   onToggleMute?: () => void;
+  lang?: 'uz' | 'ru';
 }
 
-export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute }: PauseMenuProps) {
+const t = {
+  pause: { uz: 'Pauza', ru: 'Пауза' },
+  resume: { uz: 'Davom etish', ru: 'Продолжить' },
+  muteOn: { uz: "Ovozni o'chirish", ru: 'Выключить звук' },
+  muteOff: { uz: 'Ovozni yoqish', ru: 'Включить звук' },
+  exit: { uz: 'Chiqish', ru: 'Выйти' },
+  warning: { uz: 'Kun progressi yo\'qoladi', ru: 'Прогресс дня будет потерян' },
+} as const;
+
+export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute, lang = 'uz' }: PauseMenuProps) {
   return (
     <div
       className="fixed inset-0 z-40 bg-black/70 flex items-center justify-center"
@@ -17,13 +27,13 @@ export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute }: P
         className="bg-neutral-900 rounded-2xl p-8 max-w-xs w-full mx-4 text-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold text-white mb-6">Пауза</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">{t.pause[lang]}</h2>
 
         <button
           onClick={onResume}
           className="bg-blue-600 hover:bg-blue-700 w-full py-3 rounded-xl text-white font-semibold transition-colors mb-3"
         >
-          Продолжить
+          {t.resume[lang]}
         </button>
 
         {onToggleMute && (
@@ -31,7 +41,7 @@ export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute }: P
             onClick={onToggleMute}
             className="bg-white/10 hover:bg-white/15 w-full py-3 rounded-xl text-neutral-300 transition-colors mb-3"
           >
-            {isMuted ? '🔇 Включить звук' : '🔊 Выключить звук'}
+            {isMuted ? `🔇 ${t.muteOff[lang]}` : `🔊 ${t.muteOn[lang]}`}
           </button>
         )}
 
@@ -39,11 +49,11 @@ export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute }: P
           onClick={onExit}
           className="bg-white/10 hover:bg-white/15 w-full py-3 rounded-xl text-neutral-300 transition-colors"
         >
-          Выйти
+          {t.exit[lang]}
         </button>
 
         <p className="text-xs text-neutral-500 mt-2">
-          Прогресс дня будет потерян
+          {t.warning[lang]}
         </p>
       </div>
     </div>

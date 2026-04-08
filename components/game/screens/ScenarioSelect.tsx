@@ -5,20 +5,34 @@ interface ScenarioSelectProps {
   playerLevel: number
   playerCoins: number
   onSelectScenario: (scenarioId: string) => void
+  lang?: 'uz' | 'ru'
 }
 
-const lockedCards = [
-  { emoji: '🏠', title: 'Недвижимость', w: 'w-[24%]', h: 'h-[68%]', opacity: 'opacity-70', border: 'border-neutral-700', overlay: 'bg-black/80' },
-  { emoji: '📱', title: 'Электроника', w: 'w-[20%]', h: 'h-[60%]', opacity: 'opacity-50', border: 'border-neutral-600', overlay: 'bg-black/80' },
-  { emoji: '🪑', title: 'Мебель', w: 'w-[12%]', h: 'h-[52%]', opacity: 'opacity-35', border: 'border-neutral-800', overlay: 'bg-black/85' },
-]
+const t = {
+  open: { uz: 'OCHIQ', ru: 'ОТКРЫТ' },
+  soon: { uz: 'Tez kunda', ru: 'Скоро' },
+  level: { uz: 'Daraja', ru: 'Уровень' },
+  chevrolet: { uz: 'Chevrolet avtosaloni', ru: 'Автосалон Chevrolet' },
+  duration: { uz: "5 kun · 7-10 daq", ru: '5 дней · 7-10 мин' },
+  unlockHint: { uz: "Avtosalonni o'ting → ko'chmas mulkni oching!", ru: 'Пройди автосалон → открой недвижимость!' },
+  realEstate: { uz: "Ko'chmas mulk", ru: 'Недвижимость' },
+  electronics: { uz: 'Elektronika', ru: 'Электроника' },
+  furniture: { uz: 'Mebel', ru: 'Мебель' },
+} as const;
 
 export default function ScenarioSelect({
   playerName,
   playerLevel,
   playerCoins,
   onSelectScenario,
+  lang = 'uz',
 }: ScenarioSelectProps) {
+  const lockedCards = [
+    { emoji: '🏠', titleKey: 'realEstate' as const, w: 'w-[24%]', h: 'h-[68%]', opacity: 'opacity-70', border: 'border-neutral-700' },
+    { emoji: '📱', titleKey: 'electronics' as const, w: 'w-[20%]', h: 'h-[60%]', opacity: 'opacity-50', border: 'border-neutral-600' },
+    { emoji: '🪑', titleKey: 'furniture' as const, w: 'w-[12%]', h: 'h-[52%]', opacity: 'opacity-35', border: 'border-neutral-800' },
+  ]
+
   return (
     <div className="h-dvh bg-neutral-950 text-white relative overflow-hidden">
       {/* Top bar */}
@@ -45,18 +59,18 @@ export default function ScenarioSelect({
         >
           {/* Badge */}
           <span className="absolute top-2 right-2 bg-[#22c55e] text-xs px-2 py-0.5 rounded-full font-medium z-10">
-            ОТКРЫТ
+            {t.open[lang]}
           </span>
 
           <div className="flex flex-col items-center justify-center h-full px-3 gap-2">
             <span className="text-5xl">🚗</span>
             <span className="text-[#4a90d9] text-xs uppercase tracking-wider font-medium">
-              Уровень 1
+              {t.level[lang]} 1
             </span>
             <span className="text-white font-bold text-center text-sm leading-snug">
-              Автосалон Chevrolet
+              {t.chevrolet[lang]}
             </span>
-            <span className="text-neutral-400 text-xs">5 дней · 7-10 мин</span>
+            <span className="text-neutral-400 text-xs">{t.duration[lang]}</span>
           </div>
 
           {/* Play button */}
@@ -70,15 +84,15 @@ export default function ScenarioSelect({
         {/* Locked cards */}
         {lockedCards.map((card) => (
           <div
-            key={card.title}
+            key={card.titleKey}
             className={`flex-none ${card.w} ${card.h} ${card.opacity} bg-neutral-900 border ${card.border} rounded-xl relative overflow-hidden`}
           >
             <div className="absolute inset-0 bg-neutral-900 flex flex-col items-center justify-center gap-2 z-10 rounded-xl">
               <span className="text-2xl grayscale opacity-40">{card.emoji}</span>
-              <span className="text-white/30 text-xs text-center px-1">{card.title}</span>
+              <span className="text-white/30 text-xs text-center px-1">{t[card.titleKey][lang]}</span>
               <div className="flex flex-col items-center gap-0.5 mt-1">
                 <span className="text-lg">🔒</span>
-                <span className="text-white/50 text-[10px] font-medium">Скоро</span>
+                <span className="text-white/50 text-[10px] font-medium">{t.soon[lang]}</span>
               </div>
             </div>
           </div>
@@ -87,7 +101,7 @@ export default function ScenarioSelect({
 
       {/* Bottom text */}
       <p className="absolute bottom-6 left-0 right-0 text-center text-[#4a90d9] text-sm font-medium px-4">
-        Пройди автосалон → открой недвижимость!
+        {t.unlockHint[lang]}
       </p>
     </div>
   )

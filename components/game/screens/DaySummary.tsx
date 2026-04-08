@@ -31,6 +31,7 @@ interface DaySummaryProps {
   onNextDay: () => void;
   onReplayDay: () => void;
   canReplay: boolean;
+  lang?: 'uz' | 'ru';
 }
 
 const RATING_COLORS: Record<Rating, string> = {
@@ -42,15 +43,25 @@ const RATING_COLORS: Record<Rating, string> = {
   F: '#ef4444',
 };
 
-const DIMENSION_LABELS: Record<string, string> = {
-  empathy: 'Эмпатия',
-  rapport: 'Раппорт',
-  timing: 'Тайминг',
-  expertise: 'Экспертиза',
-  persuasion: 'Убеждение',
-  discovery: 'Выявление потребностей',
-  opportunity: 'Работа с возможностями',
+const DIMENSION_LABELS: Record<string, { uz: string; ru: string }> = {
+  empathy: { uz: 'Empatiya', ru: 'Эмпатия' },
+  rapport: { uz: 'Rapport', ru: 'Раппорт' },
+  timing: { uz: 'Tayming', ru: 'Тайминг' },
+  expertise: { uz: 'Ekspertiza', ru: 'Экспертиза' },
+  persuasion: { uz: 'Ishontirish', ru: 'Убеждение' },
+  discovery: { uz: 'Ehtiyojlarni aniqlash', ru: 'Выявление потребностей' },
+  opportunity: { uz: 'Imkoniyatlar bilan ishlash', ru: 'Работа с возможностями' },
 };
+
+const t = {
+  strongest: { uz: 'Kuchli tomon', ru: 'Сильная сторона' },
+  growthZone: { uz: "O'sish zonasi", ru: 'Зона роста' },
+  nearMiss: { uz: 'ochkogacha', ru: 'очков до рейтинга' },
+  achievements: { uz: 'Yutuqlar', ru: 'Достижения' },
+  replayDay: { uz: 'Kunni qayta o\'ynash', ru: 'Переиграть день' },
+  nextDay: { uz: 'Keyingi kun', ru: 'Следующий день' },
+  showResults: { uz: 'Natijalarni ko\'rish', ru: 'Показать итоги' },
+} as const;
 
 export default function DaySummary({
   score,
@@ -66,6 +77,7 @@ export default function DaySummary({
   onNextDay,
   onReplayDay,
   canReplay,
+  lang = 'uz',
 }: DaySummaryProps) {
   const shouldReduceMotion = useReducedMotion();
   const entries = Object.entries(dimensions) as [string, number][];
@@ -114,15 +126,15 @@ export default function DaySummary({
                     {isWeakest && (
                       <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
                     )}
-                    {DIMENSION_LABELS[key]}
+                    {DIMENSION_LABELS[key]?.[lang] ?? key}
                   </span>
                   {isStrongest && (
                     <span className="text-xs text-green-400">
-                      Сильная сторона
+                      {t.strongest[lang]}
                     </span>
                   )}
                   {isWeakest && (
-                    <span className="text-xs text-yellow-400">Зона роста</span>
+                    <span className="text-xs text-yellow-400">{t.growthZone[lang]}</span>
                   )}
                 </div>
                 <div className="bg-white/10 rounded-full h-2">
@@ -143,8 +155,9 @@ export default function DaySummary({
         {nearMiss && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-6">
             <p className="text-yellow-300 text-sm">
-              Ещё {nearMiss.pointsNeeded} очков до рейтинга{' '}
-              {nearMiss.nextRating}!
+              {lang === 'uz'
+                ? `${nearMiss.nextRating} reytingigacha yana ${nearMiss.pointsNeeded} ochko!`
+                : `Ещё ${nearMiss.pointsNeeded} очков до рейтинга ${nearMiss.nextRating}!`}
             </p>
           </div>
         )}
@@ -153,7 +166,7 @@ export default function DaySummary({
         {unlockedAchievements.length > 0 && (
           <div className="mb-6">
             <h3 className="text-sm font-semibold text-neutral-300 mb-2">
-              Достижения
+              {t.achievements[lang]}
             </h3>
             <div className="space-y-2">
               {unlockedAchievements.map((id) => (
@@ -186,13 +199,13 @@ export default function DaySummary({
             onClick={onReplayDay}
             className="flex-1 bg-white/10 border border-white/20 hover:bg-white/15 py-3 rounded-xl text-white transition-colors text-sm"
           >
-            Переиграть день {canReplay && <span className="ml-1">🪙 1</span>}
+            {t.replayDay[lang]} {canReplay && <span className="ml-1">🪙 1</span>}
           </button>
           <button
             onClick={onNextDay}
             className="flex-1 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-white font-semibold transition-colors text-sm"
           >
-            {isLastDay ? 'Показать итоги' : 'Следующий день'}
+            {isLastDay ? t.showResults[lang] : t.nextDay[lang]}
           </button>
         </div>
       </div>

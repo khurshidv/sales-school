@@ -41,12 +41,16 @@ export function syncDayResults(
   timeTaken: number,
   choices: object[],
 ): void {
-  // Fire-and-forget
-  fetch('/api/game/results', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ playerId, scenarioId, dayId, score, rating, timeTaken, choices }),
-  }).catch((e) => console.warn('[sync] dayResults error:', e));
+  // Fire-and-forget — never crashes the game
+  try {
+    fetch('/api/game/results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId, scenarioId, dayId, score, rating, timeTaken, choices }),
+    }).catch((e) => console.warn('[sync] dayResults error:', e));
+  } catch (e) {
+    console.warn('[sync] dayResults error:', e);
+  }
 }
 
 export function syncProgress(
@@ -56,19 +60,27 @@ export function syncProgress(
   sessionState: object,
   isCompleted: boolean,
 ): void {
-  // Fire-and-forget
-  fetch('/api/game/progress', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ playerId, scenarioId, dayId, sessionState, isCompleted }),
-  }).catch((e) => console.warn('[sync] progress error:', e));
+  // Fire-and-forget — never crashes the game
+  try {
+    fetch('/api/game/progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId, scenarioId, dayId, sessionState, isCompleted }),
+    }).catch((e) => console.warn('[sync] progress error:', e));
+  } catch (e) {
+    console.warn('[sync] progress error:', e);
+  }
 }
 
 export function syncAchievement(playerId: string, achievementId: string): void {
-  // Fire-and-forget
-  fetch('/api/game/achievements', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ playerId, achievementId }),
-  }).catch((e) => console.warn('[sync] achievement error:', e));
+  // Fire-and-forget — never crashes the game
+  try {
+    fetch('/api/game/achievements', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ playerId, achievementId }),
+    }).catch((e) => console.warn('[sync] achievement error:', e));
+  } catch (e) {
+    console.warn('[sync] achievement error:', e);
+  }
 }

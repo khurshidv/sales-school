@@ -930,6 +930,39 @@ nextNodeId: "d3_anniversary_check"
 
 ---
 
+**d3_pair_reacts_balanced** `dialogue` _(реакция на баланс)_
+```
+speaker: "nilufar"
+emotion: "thoughtful"
+uz: "U to'g'ri aytdi... Hozir bolalar uchun kattaroq kerak.\n\nJavlon: Hmm... balki haqiqatan ham Equinox ko'rib chiqsak..."
+ru: "Он прав... Сейчас для детей нужно побольше.\n\nЖавлон: Хм... может, и правда посмотрим Equinox..."
+nextNodeId: "d3_anniversary_check"
+```
+
+---
+
+**d3_pair_reacts_sport** `dialogue` _(реакция на спорт-режим)_
+```
+speaker: "javlon"
+emotion: "thinking"
+uz: "Sport rejimi? Jiddiy gapiryapsizmi? Ko'rsating!\n\nNilufar: Ana ko'rdingmi — ikkalamiz uchun ham bor!"
+ru: "Спорт-режим? Серьёзно? Покажите!\n\nНилуфар: Вот видишь — и для тебя, и для меня!"
+nextNodeId: "d3_anniversary_check"
+```
+
+---
+
+**d3_pair_reacts_tradein** `dialogue` _(реакция на trade-in)_
+```
+speaker: "javlon"
+emotion: "thinking"
+uz: "Hmm, avval Tracker, keyin almashtirish... Bu variant yomon emas.\n\nNilufar: Lekin yana kutishim kerakmi? Bolalar esa hozir o'syapti..."
+ru: "Хм, сначала Tracker, потом обменять... Вариант неплохой.\n\nНилуфар: Но мне опять ждать? А дети растут уже сейчас..."
+nextNodeId: "d3_anniversary_check"
+```
+
+---
+
 **d3_anniversary_check** `condition_branch`
 ```
 branches:
@@ -1079,9 +1112,14 @@ dialogue:
 
 ### Нод-граф
 ```
-d4_intro → d4_preparation [CHOICE: выбрать 2 из 3]
+d4_intro → d4_preparation [CHOICE: 2 из 3] → d4_anvar_helps [BRANCH]
 → d4_abdullaev_enters → d4_greeting [CHOICE]
-→ d4_fleet [CHOICE 10с] → d4_wife_car [CHOICE]
+  A → d4_abdullaev_reacts_vip ──────┐
+  B → d4_abdullaev_reacts_direct ───┼→ d4_fleet [CHOICE 10с]
+  C → d4_abdullaev_reacts_research ─┘
+    A → d4_fleet_react_package ──┐
+    B → d4_fleet_react_reliable ─┼→ d4_wife_car [CHOICE]
+    C → d4_fleet_react_price ────┘
 → d4_check [BRANCH] → d4_end_success | d4_end_partial | d4_end_fail | d4_end_hidden
 ```
 

@@ -367,7 +367,7 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'kamola',
       emotion: 'impressed',
-      background: 'bg_test_drive_interior',
+      background: 'bg_test_drive_city',
       characters: [
         { id: 'kamola', emotion: 'impressed', position: 'center' },
       ],
@@ -442,7 +442,7 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'kamola',
       emotion: 'impressed',
-      background: 'bg_test_drive_interior',
+      background: 'bg_test_drive_city',
       characters: [
         { id: 'kamola', emotion: 'impressed', position: 'center' },
       ],
@@ -458,7 +458,7 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'kamola',
       emotion: 'impressed',
-      background: 'bg_test_drive_interior',
+      background: 'bg_test_drive_city',
       characters: [
         { id: 'kamola', emotion: 'impressed', position: 'center' },
       ],

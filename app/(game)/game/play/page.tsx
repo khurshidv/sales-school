@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useGameEngine } from '@/lib/game/hooks/useGameEngine';
 import { useTimer } from '@/lib/game/hooks/useTimer';
 import { useAudio } from '@/lib/game/hooks/useAudio';
@@ -19,7 +19,7 @@ import FinalResults from '@/components/game/screens/FinalResults';
 import GameOver from '@/components/game/screens/GameOver';
 import PauseMenu from '@/components/game/screens/PauseMenu';
 import RotateDevice from '@/components/game/screens/RotateDevice';
-import type { DialogueNode, ChoiceNode, DayIntroNode, EndNode } from '@/game/engine/types';
+import type { DialogueNode, ChoiceNode, DayIntroNode, EndNode, CharacterOnScreen } from '@/game/engine/types';
 import { isGameOver } from '@/game/systems/LivesSystem';
 
 function GamePlayInner() {
@@ -95,23 +95,24 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     return () => window.removeEventListener('beforeunload', handler);
   }, [player, engine.flowState, engine.currentDayIndex, scenarioId]);
 
-  // Resolve background from current node or day default
-  const getBackground = (): string | undefined => {
-    if (!node) return undefined;
+  // Track last-seen background so it persists across nodes without explicit background
+  const lastBackgroundRef = useRef<string>('bg_showroom');
+
+  // Reset background when day changes
+  useEffect(() => {
+    lastBackgroundRef.current = 'bg_showroom';
+  }, [engine.currentDayIndex]);
+
+  // Resolve background from current node, persisting last-seen value
+  const getBackground = useCallback((): string => {
+    if (!node) return lastBackgroundRef.current;
     if (node.type === 'dialogue' && (node as DialogueNode).background) {
-      return (node as DialogueNode).background;
+      lastBackgroundRef.current = (node as DialogueNode).background!;
+    } else if (node.type === 'day_intro') {
+      lastBackgroundRef.current = (node as DayIntroNode).background;
     }
-    if (node.type === 'day_intro') {
-      return (node as DayIntroNode).background;
-    }
-    if (day) {
-      const introNode = day.nodes[day.rootNodeId];
-      if (introNode?.type === 'dialogue' && (introNode as DialogueNode).background) {
-        return (introNode as DialogueNode).background;
-      }
-    }
-    return undefined;
-  };
+    return lastBackgroundRef.current;
+  }, [node]);
 
   // Resolve speaker and emotion
   const getSpeaker = (): { speaker: string | undefined; emotion: string | null } => {
@@ -137,9 +138,61 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     return null;
   };
 
+  // Track characters on screen (persists across nodes without explicit characters)
+  const lastCharactersRef = useRef<CharacterOnScreen[]>([]);
+
+  // Reset characters when day changes
+  useEffect(() => {
+    lastCharactersRef.current = [];
+  }, [engine.currentDayIndex]);
+
+  const getCharacters = useCallback((): CharacterOnScreen[] => {
+    if (!node) return lastCharactersRef.current;
+
+    // DialogueNode with explicit characters array
+    if (node.type === 'dialogue' && (node as DialogueNode).characters) {
+      lastCharactersRef.current = (node as DialogueNode).characters!;
+      return lastCharactersRef.current;
+    }
+
+    // EndNode with dialogue.characters
+    if (node.type === 'end' && (node as EndNode).dialogue?.characters) {
+      lastCharactersRef.current = (node as EndNode).dialogue!.characters!;
+      return lastCharactersRef.current;
+    }
+
+    // DialogueNode without characters → single speaker fallback
+    if (node.type === 'dialogue') {
+      const d = node as DialogueNode;
+      if (d.speaker && d.speaker !== 'narrator') {
+        lastCharactersRef.current = [{
+          id: d.speaker,
+          emotion: d.emotion ?? 'neutral',
+          position: 'center' as const,
+        }];
+      }
+      return lastCharactersRef.current;
+    }
+
+    // EndNode single speaker fallback
+    if (node.type === 'end' && (node as EndNode).dialogue) {
+      const e = node as EndNode;
+      lastCharactersRef.current = [{
+        id: e.dialogue!.speaker,
+        emotion: e.dialogue!.emotion ?? 'neutral',
+        position: 'center' as const,
+      }];
+      return lastCharactersRef.current;
+    }
+
+    // Choice/condition/score nodes → keep previous characters
+    return lastCharactersRef.current;
+  }, [node]);
+
   const { speaker, emotion } = getSpeaker();
   const dialogueText = getDialogueText();
   const backgroundId = getBackground();
+  const characters = getCharacters();
   const isNarrator = !speaker || speaker === 'narrator';
   const speakerName = speaker && speaker !== 'narrator' && CHARACTERS[speaker]
     ? CHARACTERS[speaker].name[lang]
@@ -162,6 +215,9 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           backgroundId={
             (() => {
               const introNode = day.nodes[day.rootNodeId];
+              if (introNode?.type === 'day_intro') {
+                return (introNode as DayIntroNode).background;
+              }
               if (introNode?.type === 'dialogue' && (introNode as DialogueNode).background) {
                 return (introNode as DialogueNode).background!;
               }
@@ -227,8 +283,8 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
       <RotateDevice />
       <SceneRenderer
         backgroundId={backgroundId}
-        speaker={speaker}
-        emotion={emotion}
+        characters={characters}
+        activeSpeaker={speaker}
         onTap={engine.advanceDialogue}
         tapEnabled={node?.type === 'dialogue' || node?.type === 'end'}
       >

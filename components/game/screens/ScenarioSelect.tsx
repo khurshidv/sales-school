@@ -62,8 +62,19 @@ export default function ScenarioSelect({
             {t.open[lang]}
           </span>
 
-          <div className="flex flex-col items-center justify-center h-full px-3 gap-2">
-            <span className="text-5xl">🚗</span>
+          {/* Card background image */}
+          <img
+            src="/assets/scenarios/car-dealership/backgrounds/bg_showroom.jpg"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-30"
+          />
+
+          <div className="flex flex-col items-center justify-center h-full px-3 gap-2 relative z-[1]">
+            <img
+              src="/assets/scenarios/car-dealership/cars/car_all_lineup.webp"
+              alt="Chevrolet"
+              className="w-24 h-auto drop-shadow-lg"
+            />
             <span className="text-[#4a90d9] text-xs uppercase tracking-wider font-medium">
               {t.level[lang]} 1
             </span>

@@ -85,9 +85,19 @@ export default function DaySummary({
   const strongestKey = entries.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
   const weakestKey = entries.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
 
+  const isSuccess = ['S', 'A', 'B'].includes(rating);
+  const summaryImage = isSuccess
+    ? '/assets/scenarios/car-dealership/ui/ui_day_summary_success.jpg'
+    : '/assets/scenarios/car-dealership/ui/ui_day_summary_failure.jpg';
+
   return (
     <div className="min-h-screen bg-neutral-950 text-white overflow-y-auto p-6">
       <div className="max-w-lg mx-auto">
+        {/* Summary illustration */}
+        <div className="mb-4 rounded-xl overflow-hidden max-w-xs mx-auto">
+          <img src={summaryImage} alt="" className="w-full h-auto" />
+        </div>
+
         {/* Rating reveal */}
         <div className="text-center mb-8">
           <motion.div

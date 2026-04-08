@@ -32,6 +32,7 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'rustam',
       emotion: 'friendly',
+      background: 'bg_manager_office',
       text: {
         uz: 'Xush kelibsiz! Birinchi qoidani bepul aytaman: avval tinglang. Professionallar bunga \'aktiv tinglash\' deydi — bu alohida san\'at. Keling, birinchi mijozingiz kelayotganga o\'xshaydi.',
         ru: 'Добро пожаловать! Первое правило — бесплатно: слушайте сначала. Профессионалы называют это \'активное слушание\' — это отдельное искусство. Кстати, ваш первый клиент, кажется, уже идёт.',
@@ -44,6 +45,7 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
+      background: 'bg_showroom',
       text: {
         uz: 'Salonга yosh yigit kirdi. U atrofga qarayapti, Tracker va Equinox orasida to\'xtadi.',
         ru: 'В салон зашёл молодой мужчина. Он осматривается, остановился между Tracker и Equinox.',
@@ -71,7 +73,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 10, dimension: 'rapport' },
             { type: 'set_flag', flag: 'approach_warm' },
           ],
-          nextNodeId: 'd1_converge',
+          nextNodeId: 'd1_converge_warm',
         },
         {
           id: 'd1_approach_b',
@@ -83,7 +85,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 5, dimension: 'timing' },
             { type: 'set_flag', flag: 'approach_direct' },
           ],
-          nextNodeId: 'd1_converge',
+          nextNodeId: 'd1_converge_direct',
         },
         {
           id: 'd1_approach_c',
@@ -95,7 +97,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 12, dimension: 'empathy' },
             { type: 'set_flag', flag: 'approach_soft' },
           ],
-          nextNodeId: 'd1_converge',
+          nextNodeId: 'd1_converge_soft',
         },
       ],
     },
@@ -108,17 +110,53 @@ export const day1: Day = {
         uz: 'Siz ikkilandingiz va mijoz o\'zi qarab ketdi.',
         ru: 'Вы замешкались, и клиент сам продолжил осматривать.',
       },
-      nextNodeId: 'd1_converge',
+      nextNodeId: 'd1_converge_expired',
     },
 
-    d1_converge: {
-      id: 'd1_converge',
+    d1_converge_warm: {
+      id: 'd1_converge_warm',
       type: 'dialogue',
       speaker: 'bobur',
       emotion: 'neutral',
       text: {
-        uz: 'Rahmat. Aslida... xotinim ikkinchi farzandimizni kutyapti. Hozirgi Cobaltimiz kichik bo\'lib qoldi.',
-        ru: 'Спасибо. Вообще-то... жена ждёт второго ребёнка. Наш Cobalt стал маловат.',
+        uz: 'Rahmat, yaxshi kutib oldingiz. Aslida... xotinim ikkinchi farzandimizni kutyapti. Hozirgi Cobaltimiz kichik bo\'lib qoldi. Kattaroq mashina kerak.',
+        ru: 'Спасибо, приятно. Вообще-то... жена ждёт второго ребёнка. Наш Cobalt стал маловат. Нужна машина побольше.',
+      },
+      nextNodeId: 'd1_needs',
+    },
+
+    d1_converge_direct: {
+      id: 'd1_converge_direct',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'neutral',
+      text: {
+        uz: 'Ha, shu ikkalasiga qarayapman. Oilam uchun kattaroq mashina kerak — xotinim ikkinchi farzandimizni kutyapti. Cobaltimiz endi sig\'mayapti.',
+        ru: 'Да, смотрю на эти два. Нужна машина побольше для семьи — жена ждёт второго. Cobalt уже не вмещает.',
+      },
+      nextNodeId: 'd1_needs',
+    },
+
+    d1_converge_soft: {
+      id: 'd1_converge_soft',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'happy',
+      text: {
+        uz: 'Rahmat, shoshilmasdan ko\'rib chiqdim. Aslida savol bor — xotinim ikkinchi farzandimizni kutyapti, Cobaltimiz kichik bo\'lib qoldi. Oilaviy mashina kerak.',
+        ru: 'Спасибо, что дали осмотреться. У меня вопрос — жена ждёт второго ребёнка, наш Cobalt стал мал. Нужна семейная машина.',
+      },
+      nextNodeId: 'd1_needs',
+    },
+
+    d1_converge_expired: {
+      id: 'd1_converge_expired',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'neutral',
+      text: {
+        uz: 'Kechirasiz, siz shu yerdamisiz? Menga maslahat kerak — xotinim ikkinchi farzandimizni kutyapti, Cobaltimiz kichik bo\'lib qoldi.',
+        ru: 'Извините, вы здесь работаете? Мне нужна консультация — жена ждёт второго, наш Cobalt стал маловат.',
       },
       nextNodeId: 'd1_needs',
     },
@@ -142,7 +180,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 5, dimension: 'rapport' },
             { type: 'set_flag', flag: 'asked_priorities' },
           ],
-          nextNodeId: 'd1_needs_response',
+          nextNodeId: 'd1_needs_resp_priorities',
         },
         {
           id: 'd1_needs_b',
@@ -154,7 +192,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 3, dimension: 'discovery' },
             { type: 'set_flag', flag: 'asked_budget' },
           ],
-          nextNodeId: 'd1_needs_response',
+          nextNodeId: 'd1_needs_resp_budget',
         },
         {
           id: 'd1_needs_c',
@@ -167,19 +205,43 @@ export const day1: Day = {
             { type: 'add_score', amount: 5, dimension: 'expertise' },
             { type: 'set_flag', flag: 'jumped_to_pitch' },
           ],
-          nextNodeId: 'd1_needs_response',
+          nextNodeId: 'd1_needs_resp_pitch',
         },
       ],
     },
 
-    d1_needs_response: {
-      id: 'd1_needs_response',
+    d1_needs_resp_priorities: {
+      id: 'd1_needs_resp_priorities',
       type: 'dialogue',
       speaker: 'bobur',
       emotion: 'thoughtful',
       text: {
-        uz: 'Xavfsizlik birinchi o\'rinda. Bolalar uchun airbag ko\'p bo\'lsin. Lekin narx ham muhim — Tracker 22 ming, Equinox 30 ming... Farqi katta.',
-        ru: 'Безопасность на первом месте. Чтобы подушек побольше для детей. Но и цена важна — Tracker 22 тысячи, Equinox 30... Разница большая.',
+        uz: 'Yaxshi savol. Xavfsizlik birinchi o\'rinda — bolalar uchun airbag ko\'p bo\'lsin. Lekin narx ham muhim — Tracker 22 ming, Equinox 30 ming... Farqi katta.',
+        ru: 'Хороший вопрос. Безопасность на первом месте — чтобы подушек побольше для детей. Но и цена важна — Tracker 22 тысячи, Equinox 30... Разница большая.',
+      },
+      nextNodeId: 'd1_suggest',
+    },
+
+    d1_needs_resp_budget: {
+      id: 'd1_needs_resp_budget',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'thoughtful',
+      text: {
+        uz: 'Byudjet... 22-25 ming dollar atrofida. Kredit bo\'lsa ham ko\'rib chiqaman. Lekin menga narxdan ko\'ra xavfsizlik muhimroq — bolalar uchun.',
+        ru: 'Бюджет... в районе 22-25 тысяч долларов. Кредит тоже рассмотрю. Но мне важнее безопасности, чем цена — ради детей.',
+      },
+      nextNodeId: 'd1_suggest',
+    },
+
+    d1_needs_resp_pitch: {
+      id: 'd1_needs_resp_pitch',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'surprised',
+      text: {
+        uz: 'Kutib turing... Men hali qaror qilganim yo\'q. Avval nimalar borligini bilishim kerak. Narxlar qanday? Xavfsizlik bo\'yicha farq bormi?',
+        ru: 'Подождите... Я ещё не решил. Сначала хочу понять, что есть. Какие цены? Есть разница по безопасности?',
       },
       nextNodeId: 'd1_suggest',
     },
@@ -203,7 +265,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 5, dimension: 'expertise' },
             { type: 'set_flag', flag: 'suggested_equinox' },
           ],
-          nextNodeId: 'd1_result',
+          nextNodeId: 'd1_result_equinox',
         },
         {
           id: 'd1_suggest_b',
@@ -216,7 +278,7 @@ export const day1: Day = {
             { type: 'add_score', amount: 5, dimension: 'persuasion' },
             { type: 'set_flag', flag: 'suggested_tracker' },
           ],
-          nextNodeId: 'd1_result',
+          nextNodeId: 'd1_result_tracker',
         },
         {
           id: 'd1_suggest_c',
@@ -229,19 +291,43 @@ export const day1: Day = {
             { type: 'add_score', amount: 3, dimension: 'discovery' },
             { type: 'set_flag', flag: 'compared_models' },
           ],
-          nextNodeId: 'd1_result',
+          nextNodeId: 'd1_result_compare',
         },
       ],
     },
 
-    d1_result: {
-      id: 'd1_result',
+    d1_result_equinox: {
+      id: 'd1_result_equinox',
       type: 'dialogue',
       speaker: 'bobur',
       emotion: 'interested',
       text: {
-        uz: 'Hmm, o\'ylab ko\'raman. Xotinimga ham ko\'rsatishim kerak. Vizitkangiz bormi?',
-        ru: 'Хм, подумаю. Жене тоже надо показать. Есть ваша визитка?',
+        uz: '6 ta airbag — bu jiddiy. Narxi qimmatroq, lekin bolalar xavfsizligi uchun... Bo\'lib to\'lash shartlari qanday? Xotinimga ham ko\'rsatishim kerak.',
+        ru: '6 подушек — это серьёзно. Дороже, конечно, но ради безопасности детей... А какие условия рассрочки? Жене тоже надо показать.',
+      },
+      nextNodeId: 'd1_check',
+    },
+
+    d1_result_tracker: {
+      id: 'd1_result_tracker',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'thoughtful',
+      text: {
+        uz: 'Tracker arzonroq, bu yaxshi. Lekin 4 ta airbag yetarlimi oila uchun? Equinox bilan solishtirib ko\'rsangiz... Vizitkangiz bormi? Xotinimga ham maslahat qilishim kerak.',
+        ru: 'Tracker дешевле, это хорошо. Но 4 подушки — достаточно для семьи? Может, сравните с Equinox... Есть визитка? Надо с женой посоветоваться.',
+      },
+      nextNodeId: 'd1_check',
+    },
+
+    d1_result_compare: {
+      id: 'd1_result_compare',
+      type: 'dialogue',
+      speaker: 'bobur',
+      emotion: 'happy',
+      text: {
+        uz: 'Ana bu yaxshi yondashuv! Solishtirib ko\'rsak, aniqroq bo\'ladi. Xotinimga ham shu solishtirishni ko\'rsataman. Vizitkangiz bormi?',
+        ru: 'Вот это правильный подход! Сравнение — это наглядно. Покажу жене. Есть ваша визитка?',
       },
       nextNodeId: 'd1_check',
     },

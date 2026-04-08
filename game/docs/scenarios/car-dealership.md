@@ -54,7 +54,7 @@
 
 ## День 1: "Birinchi mijoz" / "Первый клиент"
 
-**Сложность:** Tutorial | **Target score:** 30 | **Нод:** 10 | **Таймер:** 1 (15с)
+**Сложность:** Tutorial | **Target score:** 30 | **Нод:** 19 | **Таймер:** 1 (15с)
 
 **Клиент:** Бобур, 32 года, айтишник. Жена беременна вторым, нужна семейная машина вместо Cobalt. Бюджет ограничен, но безопасность — приоритет.
 
@@ -63,8 +63,16 @@
 ### Нод-граф
 ```
 d1_intro → d1_briefing → d1_client_enters → d1_approach [CHOICE 15с]
-→ d1_converge → d1_needs [CHOICE] → d1_suggest [CHOICE]
-→ d1_result → d1_check [BRANCH] → d1_end_success | d1_end_partial | d1_end_fail
+  A → d1_converge_warm ──┐
+  B → d1_converge_direct ┼→ d1_needs [CHOICE]
+  C → d1_converge_soft ──┘
+  expired → d1_converge_expired ─┘
+    A → d1_needs_resp_priorities ──┐
+    B → d1_needs_resp_budget ──────┼→ d1_suggest [CHOICE]
+    C → d1_needs_resp_pitch ───────┘
+      A → d1_result_equinox ──┐
+      B → d1_result_tracker ──┼→ d1_check [BRANCH] → d1_end_success | d1_end_partial | d1_end_fail
+      C → d1_result_compare ──┘
 ```
 
 ### Полные ноды
@@ -119,21 +127,21 @@ choices:
     ru: "Здравствуйте! Добро пожаловать в Chevrolet. Чем могу помочь?"
     effects: [{ type: "add_score", amount: 10, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "approach_warm" }]
-    nextNodeId: "d1_converge"
+    nextNodeId: "d1_converge_warm"
 
   B)
     uz: "Salom! Tracker yoki Equinox — qaysi biri qiziqtirdi?"
     ru: "Привет! Tracker или Equinox — какой заинтересовал?"
     effects: [{ type: "add_score", amount: 5, dimension: "timing" }]
     flags: [{ type: "set_flag", flag: "approach_direct" }]
-    nextNodeId: "d1_converge"
+    nextNodeId: "d1_converge_direct"
 
   C)
     uz: "Assalomu alaykum! Biroz ko'rib chiqing, savol bo'lsa — men shu yerdaman."
     ru: "Здравствуйте! Посмотрите спокойно, если будут вопросы — я рядом."
     effects: [{ type: "add_score", amount: 12, dimension: "empathy" }]
     flags: [{ type: "set_flag", flag: "approach_soft" }]
-    nextNodeId: "d1_converge"
+    nextNodeId: "d1_converge_soft"
 
 expireNodeId: "d1_approach_expired"
 ```
@@ -146,17 +154,50 @@ effects: [{ type: "add_score", amount: -5, dimension: "timing" }]
 narrator:
   uz: "Siz ikkilandingiz va mijoz o'zi qarab ketdi."
   ru: "Вы замешкались, и клиент сам продолжил осматривать."
-nextNodeId: "d1_converge"
+nextNodeId: "d1_converge_expired"
 ```
 
 ---
 
-**d1_converge** `dialogue`
+**d1_converge_warm** `dialogue` _(после тёплого приветствия)_
 ```
 speaker: "bobur"
 emotion: "neutral"
-uz: "Rahmat. Aslida... xotinim ikkinchi farzandimizni kutyapti. Hozirgi Cobaltimiz kichik bo'lib qoldi."
-ru: "Спасибо. Вообще-то... жена ждёт второго ребёнка. Наш Cobalt стал маловат."
+uz: "Rahmat, yaxshi kutib oldingiz. Aslida... xotinim ikkinchi farzandimizni kutyapti. Hozirgi Cobaltimiz kichik bo'lib qoldi. Kattaroq mashina kerak."
+ru: "Спасибо, приятно. Вообще-то... жена ждёт второго ребёнка. Наш Cobalt стал маловат. Нужна машина побольше."
+nextNodeId: "d1_needs"
+```
+
+---
+
+**d1_converge_direct** `dialogue` _(после прямого вопроса о модели)_
+```
+speaker: "bobur"
+emotion: "neutral"
+uz: "Ha, shu ikkalasiga qarayapman. Oilam uchun kattaroq mashina kerak — xotinim ikkinchi farzandimizni kutyapti. Cobaltimiz endi sig'mayapti."
+ru: "Да, смотрю на эти два. Нужна машина побольше для семьи — жена ждёт второго. Cobalt уже не вмещает."
+nextNodeId: "d1_needs"
+```
+
+---
+
+**d1_converge_soft** `dialogue` _(после мягкого подхода — клиент сам подходит)_
+```
+speaker: "bobur"
+emotion: "happy"
+uz: "Rahmat, shoshilmasdan ko'rib chiqdim. Aslida savol bor — xotinim ikkinchi farzandimizni kutyapti, Cobaltimiz kichik bo'lib qoldi. Oilaviy mashina kerak."
+ru: "Спасибо, что дали осмотреться. У меня вопрос — жена ждёт второго ребёнка, наш Cobalt стал мал. Нужна семейная машина."
+nextNodeId: "d1_needs"
+```
+
+---
+
+**d1_converge_expired** `dialogue` _(клиент сам начинает разговор)_
+```
+speaker: "bobur"
+emotion: "neutral"
+uz: "Kechirasiz, siz shu yerdamisiz? Menga maslahat kerak — xotinim ikkinchi farzandimizni kutyapti, Cobaltimiz kichik bo'lib qoldi."
+ru: "Извините, вы здесь работаете? Мне нужна консультация — жена ждёт второго, наш Cobalt стал маловат."
 nextNodeId: "d1_needs"
 ```
 
@@ -175,31 +216,53 @@ choices:
     ru: "Что для вас самое важное в машине — безопасность, пространство или цена?"
     effects: [{ type: "add_score", amount: 12, dimension: "discovery" }, { type: "add_score", amount: 5, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "asked_priorities" }]
-    nextNodeId: "d1_needs_response"
+    nextNodeId: "d1_needs_resp_priorities"
 
   B)
     uz: "Byudjetingiz qancha atrofida?"
     ru: "На какой бюджет рассчитываете?"
     effects: [{ type: "add_score", amount: 3, dimension: "discovery" }]
     flags: [{ type: "set_flag", flag: "asked_budget" }]
-    nextNodeId: "d1_needs_response"
+    nextNodeId: "d1_needs_resp_budget"
 
   C)
     uz: "Equinox — oilalar uchun eng zo'r tanlov! Ko'rsatay?"
     ru: "Equinox — лучший выбор для семьи! Показать?"
     effects: [{ type: "add_score", amount: -3, dimension: "discovery" }, { type: "add_score", amount: 5, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "jumped_to_pitch" }]
-    nextNodeId: "d1_needs_response"
+    nextNodeId: "d1_needs_resp_pitch"
 ```
 
 ---
 
-**d1_needs_response** `dialogue`
+**d1_needs_resp_priorities** `dialogue` _(ответ на вопрос о приоритетах)_
 ```
 speaker: "bobur"
 emotion: "thoughtful"
-uz: "Xavfsizlik birinchi o'rinda. Bolalar uchun airbag ko'p bo'lsin. Lekin narx ham muhim — Tracker 22 ming, Equinox 30 ming... Farqi katta."
-ru: "Безопасность на первом месте. Чтобы подушек побольше для детей. Но и цена важна — Tracker 22 тысячи, Equinox 30... Разница большая."
+uz: "Yaxshi savol. Xavfsizlik birinchi o'rinda — bolalar uchun airbag ko'p bo'lsin. Lekin narx ham muhim — Tracker 22 ming, Equinox 30 ming... Farqi katta."
+ru: "Хороший вопрос. Безопасность на первом месте — чтобы подушек побольше для детей. Но и цена важна — Tracker 22 тысячи, Equinox 30... Разница большая."
+nextNodeId: "d1_suggest"
+```
+
+---
+
+**d1_needs_resp_budget** `dialogue` _(ответ на вопрос о бюджете)_
+```
+speaker: "bobur"
+emotion: "thoughtful"
+uz: "Byudjet... 22-25 ming dollar atrofida. Kredit bo'lsa ham ko'rib chiqaman. Lekin menga narxdan ko'ra xavfsizlik muhimroq — bolalar uchun."
+ru: "Бюджет... в районе 22-25 тысяч долларов. Кредит тоже рассмотрю. Но мне важнее безопасности, чем цена — ради детей."
+nextNodeId: "d1_suggest"
+```
+
+---
+
+**d1_needs_resp_pitch** `dialogue` _(ответ на преждевременный питч)_
+```
+speaker: "bobur"
+emotion: "surprised"
+uz: "Kutib turing... Men hali qaror qilganim yo'q. Avval nimalar borligini bilishim kerak. Narxlar qanday? Xavfsizlik bo'yicha farq bormi?"
+ru: "Подождите... Я ещё не решил. Сначала хочу понять, что есть. Какие цены? Есть разница по безопасности?"
 nextNodeId: "d1_suggest"
 ```
 
@@ -218,31 +281,53 @@ choices:
     ru: "Equinox — 6 подушек, 7 мест. Лучший для безопасности детей. Дороже, но это инвестиция в семью."
     effects: [{ type: "add_score", amount: 12, dimension: "persuasion" }, { type: "add_score", amount: 5, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "suggested_equinox" }]
-    nextNodeId: "d1_result"
+    nextNodeId: "d1_result_equinox"
 
   B)
     uz: "Tracker ham yomon emas — 4 ta airbag bor, va 8 ming arzon. Bo'lib to'lash ham bor."
     ru: "Tracker тоже неплох — 4 подушки есть, и на 8 тысяч дешевле. Есть рассрочка."
     effects: [{ type: "add_score", amount: 8, dimension: "empathy" }, { type: "add_score", amount: 5, dimension: "persuasion" }]
     flags: [{ type: "set_flag", flag: "suggested_tracker" }]
-    nextNodeId: "d1_result"
+    nextNodeId: "d1_result_tracker"
 
   C)
     uz: "Ikkalasini solishtiramizmi? Hozir xususiyatlarini yonma-yon ko'rsataman."
     ru: "Давайте сравним оба? Сейчас покажу характеристики рядом."
     effects: [{ type: "add_score", amount: 10, dimension: "expertise" }, { type: "add_score", amount: 3, dimension: "discovery" }]
     flags: [{ type: "set_flag", flag: "compared_models" }]
-    nextNodeId: "d1_result"
+    nextNodeId: "d1_result_compare"
 ```
 
 ---
 
-**d1_result** `dialogue`
+**d1_result_equinox** `dialogue` _(ответ на рекомендацию Equinox)_
 ```
 speaker: "bobur"
 emotion: "interested"
-uz: "Hmm, o'ylab ko'raman. Xotinimga ham ko'rsatishim kerak. Vizitkangiз bormi?"
-ru: "Хм, подумаю. Жене тоже надо показать. Есть ваша визитка?"
+uz: "6 ta airbag — bu jiddiy. Narxi qimmatroq, lekin bolalar xavfsizligi uchun... Bo'lib to'lash shartlari qanday? Xotinimga ham ko'rsatishim kerak."
+ru: "6 подушек — это серьёзно. Дороже, конечно, но ради безопасности детей... А какие условия рассрочки? Жене тоже надо показать."
+nextNodeId: "d1_check"
+```
+
+---
+
+**d1_result_tracker** `dialogue` _(ответ на рекомендацию Tracker)_
+```
+speaker: "bobur"
+emotion: "thoughtful"
+uz: "Tracker arzonroq, bu yaxshi. Lekin 4 ta airbag yetarlimi oila uchun? Equinox bilan solishtirib ko'rsangiz... Vizitkangiz bormi? Xotinimga ham maslahat qilishim kerak."
+ru: "Tracker дешевле, это хорошо. Но 4 подушки — достаточно для семьи? Может, сравните с Equinox... Есть визитка? Надо с женой посоветоваться."
+nextNodeId: "d1_check"
+```
+
+---
+
+**d1_result_compare** `dialogue` _(ответ на предложение сравнить)_
+```
+speaker: "bobur"
+emotion: "happy"
+uz: "Ana bu yaxshi yondashuv! Solishtirib ko'rsak, aniqroq bo'ladi. Xotinimga ham shu solishtirishni ko'rsataman. Vizitkangiz bormi?"
+ru: "Вот это правильный подход! Сравнение — это наглядно. Покажу жене. Есть ваша визитка?"
 nextNodeId: "d1_check"
 ```
 
@@ -343,10 +428,16 @@ course_hint:
 
 ### Нод-граф
 ```
-d2_intro → d2_callback_check [BRANCH] → d2_kamola_enters
-→ d2_presentation [CHOICE] → d2_kamola_objection → d2_objection [CHOICE 10с]
-→ d2_closing [CHOICE] → d2_check [BRANCH]
-→ d2_end_success | d2_end_partial | d2_end_fail | d2_end_hidden
+d2_intro → d2_anvar_files → d2_callback_check [BRANCH] → d2_kamola_enters
+→ d2_presentation [CHOICE]
+  A → d2_kamola_obj_features ──┐
+  B → d2_kamola_obj_value ─────┼→ d2_objection [CHOICE 10с]
+  C → d2_kamola_obj_priorities ┘
+    A → d2_kamola_reacts_service ──┐
+    B → d2_kamola_reacts_resale ───┼→ d2_closing [CHOICE]
+    C → d2_kamola_reacts_discount ─┘
+    expired → d2_kamola_reacts_timeout ─┘
+→ d2_check [BRANCH] → d2_end_success | d2_end_partial | d2_end_fail | d2_end_hidden
 ```
 
 ### Полные ноды
@@ -410,31 +501,53 @@ choices:
     ru: "Вы уже отлично проанализировали. Покажу только то, чего нет у K5 — адаптивный круиз и камера 360°."
     effects: [{ type: "add_score", amount: 15, dimension: "expertise" }, { type: "add_score", amount: 5, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "respected_knowledge" }]
-    nextNodeId: "d2_kamola_objection"
+    nextNodeId: "d2_kamola_obj_features"
 
   B)
     uz: "Malibu biznes-klass segmentida eng yaxshi narx-sifat nisbati. Keling, asosiy xususiyatlarni ko'rib chiqamiz."
     ru: "Malibu — лучшее соотношение цена-качество в бизнес-классе. Давайте пройдёмся по основным характеристикам."
     effects: [{ type: "add_score", amount: 10, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "standard_pitch" }]
-    nextNodeId: "d2_kamola_objection"
+    nextNodeId: "d2_kamola_obj_value"
 
   C)
     uz: "Qaysi jihati sizga eng muhim — qulaylik, xavfsizlik yoki texnologiyalar?"
     ru: "Что для вас важнее всего — комфорт, безопасность или технологии?"
     effects: [{ type: "add_score", amount: 8, dimension: "discovery" }, { type: "add_score", amount: 5, dimension: "empathy" }]
     flags: [{ type: "set_flag", flag: "asked_priorities_d2" }]
-    nextNodeId: "d2_kamola_objection"
+    nextNodeId: "d2_kamola_obj_priorities"
 ```
 
 ---
 
-**d2_kamola_objection** `dialogue`
+**d2_kamola_obj_features** `dialogue` _(ответ на показ уникальных фич)_
 ```
 speaker: "kamola"
-emotion: "skeptical"
-uz: "Hammasi yaxshi, lekin K5 — 25 ming, Malibu — 28 ming. 3 ming farq uchun nima olaman?"
-ru: "Всё хорошо, но K5 — 25 тысяч, Malibu — 28. За 3 тысячи разницы что я получу?"
+emotion: "checking"
+uz: "Adaptive cruise va 360° kamera — bu yaxshi. Lekin K5 da ham kamera bor. 3 ming farq faqat cruise uchunmi?"
+ru: "Адаптивный круиз и камера 360° — это хорошо. Но у K5 тоже есть камера. 3 тысячи разницы — только за круиз?"
+nextNodeId: "d2_objection"
+```
+
+---
+
+**d2_kamola_obj_value** `dialogue` _(ответ на narx-sifat nisbati)_
+```
+speaker: "kamola"
+emotion: "checking"
+uz: "Narx-sifat nisbati — bu chiroyli gap. Lekin K5 — 25 ming, Malibu — 28 ming. 3 ming farq uchun konkret nima olaman?"
+ru: "Соотношение цена-качество — красиво звучит. Но K5 — 25 тысяч, Malibu — 28. За 3 тысячи конкретно что получу?"
+nextNodeId: "d2_objection"
+```
+
+---
+
+**d2_kamola_obj_priorities** `dialogue` _(ответ на вопрос о приоритетах)_
+```
+speaker: "kamola"
+emotion: "confident"
+uz: "Texnologiyalar va qulaylik. Lekin men buni allaqachon bilaman — K5 bilan solishtirdim. Savol boshqa: 3 ming farq uchun nima olaman?"
+ru: "Технологии и комфорт. Но я это уже знаю — сравнивала с K5. Вопрос другой: за 3 тысячи разницы — что получу?"
 nextNodeId: "d2_objection"
 ```
 
@@ -453,21 +566,21 @@ choices:
     ru: "3 тысячи — это 2 года бесплатного сервиса. У K5 нет. Экономия $1500 в год на обслуживании."
     effects: [{ type: "add_score", amount: 15, dimension: "persuasion" }, { type: "add_score", amount: 5, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "value_reframe" }]
-    nextNodeId: "d2_closing"
+    nextNodeId: "d2_kamola_reacts_service"
 
   B)
     uz: "Tushunaman. Ko'p mijozlarimiz ham shunday o'ylagan, lekin Malibu egalari o'z tanlovlaridan mamnun — qayta sotish narxi ham yuqori."
     ru: "Понимаю. Многие клиенты думали так же, но владельцы Malibu довольны — и перепродажная стоимость выше."
     effects: [{ type: "add_score", amount: 10, dimension: "persuasion" }, { type: "add_score", amount: 5, dimension: "rapport" }]
     flags: [{ type: "set_flag", flag: "social_proof" }]
-    nextNodeId: "d2_closing"
+    nextNodeId: "d2_kamola_reacts_resale"
 
   C)
     uz: "Chegirma qilsam bo'ladimi? Menejer bilan gaplashaman."
     ru: "Могу попросить скидку? Поговорю с менеджером."
     effects: [{ type: "add_score", amount: -5, dimension: "persuasion" }, { type: "add_score", amount: 3, dimension: "empathy" }]
     flags: [{ type: "set_flag", flag: "offered_discount" }]
-    nextNodeId: "d2_closing"
+    nextNodeId: "d2_kamola_reacts_discount"
 
 expireNodeId: "d2_objection_expired"
 ```
@@ -480,6 +593,50 @@ effects: [{ type: "add_score", amount: -8, dimension: "timing" }]
 narrator:
   uz: "Siz javob topa olmadingiz. Kamola xonim sabrsizlanmoqda."
   ru: "Вы не нашли что ответить. Камола теряет терпение."
+nextNodeId: "d2_kamola_reacts_timeout"
+```
+
+---
+
+**d2_kamola_reacts_service** `dialogue` _(реакция на аргумент о сервисе)_
+```
+speaker: "kamola"
+emotion: "checking"
+uz: "Hmm, 2 yillik servis... Yiliga 1500 tejash — bu hisob-kitob qiladigan gap. Qiziq."
+ru: "Хм, 2 года сервиса... Экономия $1500 в год — это уже считаемый аргумент. Интересно."
+nextNodeId: "d2_closing"
+```
+
+---
+
+**d2_kamola_reacts_resale** `dialogue` _(реакция на перепродажную стоимость)_
+```
+speaker: "kamola"
+emotion: "checking"
+uz: "Qayta sotish narxi... Bu to'g'ri, lekin K5 ham likvidli mashina. Boshqa argument bormi?"
+ru: "Перепродажная стоимость... Это верно, но K5 тоже ликвидна. Ещё аргументы есть?"
+nextNodeId: "d2_closing"
+```
+
+---
+
+**d2_kamola_reacts_discount** `dialogue` _(реакция на предложение скидки)_
+```
+speaker: "kamola"
+emotion: "skeptical"
+uz: "Chegirma? Men chegirma uchun emas, argument uchun keldim. Malibu nimasi bilan yaxshiroq — shuni ayting."
+ru: "Скидка? Я пришла не за скидками, а за аргументами. Скажите, чем Malibu лучше — конкретно."
+nextNodeId: "d2_closing"
+```
+
+---
+
+**d2_kamola_reacts_timeout** `dialogue` _(реакция на таймаут)_
+```
+speaker: "kamola"
+emotion: "skeptical"
+uz: "Javob yo'qmi? Demak, 3 ming farq uchun argument yo'q. Qiziq..."
+ru: "Нет ответа? Значит, за 3 тысячи разницы аргументов нет. Интересно..."
 nextNodeId: "d2_closing"
 ```
 
@@ -626,10 +783,15 @@ dialogue:
 
 ### Нод-граф
 ```
-d3_intro → d3_couple_enters → d3_who_first [CHOICE]
-→ d3_conflict → d3_compromise [CHOICE 10с]
-→ d3_anniversary_check [BRANCH] → d3_closing [CHOICE]
-→ d3_check [BRANCH] → d3_end_success | d3_end_partial | d3_end_fail | d3_end_hidden
+d3_day_intro → d3_intro → d3_couple_enters → d3_who_first [CHOICE]
+  A → d3_conflict_both ──────┐
+  B → d3_conflict_tracker ───┼→ d3_compromise [CHOICE 10с]
+  C → d3_conflict_equinox ───┘
+    A → d3_pair_reacts_balanced ──┐
+    B → d3_pair_reacts_sport ─────┼→ d3_anniversary_check [BRANCH]
+    C → d3_pair_reacts_tradein ───┘
+→ d3_closing [CHOICE] → d3_check [BRANCH]
+→ d3_end_success | d3_end_partial | d3_end_fail | d3_end_hidden
 ```
 
 ### Полные ноды
@@ -671,36 +833,53 @@ choices:
     ru: "Здравствуйте оба! Давайте вместе посмотрим?"
     effects: [{ type: "add_score", amount: 15, dimension: "rapport" }, { type: "add_score", amount: 5, dimension: "empathy" }]
     flags: [{ type: "set_flag", flag: "addressed_both" }]
-    nextNodeId: "d3_conflict"
+    nextNodeId: "d3_conflict_both"
 
   B)
     uz: "Assalomu alaykum! Tracker qiziqtirdi? Keling, ko'rsataman."
     ru: "Здравствуйте! Tracker заинтересовал? Давайте покажу."
     effects: [{ type: "add_score", amount: 8, dimension: "timing" }]
     flags: [{ type: "set_flag", flag: "approached_javlon" }]
-    nextNodeId: "d3_conflict"
+    nextNodeId: "d3_conflict_tracker"
 
   C)
     uz: "Salom! Equinox — ajoyib tanlov oilalar uchun. Ko'rsatay?"
     ru: "Здравствуйте! Equinox — отличный выбор для семьи. Показать?"
     effects: [{ type: "add_score", amount: 8, dimension: "expertise" }]
     flags: [{ type: "set_flag", flag: "approached_nilufar" }]
-    nextNodeId: "d3_conflict"
+    nextNodeId: "d3_conflict_equinox"
 ```
 
 ---
 
-**d3_conflict** `dialogue`
+**d3_conflict_both** `dialogue` _(обоим — ссора мягче)_
+```
+speaker: "javlon"
+emotion: "thinking"
+uz: "Yaxshi, birga ko'raylik. Lekin men Tracker xohlayman — sportiv, tez. Equinox katta.\n\nNilufar: Bolalarga joy kerak! Lekin... birga ko'rsak, yaxshiroq bo'ladi."
+ru: "Хорошо, посмотрим вместе. Но я хочу Tracker — спортивный, быстрый. Equinox большой.\n\nНилуфар: Детям нужно место! Но... вместе посмотреть — лучше."
+nextNodeId: "d3_compromise"
+```
+
+---
+
+**d3_conflict_tracker** `dialogue` _(подошёл к Жавлону — он доволен)_
 ```
 speaker: "javlon"
 emotion: "stubborn"
-uz: "Men Tracker xohlayman — sportiv, tez, chiroyli. Equinox juda katta."
-ru: "Я хочу Tracker — спортивный, быстрый, красивый. Equinox слишком большой."
+uz: "Ko'rdingizmi! Tracker — ana shu mashina! Sportiv, tez, chiroyli.\n\nNilufar: Yana Tracker... Bolalarga joy kerak! Equinox — 7 o'rindiq. Nega meni hech kim tinglamaydi?"
+ru: "Видите! Tracker — вот это машина! Спортивный, быстрый, красивый.\n\nНилуфар: Опять Tracker... Детям нужно место! Equinox — 7 мест. Почему меня никто не слушает?"
+nextNodeId: "d3_compromise"
+```
 
-speaker2: "nilufar"
-emotion: "worried"
-uz: "Bolalarga joy kerak! Tracker kichik. Equinox — 7 o'rindiq, xavfsiz."
-ru: "Детям нужно место! Tracker маленький. Equinox — 7 мест, безопасный."
+---
+
+**d3_conflict_equinox** `dialogue` _(подошёл к Нилуфар — она довольна)_
+```
+speaker: "javlon"
+emotion: "stubborn"
+uz: "Yana Equinox! Men Tracker xohlayman — sportiv, tez. Equinox juda katta va sekin.\n\nNilufar: To'g'ri aytdilar — oilalar uchun eng yaxshi! Bolalarga joy va xavfsizlik kerak."
+ru: "Опять Equinox! Я хочу Tracker — спортивный, быстрый. Equinox слишком большой и медленный.\n\nНилуфар: Правильно сказали — лучший для семей! Детям нужно место и безопасность."
 nextNodeId: "d3_compromise"
 ```
 
@@ -719,21 +898,21 @@ choices:
     ru: "Вы оба правы. Tracker — для будней, Equinox — для семьи. Что сейчас нужнее?"
     effects: [{ type: "add_score", amount: 15, dimension: "empathy" }, { type: "add_score", amount: 10, dimension: "persuasion" }]
     flags: [{ type: "set_flag", flag: "balanced_both" }]
-    nextNodeId: "d3_anniversary_check"
+    nextNodeId: "d3_pair_reacts_balanced"
 
   B)
     uz: "Equinox sport rejimi ham bor — tezlik ham, joy ham. Ikkalangiz uchun yechim."
     ru: "У Equinox есть спорт-режим — и скорость, и пространство. Решение для обоих."
     effects: [{ type: "add_score", amount: 12, dimension: "expertise" }, { type: "add_score", amount: 5, dimension: "persuasion" }]
     flags: [{ type: "set_flag", flag: "equinox_sport_mode" }]
-    nextNodeId: "d3_anniversary_check"
+    nextNodeId: "d3_pair_reacts_sport"
 
   C)
     uz: "Tracker olib, keyinroq Equinoxga almashtirsangiz bo'ladi. Trade-in dasturimiz bor."
     ru: "Можете взять Tracker, а позже обменять на Equinox. У нас есть trade-in программа."
     effects: [{ type: "add_score", amount: 8, dimension: "timing" }, { type: "add_score", amount: 5, dimension: "opportunity" }]
     flags: [{ type: "set_flag", flag: "trade_in_offer" }]
-    nextNodeId: "d3_anniversary_check"
+    nextNodeId: "d3_pair_reacts_tradein"
 
 expireNodeId: "d3_compromise_expired"
 ```

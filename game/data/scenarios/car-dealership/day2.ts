@@ -15,9 +15,30 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'rustam',
       emotion: 'serious',
+      background: 'bg_manager_office',
+      characters: [
+        { id: 'rustam', emotion: 'serious', position: 'center' },
+      ],
       text: {
         uz: 'Bugun Kamola xonim keladi — u hamma narsani biladi. Unga o\'rgatmang. Bu siz uchun FAB texnikasini sinab ko\'rish imkoniyati: Feature, Advantage, Benefit. Uch so\'z — bitta tizim.',
         ru: 'Сегодня придёт Камола — она всё знает. Не учите её. Это ваш шанс попробовать технику FAB: Feature, Advantage, Benefit. Три слова — одна система.',
+      },
+      nextNodeId: 'd2_anvar_files',
+    },
+
+    d2_anvar_files: {
+      id: 'd2_anvar_files',
+      type: 'dialogue',
+      speaker: 'anvar',
+      emotion: 'nervous',
+      background: 'bg_manager_office',
+      characters: [
+        { id: 'rustam', emotion: 'serious', position: 'left' },
+        { id: 'anvar', emotion: 'nervous', position: 'right' },
+      ],
+      text: {
+        uz: 'Rustam aka, Kamola xonimning oldingi so\'rovlari... Malibu va K5 haqida so\'ragan ekan.',
+        ru: 'Рустам-ака, предыдущие запросы Камолы... Она спрашивала про Malibu и K5.',
       },
       nextNodeId: 'd2_callback_check',
     },
@@ -55,6 +76,10 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'kamola',
       emotion: 'confident',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'confident', position: 'center' },
+      ],
       text: {
         uz: 'Salom. Malibu ko\'rmoqchiman. Kia K5 bilan solishtirib bo\'ldim, Malibu yutadi — lekin narxi baland.',
         ru: 'Здравствуйте. Хочу посмотреть Malibu. Я уже сравнила с Kia K5 — Malibu выигрывает, но цена выше.',
@@ -81,7 +106,7 @@ export const day2: Day = {
             { type: 'add_score', amount: 5, dimension: 'rapport' },
             { type: 'set_flag', flag: 'respected_knowledge' },
           ],
-          nextNodeId: 'd2_kamola_objection',
+          nextNodeId: 'd2_kamola_obj_features',
         },
         {
           id: 'd2_presentation_b',
@@ -93,7 +118,7 @@ export const day2: Day = {
             { type: 'add_score', amount: 10, dimension: 'expertise' },
             { type: 'set_flag', flag: 'standard_pitch' },
           ],
-          nextNodeId: 'd2_kamola_objection',
+          nextNodeId: 'd2_kamola_obj_value',
         },
         {
           id: 'd2_presentation_c',
@@ -106,19 +131,55 @@ export const day2: Day = {
             { type: 'add_score', amount: 5, dimension: 'empathy' },
             { type: 'set_flag', flag: 'asked_priorities_d2' },
           ],
-          nextNodeId: 'd2_kamola_objection',
+          nextNodeId: 'd2_kamola_obj_priorities',
         },
       ],
     },
 
-    d2_kamola_objection: {
-      id: 'd2_kamola_objection',
+    d2_kamola_obj_features: {
+      id: 'd2_kamola_obj_features',
       type: 'dialogue',
       speaker: 'kamola',
-      emotion: 'skeptical',
+      emotion: 'checking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'checking', position: 'center' },
+      ],
       text: {
-        uz: 'Hammasi yaxshi, lekin K5 — 25 ming, Malibu — 28 ming. 3 ming farq uchun nima olaman?',
-        ru: 'Всё хорошо, но K5 — 25 тысяч, Malibu — 28. За 3 тысячи разницы что я получу?',
+        uz: 'Adaptive cruise va 360° kamera — bu yaxshi. Lekin K5 da ham kamera bor. 3 ming farq faqat cruise uchunmi?',
+        ru: 'Адаптивный круиз и камера 360° — это хорошо. Но у K5 тоже есть камера. 3 тысячи разницы — только за круиз?',
+      },
+      nextNodeId: 'd2_objection',
+    },
+
+    d2_kamola_obj_value: {
+      id: 'd2_kamola_obj_value',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'checking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'checking', position: 'center' },
+      ],
+      text: {
+        uz: 'Narx-sifat nisbati — bu chiroyli gap. Lekin K5 — 25 ming, Malibu — 28 ming. 3 ming farq uchun konkret nima olaman?',
+        ru: 'Соотношение цена-качество — красиво звучит. Но K5 — 25 тысяч, Malibu — 28. За 3 тысячи конкретно что получу?',
+      },
+      nextNodeId: 'd2_objection',
+    },
+
+    d2_kamola_obj_priorities: {
+      id: 'd2_kamola_obj_priorities',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'confident',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'confident', position: 'center' },
+      ],
+      text: {
+        uz: 'Texnologiyalar va qulaylik. Lekin men buni allaqachon bilaman — K5 bilan solishtirdim. Savol boshqa: 3 ming farq uchun nima olaman?',
+        ru: 'Технологии и комфорт. Но я это уже знаю — сравнивала с K5. Вопрос другой: за 3 тысячи разницы — что получу?',
       },
       nextNodeId: 'd2_objection',
     },
@@ -144,7 +205,7 @@ export const day2: Day = {
             { type: 'add_score', amount: 5, dimension: 'expertise' },
             { type: 'set_flag', flag: 'value_reframe' },
           ],
-          nextNodeId: 'd2_closing',
+          nextNodeId: 'd2_kamola_reacts_service',
         },
         {
           id: 'd2_objection_b',
@@ -157,7 +218,7 @@ export const day2: Day = {
             { type: 'add_score', amount: 5, dimension: 'rapport' },
             { type: 'set_flag', flag: 'social_proof' },
           ],
-          nextNodeId: 'd2_closing',
+          nextNodeId: 'd2_kamola_reacts_resale',
         },
         {
           id: 'd2_objection_c',
@@ -170,7 +231,7 @@ export const day2: Day = {
             { type: 'add_score', amount: 3, dimension: 'empathy' },
             { type: 'set_flag', flag: 'offered_discount' },
           ],
-          nextNodeId: 'd2_closing',
+          nextNodeId: 'd2_kamola_reacts_discount',
         },
       ],
     },
@@ -182,6 +243,70 @@ export const day2: Day = {
       narrator: {
         uz: 'Siz javob topa olmadingiz. Kamola xonim sabrsizlanmoqda.',
         ru: 'Вы не нашли что ответить. Камола теряет терпение.',
+      },
+      nextNodeId: 'd2_kamola_reacts_timeout',
+    },
+
+    d2_kamola_reacts_service: {
+      id: 'd2_kamola_reacts_service',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'checking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'checking', position: 'center' },
+      ],
+      text: {
+        uz: 'Hmm, 2 yillik servis... Yiliga 1500 tejash — bu hisob-kitob qiladigan gap. Qiziq.',
+        ru: 'Хм, 2 года сервиса... Экономия $1500 в год — это уже считаемый аргумент. Интересно.',
+      },
+      nextNodeId: 'd2_closing',
+    },
+
+    d2_kamola_reacts_resale: {
+      id: 'd2_kamola_reacts_resale',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'checking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'checking', position: 'center' },
+      ],
+      text: {
+        uz: 'Qayta sotish narxi... Bu to\'g\'ri, lekin K5 ham likvidli mashina. Boshqa argument bormi?',
+        ru: 'Перепродажная стоимость... Это верно, но K5 тоже ликвидна. Ещё аргументы есть?',
+      },
+      nextNodeId: 'd2_closing',
+    },
+
+    d2_kamola_reacts_discount: {
+      id: 'd2_kamola_reacts_discount',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'skeptical',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'skeptical', position: 'center' },
+      ],
+      text: {
+        uz: 'Chegirma? Men chegirma uchun emas, argument uchun keldim. Malibu nimasi bilan yaxshiroq — shuni ayting.',
+        ru: 'Скидка? Я пришла не за скидками, а за аргументами. Скажите, чем Malibu лучше — конкретно.',
+      },
+      nextNodeId: 'd2_closing',
+    },
+
+    d2_kamola_reacts_timeout: {
+      id: 'd2_kamola_reacts_timeout',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'skeptical',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'kamola', emotion: 'skeptical', position: 'center' },
+      ],
+      text: {
+        uz: 'Javob yo\'qmi? Demak, 3 ming farq uchun argument yo\'q. Qiziq...',
+        ru: 'Нет ответа? Значит, за 3 тысячи разницы аргументов нет. Интересно...',
       },
       nextNodeId: 'd2_closing',
     },

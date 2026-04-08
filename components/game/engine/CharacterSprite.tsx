@@ -2,33 +2,45 @@
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
+import type { CharacterPosition } from '@/game/engine/types';
 
 interface CharacterSpriteProps {
-  speaker: string | undefined;
-  emotion: string | null;
+  characterId: string;
+  emotion: string;
+  position: CharacterPosition;
+  isActive: boolean;
 }
 
-export default function CharacterSprite({ speaker, emotion }: CharacterSpriteProps) {
+const POSITION_CLASSES: Record<CharacterPosition, string> = {
+  left: 'left-[8%] translate-x-0',
+  center: 'left-1/2 -translate-x-1/2',
+  right: 'right-[8%] translate-x-0 left-auto',
+};
+
+export default function CharacterSprite({
+  characterId,
+  emotion,
+  position,
+  isActive,
+}: CharacterSpriteProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  if (!speaker || speaker === 'narrator' || !CHARACTERS[speaker]) {
-    return null;
-  }
+  const character = CHARACTERS[characterId];
+  if (!character) return null;
 
-  const character = CHARACTERS[speaker];
-  const src = character.assetPath(emotion ?? 'neutral');
+  const src = character.assetPath(emotion);
 
   return (
     <AnimatePresence mode="wait">
       <motion.img
-        key={speaker + '-' + (emotion ?? 'neutral')}
+        key={characterId + '-' + emotion + '-' + position}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={{ opacity: isActive ? 1 : 0.6 }}
         exit={{ opacity: 0 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
         src={src}
         alt={character.id}
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 max-h-[85dvh] w-auto pointer-events-none select-none z-0"
+        className={`absolute bottom-0 max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
       />
     </AnimatePresence>
   );

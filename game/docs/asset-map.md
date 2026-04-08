@@ -35,7 +35,7 @@
 
 | ID | Персонаж | Эмоции | День | Размер | Генерация |
 |----|----------|--------|------|--------|-----------|
-| `chr_bobur` | Бобур — 32, casual, добрый | `neutral`, `thoughtful`, `interested`, `happy` | 1 | 512×768 | AI |
+| `chr_bobur` | Бобур — 32, casual, добрый | `neutral`, `thoughtful`, `interested`, `happy`, `surprised` | 1 | 512×768 | AI |
 | `chr_kamola` | Камола — 35, деловой костюм, уверенная | `confident`, `skeptical`, `impressed` | 2 | 512×768 | AI |
 | `chr_javlon` | Жавлон — 32, спортивный стиль | `stubborn`, `thinking`, `touched` | 3 | 512×768 | AI |
 | `chr_nilufar` | Нилуфар — 30, элегантная, заботливая мать | `worried`, `happy`, `thoughtful` | 3 | 512×768 | AI |

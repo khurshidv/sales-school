@@ -19,7 +19,17 @@ export type Rating = (typeof RATINGS)[number];
 
 export type DayOutcome = 'success' | 'partial' | 'failure' | 'hidden_ending';
 
-// --- 3.2 ScenarioNode (discriminated union, 7 variants) ---
+// --- 3.2 Multi-Character Positioning ---
+
+export type CharacterPosition = 'left' | 'center' | 'right';
+
+export interface CharacterOnScreen {
+  id: string;
+  emotion: string;
+  position: CharacterPosition;
+}
+
+// --- 3.3 ScenarioNode (discriminated union, 7 variants) ---
 
 export interface DialogueNode {
   id: string;
@@ -28,6 +38,7 @@ export interface DialogueNode {
   emotion: string | null;
   text: LocalizedText;
   background?: string;
+  characters?: CharacterOnScreen[];
   effects?: Effect[];
   nextNodeId: string;
 }
@@ -92,6 +103,7 @@ export interface EndNode {
     speaker: string;
     emotion: string | null;
     text: LocalizedText;
+    characters?: CharacterOnScreen[];
   };
   nextDayTeaser?: LocalizedText;
 }

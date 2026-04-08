@@ -1,11 +1,12 @@
 'use client';
 
 import CharacterSprite from './CharacterSprite';
+import type { CharacterOnScreen } from '@/game/engine/types';
 
 interface SceneRendererProps {
-  backgroundId: string | undefined;
-  speaker: string | undefined;
-  emotion: string | null;
+  backgroundId: string;
+  characters: CharacterOnScreen[];
+  activeSpeaker: string | undefined;
   onTap: () => void;
   tapEnabled: boolean;
   children?: React.ReactNode;
@@ -13,8 +14,8 @@ interface SceneRendererProps {
 
 export default function SceneRenderer({
   backgroundId,
-  speaker,
-  emotion,
+  characters,
+  activeSpeaker,
   onTap,
   tapEnabled,
   children,
@@ -31,18 +32,22 @@ export default function SceneRenderer({
       onClick={handleClick}
     >
       {/* Background */}
-      {backgroundId ? (
-        <img
-          src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-[#1a1a2e]" />
-      )}
+      <img
+        src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+      />
 
-      {/* Character */}
-      <CharacterSprite speaker={speaker} emotion={emotion} />
+      {/* Characters */}
+      {characters.map((char) => (
+        <CharacterSprite
+          key={char.id}
+          characterId={char.id}
+          emotion={char.emotion}
+          position={char.position}
+          isActive={char.id === activeSpeaker}
+        />
+      ))}
 
       {/* Overlay UI (DialogueBox, ChoicePanel, etc.) */}
       {children}

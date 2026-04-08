@@ -4,15 +4,28 @@ export const day3: Day = {
   id: 'car-day3',
   dayNumber: 3,
   title: { uz: 'Juftlik', ru: 'Пара' },
-  rootNodeId: 'd3_intro',
+  rootNodeId: 'd3_day_intro',
   targetScore: 50,
   nodes: {
+    // ── d3_day_intro (Ken Burns on parking) ───────────────────
+    d3_day_intro: {
+      id: 'd3_day_intro',
+      type: 'day_intro',
+      background: 'bg_parking',
+      title: { uz: 'Juftlik', ru: 'Пара' },
+      nextNodeId: 'd3_intro',
+    },
+
     // ── d3_intro ──────────────────────────────────────────────
     d3_intro: {
       id: 'd3_intro',
       type: 'dialogue',
       speaker: 'dilnoza',
       emotion: 'smirk',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'dilnoza', emotion: 'smirk', position: 'center' },
+      ],
       text: {
         uz: "Bugun er-xotin keladi. Maslaha: ikkalasini ham tinglang. Tomonini olmang. — Aytmoqchi, kecha LuxeWay test-drayvidan qaytdim, yangi Tahoe sinab ko'rdim. Yaxshi sotuvchi bo'lsangiz, buni o'zingiz xarid qila olasiz.",
         ru: 'Сегодня придёт пара. Слушайте обоих, не принимайте сторону. — Кстати, вчера вернулась с тест-драйва LuxeWay, попробовала новый Tahoe. Станете хорошим продавцом — сможете себе позволить.',
@@ -26,6 +39,11 @@ export const day3: Day = {
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
+      background: 'bg_showroom_entrance',
+      characters: [
+        { id: 'javlon', emotion: 'neutral', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
+      ],
       text: {
         uz: "Salon eshigi ochildi. Yosh er-xotin kirdi — u Tracker tomon, u esa Equinox tomon yo'naldi.",
         ru: 'Дверь салона открылась. Вошла молодая пара — он к Tracker, она к Equinox.',
@@ -48,7 +66,7 @@ export const day3: Day = {
             uz: "Ikkalangizga ham salom! Birga ko'rib chiqamizmi?",
             ru: 'Здравствуйте оба! Давайте вместе посмотрим?',
           },
-          nextNodeId: 'd3_conflict',
+          nextNodeId: 'd3_conflict_both',
           effects: [
             { type: 'add_score', dimension: 'rapport', amount: 15 },
             { type: 'add_score', dimension: 'empathy', amount: 5 },
@@ -61,7 +79,7 @@ export const day3: Day = {
             uz: "Assalomu alaykum! Tracker qiziqtirdi? Keling, ko'rsataman.",
             ru: 'Здравствуйте! Tracker заинтересовал? Давайте покажу.',
           },
-          nextNodeId: 'd3_conflict',
+          nextNodeId: 'd3_conflict_tracker',
           effects: [
             { type: 'add_score', dimension: 'timing', amount: 8 },
             { type: 'set_flag', flag: 'approached_javlon' },
@@ -73,7 +91,7 @@ export const day3: Day = {
             uz: "Salom! Equinox — ajoyib tanlov oilalar uchun. Ko'rsatay?",
             ru: 'Здравствуйте! Equinox — отличный выбор для семьи. Показать?',
           },
-          nextNodeId: 'd3_conflict',
+          nextNodeId: 'd3_conflict_equinox',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 8 },
             { type: 'set_flag', flag: 'approached_nilufar' },
@@ -82,15 +100,56 @@ export const day3: Day = {
       ],
     },
 
-    // ── d3_conflict ───────────────────────────────────────────
-    d3_conflict: {
-      id: 'd3_conflict',
+    // ── d3_conflict_both (addressed both — softer conflict) ────
+    d3_conflict_both: {
+      id: 'd3_conflict_both',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'thinking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
+      ],
+      text: {
+        uz: "Yaxshi, birga ko'raylik. Lekin men Tracker xohlayman — sportiv, tez. Equinox katta.\n\nNilufar: Bolalarga joy kerak! Lekin... birga ko'rsak, yaxshiroq bo'ladi.",
+        ru: 'Хорошо, посмотрим вместе. Но я хочу Tracker — спортивный, быстрый. Equinox большой.\n\nНилуфар: Детям нужно место! Но... вместе посмотреть — лучше.',
+      },
+      nextNodeId: 'd3_compromise',
+    },
+
+    // ── d3_conflict_tracker (approached Javlon — he's pleased) ─
+    d3_conflict_tracker: {
+      id: 'd3_conflict_tracker',
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'stubborn',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'stubborn', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
+      ],
       text: {
-        uz: "Men Tracker xohlayman — sportiv, tez, chiroyli. Equinox juda katta.\n\nNilufar: Bolalarga joy kerak! Tracker kichik. Equinox — 7 o'rindiq, xavfsiz.",
-        ru: 'Я хочу Tracker — спортивный, быстрый, красивый. Equinox слишком большой.\n\nНилуфар: Детям нужно место! Tracker маленький. Equinox — 7 мест, безопасный.',
+        uz: "Ko'rdingizmi! Tracker — ana shu mashina! Sportiv, tez, chiroyli.\n\nNilufar: Yana Tracker... Bolalarga joy kerak! Equinox — 7 o'rindiq. Nega meni hech kim tinglamaydi?",
+        ru: 'Видите! Tracker — вот это машина! Спортивный, быстрый, красивый.\n\nНилуфар: Опять Tracker... Детям нужно место! Equinox — 7 мест. Почему меня никто не слушает?',
+      },
+      nextNodeId: 'd3_compromise',
+    },
+
+    // ── d3_conflict_equinox (approached Nilufar — she's pleased) ─
+    d3_conflict_equinox: {
+      id: 'd3_conflict_equinox',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'stubborn',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'stubborn', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
+      text: {
+        uz: "Yana Equinox! Men Tracker xohlayman — sportiv, tez. Equinox juda katta va sekin.\n\nNilufar: To'g'ri aytdilar — oilalar uchun eng yaxshi! Bolalarga joy va xavfsizlik kerak.",
+        ru: 'Опять Equinox! Я хочу Tracker — спортивный, быстрый. Equinox слишком большой и медленный.\n\nНилуфар: Правильно сказали — лучший для семей! Детям нужно место и безопасность.',
       },
       nextNodeId: 'd3_compromise',
     },
@@ -112,7 +171,7 @@ export const day3: Day = {
             uz: "Ikkalangizning ham talablaringiz to'g'ri. Tracker — kundalik uchun, Equinox — oila uchun. Hozir nima ko'proq kerak?",
             ru: 'Вы оба правы. Tracker — для будней, Equinox — для семьи. Что сейчас нужнее?',
           },
-          nextNodeId: 'd3_anniversary_check',
+          nextNodeId: 'd3_pair_reacts_balanced',
           effects: [
             { type: 'add_score', dimension: 'empathy', amount: 15 },
             { type: 'add_score', dimension: 'persuasion', amount: 10 },
@@ -125,7 +184,7 @@ export const day3: Day = {
             uz: 'Equinox sport rejimi ham bor — tezlik ham, joy ham. Ikkalangiz uchun yechim.',
             ru: 'У Equinox есть спорт-режим — и скорость, и пространство. Решение для обоих.',
           },
-          nextNodeId: 'd3_anniversary_check',
+          nextNodeId: 'd3_pair_reacts_sport',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 12 },
             { type: 'add_score', dimension: 'persuasion', amount: 5 },
@@ -138,7 +197,7 @@ export const day3: Day = {
             uz: "Tracker olib, keyinroq Equinoxga almashtirsangiz bo'ladi. Trade-in dasturimiz bor.",
             ru: 'Можете взять Tracker, а позже обменять на Equinox. У нас есть trade-in программа.',
           },
-          nextNodeId: 'd3_anniversary_check',
+          nextNodeId: 'd3_pair_reacts_tradein',
           effects: [
             { type: 'add_score', dimension: 'timing', amount: 8 },
             { type: 'add_score', dimension: 'opportunity', amount: 5 },
@@ -156,6 +215,60 @@ export const day3: Day = {
       narrator: {
         uz: "Ikkilandingiz va er-xotin bir-biri bilan bahslashishda davom etdi.",
         ru: 'Вы замешкались, и пара продолжила спорить между собой.',
+      },
+      nextNodeId: 'd3_anniversary_check',
+    },
+
+    // ── d3_pair_reacts_balanced ──────────────────────────────
+    d3_pair_reacts_balanced: {
+      id: 'd3_pair_reacts_balanced',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'thoughtful',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
+      ],
+      text: {
+        uz: "U to'g'ri aytdi... Hozir bolalar uchun kattaroq kerak.\n\nJavlon: Hmm... balki haqiqatan ham Equinox ko'rib chiqsak...",
+        ru: 'Он прав... Сейчас для детей нужно побольше.\n\nЖавлон: Хм... может, и правда посмотрим Equinox...',
+      },
+      nextNodeId: 'd3_anniversary_check',
+    },
+
+    // ── d3_pair_reacts_sport ─────────────────────────────────
+    d3_pair_reacts_sport: {
+      id: 'd3_pair_reacts_sport',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'thinking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
+      text: {
+        uz: "Sport rejimi? Jiddiy gapiryapsizmi? Ko'rsating!\n\nNilufar: Ana ko'rdingmi — ikkalamiz uchun ham bor!",
+        ru: 'Спорт-режим? Серьёзно? Покажите!\n\nНилуфар: Вот видишь — и для тебя, и для меня!',
+      },
+      nextNodeId: 'd3_anniversary_check',
+    },
+
+    // ── d3_pair_reacts_tradein ────────────────────────────────
+    d3_pair_reacts_tradein: {
+      id: 'd3_pair_reacts_tradein',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'thinking',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'worried', position: 'right' },
+      ],
+      text: {
+        uz: "Hmm, avval Tracker, keyin almashtirish... Bu variant yomon emas.\n\nNilufar: Lekin yana kutishim kerakmi? Bolalar esa hozir o'syapti...",
+        ru: 'Хм, сначала Tracker, потом обменять... Вариант неплохой.\n\nНилуфар: Но мне опять ждать? А дети растут уже сейчас...',
       },
       nextNodeId: 'd3_anniversary_check',
     },
@@ -185,6 +298,10 @@ export const day3: Day = {
       type: 'dialogue',
       speaker: 'nilufar',
       emotion: 'happy',
+      characters: [
+        { id: 'javlon', emotion: 'thinking', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
       text: {
         uz: "Bilasizmi, kelasi haftada to'yimizning 5 yilligi...",
         ru: 'Знаете, на следующей неделе у нас 5-летие свадьбы...',
@@ -281,6 +398,10 @@ export const day3: Day = {
           uz: "Voy... ajoyib fikr. Xotinim yig'lab yuboradi. Olamiz! Equinox — bizniki.",
           ru: 'Ого... отличная идея. Жена расплачется. Берём! Equinox — наш.',
         },
+        characters: [
+          { id: 'javlon', emotion: 'touched', position: 'left' },
+          { id: 'nilufar', emotion: 'happy', position: 'right' },
+        ],
       },
     },
 
@@ -334,11 +455,14 @@ export const day3: Day = {
       ],
       dialogue: {
         speaker: 'dilnoza',
-        emotion: 'helpful',
+        emotion: 'explaining',
         text: {
           uz: "Er-xotinlar — qiyin mijozlar. Sir: o'rtadagi qadriyatni toping.",
           ru: 'Пары — сложные клиенты. Секрет: найдите общую ценность.',
         },
+        characters: [
+          { id: 'dilnoza', emotion: 'explaining', position: 'center' },
+        ],
       },
     },
   },

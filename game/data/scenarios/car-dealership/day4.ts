@@ -13,6 +13,10 @@ export const day4: Day = {
       type: 'dialogue',
       speaker: 'rustam',
       emotion: 'serious',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'rustam', emotion: 'serious', position: 'center' },
+      ],
       text: {
         uz: "Bugun Abdullaev — qurilish kompaniyasi direktori, VIP. Korporativ sotuv — bu alohida dunyo. B2B texnikasi oddiy B2C dan farq qiladi. Tayyorlanish muhim — professional sotuvchilar doim tayyorlanadi.",
         ru: 'Сегодня Абдуллаев — директор строительной компании, VIP. Корпоративные продажи — отдельный мир. Техника B2B отличается от обычного B2C. Подготовка — профессиональные продавцы всегда готовятся.',
@@ -36,7 +40,7 @@ export const day4: Day = {
             uz: 'Kompaniyasi haqida internetdan izlash',
             ru: 'Погуглить его компанию',
           },
-          nextNodeId: 'd4_abdullaev_enters',
+          nextNodeId: 'd4_anvar_helps',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 8 },
             { type: 'set_flag', flag: 'researched_company' },
@@ -48,7 +52,7 @@ export const day4: Day = {
             uz: "Rustam akadan VIP protokolni so'rash",
             ru: 'Спросить у Рустама про VIP-протокол',
           },
-          nextNodeId: 'd4_abdullaev_enters',
+          nextNodeId: 'd4_anvar_helps',
           effects: [
             { type: 'add_score', dimension: 'rapport', amount: 8 },
             { type: 'set_flag', flag: 'knows_vip_protocol' },
@@ -60,7 +64,7 @@ export const day4: Day = {
             uz: "Moliya bo'limidan fleet chegirma limitini aniqlash",
             ru: 'Уточнить у финансов лимит fleet-скидки',
           },
-          nextNodeId: 'd4_abdullaev_enters',
+          nextNodeId: 'd4_anvar_helps',
           effects: [
             { type: 'add_score', dimension: 'opportunity', amount: 8 },
             { type: 'set_flag', flag: 'has_discount_authority' },
@@ -69,12 +73,45 @@ export const day4: Day = {
       ],
     },
 
+    // ── d4_anvar_helps (conditional — only if researched) ─────
+    d4_anvar_helps: {
+      id: 'd4_anvar_helps',
+      type: 'condition_branch',
+      branches: [
+        {
+          condition: { type: 'flag', flag: 'researched_company' },
+          nextNodeId: 'd4_anvar_info',
+        },
+      ],
+      fallbackNodeId: 'd4_abdullaev_enters',
+    },
+
+    d4_anvar_info: {
+      id: 'd4_anvar_info',
+      type: 'dialogue',
+      speaker: 'anvar',
+      emotion: 'eager',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'anvar', emotion: 'eager', position: 'center' },
+      ],
+      text: {
+        uz: "Men ham izladim — Abdullaev kompaniyasi o'tgan yili 12 ta Cobalt olgan! Katta mijoz ekan.",
+        ru: 'Я тоже поискал — компания Абдуллаева в прошлом году купила 12 Cobalt! Крупный клиент.',
+      },
+      nextNodeId: 'd4_abdullaev_enters',
+    },
+
     // ── d4_abdullaev_enters ───────────────────────────────────
     d4_abdullaev_enters: {
       id: 'd4_abdullaev_enters',
       type: 'dialogue',
       speaker: 'abdullaev',
       emotion: 'impatient',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'impatient', position: 'center' },
+      ],
       text: {
         uz: 'Salom. Vaqtim kam. 3 ta Malibu — menejerlarimga. Va xotinimga Tahoe. Nima taklif bor?',
         ru: 'Здравствуйте. Времени мало. 3 Malibu — менеджерам. И Tahoe жене. Что предложите?',
@@ -97,7 +134,7 @@ export const day4: Day = {
             uz: "Abdullaev janoblari, xush kelibsiz. VIP xonaga marhamat — choy va taqdimot tayyorlab qo'ydim.",
             ru: 'Господин Абдуллаев, добро пожаловать. Прошу в VIP-зону — чай и презентация уже готовы.',
           },
-          nextNodeId: 'd4_fleet',
+          nextNodeId: 'd4_abdullaev_reacts_vip',
           effects: [
             { type: 'add_score', dimension: 'rapport', amount: 15 },
             { type: 'add_score', dimension: 'timing', amount: 5 },
@@ -111,7 +148,7 @@ export const day4: Day = {
             uz: "Xush kelibsiz! Keling, Malibu larni ko'rsataman.",
             ru: 'Добро пожаловать! Давайте покажу Malibu.',
           },
-          nextNodeId: 'd4_fleet',
+          nextNodeId: 'd4_abdullaev_reacts_direct',
           effects: [
             { type: 'add_score', dimension: 'timing', amount: 8 },
           ],
@@ -122,7 +159,7 @@ export const day4: Day = {
             uz: "Salom! Kompaniyangiz kengayayotganini o'qidim — tabriklayman! Flot uchun maxsus shartlarimiz bor.",
             ru: 'Здравствуйте! Читал, что компания расширяется — поздравляю! Для флота есть особые условия.',
           },
-          nextNodeId: 'd4_fleet',
+          nextNodeId: 'd4_abdullaev_reacts_research',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 12 },
             { type: 'add_score', dimension: 'rapport', amount: 5 },
@@ -131,6 +168,57 @@ export const day4: Day = {
           condition: { type: 'flag', flag: 'researched_company' },
         },
       ],
+    },
+
+    // ── d4_abdullaev_reacts_vip ─────────────────────────────────
+    d4_abdullaev_reacts_vip: {
+      id: 'd4_abdullaev_reacts_vip',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'neutral',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'neutral', position: 'center' },
+      ],
+      text: {
+        uz: 'Yaxshi. Tayyorlanibsiz. Choy ichib, ishga kirishamiz. Vaqtim kam — 20 daqiqa.',
+        ru: 'Хорошо. Подготовились. Попьём чаю и к делу. У меня 20 минут.',
+      },
+      nextNodeId: 'd4_fleet',
+    },
+
+    // ── d4_abdullaev_reacts_direct ────────────────────────────
+    d4_abdullaev_reacts_direct: {
+      id: 'd4_abdullaev_reacts_direct',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'impatient',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'impatient', position: 'center' },
+      ],
+      text: {
+        uz: 'Shunchaki ko\'rsatasizmi? Men narx va shart kutayapman. Malibu ko\'rganman — taklif nima?',
+        ru: 'Просто покажете? Я жду цену и условия. Malibu я видел — что предложите?',
+      },
+      nextNodeId: 'd4_fleet',
+    },
+
+    // ── d4_abdullaev_reacts_research ──────────────────────────
+    d4_abdullaev_reacts_research: {
+      id: 'd4_abdullaev_reacts_research',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'impressed',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'impressed', position: 'center' },
+      ],
+      text: {
+        uz: 'O\'qibsiz? Yaxshi. Bilimli sotuvchini yoqtiraman. Maxsus shartlar — eshitaman.',
+        ru: 'Читали? Хорошо. Люблю подготовленных продавцов. Особые условия — слушаю.',
+      },
+      nextNodeId: 'd4_fleet',
     },
 
     // ── d4_fleet ──────────────────────────────────────────────
@@ -150,7 +238,7 @@ export const day4: Day = {
             uz: 'Flot paketi: 3 ta Malibu — har biriga 2 yillik servis, GPS monitoring, va korporativ chegirma 7%.',
             ru: 'Пакет флота: 3 Malibu — каждому 2 года сервиса, GPS мониторинг, корпоративная скидка 7%.',
           },
-          nextNodeId: 'd4_wife_car',
+          nextNodeId: 'd4_fleet_react_package',
           effects: [
             { type: 'add_score', dimension: 'persuasion', amount: 15 },
             { type: 'add_score', dimension: 'expertise', amount: 8 },
@@ -163,7 +251,7 @@ export const day4: Day = {
             uz: "Malibu — biznes segmentda eng ishonchli. Menejerlaringiz uchun ideal. Ranglarni tanlashni boshlaylikmi?",
             ru: 'Malibu — самый надёжный в бизнес-сегменте. Идеален для менеджеров. Начнём выбирать цвета?',
           },
-          nextNodeId: 'd4_wife_car',
+          nextNodeId: 'd4_fleet_react_reliable',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 10 },
             { type: 'add_score', dimension: 'timing', amount: 5 },
@@ -175,7 +263,7 @@ export const day4: Day = {
             uz: "3 ta Malibu uchun maxsus fleet narx — har biri $26,000 ($28k o'rniga). Yiliga $6,000 tejaysiz.",
             ru: 'Специальная fleet-цена на 3 Malibu — $26,000 каждый (вместо $28к). Экономия $6,000 в год.',
           },
-          nextNodeId: 'd4_wife_car',
+          nextNodeId: 'd4_fleet_react_price',
           effects: [
             { type: 'add_score', dimension: 'persuasion', amount: 12 },
             { type: 'add_score', dimension: 'opportunity', amount: 10 },
@@ -194,6 +282,74 @@ export const day4: Day = {
       narrator: {
         uz: "Abdullaev sabrsiz. Siz tayyorlanmagansiz deb o'yladi.",
         ru: 'Абдуллаев нетерпелив. Он подумал, что вы не подготовились.',
+      },
+      nextNodeId: 'd4_fleet_react_timeout',
+    },
+
+    // ── d4_fleet_react_package ────────────────────────────────
+    d4_fleet_react_package: {
+      id: 'd4_fleet_react_package',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'neutral',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'neutral', position: 'center' },
+      ],
+      text: {
+        uz: 'Servis va GPS — bu yaxshi. 7% chegirma... Qabul qilaman. Endi xotinimga Tahoe — gapiring.',
+        ru: 'Сервис и GPS — хорошо. Скидка 7%... Принимается. Теперь про Tahoe для жены.',
+      },
+      nextNodeId: 'd4_wife_car',
+    },
+
+    // ── d4_fleet_react_reliable ───────────────────────────────
+    d4_fleet_react_reliable: {
+      id: 'd4_fleet_react_reliable',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'impatient',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'impatient', position: 'center' },
+      ],
+      text: {
+        uz: 'Ishonchli — bu yaxshi. Lekin rang emas, narx kerak. Chegirma bormi? Endi Tahoe haqida gapiring.',
+        ru: 'Надёжный — хорошо. Но не цвета, а цену давайте. Скидка есть? И расскажите про Tahoe.',
+      },
+      nextNodeId: 'd4_wife_car',
+    },
+
+    // ── d4_fleet_react_price ──────────────────────────────────
+    d4_fleet_react_price: {
+      id: 'd4_fleet_react_price',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'impressed',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'impressed', position: 'center' },
+      ],
+      text: {
+        uz: '$6,000 tejash — bu raqam. Tayyorlanibsiz. Yaxshi. Endi Tahoe — xotinimga.',
+        ru: 'Экономия $6,000 — это цифра. Подготовились. Хорошо. Теперь Tahoe — для жены.',
+      },
+      nextNodeId: 'd4_wife_car',
+    },
+
+    // ── d4_fleet_react_timeout ────────────────────────────────
+    d4_fleet_react_timeout: {
+      id: 'd4_fleet_react_timeout',
+      type: 'dialogue',
+      speaker: 'abdullaev',
+      emotion: 'impatient',
+      background: 'bg_vip_lounge',
+      characters: [
+        { id: 'abdullaev', emotion: 'impatient', position: 'center' },
+      ],
+      text: {
+        uz: 'Javob yo\'qmi? Yaxshi, Tahoe haqida gapiring — balki u yaxshiroq tayyorlangandirsiz.',
+        ru: 'Нет ответа? Ладно, расскажите про Tahoe — может, там подготовились лучше.',
       },
       nextNodeId: 'd4_wife_car',
     },

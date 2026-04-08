@@ -4,7 +4,7 @@
 
 ---
 
-## CHR-C01 | Бобур — День 1 "Первый клиент"
+## CHR-C01 | Бобур — Callback-персонаж (упоминается в День 2)
 
 **ID:** `chr_bobur` | Возраст: 32 | Архетип: Emotional Buyer
 
@@ -85,9 +85,16 @@ with data as if to challenge, sharp questioning look
 expression, nodding slightly, lowering phone, unexpected respect
 ```
 
+### ЭМОЦИЯ 4 — `checking` (проверяет факты):
+```
+[BASE] + looking down at phone then back up, comparing information,
+analytical assessment expression, one eyebrow slightly raised,
+data-driven evaluation body language, neutral lighting
+```
+
 ---
 
-## CHR-C03 | Жавлон — День 3 (муж)
+## CHR-C03 | Жавлон — День 1 (муж)
 
 **ID:** `chr_javlon` | Возраст: 32 | Архетип: Negotiator
 
@@ -124,7 +131,7 @@ hand on chest, the rare emotional breakthrough, warm lighting
 
 ---
 
-## CHR-C04 | Нилуфар — День 3 (жена)
+## CHR-C04 | Нилуфар — День 1 (жена)
 
 **ID:** `chr_nilufar` | Возраст: 30 | Архетип: Emotional Buyer
 
@@ -162,7 +169,7 @@ considering carefully, soft warm interior lighting
 
 ---
 
-## CHR-C05 | Абдуллаев — День 4 "VIP"
+## CHR-C05 | Абдуллаев — День 3 "VIP"
 
 **ID:** `chr_abdullaev` | Возраст: 50 | Архетип: Impulse + Negotiator
 
@@ -202,7 +209,7 @@ level gaze, arms at sides, cool neutral lighting
 
 ---
 
-## CHR-C06 | Сардор — День 5 "Mystery Shopper"
+## CHR-C06 | Сардор — День 3 "Финал — Mystery Shopper"
 
 **ID:** `chr_sardor` | Возраст: 40 | Архетип: Silent → reveals as Authority
 
@@ -258,4 +265,19 @@ notepad visible with positive marks, official but positive expression
 ```
 [REVEALED BASE] + restrained disappointment, formal expression,
 making notes, empathetic but honest assessment look
+```
+
+### ЭМОЦИЯ 7 — `testing_notes` (делает пометки):
+```
+[BASE] + slightly looking down as if mentally noting something,
+subtle concentration around eyes, fingers slightly moving as if
+writing invisible notes, observational but not confrontational,
+neutral soft lighting
+```
+
+### ЭМОЦИЯ 8 — `neutral_alt` (раскрытый, нейтральный):
+```
+[REVEALED BASE] + calm professional assessment, neither impressed
+nor disappointed, balanced objective expression, standing straight,
+official inspector demeanor, even balanced lighting
 ```

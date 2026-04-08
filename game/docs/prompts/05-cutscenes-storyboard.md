@@ -110,7 +110,7 @@ cinematic style, 4 seconds, confident business woman energy, Tashkent setting
 
 ---
 
-## CUT-03 | День 3 — Интро "Er-xotin"
+## CUT-03 | День 1 — Пара входит "Juftlik keldi"
 
 **Инструмент:** Kling 3.0
 **Длительность:** 5 секунд
@@ -151,7 +151,7 @@ GTA V cinematic style, 5 seconds, warm afternoon light, natural couple energy
 
 ---
 
-## CUT-04 | День 4 — Интро "VIP"
+## CUT-04 | День 3 — Интро "VIP va Yakuniy Sinov"
 
 **Инструмент:** Veo3 (для драматики)
 **Длительность:** 6 секунд
@@ -162,40 +162,44 @@ GTA V cinematic style, 5 seconds, warm afternoon light, natural couple energy
 
 **Промпт Gemini:**
 ```
-GTA V loading screen art style, dealership parking lot exterior, a black
-Mercedes S-Class pulls up slowly, dramatic low angle shot emphasizing
-power and wealth, sunlight gleaming off black hood, chrome grille catching
-light, VIP energy, slight dust from entrance, Tashkent architecture in
-background, semi-realistic illustration, Rockstar Games quality, 1920x1080
+GTA V loading screen art style, Chevrolet dealership main entrance exterior,
+a black Mercedes S-Class pulls up to the glass doors, dramatic low angle shot
+from inside looking out through glass facade, powerful CEO silhouette
+approaching main entrance, sunlight gleaming off black hood, chrome grille
+catching light, VIP energy, modern glass doors and Chevrolet logo visible,
+Tashkent architecture in background, semi-realistic illustration, Rockstar
+Games quality, 1920x1080
 ```
 
 ### ПОСЛЕДНИЙ КАДР (`cut_day4_frame_end`)
 
 **Промпт Gemini:**
 ```
-GTA V loading screen art style, close-up of powerful hand pressing showroom
-doorbell/buzzer, expensive Rolex watch and gold ring visible, manicured hand
-of powerful CEO, dealership glass door partially visible, anticipation and
-power in the composition, warm exterior light, semi-realistic illustration,
-Rockstar Games quality, 1920x1080, cinematic crop
+GTA V loading screen art style, close-up of powerful hand pushing through
+main glass dealership door, expensive Rolex watch and gold ring visible,
+manicured hand of powerful CEO, dealership glass entrance doors swinging open,
+anticipation and power in the composition, warm exterior light streaming
+through glass, semi-realistic illustration, Rockstar Games quality, 1920x1080,
+cinematic crop
 ```
 
 ### ПРОМПТ ДЛЯ Veo3:
 ```
 Cinematic 6-second sequence GTA V art style: black Mercedes S-Class enters
-frame in slow motion from the side, low dramatic angle, pulls up to luxury
-Chevrolet dealership entrance, engine sound fades, driver door opens, powerful
-50-year-old Uzbek CEO in expensive suit steps out, straightens jacket with
-authority, looks at the dealership with ownership energy, slow push in to
-close-up of his Rolex watch as he reaches for the door, atmosphere of power
-and money, warm golden afternoon light, semi-realistic aesthetic, cinematic 24fps
+frame in slow motion from the side, low dramatic angle, pulls up to the main
+glass entrance of Chevrolet dealership, engine sound fades, driver door opens,
+powerful 50-year-old Uzbek CEO in expensive suit steps out, straightens jacket
+with authority, walks toward the main glass doors of the dealership, slow push
+in to close-up of his Rolex watch as he pushes through the glass entrance door,
+atmosphere of power and money, warm golden afternoon light, semi-realistic
+aesthetic, cinematic 24fps
 ```
 
 **Звук для Veo3:** `luxury car engine purring then stopping, expensive door thud, slow confident footsteps on asphalt`
 
 ---
 
-## CUT-05 | День 5 — Интро "Oxirgi Sinov"
+## CUT-05 | День 3 — Sardor kiradi (ikkinchi yarimi)
 
 **Инструмент:** Veo3
 **Длительность:** 5 секунд
@@ -206,43 +210,44 @@ and money, warm golden afternoon light, semi-realistic aesthetic, cinematic 24fp
 
 **Промпт Gemini:**
 ```
-GTA V loading screen art style, Chevrolet dealership exterior at 9 AM,
-overcast grey sky creating tension, dealership looks normal but atmosphere
-feels different — testing day, low angle looking up at building, Chevrolet
-logo slightly less gleaming under grey light, empty parking lot with just
-a few cars, subtle unease in composition, semi-realistic illustration,
-Rockstar Games quality, 1920x1080
+GTA V loading screen art style, Chevrolet dealership exterior afternoon,
+warm golden afternoon sunlight on glass facade, same day as VIP visit but
+hours later, dealership bustling with quiet energy, low angle looking at
+entrance, Chevrolet logo gleaming in warm afternoon light, a few cars in
+parking lot, subtle shift in atmosphere — something new is coming,
+semi-realistic illustration, Rockstar Games quality, 1920x1080
 ```
 
 ### ПОСЛЕДНИЙ КАДР (`cut_day5_frame_end`)
 
 **Промпт Gemini:**
 ```
-GTA V loading screen art style, interior of dealership, ordinary looking
-Uzbek man in plain clothes (Sardor in disguise) standing near entrance looking
-around, his back to camera but sharp observant posture reveals hidden purpose,
-he's memorizing everything, other staff visible in background going about
-normal day unaware, tension in composition despite quiet normal scene,
+GTA V loading screen art style, interior of dealership afternoon light,
+ordinary looking Uzbek man in plain clothes (Sardor in disguise) standing
+near entrance looking around, his back to camera but sharp observant posture
+reveals hidden purpose, he's memorizing everything, other staff visible in
+background going about normal day unaware, warm afternoon light streaming
+through windows, tension in composition despite quiet normal scene,
 semi-realistic illustration, Rockstar Games quality, 1920x1080
 ```
 
 ### ПРОМПТ ДЛЯ Veo3:
 ```
-Cinematic 5-second sequence GTA V art style: overcast morning at Chevrolet
-dealership in Tashkent, tension in the air, camera drifts slowly along
-building exterior showing normal dealership operations through glass windows,
-cut to inside where we see a plainly dressed man enter and stand quietly near
-entrance, camera slowly pushes in on the back of his head as he surveys the
-showroom with sharp unseen intelligence, he looks like nobody — but his
-posture screams observer, mystery and tension, grey cool color grade,
-semi-realistic illustrated aesthetic, 24fps
+Cinematic 5-second sequence GTA V art style: warm afternoon at Chevrolet
+dealership in Tashkent, mid-day transition energy, camera drifts slowly along
+building exterior showing normal dealership operations through glass windows
+bathed in golden afternoon light, cut to inside where we see a plainly dressed
+man enter and stand quietly near entrance, camera slowly pushes in on the back
+of his head as he surveys the showroom with sharp unseen intelligence, he looks
+like nobody — but his posture screams observer, mystery and tension, warm
+afternoon color grade, semi-realistic illustrated aesthetic, 24fps
 ```
 
-**Звук для Veo3:** `quiet ambient showroom, normal day sounds, subtle ominous undercurrent in music`
+**Звук для Veo3:** `quiet ambient showroom, normal afternoon sounds, subtle ominous undercurrent in music`
 
 ---
 
-## CUT-06 | Grandmaster Ending — "Taklif"
+## CUT-06 | День 3 финал — Grandmaster Ending "Taklif"
 
 **Инструмент:** Veo3 (героический момент)
 **Длительность:** 7 секунд
@@ -285,6 +290,41 @@ illustrated aesthetic, 24fps, cinematic quality
 ```
 
 **Звук для Veo3:** `triumphant orchestral swell, applause, uplifting celebration music`
+
+---
+
+## CUT-07 | День 1 — Тест-драйв пары
+
+**Инструмент:** Kling 3.0
+**Длительность:** 5 секунд
+
+### ПЕРВЫЙ КАДР (`cut_test_drive_start`)
+**Промпт Gemini:**
+```
+GTA V loading screen art style, Chevrolet dealership parking lot, young Uzbek
+couple approaching a white Chevrolet Equinox with a sales consultant, afternoon
+golden sunlight, excited anticipation on faces, car keys being handed over,
+semi-realistic illustration, Rockstar Games quality, 1920x1080
+```
+
+### ПОСЛЕДНИЙ КАДР (`cut_test_drive_end`)
+**Промпт Gemini:**
+```
+GTA V loading screen art style, white Chevrolet Equinox driving through
+Tashkent boulevard, young Uzbek couple visible inside through windshield,
+husband driving wife smiling, tree-lined street with afternoon golden light,
+slight motion blur, freedom and excitement mood, semi-realistic illustration,
+Rockstar Games quality, 1920x1080
+```
+
+### ПРОМПТ ДЛЯ KLING 3.0:
+```
+Chevrolet dealership parking lot, young couple getting into white Equinox,
+consultant waves goodbye, car starts and drives out of parking lot onto
+Tashkent city boulevard, camera follows from medium distance then cuts to
+street-level tracking shot of car driving through tree-lined avenue,
+golden afternoon light, GTA V cinematic style, 5 seconds, excitement energy
+```
 
 ---
 

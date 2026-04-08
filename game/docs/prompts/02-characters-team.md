@@ -53,7 +53,7 @@ tired eyes showing concern not anger
 
 ## CHR-T02 | Дильноза — Старший коллега
 
-**ID:** `chr_dilnoza` | Возраст: 30 | 3 эмоции
+**ID:** `chr_dilnoza` | Возраст: 30 | 5 эмоций
 
 ---
 
@@ -85,6 +85,20 @@ amused competitive expression, crossed arms, cool confident lighting
 ```
 [BASE] + genuine helpful smile, open palm gesture, leaning slightly in,
 warm cooperative expression, softer lighting, collegial body language
+```
+
+### ЭМОЦИЯ 4 — `explaining` (объясняет):
+```
+[BASE] + animated explaining gesture with both hands, engaged teaching
+expression, leaning forward slightly, eyebrows raised for emphasis,
+warm instructive lighting, mentor energy
+```
+
+### ЭМОЦИЯ 5 — `proud` (гордится учеником):
+```
+[BASE] + genuine proud smile, slight nod of approval, arms uncrossed
+and relaxed, warm glow in eyes, the satisfaction of seeing someone
+succeed, warm golden lighting
 ```
 
 ---

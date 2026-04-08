@@ -69,9 +69,9 @@ export default function ChoicePanel({
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
-      className="absolute bottom-[25dvh] left-0 right-0 px-4 py-2 z-20"
+      className="absolute bottom-[28dvh] left-0 right-0 px-4 py-3 z-20"
       onClick={(e) => e.stopPropagation()}
-      style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
     >
       {/* Timer bar */}
       {timerPercent !== null && (
@@ -98,12 +98,12 @@ export default function ChoicePanel({
                 multiSelect ? handleToggle(index) : onSelect(index)
               }
               className={`
-                w-full text-left rounded-lg p-3 text-white text-sm
-                border border-white/20 transition-colors
+                w-full text-left rounded-lg p-4 text-white text-base font-medium
+                border border-white/30 transition-all
                 ${
                   multiSelect && isSelected
-                    ? 'bg-blue-500/30 border-blue-400/40'
-                    : 'bg-neutral-900/80 hover:bg-neutral-800/80 active:bg-blue-500/30'
+                    ? 'bg-blue-500/30 border-blue-400/50 shadow-[0_0_12px_rgba(59,130,246,0.3)]'
+                    : 'bg-neutral-900/80 hover:bg-neutral-800/80 hover:border-white/50 hover:shadow-[0_0_8px_rgba(255,255,255,0.1)] active:bg-blue-500/30'
                 }
               `}
             >

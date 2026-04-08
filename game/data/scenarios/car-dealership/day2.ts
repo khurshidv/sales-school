@@ -8,7 +8,7 @@ export const day2: Day = {
     ru: 'Требовательный клиент',
   },
   rootNodeId: 'd2_intro',
-  targetScore: 40,
+  targetScore: 45,
   nodes: {
     d2_intro: {
       id: 'd2_intro',
@@ -20,8 +20,8 @@ export const day2: Day = {
         { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
-        uz: 'Bugun Kamola xonim keladi — u hamma narsani biladi. Unga o\'rgatmang. Bu siz uchun FAB texnikasini sinab ko\'rish imkoniyati: Feature, Advantage, Benefit. Uch so\'z — bitta tizim.',
-        ru: 'Сегодня придёт Камола — она всё знает. Не учите её. Это ваш шанс попробовать технику FAB: Feature, Advantage, Benefit. Три слова — одна система.',
+        uz: 'Bugungi mijoz — hamma narsani biladi. Unga o\'rgatmang. Sizning vazifangiz: xususiyat emas, QIYMAT ko\'rsating.',
+        ru: 'Сегодняшний клиент — всё знает наперёд. Не учите её. Ваша задача: показать ЦЕННОСТЬ, а не характеристики.',
       },
       nextNodeId: 'd2_anvar_files',
     },
@@ -37,8 +37,8 @@ export const day2: Day = {
         { id: 'anvar', emotion: 'nervous', position: 'right' },
       ],
       text: {
-        uz: 'Rustam aka, Kamola xonimning oldingi so\'rovlari... Malibu va K5 haqida so\'ragan ekan.',
-        ru: 'Рустам-ака, предыдущие запросы Камолы... Она спрашивала про Malibu и K5.',
+        uz: 'Rustam aka, Kamola xonim oldin ham so\'ragan ekan. Malibu va K5 ni solishtirgan.',
+        ru: 'Рустам-ака, Камола уже обращалась раньше. Сравнивала Malibu и K5.',
       },
       nextNodeId: 'd2_callback_check',
     },
@@ -61,8 +61,8 @@ export const day2: Day = {
       speaker: 'narrator',
       emotion: null,
       text: {
-        uz: 'Telefon jiringladi — kechagi Bobur qo\'ng\'iroq qildi. Xotini bilan test-drayvga kelmoqchi!',
-        ru: 'Зазвонил телефон — вчерашний Бобур звонит. Хочет приехать с женой на тест-драйв!',
+        uz: 'Telefon jiringladi — kechagi er-xotin! Javlon qo\'ng\'iroq qildi: Nilufar bilan gaplashgan, Equinox ga qaytmoqchi!',
+        ru: 'Зазвонил телефон — вчерашняя пара! Жавлон звонит: обсудил с Нилуфар, хотят вернуться за Equinox!',
       },
       effects: [
         { type: 'add_score', amount: 5, dimension: 'opportunity' },
@@ -81,8 +81,8 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'confident', position: 'center' },
       ],
       text: {
-        uz: 'Salom. Malibu ko\'rmoqchiman. Kia K5 bilan solishtirib bo\'ldim, Malibu yutadi — lekin narxi baland.',
-        ru: 'Здравствуйте. Хочу посмотреть Malibu. Я уже сравнила с Kia K5 — Malibu выигрывает, но цена выше.',
+        uz: 'Salom. Malibu ga keldim. K5 bilan taqqosladim — Malibu yaxshiroq. Lekin narxi balandroq.',
+        ru: 'Здравствуйте. Пришла за Malibu. Сравнила с K5 — Malibu лучше. Но цена выше.',
       },
       nextNodeId: 'd2_presentation',
     },
@@ -91,15 +91,15 @@ export const day2: Day = {
       id: 'd2_presentation',
       type: 'choice',
       prompt: {
-        uz: 'Kamola xonimga qanday prezentatsiya qilasiz?',
-        ru: 'Как будете презентовать Камоле?',
+        uz: 'Kamola xonimga qanday yondashishni tanlang.',
+        ru: 'Как подойдёте к Камоле?',
       },
       choices: [
         {
           id: 'd2_presentation_a',
           text: {
-            uz: 'Siz allaqachon yaxshi tahlil qilgansiz. Men faqat K5 da yo\'q farqlarni aytaman — adaptive cruise va 360\u00B0 kamera.',
-            ru: 'Вы уже отлично проанализировали. Покажу только то, чего нет у K5 — адаптивный круиз и камера 360\u00B0.',
+            uz: 'Siz yaxshi tahlil qilgansiz. Men faqat K5 da yo\'q narsalarni ko\'rsataman.',
+            ru: 'Вы отлично разобрались. Покажу только то, чего нет у K5.',
           },
           effects: [
             { type: 'add_score', amount: 15, dimension: 'expertise' },
@@ -111,8 +111,8 @@ export const day2: Day = {
         {
           id: 'd2_presentation_b',
           text: {
-            uz: 'Malibu biznes-klass segmentida eng yaxshi narx-sifat nisbati. Keling, asosiy xususiyatlarni ko\'rib chiqamiz.',
-            ru: 'Malibu — лучшее соотношение цена-качество в бизнес-классе. Давайте пройдёмся по основным характеристикам.',
+            uz: 'Malibu o\'z segmentida eng yaxshi tanlov. Keling, birga ko\'rib chiqamiz.',
+            ru: 'Malibu — лучший выбор в своём сегменте. Давайте посмотрим вместе.',
           },
           effects: [
             { type: 'add_score', amount: 10, dimension: 'expertise' },
@@ -123,8 +123,8 @@ export const day2: Day = {
         {
           id: 'd2_presentation_c',
           text: {
-            uz: 'Qaysi jihati sizga eng muhim — qulaylik, xavfsizlik yoki texnologiyalar?',
-            ru: 'Что для вас важнее всего — комфорт, безопасность или технологии?',
+            uz: 'Sizga eng muhimi nima — qulaylik, xavfsizlik yoki texnologiya?',
+            ru: 'Что для вас важнее — комфорт, безопасность или технологии?',
           },
           effects: [
             { type: 'add_score', amount: 8, dimension: 'discovery' },
@@ -146,8 +146,8 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Adaptive cruise va 360° kamera — bu yaxshi. Lekin K5 da ham kamera bor. 3 ming farq faqat cruise uchunmi?',
-        ru: 'Адаптивный круиз и камера 360° — это хорошо. Но у K5 тоже есть камера. 3 тысячи разницы — только за круиз?',
+        uz: 'Yaxshi. Lekin K5 da ham kamera bor. 3 ming dollar farq — faqat qo\'shimcha funksiyalar uchunmi?',
+        ru: 'Хорошо. Но у K5 тоже есть камера. 3 тысячи разницы — только за доп. функции?',
       },
       nextNodeId: 'd2_objection',
     },
@@ -162,8 +162,8 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Narx-sifat nisbati — bu chiroyli gap. Lekin K5 — 25 ming, Malibu — 28 ming. 3 ming farq uchun konkret nima olaman?',
-        ru: 'Соотношение цена-качество — красиво звучит. Но K5 — 25 тысяч, Malibu — 28. За 3 тысячи конкретно что получу?',
+        uz: 'Chiroyli gapirasiz. Lekin K5 — 25 ming, Malibu — 28 ming. 3 ming uchun aniq nima olaman?',
+        ru: 'Красиво говорите. Но K5 — 25 тысяч, Malibu — 28. За 3 тысячи — конкретно что получу?',
       },
       nextNodeId: 'd2_objection',
     },
@@ -178,8 +178,8 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'confident', position: 'center' },
       ],
       text: {
-        uz: 'Texnologiyalar va qulaylik. Lekin men buni allaqachon bilaman — K5 bilan solishtirdim. Savol boshqa: 3 ming farq uchun nima olaman?',
-        ru: 'Технологии и комфорт. Но я это уже знаю — сравнивала с K5. Вопрос другой: за 3 тысячи разницы — что получу?',
+        uz: 'Texnologiya va qulaylik. Lekin buni bilaman — K5 bilan solishtirdim. Savol boshqa: 3 ming uchun nima beradi?',
+        ru: 'Технологии и комфорт. Но я это знаю — сравнивала с K5. Вопрос: за 3 тысячи — что получу?',
       },
       nextNodeId: 'd2_objection',
     },
@@ -188,7 +188,7 @@ export const day2: Day = {
       id: 'd2_objection',
       type: 'choice',
       prompt: {
-        uz: 'Narx e\'tiroziga qanday javob berasiz?',
+        uz: 'Narx bo\'yicha e\'tirozga qanday javob berasiz?',
         ru: 'Как ответите на возражение по цене?',
       },
       timeLimit: 10,
@@ -197,8 +197,8 @@ export const day2: Day = {
         {
           id: 'd2_objection_a',
           text: {
-            uz: '3 ming — bu 2 yillik bepul servis. K5 da yo\'q. Yiliga 1500 tejaysiz servisga.',
-            ru: '3 тысячи — это 2 года бесплатного сервиса. У K5 нет. Экономия $1500 в год на обслуживании.',
+            uz: '3 ming — bu 2 yillik bepul servis. K5 da yo\'q. Yiliga 1500 tejaysiz.',
+            ru: '3 тысячи — это 2 года бесплатного сервиса. У K5 нет. Экономия $1500 в год.',
           },
           effects: [
             { type: 'add_score', amount: 15, dimension: 'persuasion' },
@@ -210,8 +210,8 @@ export const day2: Day = {
         {
           id: 'd2_objection_b',
           text: {
-            uz: 'Tushunaman. Ko\'p mijozlarimiz ham shunday o\'ylagan, lekin Malibu egalari o\'z tanlovlaridan mamnun — qayta sotish narxi ham yuqori.',
-            ru: 'Понимаю. Многие клиенты думали так же, но владельцы Malibu довольны — и перепродажная стоимость выше.',
+            uz: 'Tushunaman. Ko\'pchilik shunday o\'ylagan. Lekin Malibu egalari mamnun — qayta sotsangiz ham narxi yuqori.',
+            ru: 'Понимаю. Многие думали так же. Но владельцы Malibu довольны — и при перепродаже цена выше.',
           },
           effects: [
             { type: 'add_score', amount: 10, dimension: 'persuasion' },
@@ -241,8 +241,8 @@ export const day2: Day = {
       type: 'score',
       effects: [{ type: 'add_score', amount: -8, dimension: 'timing' }],
       narrator: {
-        uz: 'Siz javob topa olmadingiz. Kamola xonim sabrsizlanmoqda.',
-        ru: 'Вы не нашли что ответить. Камола теряет терпение.',
+        uz: 'Javob topa olmadingiz. Kamola sabrsizlanmoqda.',
+        ru: 'Вы не нашли ответа. Камола теряет терпение.',
       },
       nextNodeId: 'd2_kamola_reacts_timeout',
     },
@@ -257,10 +257,10 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Hmm, 2 yillik servis... Yiliga 1500 tejash — bu hisob-kitob qiladigan gap. Qiziq.',
-        ru: 'Хм, 2 года сервиса... Экономия $1500 в год — это уже считаемый аргумент. Интересно.',
+        uz: 'Hmm, 2 yillik servis... Yiliga 1500 tejash — bu hisoblasa arziydi. Qiziq.',
+        ru: 'Хм, 2 года сервиса... $1500 в год экономии — если посчитать, выгодно. Интересно.',
       },
-      nextNodeId: 'd2_closing',
+      nextNodeId: 'd2_test_drive_offer',
     },
 
     d2_kamola_reacts_resale: {
@@ -273,10 +273,10 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Qayta sotish narxi... Bu to\'g\'ri, lekin K5 ham likvidli mashina. Boshqa argument bormi?',
-        ru: 'Перепродажная стоимость... Это верно, но K5 тоже ликвидна. Ещё аргументы есть?',
+        uz: 'Qayta sotish narxi... To\'g\'ri, lekin K5 ham yaxshi sotiladi. Yana nimasi bor?',
+        ru: 'Перепродажная стоимость... Верно, но K5 тоже хорошо продаётся. Что ещё?',
       },
-      nextNodeId: 'd2_closing',
+      nextNodeId: 'd2_test_drive_offer',
     },
 
     d2_kamola_reacts_discount: {
@@ -289,10 +289,10 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'skeptical', position: 'center' },
       ],
       text: {
-        uz: 'Chegirma? Men chegirma uchun emas, argument uchun keldim. Malibu nimasi bilan yaxshiroq — shuni ayting.',
-        ru: 'Скидка? Я пришла не за скидками, а за аргументами. Скажите, чем Malibu лучше — конкретно.',
+        uz: 'Chegirma? Men chegirma uchun kelganim yo\'q. Nimasi yaxshiroq — shuni ayting.',
+        ru: 'Скидка? Я не за скидками пришла. Скажите — чем Malibu лучше.',
       },
-      nextNodeId: 'd2_closing',
+      nextNodeId: 'd2_test_drive_offer',
     },
 
     d2_kamola_reacts_timeout: {
@@ -305,11 +305,171 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'skeptical', position: 'center' },
       ],
       text: {
-        uz: 'Javob yo\'qmi? Demak, 3 ming farq uchun argument yo\'q. Qiziq...',
-        ru: 'Нет ответа? Значит, за 3 тысячи разницы аргументов нет. Интересно...',
+        uz: 'Javob yo\'qmi? Demak, 3 ming uchun argument yo\'q ekan.',
+        ru: 'Нет ответа? Значит, аргументов за 3 тысячи нет.',
+      },
+      nextNodeId: 'd2_test_drive_offer',
+    },
+
+    // ─── TEST DRIVE SCENE ───────────────────────────────────
+
+    d2_test_drive_offer: {
+      id: 'd2_test_drive_offer',
+      type: 'choice',
+      prompt: {
+        uz: 'Kamola hali ikkilanmoqda. Nima qilasiz?',
+        ru: 'Камола пока сомневается. Что сделаете?',
+      },
+      choices: [
+        {
+          id: 'd2_test_drive_offer_a',
+          text: {
+            uz: 'Test-drayv qilamizmi? Rulga o\'tirsangiz, farq o\'zi gapiradi.',
+            ru: 'Поедем на тест-драйв? Сядете за руль — разница скажет сама.',
+          },
+          effects: [
+            { type: 'add_score', amount: 10, dimension: 'timing' },
+            { type: 'add_score', amount: 5, dimension: 'persuasion' },
+            { type: 'set_flag', flag: 'offered_test_drive_d2' },
+          ],
+          nextNodeId: 'd2_test_drive',
+        },
+        {
+          id: 'd2_test_drive_offer_b',
+          text: {
+            uz: 'Keling, yakunlashtiramiz. Yana savollar bormi?',
+            ru: 'Давайте подведём итог. Есть ещё вопросы?',
+          },
+          effects: [
+            { type: 'add_score', amount: 3, dimension: 'timing' },
+          ],
+          nextNodeId: 'd2_closing',
+        },
+      ],
+    },
+
+    d2_test_drive: {
+      id: 'd2_test_drive',
+      type: 'dialogue',
+      speaker: 'narrator',
+      emotion: null,
+      background: 'bg_test_drive_city',
+      characters: [],
+      text: {
+        uz: 'Kamola rulga o\'tirdi. Malibu Toshkent ko\'chalarida ohista suzib bormoqda.',
+        ru: 'Камола села за руль. Malibu плавно скользит по улицам Ташкента.',
+      },
+      nextNodeId: 'd2_kamola_drives',
+    },
+
+    d2_kamola_drives: {
+      id: 'd2_kamola_drives',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'impressed',
+      background: 'bg_test_drive_interior',
+      characters: [
+        { id: 'kamola', emotion: 'impressed', position: 'center' },
+      ],
+      text: {
+        uz: 'Hmm... podveska K5 dan yumshoqroq. Ichkarisi ham juda chiroyli — premium his qilyapman.',
+        ru: 'Хм... подвеска мягче, чем у K5. И салон — реально премиум чувствуется.',
+      },
+      nextNodeId: 'd2_test_drive_choice',
+    },
+
+    d2_test_drive_choice: {
+      id: 'd2_test_drive_choice',
+      type: 'choice',
+      prompt: {
+        uz: 'Kamola haydayotganda nima deysiz?',
+        ru: 'Что скажете, пока Камола ведёт?',
+      },
+      choices: [
+        {
+          id: 'd2_test_drive_choice_a',
+          text: {
+            uz: 'Avtopilotni ko\'ring — qo\'yib qo\'ying, mashina o\'zi oqimga tushadi.',
+            ru: 'Попробуйте круиз — включите, и машина сама держит поток.',
+          },
+          effects: [
+            { type: 'add_score', amount: 10, dimension: 'expertise' },
+            { type: 'set_flag', flag: 'test_drive_cruise' },
+          ],
+          nextNodeId: 'd2_kamola_test_reaction',
+        },
+        {
+          id: 'd2_test_drive_choice_b',
+          text: {
+            uz: '360 kamerani ko\'ring — Toshkentda parkovka oson bo\'ladi.',
+            ru: 'Попробуйте камеру 360° — парковка в Ташкенте станет проще.',
+          },
+          effects: [
+            { type: 'add_score', amount: 8, dimension: 'expertise' },
+            { type: 'add_score', amount: 5, dimension: 'empathy' },
+          ],
+          nextNodeId: 'd2_kamola_test_reaction',
+        },
+        {
+          id: 'd2_test_drive_choice_c',
+          text: {
+            uz: 'Jim turaman. O\'zi his qilsin.',
+            ru: 'Молчу. Пусть сама почувствует.',
+          },
+          effects: [
+            { type: 'add_score', amount: 10, dimension: 'rapport' },
+            { type: 'add_score', amount: 5, dimension: 'timing' },
+          ],
+          nextNodeId: 'd2_kamola_test_reaction',
+        },
+      ],
+    },
+
+    d2_kamola_test_reaction: {
+      id: 'd2_kamola_test_reaction',
+      type: 'condition_branch',
+      branches: [
+        {
+          condition: { type: 'flag', flag: 'test_drive_cruise' },
+          nextNodeId: 'd2_kamola_test_cruise',
+        },
+      ],
+      fallbackNodeId: 'd2_kamola_test_general',
+    },
+
+    d2_kamola_test_cruise: {
+      id: 'd2_kamola_test_cruise',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'impressed',
+      background: 'bg_test_drive_interior',
+      characters: [
+        { id: 'kamola', emotion: 'impressed', position: 'center' },
+      ],
+      text: {
+        uz: 'Voy... Mashina o\'zi tezlikni ushlab turibdi. Toshkent-Samarqand yo\'lida zo\'r bo\'ladi.',
+        ru: 'Ого... Машина сама держит скорость. На трассе Ташкент-Самарканд — это супер.',
       },
       nextNodeId: 'd2_closing',
     },
+
+    d2_kamola_test_general: {
+      id: 'd2_kamola_test_general',
+      type: 'dialogue',
+      speaker: 'kamola',
+      emotion: 'impressed',
+      background: 'bg_test_drive_interior',
+      characters: [
+        { id: 'kamola', emotion: 'impressed', position: 'center' },
+      ],
+      text: {
+        uz: 'Haydashda farq boshqa. Raqamlar bir narsa, his etish — boshqa narsa.',
+        ru: 'За рулём — другое дело. Цифры — это одно, а чувствовать — совсем другое.',
+      },
+      nextNodeId: 'd2_closing',
+    },
+
+    // ─── CLOSING ────────────────────────────────────────────
 
     d2_closing: {
       id: 'd2_closing',
@@ -322,19 +482,6 @@ export const day2: Day = {
         {
           id: 'd2_closing_a',
           text: {
-            uz: 'Test-drayvga chiqamizmi? O\'tirib ko\'rganingizda farq boshqacha his etiladi.',
-            ru: 'Поедем на тест-драйв? Когда сядете за руль, разница чувствуется совсем иначе.',
-          },
-          effects: [
-            { type: 'add_score', amount: 12, dimension: 'timing' },
-            { type: 'add_score', amount: 5, dimension: 'persuasion' },
-            { type: 'set_flag', flag: 'offered_test_drive_d2' },
-          ],
-          nextNodeId: 'd2_check',
-        },
-        {
-          id: 'd2_closing_b',
-          text: {
             uz: 'Ma\'lumotlarni telegramga yuborsam bo\'ladimi? Solishtirish jadvalini tayyorlayman.',
             ru: 'Могу отправить в телеграм? Подготовлю сравнительную таблицу.',
           },
@@ -346,15 +493,28 @@ export const day2: Day = {
           nextNodeId: 'd2_check',
         },
         {
-          id: 'd2_closing_c',
+          id: 'd2_closing_b',
           text: {
-            uz: 'Hozir qaror qilsangiz, maxsus shartlar taklif qila olaman.',
-            ru: 'Если решите сейчас, могу предложить особые условия.',
+            uz: 'Bugun qaror qilsangiz, maxsus shartlar taklif qilaman.',
+            ru: 'Если решите сегодня — предложу особые условия.',
           },
           effects: [
             { type: 'add_score', amount: 5, dimension: 'timing' },
             { type: 'add_score', amount: -3, dimension: 'rapport' },
             { type: 'set_flag', flag: 'pressure_close' },
+          ],
+          nextNodeId: 'd2_check',
+        },
+        {
+          id: 'd2_closing_c',
+          text: {
+            uz: 'O\'ylab ko\'ring, shoshilmang. Savollar bo\'lsa — yozing.',
+            ru: 'Подумайте, не торопитесь. Будут вопросы — пишите.',
+          },
+          effects: [
+            { type: 'add_score', amount: 10, dimension: 'rapport' },
+            { type: 'add_score', amount: 5, dimension: 'empathy' },
+            { type: 'set_flag', flag: 'soft_close' },
           ],
           nextNodeId: 'd2_check',
         },
@@ -369,18 +529,18 @@ export const day2: Day = {
           condition: {
             type: 'and',
             conditions: [
-              { type: 'score_gte', value: 35 },
+              { type: 'score_gte', value: 40 },
               { type: 'flag', flag: 'respected_knowledge' },
             ],
           },
           nextNodeId: 'd2_end_hidden',
         },
         {
-          condition: { type: 'score_gte', value: 32 },
+          condition: { type: 'score_gte', value: 35 },
           nextNodeId: 'd2_end_success',
         },
         {
-          condition: { type: 'score_gte', value: 18 },
+          condition: { type: 'score_gte', value: 20 },
           nextNodeId: 'd2_end_partial',
         },
       ],
@@ -401,8 +561,8 @@ export const day2: Day = {
         speaker: 'kamola',
         emotion: 'impressed',
         text: {
-          uz: 'Bilasizmi, siz boshqalarga o\'xshamaysiz. Dugonalarimga ham aytaman — sizga kelsinlar.',
-          ru: 'Знаете, вы не похожи на остальных. Скажу подругам — пусть к вам приходят.',
+          uz: 'Bilasizmi, siz boshqalarga o\'xshamaysiz. Dugonalarimga aytaman — sizga kelsinlar.',
+          ru: 'Знаете, вы не как все. Скажу подругам — пусть приходят к вам.',
         },
       },
     },
@@ -419,8 +579,8 @@ export const day2: Day = {
         speaker: 'rustam',
         emotion: 'proud',
         text: {
-          uz: 'Kamola xonim qiyin mijoz, lekin siz yaxshi ishladingiz. E\'tirozga javob berdingiz — bu muhim.',
-          ru: 'Камола — сложный клиент, но вы справились. Ответили на возражение — это важно.',
+          uz: 'Kamola oson mijoz emas, lekin siz yaxshi ishladingiz. E\'tirozga javob berdingiz.',
+          ru: 'Камола — непростой клиент, но вы справились. Ответили на возражение.',
         },
       },
     },
@@ -437,8 +597,8 @@ export const day2: Day = {
         speaker: 'rustam',
         emotion: 'serious',
         text: {
-          uz: 'Kamola xonim ketdi, lekin qaytishi noaniq. Narx e\'tiroziga kuchliroq javob kerak edi.',
-          ru: 'Камола ушла, но вернётся ли — неизвестно. Нужен был более сильный ответ на возражение по цене.',
+          uz: 'Kamola ketdi, qaytishi noaniq. Narx savoli uchun kuchliroq javob kerak edi.',
+          ru: 'Камола ушла, вернётся ли — вопрос. Нужен был более сильный ответ на цену.',
         },
       },
     },
@@ -456,7 +616,7 @@ export const day2: Day = {
         speaker: 'rustam',
         emotion: 'disappointed',
         text: {
-          uz: 'Kamola xonim ketdi. Eslab qoling: bilimli mijozga hurmat ko\'rsating, o\'rgatmang.',
+          uz: 'Kamola ketdi. Eslab qoling: bilimli mijozga hurmat ko\'rsating, ma\'ruza o\'qimang.',
           ru: 'Камола ушла. Запомните: знающему клиенту — уважение, а не лекции.',
         },
       },

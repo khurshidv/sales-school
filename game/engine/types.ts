@@ -161,6 +161,18 @@ export type GameEvent =
   | { type: 'coins_changed'; amount: number; newTotal: number }
   | { type: 'sound_requested'; soundId: string };
 
+// --- 3.5b NodeHistory (for back-step) ---
+
+export interface NodeHistoryEntry {
+  nodeId: string;
+  sessionSnapshot: {
+    score: { total: number; dimensions: DimensionScores };
+    flags: Record<string, boolean>;
+    lives: number;
+    comboCount: number;
+  };
+}
+
 // --- 3.6 State ---
 
 export interface DimensionScores {
@@ -202,6 +214,7 @@ export interface GameSessionState {
     choiceIndex: number;
     timestamp: number;
   }>;
+  nodeHistory: NodeHistoryEntry[];
   comboCount: number;
   timerState: TimerState | null;
   isReplay: boolean;
@@ -279,6 +292,7 @@ export function createInitialGameSession(
     maxLives: 5,
     flags: {},
     choiceHistory: [],
+    nodeHistory: [],
     comboCount: 0,
     timerState: null,
     isReplay: false,

@@ -114,3 +114,124 @@ art style, no people, 16:9, 1920x1080, highly detailed
 ```
 anime, cartoon, 3D render, overcast, night, rain, people, text, watermark
 ```
+
+---
+
+## BG-06 | Экстерьер салона (`bg_showroom_entrance_exterior`)
+
+**Используется:** Day 1 (открывающая сцена, внешний вид дилерского центра)
+
+### Промпт:
+```
+GTA V loading screen environment art, exterior view of a modern Chevrolet
+car dealership building, large glass entrance doors with Chevrolet gold
+logo above, contemporary architecture with clean lines and glass facade,
+Tashkent urban setting with modern buildings in background, morning golden
+hour light casting warm glow on building facade, customer parking lot in
+foreground with a few Chevrolet cars parked, decorative plants and
+landscaping near entrance, fresh asphalt and clean sidewalk, dramatic
+perspective looking toward main entrance, semi-realistic illustration,
+Rockstar Games art style, cinematic quality, 16:9, 1920x1080, no people
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, night, rain, old building,
+run-down, people, text, watermark
+```
+
+---
+
+## BG-07 | Интерьер машины — тест-драйв (`bg_test_drive_interior`)
+
+**Используется:** Day 3, 5 (сцены тест-драйва, вид изнутри)
+
+### Промпт:
+```
+GTA V loading screen environment art, interior view of a modern Chevrolet
+car during a drive, detailed dashboard with digital display and steering
+wheel in foreground, Tashkent city streets visible through windshield,
+golden hour sunlight streaming through windows casting warm light on
+leather seats, modern car interior with premium materials, speedometer
+and infotainment screen glowing, warm golden tones mixed with cool
+exterior light, semi-realistic illustration, Rockstar Games art style,
+cinematic quality, 16:9, 1920x1080, no people
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, old car, dirty interior,
+night, people, text, watermark
+```
+
+---
+
+## BG-08 | Город — тест-драйв (`bg_test_drive_city`)
+
+**Используется:** Day 3, 5 (тест-драйв, вид города снаружи)
+
+### Промпт:
+```
+GTA V loading screen environment art, street-level view of a white
+Chevrolet Malibu driving through Tashkent streets, recognizable Tashkent
+landmarks in background (Minor mosque dome, Amir Temur square monument),
+golden hour warm sunlight casting long dramatic shadows, modern buildings
+and tree-lined boulevard, clean asphalt road with lane markings, slight
+motion blur on wheels, urban Uzbekistan atmosphere, semi-realistic
+illustration, Rockstar Games art style, cinematic quality, 16:9,
+1920x1080, no people on sidewalks
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, night, rain, overcast,
+people, text, watermark
+```
+
+---
+
+## BG-09 | Коридор к VIP зоне (`bg_vip_lounge_hallway`)
+
+**Используется:** Day 4 (переход в VIP зону)
+
+### Промпт:
+```
+GTA V loading screen environment art, elegant corridor leading to a VIP
+lounge in a luxury car dealership, premium interior with marble floor and
+dark wood wall panels, soft warm recessed lighting along ceiling, subtle
+Chevrolet emblem in brushed gold on wall, plush carpet runner in deep
+burgundy, frosted glass door at end of hallway with warm light behind it,
+decorative wall sconces casting dramatic shadows, atmosphere of exclusivity
+and sophistication, semi-realistic illustration, Rockstar Games art style,
+cinematic quality, 16:9, 1920x1080, no people
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, bright fluorescent lighting,
+cheap materials, people, text, watermark
+```
+
+---
+
+## BG-10 | Улица Ташкента (`bg_city_street_tashkent`)
+
+**Используется:** Day 2, 3, 5 (внешние сцены, город)
+
+### Промпт:
+```
+GTA V loading screen environment art, wide establishing shot of a Tashkent
+city street with modern buildings and tree-lined boulevard, recognizable
+Central Asian urban feel, mix of modern glass buildings and traditional
+architecture, golden hour warm sunlight casting long dramatic shadows on
+pavement, local vegetation and ornamental trees along sidewalk, clean wide
+road with parked cars, blue Central Asian sky with warm golden clouds,
+semi-realistic illustration, Rockstar Games art style, cinematic quality,
+16:9, 1920x1080, no people
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, night, rain, overcast,
+snow, people, text, watermark
+```

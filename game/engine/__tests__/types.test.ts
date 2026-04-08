@@ -190,6 +190,7 @@ describe('types — compile-time validation', () => {
       maxLives: 5,
       flags: {},
       choiceHistory: [],
+      nodeHistory: [],
       comboCount: 0,
       timerState: null,
       isReplay: false,

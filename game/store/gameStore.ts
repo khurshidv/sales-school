@@ -5,7 +5,7 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { GameSessionState, Day, PlayerState, ScenarioNode, ChoiceNode } from '@/game/engine/types';
+import type { GameSessionState, Day, PlayerState, ScenarioNode, ChoiceNode, NodeHistoryEntry } from '@/game/engine/types';
 import { createInitialGameSession } from '@/game/engine/types';
 import { resolveNode, processNode, applyEffects, makeChoice, makeMultiChoice } from '@/game/engine/ScenarioEngine';
 import { evaluateCondition } from '@/game/engine/ConditionEvaluator';
@@ -22,6 +22,22 @@ interface GameStore {
   selectMultiChoices: (indices: number[], playerState?: PlayerState) => void;
   timerExpired: () => void;
   resetDay: (day: Day) => void;
+  goBack: () => void;
+  canGoBack: () => boolean;
+}
+
+const MAX_HISTORY = 50;
+
+function createHistoryEntry(session: GameSessionState): NodeHistoryEntry {
+  return {
+    nodeId: session.currentNodeId,
+    sessionSnapshot: {
+      score: { total: session.score.total, dimensions: { ...session.score.dimensions } },
+      flags: { ...session.flags },
+      lives: session.lives,
+      comboCount: session.comboCount,
+    },
+  };
 }
 
 export const useGameStore = create<GameStore>()(
@@ -75,8 +91,12 @@ export const useGameStore = create<GameStore>()(
 
       if (!nextNodeId) return;
 
+      // Push current position to history before advancing
+      const historyEntry = createHistoryEntry(session);
+      const history = [...session.nodeHistory, historyEntry].slice(-MAX_HISTORY);
+
       let node = resolveNode(nextNodeId, currentDay);
-      let updatedSession = { ...session, currentNodeId: nextNodeId };
+      let updatedSession = { ...session, currentNodeId: nextNodeId, nodeHistory: history };
 
       // Auto-advance through condition_branch and score nodes
       while (node.type === 'condition_branch' || node.type === 'score') {
@@ -97,7 +117,12 @@ export const useGameStore = create<GameStore>()(
       if (!session || !currentDay || !currentNode) return;
       if (currentNode.type !== 'choice') return;
 
-      const result = makeChoice(choiceIndex, currentNode as ChoiceNode, session, playerState);
+      // Push current position to history before choice
+      const historyEntry = createHistoryEntry(session);
+      const history = [...session.nodeHistory, historyEntry].slice(-MAX_HISTORY);
+
+      const sessionWithHistory = { ...session, nodeHistory: history };
+      const result = makeChoice(choiceIndex, currentNode as ChoiceNode, sessionWithHistory, playerState);
       const nextNode = resolveNode(result.nextNodeId, currentDay);
 
       let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
@@ -122,7 +147,12 @@ export const useGameStore = create<GameStore>()(
       if (!session || !currentDay || !currentNode) return;
       if (currentNode.type !== 'choice') return;
 
-      const result = makeMultiChoice(indices, currentNode as ChoiceNode, session, playerState);
+      // Push current position to history before multi-choice
+      const historyEntry = createHistoryEntry(session);
+      const history = [...session.nodeHistory, historyEntry].slice(-MAX_HISTORY);
+
+      const sessionWithHistory = { ...session, nodeHistory: history };
+      const result = makeMultiChoice(indices, currentNode as ChoiceNode, sessionWithHistory, playerState);
       let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
       let node = resolveNode(result.nextNodeId, currentDay);
 
@@ -169,6 +199,39 @@ export const useGameStore = create<GameStore>()(
         state.currentDay = day;
         state.currentNode = rootNode;
       });
+    },
+
+    goBack: () => {
+      const { session, currentDay } = get();
+      if (!session || !currentDay || session.nodeHistory.length === 0) return;
+
+      const history = [...session.nodeHistory];
+      const previous = history.pop()!;
+      const node = resolveNode(previous.nodeId, currentDay);
+
+      // Only allow going back to dialogue/day_intro nodes
+      if (node.type !== 'dialogue' && node.type !== 'day_intro') return;
+
+      set((state) => {
+        state.session = {
+          ...state.session!,
+          currentNodeId: previous.nodeId,
+          score: previous.sessionSnapshot.score,
+          flags: previous.sessionSnapshot.flags,
+          lives: previous.sessionSnapshot.lives,
+          comboCount: previous.sessionSnapshot.comboCount,
+          nodeHistory: history,
+        };
+        state.currentNode = node;
+      });
+    },
+
+    canGoBack: () => {
+      const { session, currentNode } = get();
+      if (!session || !currentNode) return false;
+      // Can go back only from dialogue/day_intro, not from choice nodes
+      if (currentNode.type === 'choice') return false;
+      return session.nodeHistory.length > 0;
     },
   })),
 );

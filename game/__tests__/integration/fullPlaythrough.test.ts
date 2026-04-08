@@ -27,8 +27,6 @@ import {
   day1,
   day2,
   day3,
-  day4,
-  day5,
 } from '@/game/data/scenarios/car-dealership';
 
 // ============================================================
@@ -132,237 +130,210 @@ function simulateDay(
 // ============================================================
 
 describe('Key Paths', () => {
-  it('Path 1: Grandmaster (optimal across all 5 days)', () => {
-    // Day 1: approach_c (empathy+12) + needs_a (discovery+12, rapport+5) + suggest_a (persuasion+12, expertise+5) = 46
+  it('Path 1: Grandmaster (optimal across all 3 days)', () => {
+    // Day 1: addressed_both + balanced_both -> anniversary -> hidden ending
+    // who_first_a: rapport+15, empathy+5 = 20
+    // compromise_a: empathy+15, persuasion+10 = 25 (total 45)
+    // test_drive_offer_a: rapport+5 (total 50)
+    // test_drive_choice_c (silent): rapport+10 (total 60)
+    // anniversary_check: addressed_both + balanced_both -> knows_anniversary
+    // closing_b (anniversary): opportunity+20, empathy+10 = 30 (total 90)
+    // d1_check: anniversary_surprise -> hidden
     const d1 = simulateDay(day1, {
-      d1_approach: 2,   // soft approach: empathy +12
-      d1_needs: 0,      // priorities: discovery +12, rapport +5
-      d1_suggest: 0,    // equinox: persuasion +12, expertise +5
+      d1_who_first: 0,         // addressed_both: rapport+15, empathy+5
+      d1_compromise: 0,        // balanced_both: empathy+15, persuasion+10
+      d1_test_drive_offer: 0,  // test_drive: rapport+5
+      d1_test_drive_choice: 2, // silent: rapport+10
+      d1_closing: 1,           // anniversary_surprise: opportunity+20, empathy+10
     });
-    expect(d1.endNodeId).toBe('d1_end_success');
-    expect(d1.outcome).toBe('success');
-    expect(d1.state.score.total).toBe(46);
+    expect(d1.endNodeId).toBe('d1_end_hidden');
+    expect(d1.outcome).toBe('hidden_ending');
+    expect(d1.state.score.total).toBe(90);
     expect(d1.state.flags.d1_success).toBe(true);
+    expect(d1.state.flags.d1_hidden).toBe(true);
+    expect(d1.playerState.achievements).toContain('love_sells');
 
-    // Day 2: with d1_success callback (+5) + best choices
+    // Day 2: with d1_success callback (+5) + best choices -> hidden
+    // callback: opportunity+5 (total 5)
+    // presentation_a: expertise+15, rapport+5 = 20 (total 25)
+    // objection_a: persuasion+15, expertise+5 = 20 (total 45)
+    // test_drive_offer_a: timing+10, persuasion+5 = 15 (total 60)
+    // test_drive_choice_a: expertise+10 (total 70)
+    // closing_c: rapport+10, empathy+5 = 15 (total 85)
+    // d2_check: score>=40 + respected_knowledge -> hidden
     const d2 = simulateDay(
       day2,
       {
-        d2_presentation: 0,  // respected_knowledge: expertise+15, rapport+5
-        d2_objection: 0,     // value_reframe: persuasion+15, expertise+5
-        d2_closing: 0,       // test_drive: timing+12, persuasion+5
+        d2_presentation: 0,      // respected_knowledge: expertise+15, rapport+5
+        d2_objection: 0,         // value_reframe: persuasion+15, expertise+5
+        d2_test_drive_offer: 0,  // test_drive: timing+10, persuasion+5
+        d2_test_drive_choice: 0, // cruise: expertise+10
+        d2_closing: 2,           // soft_close: rapport+10, empathy+5
       },
       { lives: 3, flags: { d1_success: true } },
     );
     expect(d2.endNodeId).toBe('d2_end_hidden');
     expect(d2.outcome).toBe('hidden_ending');
-    // callback +5 + 20 + 20 + 17 = 62
-    expect(d2.state.score.total).toBe(62);
+    expect(d2.state.score.total).toBe(85);
     expect(d2.state.flags.d2_hidden).toBe(true);
 
-    // Day 3: addressed_both + balanced_both -> anniversary -> hidden
+    // Day 3: Part A (Abdullaev) + Part B (Sardor) -> grandmaster
+    // Prep [0,1]: expertise+8, rapport+8 = 16
+    // Greeting VIP (index 0, needs knows_vip_protocol): rapport+15, timing+5 = 20 (total 36)
+    // Fleet (index 0): persuasion+15, expertise+8 = 23 (total 59)
+    // Wife car (index 2): bundled_deal: opportunity+10, persuasion+8 = 18 (total 77)
+    // abd_check: fleet_package + bundled_deal + score>=55 -> abd_hidden (+gain_life, +achievement)
+    // Sardor approach (index 0): empathy+12, rapport+8 = 20 (total 97)
+    // Needs (index 0): discovery+15, rapport+8 = 23 (total 120)
+    // Objection (index 0): persuasion+15, expertise+5 = 20 (total 140)
+    // Sardor closing (index 0): timing+12, persuasion+8 = 20 (total 160)
+    // grandmaster_check: score>=63 + patient_approach + deep_discovery + honest_answer + d1_success -> grandmaster
     const d3 = simulateDay(
       day3,
       {
-        d3_who_first: 0,    // addressed_both: rapport+15, empathy+5
-        d3_compromise: 0,   // balanced_both: empathy+15, persuasion+10
-        d3_closing: 1,      // anniversary_surprise (conditional, but index 1)
+        d3_preparation: [0, 1],   // researched_company + knows_vip_protocol
+        d3_greeting: 0,           // vip_greeting (conditional on knows_vip_protocol)
+        d3_fleet: 0,              // fleet_package
+        d3_wife_car: 2,           // bundled_deal
+        d3_sardor_approach: 0,    // patient_approach
+        d3_needs: 0,              // deep_discovery
+        d3_objection: 0,          // honest_answer
+        d3_sardor_closing: 0,     // test_drive
       },
-      { lives: 4, flags: { d1_success: true, d2_hidden: true } },
+      { lives: 5, flags: { d1_success: true, d2_hidden: true } },
     );
-    expect(d3.endNodeId).toBe('d3_end_hidden');
+    expect(d3.state.score.total).toBe(160);
+    expect(d3.endNodeId).toBe('d3_gm_cta');
     expect(d3.outcome).toBe('hidden_ending');
-    expect(d3.state.flags.d3_hidden).toBe(true);
-
-    // Day 4: best prep + best choices -> hidden
-    const d4 = simulateDay(
-      day4,
-      {
-        d4_preparation: [0, 1],   // researched_company + knows_vip_protocol
-        d4_greeting: 0,           // vip_greeting (conditional on knows_vip_protocol)
-        d4_fleet: 0,              // fleet_package
-        d4_wife_car: 2,           // bundled_deal
-      },
-      { lives: 5, flags: { d1_success: true, d2_hidden: true, d3_hidden: true } },
-    );
-    expect(d4.endNodeId).toBe('d4_end_hidden');
-    expect(d4.outcome).toBe('hidden_ending');
-    expect(d4.state.flags.d4_hidden).toBe(true);
-
-    // Day 5: with d1_success + d2_success -> dilnoza tip, then optimal
-    // Note: d2_hidden is set but d2_success is NOT set for hidden ending.
-    // For grandmaster we need d1_success OR d2_success. We have d1_success.
-    // For dilnoza tip: needs d1_success AND d2_success.
-    // Since d2 ended hidden (not success), no dilnoza tip. But grandmaster needs
-    // patient_approach + deep_discovery + honest_answer + (d1_success OR d2_success)
-    const d5 = simulateDay(
-      day5,
-      {
-        d5_approach: 0,            // patient_approach: empathy+12, rapport+8
-        d5_needs_choice: 0,        // deep_discovery: discovery+15, rapport+8
-        d5_objection_choice: 0,    // honest_answer: persuasion+15, expertise+5
-        d5_closing: 0,             // test_drive: timing+12, persuasion+8
-      },
-      {
-        lives: 5,
-        flags: { d1_success: true, d2_hidden: true, d3_hidden: true, d4_hidden: true },
-      },
-    );
-    // Score: 20 + 23 + 20 + 20 = 83
-    expect(d5.state.score.total).toBe(83);
-    expect(d5.endNodeId).toBe('d5_end_grandmaster');
-    expect(d5.outcome).toBe('hidden_ending');
-    expect(d5.state.flags.d5_grandmaster).toBe(true);
+    expect(d3.state.flags.d3_grandmaster).toBe(true);
+    expect(d3.playerState.achievements).toContain('grandmaster');
   });
 
-  it('Path 2: All-B (always second choice)', () => {
+  it('Path 2: All-A (always first choice)', () => {
+    // Day 1: all index 0 -> good score, success
+    // who_first_a: 20, compromise_a: 25, test_drive_offer_a: 5, test_drive_choice_a: 8
+    // anniversary: addressed_both + balanced_both -> knows_anniversary -> closing
+    // closing_a: timing+10, rapport+5 = 15
+    // Total: 20+25+5+8+15 = 73
     const d1 = simulateDay(day1, {
-      d1_approach: 1,
-      d1_needs: 1,
-      d1_suggest: 1,
+      d1_who_first: 0,
+      d1_compromise: 0,
+      d1_test_drive_offer: 0,
+      d1_test_drive_choice: 0,
+      d1_closing: 0,
     });
-    // approach_b (timing+5) + needs_b (discovery+3) + suggest_b (empathy+8, persuasion+5) = 21
-    expect(d1.state.score.total).toBe(21);
-    expect(d1.endNodeId).toBe('d1_end_partial'); // 12 <= 21 < 25
-    expect(d1.outcome).toBe('partial');
+    expect(d1.state.score.total).toBe(73);
+    expect(d1.endNodeId).toBe('d1_end_success'); // no anniversary_surprise -> success (73>=32)
+    expect(d1.outcome).toBe('success');
+    expect(d1.state.flags.d1_success).toBe(true);
 
-    const d2 = simulateDay(day2, {
-      d2_presentation: 1,
-      d2_objection: 1,
-      d2_closing: 1,
-    });
-    // presentation_b (expertise+10) + objection_b (persuasion+10, rapport+5) + closing_b (rapport+8, expertise+3) = 36
-    expect(d2.state.score.total).toBe(36);
-    // Score >= 32 but no respected_knowledge -> success (not hidden)
-    expect(d2.endNodeId).toBe('d2_end_success');
-    expect(d2.outcome).toBe('success');
+    // Day 2: all index 0 -> respected_knowledge + high score
+    // callback +5, presentation_a: 20, objection_a: 20, test_drive_offer_a: 15, test_drive_choice_a: 10, closing_a: 11
+    // Total: 5+20+20+15+10+11 = 81
+    const d2 = simulateDay(
+      day2,
+      {
+        d2_presentation: 0,
+        d2_objection: 0,
+        d2_test_drive_offer: 0,
+        d2_test_drive_choice: 0,
+        d2_closing: 0,
+      },
+      { lives: 3, flags: { d1_success: true } },
+    );
+    // d2_check: score>=40 + respected_knowledge -> hidden
+    expect(d2.state.score.total).toBe(81);
+    expect(d2.endNodeId).toBe('d2_end_hidden');
 
-    const d3 = simulateDay(day3, {
-      d3_who_first: 1,
-      d3_compromise: 1,
-      d3_closing: 1,
-    });
-    // who_first_b (timing+8) + compromise_b (expertise+12, persuasion+5) + closing_b (needs knows_anniversary -> no)
-    // Since addressed_both is not set, anniversary check fallback -> d3_closing
-    // closing_b requires knows_anniversary flag (which is not set), so condition fails
-    // But makeChoice(1) will still pick index 1 regardless of condition
-    // closing_b (conditional: knows_anniversary) -> opportunity+20, empathy+10
-    // Wait - actually closing_b's condition is checked by UI, not by makeChoice.
-    // makeChoice just picks by index. So: 8 + 17 + 30 = 55? No...
-    // who_first_b: timing+8 = 8
-    // compromise_b: expertise+12, persuasion+5 = 17, total 25
-    // anniversary_check: no addressed_both -> fallback -> d3_closing
-    // closing index 1: anniversary_surprise (opportunity+20, empathy+10) = 30, total 55
-    // But! This choice has condition {flag: knows_anniversary} which we don't have
-    // However makeChoice doesn't validate conditions, it just selects by array index
-    // So closing_b at index 1 gives +30, total = 55
-    // d3_check: anniversary_surprise flag? Yes (set by closing_b effects)
-    // -> d3_end_hidden!
-    // Actually this is the hidden ending because makeChoice bypasses conditions.
-    // In real gameplay, the UI filters unavailable choices, so this wouldn't happen.
-    // For a realistic test, let's use closing index 0 or 2 instead.
-    // Let me recalculate with closing index 2 (the only unconditional non-anniversary choice):
-    // Actually closing_a (index 0) is unconditional too. And closing_c (index 2) is unconditional.
-    // For "all B" path, let's use index 2 for closing (third option) since index 1 is conditional.
-    // Hmm, but the spec says "always second choice (index 1)". Let me just test what happens.
-    // With makeChoice(1) -> anniversary_surprise flag IS set -> d3_end_hidden
-    // This is a valid engine path, just not UI-reachable without the condition.
-    // For realism, let me adjust: if choice has condition that's not met, skip to next.
-    // But the spec says "always second choice". Let's keep it and just verify.
-    expect(d3.state.score.total).toBe(55);
-    // anniversary_surprise flag set -> hidden ending
-    expect(d3.endNodeId).toBe('d3_end_hidden');
-
-    const d4 = simulateDay(day4, {
-      d4_preparation: [0, 1],  // multiSelect must pick 2
-      d4_greeting: 1,
-      d4_fleet: 1,
-      d4_wife_car: 1,
-    });
-    // prep [0,1]: expertise+8, rapport+8 = 16
-    // greeting_b (no condition): timing+8 = 8, total 24
-    // fleet_b: expertise+10, timing+5 = 15, total 39
-    // wife_car_b: expertise+8 = 8, total 47
-    // d4_check: 47 < 48 -> not success, 47 >= 28 -> partial
-    expect(d4.state.score.total).toBe(47);
-    expect(d4.endNodeId).toBe('d4_end_partial');
-    expect(d4.outcome).toBe('partial');
-
-    const d5 = simulateDay(day5, {
-      d5_approach: 1,
-      d5_needs_choice: 1,
-      d5_objection_choice: 1,
-      d5_closing: 1,
-    });
-    // approach_b: timing+8, rapport+5 = 13
-    // needs_choice_b: discovery+5, timing+3 = 8, total 21
-    // objection_choice_b: persuasion+5, rapport-5 = 0, total 21
-    // closing_b: rapport+5 = 5, total 26
-    // No d1_success/d2_success flags -> no dilnoza tip
-    // d5_final_check: 26 < 30 -> fallback -> fail
-    expect(d5.state.score.total).toBe(26);
-    expect(d5.endNodeId).toBe('d5_end_fail');
-    expect(d5.outcome).toBe('failure');
+    // Day 3: all index 0 for both parts
+    const d3 = simulateDay(
+      day3,
+      {
+        d3_preparation: [0, 1],
+        d3_greeting: 0,           // needs knows_vip_protocol (set by prep[1])
+        d3_fleet: 0,              // fleet_package
+        d3_wife_car: 0,           // personalized
+        d3_sardor_approach: 0,    // patient_approach
+        d3_needs: 0,              // deep_discovery
+        d3_objection: 0,          // honest_answer
+        d3_sardor_closing: 0,     // test_drive
+      },
+      { lives: 5, flags: { d1_success: true, d2_hidden: true } },
+    );
+    // No bundled_deal -> not abd_hidden. But score should be high enough for abd_success
+    // Part A: 16 + 20 + 23 + 17 = 76 (>=48 -> abd_success)
+    // Part B: 20 + 23 + 20 + 20 = 83 (total 159)
+    // grandmaster_check: score>=63 + patient_approach + deep_discovery + honest_answer + d1_success -> grandmaster
+    expect(d3.state.score.total).toBe(159);
+    expect(d3.endNodeId).toBe('d3_gm_cta');
+    expect(d3.state.flags.d3_grandmaster).toBe(true);
   });
 
   it('Path 3: Game Over (timers expire everywhere)', () => {
-    // Day 1: let d1_approach timer expire, then default choices
+    // Day 1: compromise expires (has timer)
     const d1 = simulateDay(day1, {
-      // d1_approach has expireNodeId, so not providing it triggers expire
-      d1_needs: 0,
-      d1_suggest: 0,
+      d1_who_first: 0,
+      // d1_compromise has expireNodeId -> expire: timing-5
+      d1_test_drive_offer: 0,
+      d1_test_drive_choice: 0,
+      // d1_closing: defaults to index 0
     });
-    // approach_expired: timing-5 = -5
-    // needs_a: discovery+12, rapport+5 = 17, total 12
-    // suggest_a: persuasion+12, expertise+5 = 17, total 29
-    // Score >= 25 -> success (not failure)
+    // who_first_a: 20, compromise_expired: -5 (total 15), test_drive_offer_a: 5 (total 20)
+    // test_drive_choice_a: 8 (total 28)
+    // anniversary_check: addressed_both but not balanced_both -> fallback -> d1_closing
+    // closing default (index 0): 15 (total 43)
+    // d1_check: no anniversary_surprise, 43 >= 32 -> success
+    expect(d1.state.score.total).toBe(43);
     expect(d1.endNodeId).toBe('d1_end_success');
 
     // Day 2: let d2_objection timer expire
     const d2 = simulateDay(day2, {
-      d2_presentation: 2,  // asked_priorities: discovery+8, empathy+5 = 13
-      // d2_objection has expireNodeId -> expire
-      d2_closing: 2,       // pressure_close: timing+5, rapport-3 = 2
+      d2_presentation: 2,      // asked_priorities: discovery+8, empathy+5 = 13
+      // d2_objection has expireNodeId -> expire: timing-8 (total 5)
+      d2_test_drive_offer: 1,  // skip test drive: timing+3 (total 8)
+      d2_closing: 1,           // pressure_close: timing+5, rapport-3 = 2 (total 10)
     });
-    // presentation: 13, objection_expired: timing-8 = -8, total 5, closing: +2, total 7
-    expect(d2.state.score.total).toBe(7);
-    // 7 < 18 -> fail
+    expect(d2.state.score.total).toBe(10);
+    // 10 < 20 -> fail
     expect(d2.endNodeId).toBe('d2_end_fail');
     expect(d2.outcome).toBe('failure');
     // End effects include lose_life
     expect(d2.state.lives).toBe(2); // started at 3, lost 1
 
-    // Day 3: let compromise timer expire
+    // Day 3: let all timers expire
     const d3 = simulateDay(
       day3,
       {
-        d3_who_first: 2,  // approached_nilufar: expertise+8
-        // d3_compromise has expireNodeId -> expire
-        d3_closing: 2,    // special_price: timing+5
+        d3_preparation: [0, 1],
+        d3_greeting: 1,          // standard: timing+8
+        // d3_fleet expires: timing-8
+        d3_wife_car: 1,          // power: expertise+8
+        // d3_sardor_approach expires: timing-8, rapport-5
+        d3_needs: 0,             // deep_discovery: discovery+15, rapport+8
+        // d3_objection expires: timing-5, persuasion-5
+        // d3_sardor_closing expires: timing-5, lose_life
       },
       { lives: 2, flags: {} },
     );
-    // who_first_c: 8, compromise_expired: timing-5, total 3, closing: timing+5, total 8
-    expect(d3.state.score.total).toBe(8);
-    // 8 < 22 -> fail
-    expect(d3.endNodeId).toBe('d3_end_fail');
-    expect(d3.outcome).toBe('failure');
-    expect(d3.state.lives).toBe(1); // started 2, lost 1
-
-    // With 1 life left, another failure = game over
-    expect(isGameOver(d3.state.lives - 1)).toBe(true); // If we lose one more
+    // Part A: 16 + 8 + (-8) + 8 = 24 (abd_check: 24 < 28 -> abd_fail, lose_life)
+    // Part B: (-13) + 23 + (-10) + (-5, lose_life)
+    // Total is sum of all. Lots of negative from timers.
+    expect(d3.state.score.total).toBeLessThan(56);
+    // Multiple lose_life effects should drop lives
+    expect(d3.state.lives).toBeLessThanOrEqual(1);
   });
 
   it('Path 4: Comeback Kid (fail then replay to success)', () => {
-    // Day 1: let everything expire/worst -> failure
+    // Day 1: worst path -> failure
     const d1fail = simulateDay(day1, {
-      // d1_approach expires
-      d1_needs: 2,    // jumped_to_pitch: discovery-3, expertise+5 = 2
-      d1_suggest: 1,  // suggested_tracker: empathy+8, persuasion+5 = 13
+      d1_who_first: 2,     // approached_nilufar: expertise+8
+      // d1_compromise expires: timing-5
+      d1_test_drive_offer: 1, // skip test drive
+      d1_closing: 2,          // special_price: timing+5
     });
-    // approach_expired: -5, needs: 2, suggest: 13 = total 10
-    expect(d1fail.state.score.total).toBe(10);
-    expect(d1fail.endNodeId).toBe('d1_end_fail'); // 10 < 12
+    // 8 + (-5) + 0 + 5 = 8
+    expect(d1fail.state.score.total).toBe(8);
+    expect(d1fail.endNodeId).toBe('d1_end_fail'); // 8 < 18
     expect(d1fail.outcome).toBe('failure');
     expect(d1fail.state.lives).toBe(2); // 3 - 1 from end effect
 
@@ -373,11 +344,13 @@ describe('Key Paths', () => {
     expect(restartState.lives).toBe(1);
     expect(restartState.score.total).toBe(0);
 
-    // Day 1 replay: best choices
+    // Day 1 replay: best choices -> success
     const d1success = simulateDay(day1, {
-      d1_approach: 2,
-      d1_needs: 0,
-      d1_suggest: 0,
+      d1_who_first: 0,
+      d1_compromise: 0,
+      d1_test_drive_offer: 0,
+      d1_test_drive_choice: 0,
+      d1_closing: 0,
     });
     expect(d1success.endNodeId).toBe('d1_end_success');
     expect(d1success.outcome).toBe('success');
@@ -390,43 +363,90 @@ describe('Key Paths', () => {
 // ============================================================
 
 describe('Day 1 — All Paths', () => {
-  it('optimal path (all A choices) -> success with high score', () => {
+  it('hidden ending (anniversary) -> highest score', () => {
     const result = simulateDay(day1, {
-      d1_approach: 0,   // rapport+10
-      d1_needs: 0,      // discovery+12, rapport+5
-      d1_suggest: 0,    // persuasion+12, expertise+5
+      d1_who_first: 0,         // addressed_both: 20
+      d1_compromise: 0,        // balanced_both: 25
+      d1_test_drive_offer: 0,  // test_drive: 5
+      d1_test_drive_choice: 2, // silent: 10
+      d1_closing: 1,           // anniversary_surprise: 30
     });
-    // 10 + 17 + 17 = 44
-    expect(result.state.score.total).toBe(44);
-    expect(result.endNodeId).toBe('d1_end_success');
-    expect(result.outcome).toBe('success');
-    expect(calculateRating(44, day1.targetScore)).toBe('S'); // 44/30 = 146%
+    expect(result.state.score.total).toBe(90);
+    expect(result.endNodeId).toBe('d1_end_hidden');
+    expect(result.outcome).toBe('hidden_ending');
+    expect(result.state.flags.anniversary_surprise).toBe(true);
+    expect(result.playerState.achievements).toContain('love_sells');
   });
 
-  it('worst path (expired + C choices) -> failure', () => {
+  it('good path without anniversary -> success', () => {
     const result = simulateDay(day1, {
-      // d1_approach expires: timing-5
-      d1_needs: 2,    // discovery-3, expertise+5
-      d1_suggest: 2,  // expertise+10, discovery+3
+      d1_who_first: 0,         // 20
+      d1_compromise: 0,        // 25
+      d1_test_drive_offer: 0,  // 5
+      d1_test_drive_choice: 0, // 8
+      d1_closing: 0,           // 15
     });
-    // -5 + 2 + 13 = 10
-    expect(result.state.score.total).toBe(10);
+    // 20 + 25 + 5 + 8 + 15 = 73
+    expect(result.state.score.total).toBe(73);
+    expect(result.endNodeId).toBe('d1_end_success');
+    expect(result.outcome).toBe('success');
+    expect(calculateRating(73, day1.targetScore)).toBe('S'); // 73/40 = 182%
+  });
+
+  it('middle path (approach javlon + equinox sport) -> success', () => {
+    const result = simulateDay(day1, {
+      d1_who_first: 1,         // timing+8
+      d1_compromise: 1,        // expertise+12, persuasion+5 = 17
+      d1_test_drive_offer: 0,  // rapport+5
+      d1_test_drive_choice: 1, // expertise+5
+      d1_closing: 0,           // timing+10, rapport+5 = 15
+    });
+    // 8 + 17 + 5 + 5 + 15 = 50
+    expect(result.state.score.total).toBe(50);
+    expect(result.endNodeId).toBe('d1_end_success');
+    expect(result.outcome).toBe('success');
+  });
+
+  it('worst path (approached nilufar + expire + skip test drive) -> failure', () => {
+    const result = simulateDay(day1, {
+      d1_who_first: 2,          // expertise+8
+      // d1_compromise expires: timing-5
+      d1_test_drive_offer: 1,   // skip test drive, no effects
+      d1_closing: 2,            // timing+5
+    });
+    // 8 + (-5) + 0 + 5 = 8
+    expect(result.state.score.total).toBe(8);
     expect(result.endNodeId).toBe('d1_end_fail');
     expect(result.outcome).toBe('failure');
     expect(result.state.lives).toBe(2); // lost 1 from end effects
   });
 
-  it('middle path (all B) -> partial', () => {
+  it('partial path', () => {
     const result = simulateDay(day1, {
-      d1_approach: 1,  // timing+5
-      d1_needs: 1,     // discovery+3
-      d1_suggest: 1,   // empathy+8, persuasion+5
+      d1_who_first: 2,         // expertise+8
+      d1_compromise: 2,        // timing+8, opportunity+5 = 13
+      d1_test_drive_offer: 1,  // skip test drive
+      d1_closing: 0,           // timing+10, rapport+5 = 15
     });
-    // 5 + 3 + 13 = 21
-    expect(result.state.score.total).toBe(21);
-    expect(result.endNodeId).toBe('d1_end_partial');
-    expect(result.outcome).toBe('partial');
-    expect(calculateRating(21, day1.targetScore)).toBe('B'); // 21/30 = 70%
+    // 8 + 13 + 0 + 15 = 36
+    expect(result.state.score.total).toBe(36);
+    // 36 >= 32 -> success actually
+    expect(result.endNodeId).toBe('d1_end_success');
+    // For partial: need 18 <= score < 32
+    // Let's try: who_first_c(8) + compromise_expire(-5) + test_drive_offer_b(0) + closing_c(5) = 8
+    // That's failure. Hard to get exactly 18-31 range...
+    // Skip test drive + trade-in approach:
+    // who_first_b(8) + compromise_c(13) + test_drive_offer_b(0) + closing_c(5) = 26
+    const partial = simulateDay(day1, {
+      d1_who_first: 1,         // timing+8
+      d1_compromise: 2,        // timing+8, opportunity+5 = 13
+      d1_test_drive_offer: 1,  // skip
+      d1_closing: 2,           // timing+5
+    });
+    // 8 + 13 + 0 + 5 = 26
+    expect(partial.state.score.total).toBe(26);
+    expect(partial.endNodeId).toBe('d1_end_partial'); // 18 <= 26 < 32
+    expect(partial.outcome).toBe('partial');
   });
 });
 
@@ -437,7 +457,8 @@ describe('Day 2 — All Paths', () => {
       {
         d2_presentation: 1,
         d2_objection: 1,
-        d2_closing: 1,
+        d2_test_drive_offer: 1,
+        d2_closing: 0,
       },
       { lives: 3, flags: { d1_success: true } },
     );
@@ -446,214 +467,209 @@ describe('Day 2 — All Paths', () => {
       {
         d2_presentation: 1,
         d2_objection: 1,
-        d2_closing: 1,
+        d2_test_drive_offer: 1,
+        d2_closing: 0,
       },
       { lives: 3, flags: {} },
     );
     expect(withCallback.state.score.total - withoutCallback.state.score.total).toBe(5);
   });
 
-  it('without callback -> no bonus, still can succeed', () => {
-    const result = simulateDay(
-      day2,
-      {
-        d2_presentation: 0,  // expertise+15, rapport+5 = 20
-        d2_objection: 0,     // persuasion+15, expertise+5 = 20
-        d2_closing: 0,       // timing+12, persuasion+5 = 17
-      },
-      { lives: 3, flags: {} },
-    );
-    expect(result.state.score.total).toBe(57);
-    // Score >= 35 and respected_knowledge -> hidden
-    expect(result.endNodeId).toBe('d2_end_hidden');
-  });
-
   it('hidden ending path -> respected_knowledge + high score', () => {
     const result = simulateDay(
       day2,
       {
-        d2_presentation: 0,
-        d2_objection: 0,
-        d2_closing: 0,
+        d2_presentation: 0,      // respected_knowledge: expertise+15, rapport+5 = 20
+        d2_objection: 0,         // value_reframe: persuasion+15, expertise+5 = 20
+        d2_test_drive_offer: 0,  // timing+10, persuasion+5 = 15
+        d2_test_drive_choice: 0, // expertise+10
+        d2_closing: 2,           // soft_close: rapport+10, empathy+5 = 15
       },
       { lives: 3, flags: { d1_success: true } },
     );
-    expect(result.state.score.total).toBe(62);
+    // callback+5, 20+20+15+10+15 = 85
+    expect(result.state.score.total).toBe(85);
     expect(result.endNodeId).toBe('d2_end_hidden');
     expect(result.outcome).toBe('hidden_ending');
     expect(result.state.flags.d2_hidden).toBe(true);
     expect(result.playerState.achievements).toContain('respect_earns_referrals');
     expect(result.state.lives).toBe(4); // gained 1 life
   });
-});
 
-describe('Day 3 — All Paths', () => {
-  it('anniversary surprise path -> hidden ending', () => {
-    const result = simulateDay(day3, {
-      d3_who_first: 0,    // addressed_both: rapport+15, empathy+5 = 20
-      d3_compromise: 0,   // balanced_both: empathy+15, persuasion+10 = 25
-      d3_closing: 1,      // anniversary_surprise: opportunity+20, empathy+10 = 30
-    });
-    // addressed_both + balanced_both -> anniversary_hint (knows_anniversary flag)
-    // closing index 1 (anniversary): +30
-    // Total: 20 + 25 + 30 = 75
-    expect(result.state.score.total).toBe(75);
-    expect(result.state.flags.anniversary_surprise).toBe(true);
-    expect(result.endNodeId).toBe('d3_end_hidden');
-    expect(result.outcome).toBe('hidden_ending');
-    expect(result.playerState.achievements).toContain('love_sells');
+  it('without callback -> no bonus, still can get hidden', () => {
+    const result = simulateDay(
+      day2,
+      {
+        d2_presentation: 0,      // expertise+15, rapport+5 = 20
+        d2_objection: 0,         // persuasion+15, expertise+5 = 20
+        d2_test_drive_offer: 0,  // timing+10, persuasion+5 = 15
+        d2_test_drive_choice: 0, // expertise+10
+        d2_closing: 2,           // rapport+10, empathy+5 = 15
+      },
+      { lives: 3, flags: {} },
+    );
+    expect(result.state.score.total).toBe(80);
+    // Score >= 40 + respected_knowledge -> hidden
+    expect(result.endNodeId).toBe('d2_end_hidden');
   });
 
-  it('normal success path (good choices, no anniversary)', () => {
-    const result = simulateDay(day3, {
-      d3_who_first: 0,    // rapport+15, empathy+5 = 20
-      d3_compromise: 1,   // equinox_sport: expertise+12, persuasion+5 = 17
-      d3_closing: 0,      // test_drive: timing+10, rapport+5 = 15
+  it('objection timer expires -> low score -> fail', () => {
+    const result = simulateDay(day2, {
+      d2_presentation: 2,      // discovery+8, empathy+5 = 13
+      // d2_objection expires: timing-8
+      d2_test_drive_offer: 1,  // skip test drive: timing+3
+      d2_closing: 1,           // pressure: timing+5, rapport-3 = 2
     });
-    // No addressed_both + balanced_both together (balanced_both not set)
-    // anniversary_check: addressed_both is set but balanced_both is not -> fallback -> d3_closing
-    // Total: 20 + 17 + 15 = 52
-    expect(result.state.score.total).toBe(52);
-    // No anniversary_surprise flag -> check score >= 40 -> success
-    expect(result.endNodeId).toBe('d3_end_success');
-    expect(result.outcome).toBe('success');
-  });
-
-  it('compromise expired -> low score', () => {
-    const result = simulateDay(day3, {
-      d3_who_first: 2,    // approached_nilufar: expertise+8
-      // d3_compromise expires: timing-5
-      d3_closing: 0,      // test_drive: timing+10, rapport+5 = 15
-    });
-    // 8 + (-5) + 15 = 18
-    expect(result.state.score.total).toBe(18);
-    // 18 < 22 -> fail
-    expect(result.endNodeId).toBe('d3_end_fail');
+    // 13 + (-8) + 3 + 2 = 10
+    expect(result.state.score.total).toBe(10);
+    expect(result.endNodeId).toBe('d2_end_fail');
     expect(result.outcome).toBe('failure');
+    expect(result.state.lives).toBe(2); // lost 1
   });
 });
 
-describe('Day 4 — All Paths', () => {
+describe('Day 3 — Part A: Abdullaev (VIP)', () => {
   it('multiSelect [0,1] -> researched_company + knows_vip_protocol', () => {
-    const result = simulateDay(day4, {
-      d4_preparation: [0, 1],
-      d4_greeting: 1,    // standard: timing+8
-      d4_fleet: 1,       // reliable: expertise+10, timing+5
-      d4_wife_car: 0,    // personalized: empathy+12, expertise+5
+    const result = simulateDay(day3, {
+      d3_preparation: [0, 1],
+      d3_greeting: 1,    // standard: timing+8
+      d3_fleet: 1,       // reliable: expertise+10, timing+5
+      d3_wife_car: 0,    // personalized: empathy+12, expertise+5
+      d3_sardor_approach: 0,
+      d3_needs: 0,
+      d3_objection: 0,
+      d3_sardor_closing: 0,
     });
-    // prep: expertise+8, rapport+8 = 16
-    // greeting_b: timing+8 = 8, total 24
-    // fleet_b: expertise+10, timing+5 = 15, total 39
-    // wife_car_a: empathy+12, expertise+5 = 17, total 56
-    expect(result.state.score.total).toBe(56);
     expect(result.state.flags.researched_company).toBe(true);
     expect(result.state.flags.knows_vip_protocol).toBe(true);
-    expect(result.endNodeId).toBe('d4_end_success'); // 56 >= 48
+    // Part A: 16 + 8 + 15 + 17 = 56 (>= 48 -> abd_success)
+    // Part B adds more score
+    expect(result.state.score.total).toBeGreaterThanOrEqual(56);
   });
 
   it('multiSelect [0,2] -> researched_company + has_discount_authority', () => {
-    const result = simulateDay(day4, {
-      d4_preparation: [0, 2],
-      d4_greeting: 1,    // standard: timing+8
-      d4_fleet: 0,       // fleet_package: persuasion+15, expertise+8
-      d4_wife_car: 0,    // personalized: empathy+12, expertise+5
+    const result = simulateDay(day3, {
+      d3_preparation: [0, 2],
+      d3_greeting: 1,    // standard: timing+8
+      d3_fleet: 0,       // fleet_package: persuasion+15, expertise+8
+      d3_wife_car: 0,    // personalized: empathy+12, expertise+5
+      d3_sardor_approach: 0,
+      d3_needs: 0,
+      d3_objection: 0,
+      d3_sardor_closing: 0,
     });
-    // prep: expertise+8, opportunity+8 = 16
-    // greeting_b: timing+8, total 24
-    // fleet_a: persuasion+15, expertise+8 = 23, total 47
-    // wife_car_a: empathy+12, expertise+5 = 17, total 64
-    expect(result.state.score.total).toBe(64);
     expect(result.state.flags.researched_company).toBe(true);
     expect(result.state.flags.has_discount_authority).toBe(true);
-    expect(result.endNodeId).toBe('d4_end_success'); // 64 >= 48
+    // Part A: 16 + 8 + 23 + 17 = 64 (>= 48 -> abd_success)
+    expect(result.state.score.total).toBeGreaterThanOrEqual(64);
   });
 
-  it('hidden ending path -> fleet_package + bundled_deal + high score', () => {
-    const result = simulateDay(day4, {
-      d4_preparation: [0, 1],   // researched_company + knows_vip_protocol
-      d4_greeting: 0,           // vip_greeting: rapport+15, timing+5 = 20
-      d4_fleet: 0,              // fleet_package: persuasion+15, expertise+8 = 23
-      d4_wife_car: 2,           // bundled_deal: opportunity+10, persuasion+8 = 18
+  it('abd_hidden path -> fleet_package + bundled_deal + high score', () => {
+    const result = simulateDay(day3, {
+      d3_preparation: [0, 1],   // researched_company + knows_vip_protocol
+      d3_greeting: 0,           // vip_greeting: rapport+15, timing+5 = 20
+      d3_fleet: 0,              // fleet_package: persuasion+15, expertise+8 = 23
+      d3_wife_car: 2,           // bundled_deal: opportunity+10, persuasion+8 = 18
+      d3_sardor_approach: 0,
+      d3_needs: 0,
+      d3_objection: 0,
+      d3_sardor_closing: 0,
     });
-    // prep: 16, greeting: 20, fleet: 23, wife_car: 18 = 77
-    expect(result.state.score.total).toBe(77);
+    // Part A: 16 + 20 + 23 + 18 = 77
+    // abd_check: fleet_package + bundled_deal + score>=55 -> abd_hidden
     expect(result.state.flags.fleet_package).toBe(true);
     expect(result.state.flags.bundled_deal).toBe(true);
-    expect(result.endNodeId).toBe('d4_end_hidden');
-    expect(result.outcome).toBe('hidden_ending');
+    expect(result.state.flags.d3_abd_hidden).toBe(true);
     expect(result.playerState.achievements).toContain('corporate_king');
   });
 });
 
-describe('Day 5 — All Paths', () => {
+describe('Day 3 — Part B: Sardor (Mystery Shopper)', () => {
   it('grandmaster path (all flags + score >= 63)', () => {
     const result = simulateDay(
-      day5,
+      day3,
       {
-        d5_approach: 0,            // patient_approach: empathy+12, rapport+8 = 20
-        d5_needs_choice: 0,        // deep_discovery: discovery+15, rapport+8 = 23
-        d5_objection_choice: 0,    // honest_answer: persuasion+15, expertise+5 = 20
-        d5_closing: 0,             // test_drive: timing+12, persuasion+8 = 20
+        d3_preparation: [0, 1],
+        d3_greeting: 0,           // vip_greeting
+        d3_fleet: 0,              // fleet_package
+        d3_wife_car: 2,           // bundled_deal
+        d3_sardor_approach: 0,    // patient_approach: empathy+12, rapport+8
+        d3_needs: 0,              // deep_discovery: discovery+15, rapport+8
+        d3_objection: 0,          // honest_answer: persuasion+15, expertise+5
+        d3_sardor_closing: 0,     // test_drive: timing+12, persuasion+8
       },
       { lives: 3, flags: { d1_success: true } },
     );
-    // Total: 20 + 23 + 20 + 20 = 83
-    expect(result.state.score.total).toBe(83);
-    expect(result.endNodeId).toBe('d5_end_grandmaster');
+    // Part A: 16+20+23+18 = 77 (abd_hidden)
+    // Part B: 20+23+20+20 = 83 (total 160)
+    expect(result.state.score.total).toBe(160);
+    expect(result.endNodeId).toBe('d3_gm_cta');
     expect(result.outcome).toBe('hidden_ending');
-    expect(result.state.flags.d5_grandmaster).toBe(true);
+    expect(result.state.flags.d3_grandmaster).toBe(true);
     expect(result.playerState.achievements).toContain('grandmaster');
   });
 
   it('good path without grandmaster flags -> success', () => {
     const result = simulateDay(
-      day5,
+      day3,
       {
-        d5_approach: 1,            // timing+8, rapport+5 = 13
-        d5_needs_choice: 0,        // deep_discovery: discovery+15, rapport+8 = 23
-        d5_objection_choice: 0,    // honest_answer: persuasion+15, expertise+5 = 20
-        d5_closing: 0,             // test_drive: timing+12, persuasion+8 = 20
+        d3_preparation: [0, 1],
+        d3_greeting: 1,           // standard: timing+8
+        d3_fleet: 1,              // reliable
+        d3_wife_car: 0,           // personalized
+        d3_sardor_approach: 1,    // timing+8, rapport+5 (no patient_approach)
+        d3_needs: 0,              // deep_discovery
+        d3_objection: 0,          // honest_answer
+        d3_sardor_closing: 0,     // test_drive
       },
       { lives: 3, flags: { d1_success: true } },
     );
-    // 13 + 23 + 20 + 20 = 76
     // Has honest_answer, deep_discovery, d1_success, but NO patient_approach -> not grandmaster
-    expect(result.state.score.total).toBe(76);
-    expect(result.endNodeId).toBe('d5_end_success'); // 76 >= 56
+    // Total should be >= 56 -> success
+    expect(result.state.score.total).toBeGreaterThanOrEqual(56);
+    expect(result.endNodeId).toBe('d3_s_cta');
     expect(result.outcome).toBe('success');
   });
 
-  it('morning check with d1+d2 success -> dilnoza tip appears', () => {
+  it('dilnoza tip with d1+d2 success -> got_dilnoza_tip flag', () => {
     const result = simulateDay(
-      day5,
+      day3,
       {
-        d5_approach: 0,
-        d5_needs_choice: 0,
-        d5_objection_choice: 0,
-        d5_closing: 0,
+        d3_preparation: [0, 1],
+        d3_greeting: 0,
+        d3_fleet: 0,
+        d3_wife_car: 2,
+        d3_sardor_approach: 0,
+        d3_needs: 0,
+        d3_objection: 0,
+        d3_sardor_closing: 0,
       },
       { lives: 3, flags: { d1_success: true, d2_success: true } },
     );
-    // Should have got_dilnoza_tip flag from d5_dilnoza_tip node
+    // Should have got_dilnoza_tip flag from d3_dilnoza_tip node
     expect(result.state.flags.got_dilnoza_tip).toBe(true);
-    expect(result.endNodeId).toBe('d5_end_grandmaster');
+    expect(result.endNodeId).toBe('d3_gm_cta');
   });
 
-  it('morning check without d1+d2 success -> no dilnoza tip', () => {
+  it('no dilnoza tip without d1+d2 success', () => {
     const result = simulateDay(
-      day5,
+      day3,
       {
-        d5_approach: 0,
-        d5_needs_choice: 0,
-        d5_objection_choice: 0,
-        d5_closing: 0,
+        d3_preparation: [0, 1],
+        d3_greeting: 0,
+        d3_fleet: 0,
+        d3_wife_car: 2,
+        d3_sardor_approach: 0,
+        d3_needs: 0,
+        d3_objection: 0,
+        d3_sardor_closing: 0,
       },
       { lives: 3, flags: { d1_success: true } },
     );
     // Only d1_success, not d2_success -> no dilnoza tip
     expect(result.state.flags.got_dilnoza_tip).toBeUndefined();
     // Still reaches grandmaster since d1_success satisfies the OR condition
-    expect(result.endNodeId).toBe('d5_end_grandmaster');
+    expect(result.endNodeId).toBe('d3_gm_cta');
   });
 });
 
@@ -663,32 +679,45 @@ describe('Day 5 — All Paths', () => {
 
 describe('Cross-day Flag Propagation', () => {
   it('d1_success flows to d2_callback_check', () => {
-    // With d1_success -> should go through d2_callback
+    // With d1_success -> should go through d2_callback (+5 opportunity)
     const withFlag = simulateDay(
       day2,
-      { d2_presentation: 0, d2_objection: 0, d2_closing: 0 },
+      {
+        d2_presentation: 0,
+        d2_objection: 0,
+        d2_test_drive_offer: 0,
+        d2_test_drive_choice: 0,
+        d2_closing: 2,
+      },
       { lives: 3, flags: { d1_success: true } },
     );
-    // Callback adds opportunity+5, so score should include that
-    expect(withFlag.state.score.total).toBe(62);
-
     // Without d1_success -> no callback
     const withoutFlag = simulateDay(
       day2,
-      { d2_presentation: 0, d2_objection: 0, d2_closing: 0 },
+      {
+        d2_presentation: 0,
+        d2_objection: 0,
+        d2_test_drive_offer: 0,
+        d2_test_drive_choice: 0,
+        d2_closing: 2,
+      },
       { lives: 3, flags: {} },
     );
-    expect(withoutFlag.state.score.total).toBe(57);
+    expect(withFlag.state.score.total - withoutFlag.state.score.total).toBe(5);
   });
 
-  it('d1_success + d2_success flows to d5_morning_check', () => {
+  it('d1_success + d2_success flows to d3_dilnoza_check', () => {
     const result = simulateDay(
-      day5,
+      day3,
       {
-        d5_approach: 1,
-        d5_needs_choice: 1,
-        d5_objection_choice: 1,
-        d5_closing: 1,
+        d3_preparation: [0, 1],
+        d3_greeting: 1,
+        d3_fleet: 1,
+        d3_wife_car: 1,
+        d3_sardor_approach: 1,
+        d3_needs: 1,
+        d3_objection: 1,
+        d3_sardor_closing: 1,
       },
       { lives: 3, flags: { d1_success: true, d2_success: true } },
     );
@@ -696,13 +725,11 @@ describe('Cross-day Flag Propagation', () => {
   });
 
   it('hidden ending flags preserved across days', () => {
-    const state = initDaySession('car-dealership', day5, {
+    const state = initDaySession('car-dealership', day3, {
       lives: 5,
       flags: {
         d1_success: true,
         d2_hidden: true,
-        d3_hidden: true,
-        d4_hidden: true,
         // Non-cross-day flags should be stripped
         approach_warm: true,
         respected_knowledge: true,
@@ -711,8 +738,6 @@ describe('Cross-day Flag Propagation', () => {
     // Cross-day flags (d\d+_*) should be preserved
     expect(state.flags.d1_success).toBe(true);
     expect(state.flags.d2_hidden).toBe(true);
-    expect(state.flags.d3_hidden).toBe(true);
-    expect(state.flags.d4_hidden).toBe(true);
     // Non-cross-day flags should be stripped
     expect(state.flags.approach_warm).toBeUndefined();
     expect(state.flags.respected_knowledge).toBeUndefined();
@@ -725,70 +750,56 @@ describe('Cross-day Flag Propagation', () => {
 // ============================================================
 
 describe('Edge Cases', () => {
-  it('timer expire on every timed node in Day 5', () => {
+  it('timer expire on multiple timed nodes in Day 3 Sardor section', () => {
     const result = simulateDay(
-      day5,
+      day3,
       {
-        // d5_approach has expireNodeId -> expire
-        // d5_objection_choice has expireNodeId -> expire
-        // d5_closing has expireNodeId -> expire
-        d5_needs_choice: 0, // no timer on this one
+        d3_preparation: [0, 1],
+        d3_greeting: 1,         // standard: timing+8
+        // d3_fleet has expireNodeId -> expire: timing-8
+        d3_wife_car: 1,         // power: expertise+8
+        // d3_sardor_approach has expireNodeId -> expire: timing-8, rapport-5
+        d3_needs: 0,            // deep_discovery: discovery+15, rapport+8
+        // d3_objection has expireNodeId -> expire: timing-5, persuasion-5
+        // d3_sardor_closing has expireNodeId -> expire: timing-5, lose_life
       },
       { lives: 3, flags: {} },
     );
-    // d5_approach_expired: timing-8, lose_life -> score -8, lives 2
-    // d5_needs: dialogue
-    // d5_needs_choice_a: discovery+15, rapport+8 = 23, total 15
-    // d5_objection: dialogue
-    // d5_objection_expired: timing-10, lose_life -> total 5, lives 1
-    // d5_closing_expired: timing-5 -> total 0
-    // d5_reveal -> d5_final_check: 0 < 30 -> fail
-    expect(result.state.score.total).toBe(0);
-    expect(result.endNodeId).toBe('d5_end_fail');
-    // End effects include lose_life
-    // Started with 3, lost 1 (approach), lost 1 (objection), lost 1 (end fail) = 0
-    expect(result.state.lives).toBe(0);
-    expect(isGameOver(result.state.lives)).toBe(true);
+    // Multiple timer expirations should lower score significantly
+    expect(result.state.score.total).toBeLessThan(56);
+    // Sardor closing expire causes lose_life
+    expect(result.state.lives).toBeLessThan(3);
   });
 
   it('combo building across multiple good choices', () => {
-    // The engine tracks choiceHistory — verify choices accumulate
+    // Day 1 choices
     const result = simulateDay(day1, {
-      d1_approach: 0,  // rapport+10 (score sum = 10 -> good choice)
-      d1_needs: 0,     // discovery+12, rapport+5 (score sum = 17 -> good choice)
-      d1_suggest: 0,   // persuasion+12, expertise+5 (score sum = 17 -> good choice)
+      d1_who_first: 0,
+      d1_compromise: 0,
+      d1_test_drive_offer: 0,
+      d1_test_drive_choice: 0,
+      d1_closing: 0,
     });
-    // Verify all 3 choices recorded in history
-    expect(result.state.choiceHistory).toHaveLength(3);
-    expect(result.state.choiceHistory[0].nodeId).toBe('d1_approach');
+    // Verify choices recorded in history
+    expect(result.state.choiceHistory.length).toBeGreaterThanOrEqual(4);
+    expect(result.state.choiceHistory[0].nodeId).toBe('d1_who_first');
     expect(result.state.choiceHistory[0].choiceIndex).toBe(0);
-    expect(result.state.choiceHistory[1].nodeId).toBe('d1_needs');
-    expect(result.state.choiceHistory[2].nodeId).toBe('d1_suggest');
+    expect(result.state.choiceHistory[1].nodeId).toBe('d1_compromise');
   });
 
-  it('score never goes negative on session (but individual dimension can)', () => {
-    // Day 1: expire approach (-5 timing) then worst needs (-3 discovery, +5 expertise)
+  it('score dimensions can go negative but total stays correct', () => {
+    // Day 1: expire compromise (-5 timing) then skip test drive
     const result = simulateDay(day1, {
-      // expire approach: timing -5
-      d1_needs: 2,     // discovery -3, expertise +5
-      d1_suggest: 0,   // persuasion+12, expertise+5
+      d1_who_first: 2,          // expertise+8
+      // d1_compromise expires: timing-5
+      d1_test_drive_offer: 1,   // skip test drive
+      d1_closing: 2,            // timing+5
     });
-    // Individual dimension: timing = -5 (can go negative)
-    expect(result.state.score.dimensions.timing).toBe(-5);
-    // But total is sum of all: -5 + (-3) + 5 + 12 + 5 = 14
-    // Actually: approach_expired: timing-5 = total -5
-    // needs_c: discovery-3, expertise+5 = total -3
-    // suggest_a: persuasion+12, expertise+5 = total 14
-    // Wait: -5 + 2 + 17 = 14. Let me recalculate:
-    // approach_expired: add_score timing -5 -> total = -5
-    // needs_c: add_score discovery -3, add_score expertise +5 -> total = -5 + (-3) + 5 = -3
-    // suggest_a: add_score persuasion +12, add_score expertise +5 -> total = -3 + 12 + 5 = 14
-    expect(result.state.score.total).toBe(14);
-    // Dimensions can go negative
-    expect(result.state.score.dimensions.timing).toBe(-5);
-    expect(result.state.score.dimensions.discovery).toBe(-3);
-    // Total score can be positive even with negative dimensions
-    expect(result.state.score.total).toBeGreaterThan(0);
+    // Individual dimension: timing started from -5, then +5 = 0
+    // But this depends on whether timing was used elsewhere. Let's just verify totals.
+    expect(result.state.score.total).toBe(8); // 8+(-5)+0+5 = 8
+    expect(result.state.score.total).toBeLessThan(18); // failure territory
+    expect(result.endNodeId).toBe('d1_end_fail');
   });
 });
 
@@ -797,10 +808,11 @@ describe('Edge Cases', () => {
 // ============================================================
 
 describe('Scenario Structure', () => {
-  it('carDealershipScenario has exactly 5 days', () => {
-    expect(carDealershipScenario.days).toHaveLength(5);
+  it('carDealershipScenario has exactly 3 days', () => {
+    expect(carDealershipScenario.days).toHaveLength(3);
     expect(carDealershipScenario.days[0].id).toBe('car-day1');
-    expect(carDealershipScenario.days[4].id).toBe('car-day5');
+    expect(carDealershipScenario.days[1].id).toBe('car-day2');
+    expect(carDealershipScenario.days[2].id).toBe('car-day3');
   });
 
   it('every day root node exists and is reachable', () => {

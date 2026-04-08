@@ -4,348 +4,787 @@ export const day1: Day = {
   id: 'car-day1',
   dayNumber: 1,
   title: {
-    uz: 'Birinchi mijoz',
-    ru: 'Первый клиент',
+    uz: 'Birinchi kun',
+    ru: 'Первый день',
   },
-  rootNodeId: 'd1_intro',
-  targetScore: 30,
+  rootNodeId: 'd1_day_intro',
+  targetScore: 40,
   nextDayTeaser: {
-    uz: 'Ertaga Kamola xonim keladi — u hamma narsani biladi. Tayyor bo\'ling.',
-    ru: 'Завтра придёт Камола — она всё знает. Готовьтесь.',
+    uz: 'Ertaga Kamola xonim keladi — hamma narsani biladi...',
+    ru: 'Завтра придёт Камола — она всё знает...',
   },
   nodes: {
-    d1_intro: {
-      id: 'd1_intro',
+    // ============================================================
+    // PROLOGUE: Meeting Colleagues
+    // ============================================================
+
+    d1_day_intro: {
+      id: 'd1_day_intro',
+      type: 'day_intro',
+      background: 'bg_showroom_entrance_exterior',
+      title: {
+        uz: '1-kun: Yangi boshlanish',
+        ru: 'День 1: Новое начало',
+      },
+      subtitle: {
+        uz: 'Toshkent, Chevrolet saloni',
+        ru: 'Ташкент, салон Chevrolet',
+      },
+      nextNodeId: 'd1_morning',
+    },
+
+    d1_morning: {
+      id: 'd1_morning',
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
-      background: 'bg_showroom_entrance',
+      background: 'bg_showroom_entrance_exterior',
       text: {
-        uz: 'Ertalab. Toshkentdagi Chevrolet saloni eshiklari ochilyapti. Quyosh nuri vitrina oynalarida o\'ynayapti. Bugun — sizning birinchi ish kuningiz.',
-        ru: 'Утро. Двери Chevrolet-салона в Ташкенте открываются. Солнечные лучи играют на витринных стёклах. Сегодня — ваш первый рабочий день.',
+        uz: 'Ertalab, Toshkent. Quyosh endigina ko\'tarilibdi. Bugun sizning Chevrolet salonidagi birinchi ish kuningiz. Yurak tez urayapti.',
+        ru: 'Утро, Ташкент. Солнце только поднимается. Сегодня ваш первый рабочий день в салоне Chevrolet. Сердце бьётся быстрее.',
       },
-      nextNodeId: 'd1_briefing',
+      nextNodeId: 'd1_meet_rustam',
     },
 
-    d1_briefing: {
-      id: 'd1_briefing',
+    d1_meet_rustam: {
+      id: 'd1_meet_rustam',
       type: 'dialogue',
       speaker: 'rustam',
       emotion: 'friendly',
       background: 'bg_manager_office',
+      characters: [
+        { id: 'rustam', emotion: 'friendly', position: 'center' },
+      ],
       text: {
-        uz: 'Xush kelibsiz! Birinchi qoidani bepul aytaman: avval tinglang. Professionallar bunga \'aktiv tinglash\' deydi — bu alohida san\'at. Keling, birinchi mijozingiz kelayotganga o\'xshaydi.',
-        ru: 'Добро пожаловать! Первое правило — бесплатно: слушайте сначала. Профессионалы называют это \'активное слушание\' — это отдельное искусство. Кстати, ваш первый клиент, кажется, уже идёт.',
+        uz: 'Xush kelibsiz! Men Rustam, salonning bosh menejeri. Asosiy qoida: avval tinglang, keyin gapiring.',
+        ru: 'Добро пожаловать! Я Рустам, главный менеджер салона. Главное правило: сначала слушай, потом говори.',
       },
-      nextNodeId: 'd1_client_enters',
+      nextNodeId: 'd1_rustam_tip',
     },
 
-    d1_client_enters: {
-      id: 'd1_client_enters',
+    d1_rustam_tip: {
+      id: 'd1_rustam_tip',
+      type: 'dialogue',
+      speaker: 'rustam',
+      emotion: 'serious',
+      characters: [
+        { id: 'rustam', emotion: 'serious', position: 'center' },
+      ],
+      text: {
+        uz: 'Bugun bir juftlik keladi. Ikkalasini ham tinglang — bu juda muhim.',
+        ru: 'Сегодня придёт пара. Слушай обоих — это очень важно.',
+      },
+      nextNodeId: 'd1_meet_dilnoza',
+    },
+
+    d1_meet_dilnoza: {
+      id: 'd1_meet_dilnoza',
+      type: 'dialogue',
+      speaker: 'dilnoza',
+      emotion: 'confident',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'dilnoza', emotion: 'confident', position: 'center' },
+      ],
+      text: {
+        uz: '2 yil oldin men ham xuddi siz kabi boshlaganman. Hozir oyiga 15 million ishlayman. Hammasi mumkin.',
+        ru: '2 года назад я была такой же, как ты. Сейчас зарабатываю 15 миллионов в месяц. Всё возможно.',
+      },
+      nextNodeId: 'd1_dilnoza_tip',
+    },
+
+    d1_dilnoza_tip: {
+      id: 'd1_dilnoza_tip',
+      type: 'dialogue',
+      speaker: 'dilnoza',
+      emotion: 'confident',
+      characters: [
+        { id: 'dilnoza', emotion: 'confident', position: 'center' },
+      ],
+      effects: [{ type: 'set_flag', flag: 'met_dilnoza' }],
+      text: {
+        uz: 'Sir aytaymi? Juftliklar kelganda — ikkalasini bog\'laydigan narsani toping.',
+        ru: 'Секрет? Когда приходит пара — найди то, что связывает обоих.',
+      },
+      nextNodeId: 'd1_meet_anvar',
+    },
+
+    d1_meet_anvar: {
+      id: 'd1_meet_anvar',
+      type: 'dialogue',
+      speaker: 'anvar',
+      emotion: 'nervous',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'anvar', emotion: 'nervous', position: 'center' },
+      ],
+      text: {
+        uz: 'Salom! Men Anvar, men ham yangi boshladim. Mana bugungi uchrashuvlar ro\'yxati.',
+        ru: 'Привет! Я Анвар, тоже недавно начал. Вот список сегодняшних встреч.',
+      },
+      nextNodeId: 'd1_anvar_info',
+    },
+
+    d1_anvar_info: {
+      id: 'd1_anvar_info',
+      type: 'dialogue',
+      speaker: 'anvar',
+      emotion: 'nervous',
+      characters: [
+        { id: 'anvar', emotion: 'nervous', position: 'center' },
+      ],
+      effects: [{ type: 'set_flag', flag: 'met_anvar' }],
+      text: {
+        uz: 'Yosh juftlik keladi. Er — sportni yaxshi ko\'radi, tezlikka o\'ch. Xotini esa — bolalar uchun keng joy kerak deydi.',
+        ru: 'Придёт молодая пара. Муж любит спорт и скорость. А жена говорит — нужно просторное для детей.',
+      },
+      nextNodeId: 'd1_couple_enters',
+    },
+
+    // ============================================================
+    // MAIN: Couple Enters
+    // ============================================================
+
+    d1_couple_enters: {
+      id: 'd1_couple_enters',
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
       text: {
-        uz: 'Salonга yosh yigit kirdi. U atrofga qarayapti, Tracker va Equinox orasida to\'xtadi.',
-        ru: 'В салон зашёл молодой мужчина. Он осматривается, остановился между Tracker и Equinox.',
+        uz: 'Eshik ochildi. Yosh juftlik kirdi. Er darhol Tracker tomon yurdi. Xotini esa Equinox oldida to\'xtadi.',
+        ru: 'Дверь открылась. Вошла молодая пара. Муж сразу пошёл к Tracker. Жена остановилась у Equinox.',
       },
-      nextNodeId: 'd1_approach',
+      nextNodeId: 'd1_who_first',
     },
 
-    d1_approach: {
-      id: 'd1_approach',
+    d1_who_first: {
+      id: 'd1_who_first',
       type: 'choice',
       prompt: {
-        uz: 'Mijozga qanday murojaat qilasiz?',
-        ru: 'Как вы подойдёте к клиенту?',
+        uz: 'Kimga birinchi yondashasiz?',
+        ru: 'К кому подойдёте первым?',
       },
-      timeLimit: 15,
-      expireNodeId: 'd1_approach_expired',
       choices: [
         {
-          id: 'd1_approach_a',
+          id: 'd1_who_first_a',
           text: {
-            uz: 'Assalomu alaykum! Chevrolet saloniga xush kelibsiz. Qanday yordam bera olaman?',
-            ru: 'Здравствуйте! Добро пожаловать в Chevrolet. Чем могу помочь?',
+            uz: 'Ikkalasini birga kutib olaman: "Assalomu alaykum! Xush kelibsiz, birga ko\'raylikmi?"',
+            ru: 'Приветствую обоих вместе: "Здравствуйте! Добро пожаловать, давайте вместе посмотрим?"',
           },
           effects: [
-            { type: 'add_score', amount: 10, dimension: 'rapport' },
-            { type: 'set_flag', flag: 'approach_warm' },
+            { type: 'add_score', dimension: 'rapport', amount: 15 },
+            { type: 'add_score', dimension: 'empathy', amount: 5 },
+            { type: 'set_flag', flag: 'addressed_both' },
           ],
-          nextNodeId: 'd1_converge_warm',
+          nextNodeId: 'd1_conflict_both',
         },
         {
-          id: 'd1_approach_b',
+          id: 'd1_who_first_b',
           text: {
-            uz: 'Salom! Tracker yoki Equinox — qaysi biri qiziqtirdi?',
-            ru: 'Привет! Tracker или Equinox — какой заинтересовал?',
+            uz: 'Er tomon boraman — Tracker oldiga: "Salom! Trackerga qarayapsizmi?"',
+            ru: 'Подхожу к мужу — к Tracker: "Привет! Смотрите Tracker?"',
           },
           effects: [
-            { type: 'add_score', amount: 5, dimension: 'timing' },
-            { type: 'set_flag', flag: 'approach_direct' },
+            { type: 'add_score', dimension: 'timing', amount: 8 },
+            { type: 'set_flag', flag: 'approached_javlon' },
           ],
-          nextNodeId: 'd1_converge_direct',
+          nextNodeId: 'd1_conflict_tracker',
         },
         {
-          id: 'd1_approach_c',
+          id: 'd1_who_first_c',
           text: {
-            uz: 'Assalomu alaykum! Biroz ko\'rib chiqing, savol bo\'lsa — men shu yerdaman.',
-            ru: 'Здравствуйте! Посмотрите спокойно, если будут вопросы — я рядом.',
+            uz: 'Xotini tomon boraman — Equinox oldiga: "Salom! Equinox yoqdimi?"',
+            ru: 'Подхожу к жене — к Equinox: "Здравствуйте! Нравится Equinox?"',
           },
           effects: [
-            { type: 'add_score', amount: 12, dimension: 'empathy' },
-            { type: 'set_flag', flag: 'approach_soft' },
+            { type: 'add_score', dimension: 'expertise', amount: 8 },
+            { type: 'set_flag', flag: 'approached_nilufar' },
           ],
-          nextNodeId: 'd1_converge_soft',
+          nextNodeId: 'd1_conflict_equinox',
         },
       ],
     },
 
-    d1_approach_expired: {
-      id: 'd1_approach_expired',
+    // --- Branch: Addressed Both ---
+
+    d1_conflict_both: {
+      id: 'd1_conflict_both',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'neutral',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'neutral', position: 'left' },
+        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+      ],
+      text: {
+        uz: 'Ha, birga ko\'raylik. Lekin men Tracker xohlayman. Tez, kuchli, sport rejim bor.',
+        ru: 'Ладно, давайте вместе. Но я хочу Tracker. Быстрый, мощный, есть спорт-режим.',
+      },
+      nextNodeId: 'd1_conflict_both_nilufar',
+    },
+
+    d1_conflict_both_nilufar: {
+      id: 'd1_conflict_both_nilufar',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'concerned',
+      characters: [
+        { id: 'javlon', emotion: 'neutral', position: 'left' },
+        { id: 'nilufar', emotion: 'concerned', position: 'right' },
+      ],
+      text: {
+        uz: 'Bolalarga joy kerak! Tracker tor. Lekin birga ko\'rsak — yaxshi.',
+        ru: 'Детям нужно место! Tracker тесный. Но вместе посмотрим — это хорошо.',
+      },
+      nextNodeId: 'd1_compromise',
+    },
+
+    // --- Branch: Approached Javlon (Tracker) ---
+
+    d1_conflict_tracker: {
+      id: 'd1_conflict_tracker',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'happy',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'happy', position: 'left' },
+        { id: 'nilufar', emotion: 'upset', position: 'right' },
+      ],
+      text: {
+        uz: 'Ha! Tracker — zo\'r mashina! 174 ot kuchi, sport rejim. Bu menga yoqadi!',
+        ru: 'Да! Tracker — отличная машина! 174 лошадки, спорт-режим. Мне нравится!',
+      },
+      nextNodeId: 'd1_conflict_tracker_nilufar',
+    },
+
+    d1_conflict_tracker_nilufar: {
+      id: 'd1_conflict_tracker_nilufar',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'upset',
+      characters: [
+        { id: 'javlon', emotion: 'happy', position: 'left' },
+        { id: 'nilufar', emotion: 'upset', position: 'right' },
+      ],
+      text: {
+        uz: 'Javlon, yana sport mashina? Bolalarimiz qaerda o\'tiradi? Menga ham fikrimni so\'rashingizni istayman.',
+        ru: 'Жавлон, опять спортивная? А дети где сядут? Мне тоже хочется, чтобы спросили моё мнение.',
+      },
+      nextNodeId: 'd1_compromise',
+    },
+
+    // --- Branch: Approached Nilufar (Equinox) ---
+
+    d1_conflict_equinox: {
+      id: 'd1_conflict_equinox',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'happy',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'javlon', emotion: 'upset', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
+      text: {
+        uz: 'Equinox juda keng! Bolalar uchun joy ko\'p. Xavfsizlik ham yuqori. Menga yoqdi.',
+        ru: 'Equinox такой просторный! Много места для детей. И безопасность высокая. Мне нравится.',
+      },
+      nextNodeId: 'd1_conflict_equinox_javlon',
+    },
+
+    d1_conflict_equinox_javlon: {
+      id: 'd1_conflict_equinox_javlon',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'upset',
+      characters: [
+        { id: 'javlon', emotion: 'upset', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
+      text: {
+        uz: 'Hey, men ham bormisanmi? Equinox sekin, og\'ir. Men Tracker xohlayman — tezlik kerak.',
+        ru: 'Эй, а я тут есть? Equinox медленный, тяжёлый. Я хочу Tracker — мне нужна скорость.',
+      },
+      nextNodeId: 'd1_compromise',
+    },
+
+    // --- Compromise Choice (converge point) ---
+
+    d1_compromise: {
+      id: 'd1_compromise',
+      type: 'choice',
+      prompt: {
+        uz: 'Ikkalasining fikri har xil. Nima deysiz?',
+        ru: 'У обоих разные мнения. Что скажете?',
+      },
+      timeLimit: 10,
+      expireNodeId: 'd1_compromise_expired',
+      choices: [
+        {
+          id: 'd1_compromise_a',
+          text: {
+            uz: 'Ikkalangizning fikringiz to\'g\'ri. Tracker — har kungi yurish uchun. Equinox — oila uchun. Hozir nima muhimroq?',
+            ru: 'Вы оба правы. Tracker — для ежедневных поездок. Equinox — для семьи. Что сейчас важнее?',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'empathy', amount: 15 },
+            { type: 'add_score', dimension: 'persuasion', amount: 10 },
+            { type: 'set_flag', flag: 'balanced_both' },
+          ],
+          nextNodeId: 'd1_compromise_balanced',
+        },
+        {
+          id: 'd1_compromise_b',
+          text: {
+            uz: 'Equinoxda ham sport rejim bor — tezlik HAM joy. Ikkalasi bittada.',
+            ru: 'У Equinox тоже есть спорт-режим — скорость И пространство. Два в одном.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'expertise', amount: 12 },
+            { type: 'add_score', dimension: 'persuasion', amount: 5 },
+          ],
+          nextNodeId: 'd1_compromise_sport',
+        },
+        {
+          id: 'd1_compromise_c',
+          text: {
+            uz: 'Hozir Tracker oling, keyinroq trade-in bilan Equinoxga almashtirasiz.',
+            ru: 'Берите сейчас Tracker, потом по trade-in обменяете на Equinox.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'timing', amount: 8 },
+            { type: 'add_score', dimension: 'opportunity', amount: 5 },
+          ],
+          nextNodeId: 'd1_compromise_tradein',
+        },
+      ],
+    },
+
+    d1_compromise_expired: {
+      id: 'd1_compromise_expired',
       type: 'score',
-      effects: [{ type: 'add_score', amount: -5, dimension: 'timing' }],
+      effects: [{ type: 'add_score', dimension: 'timing', amount: -5 }],
       narrator: {
-        uz: 'Siz ikkilandingiz va mijoz o\'zi qarab ketdi.',
-        ru: 'Вы замешкались, и клиент сам продолжил осматривать.',
+        uz: 'Siz ikkilandingiz. Javlon bilan Nilufar bir-biriga qarab, noqulay jimlik cho\'kdi.',
+        ru: 'Вы замешкались. Жавлон и Нилуфар переглянулись, повисла неловкая тишина.',
       },
-      nextNodeId: 'd1_converge_expired',
+      nextNodeId: 'd1_test_drive_offer',
     },
 
-    d1_converge_warm: {
-      id: 'd1_converge_warm',
+    // --- Compromise Reactions ---
+
+    d1_compromise_balanced: {
+      id: 'd1_compromise_balanced',
       type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'neutral',
+      speaker: 'javlon',
+      emotion: 'thoughtful',
+      characters: [
+        { id: 'javlon', emotion: 'thoughtful', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
       text: {
-        uz: 'Rahmat, yaxshi kutib oldingiz. Aslida... xotinim ikkinchi farzandimizni kutyapti. Hozirgi Cobaltimiz kichik bo\'lib qoldi. Kattaroq mashina kerak.',
-        ru: 'Спасибо, приятно. Вообще-то... жена ждёт второго ребёнка. Наш Cobalt стал маловат. Нужна машина побольше.',
+        uz: 'Hmm... to\'g\'ri aytasiz. Hozir oila muhimroq. Lekin Tracker ham yoqadi...',
+        ru: 'Хм... вы правы. Сейчас семья важнее. Но Tracker тоже нравится...',
       },
-      nextNodeId: 'd1_needs',
+      nextNodeId: 'd1_compromise_balanced_nilufar',
     },
 
-    d1_converge_direct: {
-      id: 'd1_converge_direct',
+    d1_compromise_balanced_nilufar: {
+      id: 'd1_compromise_balanced_nilufar',
       type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'neutral',
-      text: {
-        uz: 'Ha, shu ikkalasiga qarayapman. Oilam uchun kattaroq mashina kerak — xotinim ikkinchi farzandimizni kutyapti. Cobaltimiz endi sig\'mayapti.',
-        ru: 'Да, смотрю на эти два. Нужна машина побольше для семьи — жена ждёт второго. Cobalt уже не вмещает.',
-      },
-      nextNodeId: 'd1_needs',
-    },
-
-    d1_converge_soft: {
-      id: 'd1_converge_soft',
-      type: 'dialogue',
-      speaker: 'bobur',
+      speaker: 'nilufar',
       emotion: 'happy',
-      text: {
-        uz: 'Rahmat, shoshilmasdan ko\'rib chiqdim. Aslida savol bor — xotinim ikkinchi farzandimizni kutyapti, Cobaltimiz kichik bo\'lib qoldi. Oilaviy mashina kerak.',
-        ru: 'Спасибо, что дали осмотреться. У меня вопрос — жена ждёт второго ребёнка, наш Cobalt стал мал. Нужна семейная машина.',
-      },
-      nextNodeId: 'd1_needs',
-    },
-
-    d1_converge_expired: {
-      id: 'd1_converge_expired',
-      type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'neutral',
-      text: {
-        uz: 'Kechirasiz, siz shu yerdamisiz? Menga maslahat kerak — xotinim ikkinchi farzandimizni kutyapti, Cobaltimiz kichik bo\'lib qoldi.',
-        ru: 'Извините, вы здесь работаете? Мне нужна консультация — жена ждёт второго, наш Cobalt стал маловат.',
-      },
-      nextNodeId: 'd1_needs',
-    },
-
-    d1_needs: {
-      id: 'd1_needs',
-      type: 'choice',
-      prompt: {
-        uz: 'Qanday savol berasiz?',
-        ru: 'Какой вопрос зададите?',
-      },
-      choices: [
-        {
-          id: 'd1_needs_a',
-          text: {
-            uz: 'Sizga mashinada eng muhim narsa nima — xavfsizlik, joy yoki narx?',
-            ru: 'Что для вас самое важное в машине — безопасность, пространство или цена?',
-          },
-          effects: [
-            { type: 'add_score', amount: 12, dimension: 'discovery' },
-            { type: 'add_score', amount: 5, dimension: 'rapport' },
-            { type: 'set_flag', flag: 'asked_priorities' },
-          ],
-          nextNodeId: 'd1_needs_resp_priorities',
-        },
-        {
-          id: 'd1_needs_b',
-          text: {
-            uz: 'Byudjetingiz qancha atrofida?',
-            ru: 'На какой бюджет рассчитываете?',
-          },
-          effects: [
-            { type: 'add_score', amount: 3, dimension: 'discovery' },
-            { type: 'set_flag', flag: 'asked_budget' },
-          ],
-          nextNodeId: 'd1_needs_resp_budget',
-        },
-        {
-          id: 'd1_needs_c',
-          text: {
-            uz: 'Equinox — oilalar uchun eng zo\'r tanlov! Ko\'rsatay?',
-            ru: 'Equinox — лучший выбор для семьи! Показать?',
-          },
-          effects: [
-            { type: 'add_score', amount: -3, dimension: 'discovery' },
-            { type: 'add_score', amount: 5, dimension: 'expertise' },
-            { type: 'set_flag', flag: 'jumped_to_pitch' },
-          ],
-          nextNodeId: 'd1_needs_resp_pitch',
-        },
+      characters: [
+        { id: 'javlon', emotion: 'thoughtful', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
-    },
-
-    d1_needs_resp_priorities: {
-      id: 'd1_needs_resp_priorities',
-      type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'thoughtful',
       text: {
-        uz: 'Yaxshi savol. Xavfsizlik birinchi o\'rinda — bolalar uchun airbag ko\'p bo\'lsin. Lekin narx ham muhim — Tracker 22 ming, Equinox 30 ming... Farqi katta.',
-        ru: 'Хороший вопрос. Безопасность на первом месте — чтобы подушек побольше для детей. Но и цена важна — Tracker 22 тысячи, Equinox 30... Разница большая.',
+        uz: 'Rahmat, ikkalamizni ham tingladingiz. Bu muhim. Equinoxni birga ko\'raylikmi?',
+        ru: 'Спасибо, что выслушали обоих. Это важно. Давайте вместе посмотрим Equinox?',
       },
-      nextNodeId: 'd1_suggest',
+      nextNodeId: 'd1_test_drive_offer',
     },
 
-    d1_needs_resp_budget: {
-      id: 'd1_needs_resp_budget',
+    d1_compromise_sport: {
+      id: 'd1_compromise_sport',
       type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'thoughtful',
-      text: {
-        uz: 'Byudjet... 22-25 ming dollar atrofida. Kredit bo\'lsa ham ko\'rib chiqaman. Lekin menga narxdan ko\'ra xavfsizlik muhimroq — bolalar uchun.',
-        ru: 'Бюджет... в районе 22-25 тысяч долларов. Кредит тоже рассмотрю. Но мне важнее безопасности, чем цена — ради детей.',
-      },
-      nextNodeId: 'd1_suggest',
-    },
-
-    d1_needs_resp_pitch: {
-      id: 'd1_needs_resp_pitch',
-      type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'surprised',
-      text: {
-        uz: 'Kutib turing... Men hali qaror qilganim yo\'q. Avval nimalar borligini bilishim kerak. Narxlar qanday? Xavfsizlik bo\'yicha farq bormi?',
-        ru: 'Подождите... Я ещё не решил. Сначала хочу понять, что есть. Какие цены? Есть разница по безопасности?',
-      },
-      nextNodeId: 'd1_suggest',
-    },
-
-    d1_suggest: {
-      id: 'd1_suggest',
-      type: 'choice',
-      prompt: {
-        uz: 'Qaysi mashinani tavsiya qilasiz?',
-        ru: 'Какую машину порекомендуете?',
-      },
-      choices: [
-        {
-          id: 'd1_suggest_a',
-          text: {
-            uz: 'Equinox — 6 ta airbag, 7 o\'rindiq. Bolalar xavfsizligi uchun eng yaxshi. Narxi ko\'proq, lekin oilangiz uchun sarmoya.',
-            ru: 'Equinox — 6 подушек, 7 мест. Лучший для безопасности детей. Дороже, но это инвестиция в семью.',
-          },
-          effects: [
-            { type: 'add_score', amount: 12, dimension: 'persuasion' },
-            { type: 'add_score', amount: 5, dimension: 'expertise' },
-            { type: 'set_flag', flag: 'suggested_equinox' },
-          ],
-          nextNodeId: 'd1_result_equinox',
-        },
-        {
-          id: 'd1_suggest_b',
-          text: {
-            uz: 'Tracker ham yomon emas — 4 ta airbag bor, va 8 ming arzon. Bo\'lib to\'lash ham bor.',
-            ru: 'Tracker тоже неплох — 4 подушки есть, и на 8 тысяч дешевле. Есть рассрочка.',
-          },
-          effects: [
-            { type: 'add_score', amount: 8, dimension: 'empathy' },
-            { type: 'add_score', amount: 5, dimension: 'persuasion' },
-            { type: 'set_flag', flag: 'suggested_tracker' },
-          ],
-          nextNodeId: 'd1_result_tracker',
-        },
-        {
-          id: 'd1_suggest_c',
-          text: {
-            uz: 'Ikkalasini solishtiramizmi? Hozir xususiyatlarini yonma-yon ko\'rsataman.',
-            ru: 'Давайте сравним оба? Сейчас покажу характеристики рядом.',
-          },
-          effects: [
-            { type: 'add_score', amount: 10, dimension: 'expertise' },
-            { type: 'add_score', amount: 3, dimension: 'discovery' },
-            { type: 'set_flag', flag: 'compared_models' },
-          ],
-          nextNodeId: 'd1_result_compare',
-        },
-      ],
-    },
-
-    d1_result_equinox: {
-      id: 'd1_result_equinox',
-      type: 'dialogue',
-      speaker: 'bobur',
+      speaker: 'javlon',
       emotion: 'interested',
+      characters: [
+        { id: 'javlon', emotion: 'interested', position: 'left' },
+        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+      ],
       text: {
-        uz: '6 ta airbag — bu jiddiy. Narxi qimmatroq, lekin bolalar xavfsizligi uchun... Bo\'lib to\'lash shartlari qanday? Xotinimga ham ko\'rsatishim kerak.',
-        ru: '6 подушек — это серьёзно. Дороже, конечно, но ради безопасности детей... А какие условия рассрочки? Жене тоже надо показать.',
+        uz: 'Sport rejim bormi? Qiziq... Tezligi qancha chiqadi?',
+        ru: 'Спорт-режим есть? Интересно... Какую скорость набирает?',
       },
-      nextNodeId: 'd1_check',
+      nextNodeId: 'd1_compromise_sport_nilufar',
     },
 
-    d1_result_tracker: {
-      id: 'd1_result_tracker',
+    d1_compromise_sport_nilufar: {
+      id: 'd1_compromise_sport_nilufar',
       type: 'dialogue',
-      speaker: 'bobur',
-      emotion: 'thoughtful',
+      speaker: 'nilufar',
+      emotion: 'neutral',
+      characters: [
+        { id: 'javlon', emotion: 'interested', position: 'left' },
+        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+      ],
       text: {
-        uz: 'Tracker arzonroq, bu yaxshi. Lekin 4 ta airbag yetarlimi oila uchun? Equinox bilan solishtirib ko\'rsangiz... Vizitkangiz bormi? Xotinimga ham maslahat qilishim kerak.',
-        ru: 'Tracker дешевле, это хорошо. Но 4 подушки — достаточно для семьи? Может, сравните с Equinox... Есть визитка? Надо с женой посоветоваться.',
+        uz: 'Agar ikkalasi ham bo\'lsa — yaxshi. Lekin avval bolalar o\'rindiqlarini ko\'raman.',
+        ru: 'Если есть и то, и другое — хорошо. Но сначала посмотрю детские кресла.',
       },
-      nextNodeId: 'd1_check',
+      nextNodeId: 'd1_test_drive_offer',
     },
 
-    d1_result_compare: {
-      id: 'd1_result_compare',
+    d1_compromise_tradein: {
+      id: 'd1_compromise_tradein',
       type: 'dialogue',
-      speaker: 'bobur',
+      speaker: 'javlon',
       emotion: 'happy',
+      characters: [
+        { id: 'javlon', emotion: 'happy', position: 'left' },
+        { id: 'nilufar', emotion: 'concerned', position: 'right' },
+      ],
       text: {
-        uz: 'Ana bu yaxshi yondashuv! Solishtirib ko\'rsak, aniqroq bo\'ladi. Xotinimga ham shu solishtirishni ko\'rsataman. Vizitkangiz bormi?',
-        ru: 'Вот это правильный подход! Сравнение — это наглядно. Покажу жене. Есть ваша визитка?',
+        uz: 'Trade-in — bu variant! Hozir Tracker, keyin Equinox. Yoqdi menga!',
+        ru: 'Trade-in — это вариант! Сейчас Tracker, потом Equinox. Мне нравится!',
       },
-      nextNodeId: 'd1_check',
+      nextNodeId: 'd1_compromise_tradein_nilufar',
     },
+
+    d1_compromise_tradein_nilufar: {
+      id: 'd1_compromise_tradein_nilufar',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'concerned',
+      characters: [
+        { id: 'javlon', emotion: 'happy', position: 'left' },
+        { id: 'nilufar', emotion: 'concerned', position: 'right' },
+      ],
+      text: {
+        uz: 'Lekin bolalar hozir kerak... Almashguncha nima qilamiz?',
+        ru: 'Но дети уже сейчас... Что будем делать, пока не обменяем?',
+      },
+      nextNodeId: 'd1_test_drive_offer',
+    },
+
+    // ============================================================
+    // TEST DRIVE
+    // ============================================================
+
+    d1_test_drive_offer: {
+      id: 'd1_test_drive_offer',
+      type: 'choice',
+      prompt: {
+        uz: 'Nima qilasiz?',
+        ru: 'Что предложите?',
+      },
+      choices: [
+        {
+          id: 'd1_test_drive_offer_a',
+          text: {
+            uz: 'Keling, hamma birga test-drayvga chiqaylik! Yo\'lda ko\'rasiz.',
+            ru: 'Давайте все вместе на тест-драйв! На дороге сами почувствуете.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'rapport', amount: 5 },
+            { type: 'set_flag', flag: 'offered_test_drive' },
+          ],
+          nextNodeId: 'd1_test_drive',
+        },
+        {
+          id: 'd1_test_drive_offer_b',
+          text: {
+            uz: 'Keling, hisob-kitobni gaplashaylik.',
+            ru: 'Давайте обсудим условия.',
+          },
+          effects: [],
+          nextNodeId: 'd1_anniversary_check',
+        },
+      ],
+    },
+
+    d1_test_drive: {
+      id: 'd1_test_drive',
+      type: 'dialogue',
+      speaker: 'narrator',
+      emotion: null,
+      background: 'bg_test_drive_city',
+      text: {
+        uz: 'Toshkent ko\'chalari. Mashina yo\'lga chiqdi. Oyna tushirilgan, shabada esyapti. Javlon rulda, Nilufar orqa o\'rindiqda.',
+        ru: 'Улицы Ташкента. Машина выехала на дорогу. Окна опущены, дует ветерок. Жавлон за рулём, Нилуфар на заднем сиденье.',
+      },
+      nextNodeId: 'd1_test_drive_javlon',
+    },
+
+    d1_test_drive_javlon: {
+      id: 'd1_test_drive_javlon',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'excited',
+      background: 'bg_test_drive_city',
+      characters: [
+        { id: 'javlon', emotion: 'excited', position: 'left' },
+        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+      ],
+      text: {
+        uz: 'Voy! Tezlashishi yaxshi ekan. Yo\'lni yaxshi ushlaydi. Yoqyapti!',
+        ru: 'Ого! Разгон хороший. Дорогу держит отлично. Нравится!',
+      },
+      nextNodeId: 'd1_test_drive_nilufar',
+    },
+
+    d1_test_drive_nilufar: {
+      id: 'd1_test_drive_nilufar',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'happy',
+      characters: [
+        { id: 'javlon', emotion: 'excited', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
+      text: {
+        uz: 'Orqa o\'rindiq keng ekan! Bolalar kreslosi sig\'adi. Va juda tinch — shovqin kam.',
+        ru: 'Сзади просторно! Детское кресло поместится. И очень тихо — мало шума.',
+      },
+      nextNodeId: 'd1_test_drive_choice',
+    },
+
+    d1_test_drive_choice: {
+      id: 'd1_test_drive_choice',
+      type: 'choice',
+      prompt: {
+        uz: 'Haydash davomida nima deysiz?',
+        ru: 'Что скажете во время поездки?',
+      },
+      choices: [
+        {
+          id: 'd1_test_drive_choice_a',
+          text: {
+            uz: 'Xavfsizlik tizimlari haqida gapirib beraman — bolalar uchun muhim.',
+            ru: 'Расскажу про системы безопасности — важно для детей.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'empathy', amount: 8 },
+          ],
+          nextNodeId: 'd1_test_drive_safety',
+        },
+        {
+          id: 'd1_test_drive_choice_b',
+          text: {
+            uz: 'Qayta sotish narxi haqida aytaman — bu mashinaning qiymati tushmaydi.',
+            ru: 'Расскажу о стоимости перепродажи — эта машина не теряет в цене.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'expertise', amount: 5 },
+          ],
+          nextNodeId: 'd1_test_drive_value',
+        },
+        {
+          id: 'd1_test_drive_choice_c',
+          text: {
+            uz: 'Hech narsa demayman — o\'zlari his qilsin.',
+            ru: 'Промолчу — пусть сами прочувствуют.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'rapport', amount: 10 },
+          ],
+          nextNodeId: 'd1_test_drive_silent',
+        },
+      ],
+    },
+
+    d1_test_drive_safety: {
+      id: 'd1_test_drive_safety',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'impressed',
+      characters: [
+        { id: 'javlon', emotion: 'neutral', position: 'left' },
+        { id: 'nilufar', emotion: 'impressed', position: 'right' },
+      ],
+      text: {
+        uz: '6 ta airbag va bolalar qulfi? Bu menga juda muhim. Rahmat aytganingiz uchun.',
+        ru: '6 подушек и детский замок? Это для меня очень важно. Спасибо, что рассказали.',
+      },
+      nextNodeId: 'd1_anniversary_check',
+    },
+
+    d1_test_drive_value: {
+      id: 'd1_test_drive_value',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'thoughtful',
+      characters: [
+        { id: 'javlon', emotion: 'thoughtful', position: 'left' },
+        { id: 'nilufar', emotion: 'neutral', position: 'right' },
+      ],
+      text: {
+        uz: 'Qiymati tushmaslik — bu yaxshi. Demak, investitsiya ham bo\'ladi.',
+        ru: 'Не теряет в цене — это хорошо. Значит, и инвестиция тоже.',
+      },
+      nextNodeId: 'd1_anniversary_check',
+    },
+
+    d1_test_drive_silent: {
+      id: 'd1_test_drive_silent',
+      type: 'dialogue',
+      speaker: 'javlon',
+      emotion: 'happy',
+      background: 'bg_test_drive_city',
+      characters: [
+        { id: 'javlon', emotion: 'happy', position: 'left' },
+        { id: 'nilufar', emotion: 'happy', position: 'right' },
+      ],
+      text: {
+        uz: 'Biliysizmi... Tinchgina haydash — eng yaxshi taklif. O\'zimiz his qilyapmiz.',
+        ru: 'Знаете... Спокойная поездка — лучшая презентация. Мы сами всё чувствуем.',
+      },
+      nextNodeId: 'd1_anniversary_check',
+    },
+
+    // ============================================================
+    // ANNIVERSARY HINT (conditional)
+    // ============================================================
+
+    d1_anniversary_check: {
+      id: 'd1_anniversary_check',
+      type: 'condition_branch',
+      branches: [
+        {
+          condition: {
+            type: 'and',
+            conditions: [
+              { type: 'flag', flag: 'addressed_both' },
+              { type: 'flag', flag: 'balanced_both' },
+            ],
+          },
+          nextNodeId: 'd1_anniversary_hint',
+        },
+      ],
+      fallbackNodeId: 'd1_closing',
+    },
+
+    d1_anniversary_hint: {
+      id: 'd1_anniversary_hint',
+      type: 'dialogue',
+      speaker: 'nilufar',
+      emotion: 'shy',
+      characters: [
+        { id: 'javlon', emotion: 'neutral', position: 'left' },
+        { id: 'nilufar', emotion: 'shy', position: 'right' },
+      ],
+      text: {
+        uz: 'Aytganday... Kelasi hafta bizning 5 yillik to\'y kunimiz.',
+        ru: 'Кстати... На следующей неделе у нас 5-я годовщина свадьбы.',
+      },
+      effects: [{ type: 'set_flag', flag: 'knows_anniversary' }],
+      nextNodeId: 'd1_closing',
+    },
+
+    // ============================================================
+    // CLOSING
+    // ============================================================
+
+    d1_closing: {
+      id: 'd1_closing',
+      type: 'choice',
+      prompt: {
+        uz: 'Yakuniy taklif nima bo\'ladi?',
+        ru: 'Какое финальное предложение сделаете?',
+      },
+      choices: [
+        {
+          id: 'd1_closing_a',
+          text: {
+            uz: 'Ikkalangiz birga yana test-drayvga keling. Qaror qilish osonroq bo\'ladi.',
+            ru: 'Приходите вдвоём ещё раз на тест-драйв. Так легче решить.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'timing', amount: 10 },
+            { type: 'add_score', dimension: 'rapport', amount: 5 },
+          ],
+          nextNodeId: 'd1_check',
+        },
+        {
+          id: 'd1_closing_b',
+          text: {
+            uz: '5 yillik to\'yga sovg\'a — Equinox, lenta bilan! Oila bayrami!',
+            ru: 'Подарок на 5-летие — Equinox с бантом! Семейный праздник!',
+          },
+          condition: { type: 'flag', flag: 'knows_anniversary' },
+          effects: [
+            { type: 'add_score', dimension: 'opportunity', amount: 20 },
+            { type: 'add_score', dimension: 'empathy', amount: 10 },
+            { type: 'set_flag', flag: 'anniversary_surprise' },
+          ],
+          nextNodeId: 'd1_check',
+        },
+        {
+          id: 'd1_closing_c',
+          text: {
+            uz: 'Shu hafta oxirigacha maxsus narx bor. O\'ylab ko\'ring.',
+            ru: 'До конца недели специальная цена. Подумайте.',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'timing', amount: 5 },
+          ],
+          nextNodeId: 'd1_check',
+        },
+      ],
+    },
+
+    // ============================================================
+    // ENDINGS
+    // ============================================================
 
     d1_check: {
       id: 'd1_check',
       type: 'condition_branch',
       branches: [
         {
-          condition: { type: 'score_gte', value: 25 },
+          condition: { type: 'flag', flag: 'anniversary_surprise' },
+          nextNodeId: 'd1_end_hidden',
+        },
+        {
+          condition: { type: 'score_gte', value: 32 },
           nextNodeId: 'd1_end_success',
         },
         {
-          condition: { type: 'score_gte', value: 12 },
+          condition: { type: 'score_gte', value: 18 },
           nextNodeId: 'd1_end_partial',
         },
       ],
       fallbackNodeId: 'd1_end_fail',
+    },
+
+    d1_end_hidden: {
+      id: 'd1_end_hidden',
+      type: 'end',
+      outcome: 'hidden_ending',
+      effects: [
+        { type: 'add_xp', amount: 180 },
+        { type: 'gain_life' },
+        { type: 'unlock_achievement', id: 'love_sells' },
+        { type: 'set_flag', flag: 'd1_hidden' },
+        { type: 'set_flag', flag: 'd1_success' },
+      ],
+      dialogue: {
+        speaker: 'javlon',
+        emotion: 'touched',
+        text: {
+          uz: 'Voy... ajoyib fikr! Nilufar yig\'lab yuboradi. Olamiz! Equinox — bizniki!',
+          ru: 'Ого... потрясающая идея! Нилуфар расплачется. Берём! Equinox — наш!',
+        },
+        characters: [
+          { id: 'javlon', emotion: 'touched', position: 'left' },
+          { id: 'nilufar', emotion: 'happy', position: 'right' },
+        ],
+      },
     },
 
     d1_end_success: {
@@ -353,17 +792,19 @@ export const day1: Day = {
       type: 'end',
       outcome: 'success',
       effects: [
-        { type: 'add_xp', amount: 100 },
-        { type: 'unlock_achievement', id: 'first_contact' },
+        { type: 'add_xp', amount: 120 },
         { type: 'set_flag', flag: 'd1_success' },
       ],
       dialogue: {
         speaker: 'rustam',
         emotion: 'proud',
         text: {
-          uz: 'Ajoyib! Siz hozirgina \'ehtiyojlarni aniqlash\' texnikasini sezdingizmi? Yaxshi sotuvchilar buni ataylab, tizimli qiladi. Dilnoza shu sababli oyiga 15 million oladi.',
-          ru: 'Отлично! Вы только что применили технику \'выявление потребностей\' — почувствовали? Хорошие продавцы делают это намеренно, системно. Именно поэтому Дильноза зарабатывает 15 миллионов в месяц.',
+          uz: 'Juftliklar bilan ishlash qiyin. Lekin siz ikkalasini ham tingladingiz. Ajoyib ish!',
+          ru: 'Работать с парами сложно. Но вы выслушали обоих. Отличная работа!',
         },
+        characters: [
+          { id: 'rustam', emotion: 'proud', position: 'center' },
+        ],
       },
     },
 
@@ -372,16 +813,19 @@ export const day1: Day = {
       type: 'end',
       outcome: 'partial',
       effects: [
-        { type: 'add_xp', amount: 65 },
+        { type: 'add_xp', amount: 75 },
         { type: 'set_flag', flag: 'd1_partial' },
       ],
       dialogue: {
         speaker: 'rustam',
         emotion: 'serious',
         text: {
-          uz: 'Yomon emas. Lekin professional sotuvchi savollarni tasodifan emas, tizim bilan beradi — SPIN texnikasi deyiladi. Shuning uchun yaxshi sotuvchilar o\'rtacha ish haqi 2-3 baravar ko\'p oladi.',
-          ru: 'Неплохо. Но профессиональный продавец задаёт вопросы не случайно, а по системе — это называется техника SPIN. Именно поэтому хорошие продавцы зарабатывают в 2-3 раза больше среднего.',
+          uz: 'Yomon emas. Lekin bir tomonga og\'ib ketdingiz. Ikkalasini teng tinglang.',
+          ru: 'Неплохо. Но вы склонились к одной стороне. Слушайте обоих одинаково.',
         },
+        characters: [
+          { id: 'rustam', emotion: 'serious', position: 'center' },
+        ],
       },
     },
 
@@ -390,17 +834,20 @@ export const day1: Day = {
       type: 'end',
       outcome: 'failure',
       effects: [
-        { type: 'add_xp', amount: 30 },
+        { type: 'add_xp', amount: 40 },
         { type: 'lose_life' },
         { type: 'set_flag', flag: 'd1_fail' },
       ],
       dialogue: {
-        speaker: 'rustam',
-        emotion: 'disappointed',
+        speaker: 'dilnoza',
+        emotion: 'explaining',
         text: {
-          uz: 'Hech gap yo\'q. Bilasizmi, men ham birinchi yilda shunday xato qilganman. Farq shundaki — men o\'sha xatolardan tizimli o\'rgandim. Ana shunday tizim bor, o\'rgatadigan.',
-          ru: 'Ничего. Знаете, я в первый год делал те же ошибки. Разница в том — я учился на них системно. Есть такая система, которой учат.',
+          uz: 'Juftliklar — eng qiyin mijozlar. Sir: ikkalasi ham xohlagan narsani toping.',
+          ru: 'Пары — самые сложные клиенты. Секрет: найди то, чего хотят оба.',
         },
+        characters: [
+          { id: 'dilnoza', emotion: 'explaining', position: 'center' },
+        ],
       },
     },
   },

@@ -123,11 +123,20 @@ export const useGameStore = create<GameStore>()(
       if (currentNode.type !== 'choice') return;
 
       const result = makeMultiChoice(indices, currentNode as ChoiceNode, session, playerState);
-      const nextNode = resolveNode(result.nextNodeId, currentDay);
+      let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
+      let node = resolveNode(result.nextNodeId, currentDay);
+
+      // Auto-advance through condition_branch and score nodes
+      while (node.type === 'condition_branch' || node.type === 'score') {
+        const processed = processNode(node, updatedSession, playerState);
+        if (!processed.nextNodeId) break;
+        updatedSession = { ...processed.state, currentNodeId: processed.nextNodeId };
+        node = resolveNode(processed.nextNodeId, currentDay);
+      }
 
       set((state) => {
-        state.session = { ...result.state, currentNodeId: result.nextNodeId };
-        state.currentNode = nextNode;
+        state.session = updatedSession;
+        state.currentNode = node;
       });
     },
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
@@ -37,16 +37,24 @@ export default function SceneRenderer({
     };
   }, []);
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     if (tapEnabled) {
       onTap();
     }
-  };
+  }, [tapEnabled, onTap]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (tapEnabled) {
+      e.preventDefault(); // prevent ghost click
+      onTap();
+    }
+  }, [tapEnabled, onTap]);
 
   return (
     <div
-      className="relative w-full h-dvh overflow-hidden"
+      className="relative w-full h-dvh overflow-hidden touch-manipulation"
       onClick={handleClick}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Background with crossfade */}
       <AnimatePresence mode="sync">

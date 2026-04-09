@@ -10,7 +10,7 @@ import { CHARACTERS } from '@/game/data/characters/index';
 import { canReplay } from '@/game/systems/CoinSystem';
 import { trackEvent } from '@/lib/game/analytics';
 import SceneRenderer from '@/components/game/engine/SceneRenderer';
-import DialogueBox from '@/components/game/engine/DialogueBox';
+import DialogueBox, { type DialogueBoxHandle } from '@/components/game/engine/DialogueBox';
 import ChoicePanel from '@/components/game/engine/ChoicePanel';
 import DayIntroTransition from '@/components/game/engine/DayIntroTransition';
 import GameHUD from '@/components/game/hud/GameHUD';
@@ -45,6 +45,21 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
 
   const timerState = engine.session?.timerState ?? null;
   const timer = useTimer(timerState, engine.timerExpired);
+
+  const dialogueBoxRef = useRef<DialogueBoxHandle>(null);
+
+  // Unified tap handler: DialogueBox controls skip/advance, SceneRenderer catches all taps
+  const handleScreenTap = useCallback(() => {
+    if (dialogueBoxRef.current) {
+      const result = dialogueBoxRef.current.handleTap();
+      if (result === 'advance') {
+        engine.advanceDialogue();
+      }
+      // 'skip' = typing was completed, don't advance yet
+    } else {
+      engine.advanceDialogue();
+    }
+  }, [engine]);
 
   const node = engine.currentNode;
   const day = engine.scenario?.days[engine.currentDayIndex];
@@ -323,7 +338,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
         backgroundId={backgroundId}
         characters={characters}
         activeSpeaker={speaker}
-        onTap={engine.advanceDialogue}
+        onTap={handleScreenTap}
         tapEnabled={node?.type === 'dialogue' || node?.type === 'end'}
       >
         {/* HUD */}
@@ -341,10 +356,10 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
         {/* Dialogue Box */}
         {dialogueText && node?.type !== 'choice' && (
           <DialogueBox
+            ref={dialogueBoxRef}
             text={dialogueText}
             speakerName={speakerName}
             isNarrator={isNarrator}
-            onAdvance={engine.advanceDialogue}
             onGoBack={engine.goBack}
             canGoBack={engine.canGoBack}
           />
@@ -368,7 +383,6 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
               text={(node as ChoiceNode).prompt[lang]}
               speakerName={undefined}
               isNarrator={true}
-              onAdvance={() => {}}
             />
           </>
         )}

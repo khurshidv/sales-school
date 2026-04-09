@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
@@ -10,6 +10,8 @@ interface SceneRendererProps {
   backgroundId: string;
   characters: CharacterOnScreen[];
   activeSpeaker: string | undefined;
+  onTap?: () => void;
+  tapEnabled?: boolean;
   children?: React.ReactNode;
 }
 
@@ -17,24 +19,38 @@ export default function SceneRenderer({
   backgroundId,
   characters,
   activeSpeaker,
+  onTap,
+  tapEnabled = false,
   children,
 }: SceneRendererProps) {
-  // Audio unlock on first user gesture
-  useEffect(() => {
-    const unlockAudio = () => {
-      SoundManager.getInstance().unlock();
-    };
+  const audioUnlockedRef = useRef(false);
 
-    document.addEventListener('click', unlockAudio, { capture: true, once: true });
-    document.addEventListener('touchend', unlockAudio, { capture: true, once: true });
-    return () => {
-      document.removeEventListener('click', unlockAudio, true);
-      document.removeEventListener('touchend', unlockAudio, true);
-    };
+  const unlockAudio = useCallback(() => {
+    if (!audioUnlockedRef.current) {
+      audioUnlockedRef.current = true;
+      SoundManager.getInstance().unlock();
+    }
   }, []);
 
+  const handleClick = useCallback(() => {
+    unlockAudio();
+    if (tapEnabled && onTap) onTap();
+  }, [tapEnabled, onTap, unlockAudio]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    unlockAudio();
+    if (tapEnabled && onTap) {
+      e.preventDefault(); // prevent ghost click
+      onTap();
+    }
+  }, [tapEnabled, onTap, unlockAudio]);
+
   return (
-    <div className="relative w-full h-dvh overflow-hidden">
+    <div
+      className="relative w-full h-dvh overflow-hidden"
+      onClick={handleClick}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Background with crossfade */}
       <AnimatePresence mode="sync">
         <motion.img

@@ -154,11 +154,11 @@ export function useGameEngine(scenarioId: string) {
         completedAt: Date.now(),
       });
 
-      // Sync to Supabase (fire-and-forget)
+      // Sync to Supabase (with retry for reliability)
       const dayId = scenario.days[currentDayIndex]?.id ?? `day-${currentDayIndex}`;
-      syncDayResults(player.id, scenarioId, dayId, score, rating, Date.now() - session.startTime, session.choiceHistory);
+      syncDayResults(player.id, scenarioId, dayId, score, rating, Date.now() - session.startTime, session.choiceHistory).catch(() => {});
       for (const ach of newAchievements) {
-        syncAchievement(player.id, ach);
+        syncAchievement(player.id, ach).catch(() => {});
       }
 
       // Analytics

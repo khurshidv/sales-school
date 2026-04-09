@@ -1,5 +1,26 @@
 // Async sync functions — call after Zustand store updates
-// Non-blocking: errors are logged but don't break the game
+// Critical syncs use retry; progress saves remain fire-and-forget
+
+async function syncWithRetry(
+  fn: () => Promise<Response>,
+  label: string,
+  maxRetries = 3,
+): Promise<Response | null> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const res = await fn();
+      if (res.ok) return res;
+      console.warn(`[sync] ${label} attempt ${attempt + 1} failed: ${res.status}`);
+    } catch (e) {
+      console.warn(`[sync] ${label} attempt ${attempt + 1} error:`, e);
+    }
+    if (attempt < maxRetries - 1) {
+      await new Promise((r) => setTimeout(r, 1000 * Math.pow(2, attempt)));
+    }
+  }
+  console.warn(`[sync] ${label} all ${maxRetries} attempts failed`);
+  return null;
+}
 
 export async function syncCreatePlayer(
   phone: string,
@@ -32,7 +53,7 @@ export async function syncCreatePlayer(
   }
 }
 
-export function syncDayResults(
+export async function syncDayResults(
   playerId: string,
   scenarioId: string,
   dayId: string,
@@ -40,17 +61,16 @@ export function syncDayResults(
   rating: string,
   timeTaken: number,
   choices: object[],
-): void {
-  // Fire-and-forget — never crashes the game
-  try {
-    fetch('/api/game/results', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerId, scenarioId, dayId, score, rating, timeTaken, choices }),
-    }).catch((e) => console.warn('[sync] dayResults error:', e));
-  } catch (e) {
-    console.warn('[sync] dayResults error:', e);
-  }
+): Promise<void> {
+  await syncWithRetry(
+    () =>
+      fetch('/api/game/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerId, scenarioId, dayId, score, rating, timeTaken, choices }),
+      }),
+    'dayResults',
+  );
 }
 
 export function syncProgress(
@@ -72,15 +92,14 @@ export function syncProgress(
   }
 }
 
-export function syncAchievement(playerId: string, achievementId: string): void {
-  // Fire-and-forget — never crashes the game
-  try {
-    fetch('/api/game/achievements', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ playerId, achievementId }),
-    }).catch((e) => console.warn('[sync] achievement error:', e));
-  } catch (e) {
-    console.warn('[sync] achievement error:', e);
-  }
+export async function syncAchievement(playerId: string, achievementId: string): Promise<void> {
+  await syncWithRetry(
+    () =>
+      fetch('/api/game/achievements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ playerId, achievementId }),
+      }),
+    'achievement',
+  );
 }

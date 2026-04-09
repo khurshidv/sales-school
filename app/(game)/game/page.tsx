@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { usePlayerStore } from '@/game/store/playerStore';
 import { useLang } from '@/lib/game/utils/lang';
 import { syncCreatePlayer } from '@/game/store/middleware/supabaseSync';
+import { setStoredPhone } from '@/lib/game/phoneStorage';
+import { usePlayerInit } from '@/lib/game/hooks/usePlayerInit';
 import { trackEvent } from '@/lib/game/analytics';
 import OnboardingSequence from '@/components/game/screens/OnboardingSequence';
 import ScenarioSelect from '@/components/game/screens/ScenarioSelect';
@@ -13,20 +15,48 @@ import type { Language } from '@/game/engine/types';
 export default function GameHub() {
   const router = useRouter();
   const player = usePlayerStore((s) => s.player);
-  const createPlayer = usePlayerStore((s) => s.createPlayer);
+  const isLoading = usePlayerStore((s) => s.isLoading);
+  const isInitialized = usePlayerStore((s) => s.isInitialized);
+  const loadPlayer = usePlayerStore((s) => s.loadPlayer);
+  const setInitialized = usePlayerStore((s) => s.setInitialized);
   const { lang, setLang } = useLang();
 
+  // Hydrate player from Supabase on mount
+  usePlayerInit();
+
   const handleFormSubmit = async (name: string, phone: string, lang: Language, avatarId: 'male' | 'female') => {
-    createPlayer(name, phone, avatarId);
     setLang(lang);
 
-    // Sync to Supabase in background
+    // Create player in Supabase first (source of truth)
     const serverId = await syncCreatePlayer(phone, name, avatarId);
     if (serverId) {
-      // Update localStorage player with server ID
-      const currentPlayer = usePlayerStore.getState().player;
-      if (currentPlayer) {
-        usePlayerStore.getState().loadPlayer({ ...currentPlayer, id: serverId });
+      // Store phone locally for identification
+      setStoredPhone(phone);
+
+      // Fetch full player from server to hydrate store
+      try {
+        const res = await fetch(`/api/game/players?phone=${encodeURIComponent(phone)}`);
+        const data = await res.json();
+        if (data.player) {
+          loadPlayer(data.player);
+          setInitialized();
+          trackEvent(data.player.id, 'game_started');
+        }
+      } catch {
+        // Fallback: load minimal player data
+        loadPlayer({
+          id: serverId,
+          phone,
+          displayName: name,
+          avatarId,
+          level: 1,
+          totalXp: 0,
+          totalScore: 0,
+          coins: 0,
+          achievements: [],
+          completedScenarios: [],
+        });
+        setInitialized();
         trackEvent(serverId, 'game_started');
       }
     }
@@ -35,6 +65,18 @@ export default function GameHub() {
   const handleSelectScenario = (scenarioId: string) => {
     router.push(`/game/play?scenario=${scenarioId}`);
   };
+
+  // Show loading while hydrating from Supabase
+  if (!isInitialized || isLoading) {
+    return (
+      <>
+        <RotateDevice />
+        <div className="flex h-dvh w-dvw items-center justify-center bg-[#0a0a1a]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

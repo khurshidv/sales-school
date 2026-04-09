@@ -1,32 +1,27 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createPlayerStore } from '../playerStore';
 import type { PlayerState, CompletedScenarioRecord } from '@/game/engine/types';
-import type { PersistStorage } from 'zustand/middleware';
-
-// In-memory storage for tests (avoids localStorage dependency)
-const createTestStorage = (): PersistStorage<any> => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (name: string) => {
-      const value = store[name];
-      return value ? JSON.parse(value) : null;
-    },
-    setItem: (name: string, value: any) => {
-      store[name] = JSON.stringify(value);
-    },
-    removeItem: (name: string) => { delete store[name]; },
-  };
-};
 
 describe('playerStore', () => {
   let useStore: ReturnType<typeof createPlayerStore>;
 
   beforeEach(() => {
-    useStore = createPlayerStore(createTestStorage());
+    useStore = createPlayerStore();
   });
 
   it('player is null initially', () => {
     expect(useStore.getState().player).toBeNull();
+  });
+
+  it('starts with isLoading true and isInitialized false', () => {
+    expect(useStore.getState().isLoading).toBe(true);
+    expect(useStore.getState().isInitialized).toBe(false);
+  });
+
+  it('setInitialized sets both flags', () => {
+    useStore.getState().setInitialized();
+    expect(useStore.getState().isLoading).toBe(false);
+    expect(useStore.getState().isInitialized).toBe(true);
   });
 
   it('createPlayer sets correct defaults (level 1, 0 xp, 0 coins)', () => {
@@ -150,5 +145,15 @@ describe('playerStore', () => {
     };
     useStore.getState().addCompletedScenario(record2);
     expect(useStore.getState().player!.completedScenarios).toHaveLength(2);
+  });
+
+  it('reset clears player and flags', () => {
+    useStore.getState().createPlayer('Ali', '+998901234567', 'male');
+    useStore.getState().setInitialized();
+    useStore.getState().reset();
+
+    expect(useStore.getState().player).toBeNull();
+    expect(useStore.getState().isLoading).toBe(false);
+    expect(useStore.getState().isInitialized).toBe(false);
   });
 });

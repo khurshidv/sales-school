@@ -33,12 +33,12 @@ export default function CharacterSprite({
   return (
     <motion.img
       initial={{ opacity: 0 }}
-      animate={{ opacity: isActive ? 1 : 0.6 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
       src={src}
       alt={character.id}
-      className={`absolute bottom-0 max-h-[92dvh] sm:max-h-[88dvh] lg:max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
+      className={`absolute bottom-0 max-h-[92dvh] sm:max-h-[88dvh] lg:max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
     />
   );
 }

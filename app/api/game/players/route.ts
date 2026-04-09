@@ -1,6 +1,70 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+// GET /api/game/players?phone=+998XXXXXXXXX
+// Returns full player state from Supabase (source of truth)
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const phone = searchParams.get('phone');
+
+  if (!phone) {
+    return NextResponse.json({ error: 'Phone parameter required' }, { status: 400 });
+  }
+
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (!phoneDigits.startsWith('998') || phoneDigits.length !== 12) {
+    return NextResponse.json({ error: 'Invalid phone format' }, { status: 400 });
+  }
+
+  const supabase = createAdminClient();
+
+  const { data: player } = await supabase
+    .from('players')
+    .select('*')
+    .eq('phone', phone)
+    .single();
+
+  if (!player) {
+    return NextResponse.json({ player: null });
+  }
+
+  // Fetch achievements
+  const { data: achievements } = await supabase
+    .from('player_achievements')
+    .select('achievement_id')
+    .eq('player_id', player.id);
+
+  // Fetch completed scenarios
+  const { data: completed } = await supabase
+    .from('completed_scenarios')
+    .select('scenario_id, day_id, score, rating, time_taken, choices')
+    .eq('player_id', player.id)
+    .order('created_at', { ascending: true });
+
+  return NextResponse.json({
+    player: {
+      id: player.id,
+      phone: player.phone,
+      displayName: player.display_name,
+      avatarId: player.avatar_id,
+      level: player.level ?? 1,
+      totalXp: player.total_xp ?? 0,
+      totalScore: player.total_score ?? 0,
+      coins: player.coins ?? 0,
+      achievements: (achievements ?? []).map((a: { achievement_id: string }) => a.achievement_id),
+      completedScenarios: (completed ?? []).map((c: { scenario_id: string; day_id: string; score: number; rating: string; time_taken: number }) => ({
+        scenarioId: c.scenario_id,
+        dayIndex: parseInt(c.day_id?.replace(/\D/g, '') || '0', 10),
+        score: c.score,
+        rating: c.rating,
+        timeTaken: c.time_taken,
+        isReplay: false,
+        completedAt: Date.now(),
+      })),
+    },
+  });
+}
+
 export async function POST(request: Request) {
   const body = await request.json();
   const { phone, displayName, avatarId, utmSource, utmMedium, utmCampaign, referrer } = body;

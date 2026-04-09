@@ -12,9 +12,9 @@ interface CharacterSpriteProps {
 }
 
 const POSITION_CLASSES: Record<CharacterPosition, string> = {
-  left: 'left-[8%] translate-x-0',
+  left: 'left-[4%] sm:left-[8%] translate-x-0',
   center: 'left-1/2 -translate-x-1/2',
-  right: 'right-[8%] translate-x-0 left-auto',
+  right: 'right-[4%] sm:right-[8%] translate-x-0 left-auto',
 };
 
 export default function CharacterSprite({
@@ -38,7 +38,7 @@ export default function CharacterSprite({
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
       src={src}
       alt={character.id}
-      className={`absolute bottom-0 max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
+      className={`absolute bottom-0 max-h-[92dvh] sm:max-h-[88dvh] lg:max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
     />
   );
 }

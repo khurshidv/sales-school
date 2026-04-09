@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import type { CharacterOnScreen } from '@/game/engine/types';
@@ -21,7 +22,14 @@ export default function SceneRenderer({
   tapEnabled,
   children,
 }: SceneRendererProps) {
+  const hasRequestedFullscreen = useRef(false);
+
   const handleClick = () => {
+    // Try to enter fullscreen on first interaction (hides mobile browser chrome)
+    if (!hasRequestedFullscreen.current && document.documentElement.requestFullscreen) {
+      hasRequestedFullscreen.current = true;
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
     if (tapEnabled) {
       onTap();
     }

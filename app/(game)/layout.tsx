@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
   title: "Sales School — Игра",
   description: "RPG тренажёр навыков продаж",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0c12",
 };
 
 export default function GameLayout({

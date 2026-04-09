@@ -23,7 +23,8 @@ const MATERIAL_SYMBOLS_URL =
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
+  viewportFit: "cover",
   themeColor: "#fbf9f5",
 };
 

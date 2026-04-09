@@ -69,7 +69,7 @@ export default function ChoicePanel({
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
-      className="absolute bottom-[28dvh] left-0 right-0 px-4 py-3 z-20"
+      className="absolute bottom-[20dvh] sm:bottom-[24dvh] lg:bottom-[28dvh] left-0 right-0 px-3 py-2 sm:px-4 sm:py-3 z-20"
       onClick={(e) => e.stopPropagation()}
       style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
     >
@@ -84,7 +84,7 @@ export default function ChoicePanel({
       )}
 
       {/* Choice buttons */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5 sm:gap-2">
         {choices.map((choice, index) => {
           const isSelected = selectedIndices.includes(index);
 
@@ -98,7 +98,7 @@ export default function ChoicePanel({
                 multiSelect ? handleToggle(index) : onSelect(index)
               }
               className={`
-                w-full text-left rounded-lg p-4 text-white text-base font-medium
+                w-full text-left rounded-lg p-3 sm:p-4 text-white text-sm sm:text-base font-medium
                 border border-white/30 transition-all
                 ${
                   multiSelect && isSelected

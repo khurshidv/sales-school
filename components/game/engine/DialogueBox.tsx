@@ -57,12 +57,13 @@ export default function DialogueBox({
       {canGoBack && onGoBack && (
         <button
           onClick={handleGoBack}
-          className="absolute top-4 left-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/8 hover:bg-white/15 border border-white/10 transition-all z-20"
+          className="absolute bottom-3 left-4 flex items-center gap-1 text-white/40 hover:text-white/70 text-xs tracking-wide transition-colors z-20"
           aria-label="Go back"
         >
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-            <path d="M10 12L6 8L10 4" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
+          Назад
         </button>
       )}
 

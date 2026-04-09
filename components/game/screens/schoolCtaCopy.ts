@@ -55,16 +55,16 @@ export const schoolCtaCopy = {
   },
   schoolInfo: {
     tagline: {
-      ru: 'SalesUp — программа, которая за 3 месяца доводит навыки продаж до рабочего уровня',
-      uz: "SalesUp — 3 oyda savdo ko'nikmalarini ish darajasiga olib chiqadigan dastur",
+      uz: 'SalesUp — sotuvni amaliy ish darajasiga olib chiqadigan dastur',
+      ru: 'SalesUp — программа, которая переводит продажи из "чутья" в рабочую систему',
     },
     features: {
-      ru: 'Личный ментор, практика и разбор ситуаций, похожих на реальные рабочие кейсы',
-      uz: "Shaxsiy mentor, amaliyot va real ish holatlariga o'xshash vaziyatlarni tahlil qilish",
+      uz: 'Mentor, amaliy mashq va real ishga yaqin vaziyatlar bilan',
+      ru: 'С наставником, практикой и разбором ситуаций, близких к реальной работе',
     },
     results: {
-      ru: 'Выпускники быстрее растут в доходе за счёт системы, практики и обратной связи',
-      uz: 'Bitiruvchilar tizim, amaliyot va fikr-mulohaza hisobiga daromadni tezroq oshiradi',
+      uz: "Tizimli o'qiganlar tezroq o'sadi va ishda o'zini barqarorroq tutadi",
+      ru: 'Те, кто учатся системно, быстрее растут и увереннее чувствуют себя в реальной работе',
     },
   },
   dismissText: {

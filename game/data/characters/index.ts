@@ -56,7 +56,7 @@ const kamola: CharacterDefinition = {
   id: 'kamola',
   name: { uz: 'Kamola', ru: 'Kamola' },
   role: 'client',
-  emotions: ['confident', 'skeptical', 'impressed', 'checking', 'neutral'],
+  emotions: ['confident', 'skeptical', 'impressed', 'checking', 'neutral', 'approving'],
   assetPath: makeAssetPath('kamola'),
 };
 
@@ -64,7 +64,7 @@ const javlon: CharacterDefinition = {
   id: 'javlon',
   name: { uz: 'Javlon', ru: 'Javlon' },
   role: 'client',
-  emotions: ['stubborn', 'thinking', 'touched', 'neutral'],
+  emotions: ['stubborn', 'thinking', 'touched', 'neutral', 'softened'],
   assetPath: makeAssetPath('javlon'),
 };
 
@@ -80,7 +80,7 @@ const abdullaev: CharacterDefinition = {
   id: 'abdullaev',
   name: { uz: 'Abdullayev', ru: 'Abdullayev' },
   role: 'client',
-  emotions: ['impatient', 'neutral', 'impressed', 'poker'],
+  emotions: ['impatient', 'neutral', 'impressed', 'poker', 'evaluating'],
   assetPath: makeAssetPath('abdullaev'),
 };
 
@@ -97,6 +97,7 @@ const sardor: CharacterDefinition = {
     'testing_notes',
     'observing',
     'neutral_alt',
+    'measured',
   ],
   assetPath: makeAssetPath('sardor'),
 };

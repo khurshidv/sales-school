@@ -16,6 +16,7 @@
 | [04-cars.md](04-cars.md) | 5 машин Chevrolet | Gemini Imagen |
 | [05-cutscenes-storyboard.md](05-cutscenes-storyboard.md) | 6 катсцен с раскадровкой (start/end кадры) | Kling 3.0 + Veo3 |
 | [06-ui-illustrations.md](06-ui-illustrations.md) | UI ключевые иллюстрации | Gemini Imagen |
+| [13-dialogue-revision-assets.md](13-dialogue-revision-assets.md) | Дополнительные эмоции и визуалы для новой версии диалогов | Gemini Imagen |
 
 ## Порядок генерации
 

@@ -47,24 +47,55 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   const timer = useTimer(timerState, engine.timerExpired);
 
   const dialogueBoxRef = useRef<DialogueBoxHandle>(null);
+  const tapEnabledRef = useRef(false);
+  const advanceRef = useRef(engine.advanceDialogue);
+  advanceRef.current = engine.advanceDialogue;
 
-  // Unified tap handler: DialogueBox controls skip/advance, SceneRenderer catches all taps
-  const handleScreenTap = useCallback(() => {
-    if (dialogueBoxRef.current) {
-      const result = dialogueBoxRef.current.handleTap();
-      if (result === 'advance') {
-        engine.advanceDialogue();
+  // Document-level tap listener — registered once, uses refs for latest state
+  useEffect(() => {
+    let touchHandled = false;
+
+    const handleTap = () => {
+      if (!tapEnabledRef.current) return;
+      if (dialogueBoxRef.current) {
+        const result = dialogueBoxRef.current.handleTap();
+        if (result === 'advance') {
+          advanceRef.current();
+        }
+      } else {
+        advanceRef.current();
       }
-      // 'skip' = typing was completed, don't advance yet
-    } else {
-      engine.advanceDialogue();
-    }
-  }, [engine]);
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, [role="button"], [data-choice]')) return;
+      touchHandled = true;
+      handleTap();
+    };
+
+    const onClick = (e: MouseEvent) => {
+      if (touchHandled) { touchHandled = false; return; }
+      const target = e.target as HTMLElement;
+      if (target.closest('button, input, [role="button"], [data-choice]')) return;
+      handleTap();
+    };
+
+    document.addEventListener('touchend', onTouchEnd, true);
+    document.addEventListener('click', onClick, true);
+    return () => {
+      document.removeEventListener('touchend', onTouchEnd, true);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, []); // stable — never re-registers
 
   const node = engine.currentNode;
   const day = engine.scenario?.days[engine.currentDayIndex];
   const session = engine.session;
   const player = engine.player;
+
+  // Keep tapEnabled in sync (used by document listener)
+  tapEnabledRef.current = engine.flowState === 'playing' && (node?.type === 'dialogue' || node?.type === 'end');
 
   // Detect game over from session
   const isGameOverState = session ? isGameOver(session.lives) : false;
@@ -338,8 +369,6 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
         backgroundId={backgroundId}
         characters={characters}
         activeSpeaker={speaker}
-        onTap={handleScreenTap}
-        tapEnabled={node?.type === 'dialogue' || node?.type === 'end'}
       >
         {/* HUD */}
         {session && player && (

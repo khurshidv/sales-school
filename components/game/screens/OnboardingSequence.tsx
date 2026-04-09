@@ -140,8 +140,6 @@ export default function OnboardingSequence({
       backgroundId={currentStep.background}
       characters={characters}
       activeSpeaker="rustam"
-      onTap={() => {}}
-      tapEnabled={false}
     >
       <AnimatePresence mode="wait">
         <motion.div

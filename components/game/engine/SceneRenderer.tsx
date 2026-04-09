@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
@@ -10,8 +10,6 @@ interface SceneRendererProps {
   backgroundId: string;
   characters: CharacterOnScreen[];
   activeSpeaker: string | undefined;
-  onTap: () => void;
-  tapEnabled: boolean;
   children?: React.ReactNode;
 }
 
@@ -19,11 +17,9 @@ export default function SceneRenderer({
   backgroundId,
   characters,
   activeSpeaker,
-  onTap,
-  tapEnabled,
   children,
 }: SceneRendererProps) {
-  // Audio unlock on first user gesture (no fullscreen — unreliable in in-app browsers)
+  // Audio unlock on first user gesture
   useEffect(() => {
     const unlockAudio = () => {
       SoundManager.getInstance().unlock();
@@ -37,25 +33,8 @@ export default function SceneRenderer({
     };
   }, []);
 
-  const handleClick = useCallback(() => {
-    if (tapEnabled) {
-      onTap();
-    }
-  }, [tapEnabled, onTap]);
-
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (tapEnabled) {
-      e.preventDefault(); // prevent ghost click
-      onTap();
-    }
-  }, [tapEnabled, onTap]);
-
   return (
-    <div
-      className="relative w-full h-dvh overflow-hidden touch-manipulation"
-      onClick={handleClick}
-      onTouchEnd={handleTouchEnd}
-    >
+    <div className="relative w-full h-dvh overflow-hidden">
       {/* Background with crossfade */}
       <AnimatePresence mode="sync">
         <motion.img

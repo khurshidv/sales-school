@@ -50,15 +50,29 @@ export default function SceneRenderer({
       }
     };
 
+    // Trigger fullscreen when device rotates to landscape
+    const landscapeQuery = window.matchMedia('(orientation: landscape)');
+    const handleOrientationChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        requestFullscreen();
+      }
+    };
+    // Also try on initial load if already landscape
+    if (landscapeQuery.matches) {
+      requestFullscreen();
+    }
+
     document.addEventListener('click', requestFullscreen, true);
     document.addEventListener('touchstart', requestFullscreen, true);
     document.addEventListener('fullscreenchange', onFullscreenChange);
     document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+    landscapeQuery.addEventListener('change', handleOrientationChange);
     return () => {
       document.removeEventListener('click', requestFullscreen, true);
       document.removeEventListener('touchstart', requestFullscreen, true);
       document.removeEventListener('fullscreenchange', onFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
+      landscapeQuery.removeEventListener('change', handleOrientationChange);
     };
   }, []);
 

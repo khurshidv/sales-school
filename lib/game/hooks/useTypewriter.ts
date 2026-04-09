@@ -9,6 +9,7 @@ interface UseTypewriterOptions {
 interface UseTypewriterReturn {
   displayedText: string;
   isTyping: boolean;
+  isTypingRef: React.RefObject<boolean>;
   skipToEnd: () => void;
 }
 
@@ -19,6 +20,7 @@ export function useTypewriter(
   const { speed = 30 } = options;
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
+  const isTypingRef = useRef(true);
   const indexRef = useRef(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const textRef = useRef(fullText);
@@ -30,6 +32,7 @@ export function useTypewriter(
     if (reducedMotion) {
       setDisplayedText(fullText);
       setIsTyping(false);
+      isTypingRef.current = false;
       return;
     }
 
@@ -38,6 +41,7 @@ export function useTypewriter(
     indexRef.current = 0;
     setDisplayedText('');
     setIsTyping(true);
+    isTypingRef.current = true;
 
     // Clear previous interval
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -51,6 +55,7 @@ export function useTypewriter(
       if (currentIndex >= currentText.length) {
         setDisplayedText(currentText);
         setIsTyping(false);
+        isTypingRef.current = false;
         if (intervalRef.current) clearInterval(intervalRef.current);
         intervalRef.current = null;
       } else {
@@ -73,7 +78,8 @@ export function useTypewriter(
     }
     setDisplayedText(textRef.current);
     setIsTyping(false);
+    isTypingRef.current = false;
   }, []);
 
-  return { displayedText, isTyping, skipToEnd };
+  return { displayedText, isTyping, isTypingRef, skipToEnd };
 }

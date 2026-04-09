@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
@@ -23,56 +23,17 @@ export default function SceneRenderer({
   tapEnabled,
   children,
 }: SceneRendererProps) {
-  const hasRequestedFullscreen = useRef(false);
-
-  // Fullscreen via document-level capture listener — works regardless of stopPropagation
+  // Audio unlock on first user gesture (no fullscreen — unreliable in in-app browsers)
   useEffect(() => {
-    const requestFullscreen = () => {
-      if (hasRequestedFullscreen.current) return;
-      hasRequestedFullscreen.current = true;
-
-      // Unlock audio in the same gesture
+    const unlockAudio = () => {
       SoundManager.getInstance().unlock();
-
-      const el = document.documentElement;
-      const rfs = el.requestFullscreen ?? (el as any).webkitRequestFullscreen;
-      if (rfs) {
-        rfs.call(el).then(() => {
-          (screen.orientation as any)?.lock?.('landscape').catch(() => {});
-        }).catch(() => {});
-      }
     };
 
-    // Reset flag when user exits fullscreen (back gesture)
-    const onFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        hasRequestedFullscreen.current = false;
-      }
-    };
-
-    // Trigger fullscreen when device rotates to landscape
-    const landscapeQuery = window.matchMedia('(orientation: landscape)');
-    const handleOrientationChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        requestFullscreen();
-      }
-    };
-    // Also try on initial load if already landscape
-    if (landscapeQuery.matches) {
-      requestFullscreen();
-    }
-
-    document.addEventListener('click', requestFullscreen, true);
-    document.addEventListener('touchstart', requestFullscreen, true);
-    document.addEventListener('fullscreenchange', onFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
-    landscapeQuery.addEventListener('change', handleOrientationChange);
+    document.addEventListener('click', unlockAudio, { capture: true, once: true });
+    document.addEventListener('touchend', unlockAudio, { capture: true, once: true });
     return () => {
-      document.removeEventListener('click', requestFullscreen, true);
-      document.removeEventListener('touchstart', requestFullscreen, true);
-      document.removeEventListener('fullscreenchange', onFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
-      landscapeQuery.removeEventListener('change', handleOrientationChange);
+      document.removeEventListener('click', unlockAudio, true);
+      document.removeEventListener('touchend', unlockAudio, true);
     };
   }, []);
 

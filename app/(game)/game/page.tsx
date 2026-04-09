@@ -5,7 +5,7 @@ import { usePlayerStore } from '@/game/store/playerStore';
 import { useLang } from '@/lib/game/utils/lang';
 import { syncCreatePlayer } from '@/game/store/middleware/supabaseSync';
 import { trackEvent } from '@/lib/game/analytics';
-import PhoneForm from '@/components/game/screens/PhoneForm';
+import OnboardingSequence from '@/components/game/screens/OnboardingSequence';
 import ScenarioSelect from '@/components/game/screens/ScenarioSelect';
 import RotateDevice from '@/components/game/screens/RotateDevice';
 import type { Language } from '@/game/engine/types';
@@ -40,7 +40,7 @@ export default function GameHub() {
     <>
       <RotateDevice />
       {!player ? (
-        <PhoneForm onSubmit={handleFormSubmit} />
+        <OnboardingSequence onSubmit={handleFormSubmit} />
       ) : (
         <ScenarioSelect
           playerName={player.displayName}

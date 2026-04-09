@@ -57,8 +57,8 @@ export const day1: Day = {
         { id: 'rustam', emotion: 'friendly', position: 'center' },
       ],
       text: {
-        uz: 'Keldingizmi. Ismim Rustam, bosh menejerman. Mijozlar bilan gaplashganda avval ularni yaxshilab eshiting, keyin esa gapiring.',
-        ru: 'Пришли. Меня зовут Рустам, я главный менеджер. Когда общаетесь с клиентами — сначала внимательно слушайте, потом говорите.',
+        uz: 'Salom! Ismim Rustam, bosh menejerman. Bizning jamoaga xush kelibsiz! Mijozlar bilan gaplashganda avval ularni yaxshilab eshiting, keyin esa gapiring.',
+        ru: 'Привет! Меня зовут Рустам, я главный менеджер. Добро пожаловать в нашу команду! Помните, когда вы разговариваете с клиентами, сначала внимательно их слушайте, а затем говорите.',
       },
       nextNodeId: 'd1_rustam_tip',
     },
@@ -72,8 +72,8 @@ export const day1: Day = {
         { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
-        uz: 'Bugun bir juftlik keladi. Bittasiga yopishib olmang. Biri jim tursa ham, qarorni baribir ikkalasi qiladi.',
-        ru: 'Сегодня придёт пара. Не прилипайте к одному. Даже если второй молчит, решение всё равно принимают вдвоём.',
+        uz: 'Bugun bir juftlik kelishi kerak. Ikkisini ham xoxishlarini yaxshilab tinglang. Biri jim tursa ham, qarorni baribir ikkalasi qabul qiladi.',
+        ru: 'Сегодня должна приехать пара. Внимательно выслушайте пожелания обоих. Даже если один из них будет молчать, решение всё равно примут оба.',
       },
       nextNodeId: 'd1_meet_dilnoza',
     },
@@ -151,7 +151,7 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
-      background: 'bg_showroom',
+      background: 'bg_showroom_young_couple',
       characters: [],
       text: {
         uz: 'Eshik ochildi. Yosh juftlik kirdi. Er darhol Tracker tomon yurdi. Xotini esa Equinox oldida to\'xtadi.',
@@ -171,8 +171,8 @@ export const day1: Day = {
         {
           id: 'd1_who_first_a',
           text: {
-            uz: 'Ikkalasini oldiga boraman: "Assalomu alaykum. Keling, birga ko\'raylik. Qaysi tomonga qarayapsizlar?"',
-            ru: 'Подхожу сразу к обоим: "Здравствуйте. Давайте посмотрим вместе. К какой машине присматриваетесь?"',
+            uz: 'Ikkalasini oldiga boraman: "Assalomu alaykum. Keling, sizga tanlov qilishda yordam beraman. Qaysi mashinalarni qarayapsizlar?"',
+            ru: 'Подхожу сразу к обоим: "Здравствуйте. Давайте я помогу вам сделать выбор. Какие автомобили вы рассматриваете?"',
           },
           effects: [
             { type: 'add_score', dimension: 'rapport', amount: 15 },
@@ -215,13 +215,13 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'stubborn',
-      background: 'bg_showroom',
+      background: 'bg_showroom_young_couple_no_people',
       characters: [
         { id: 'javlon', emotion: 'stubborn', position: 'left' },
         { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
-        uz: 'Mayli, birgalikda ko\'ramiz. Lekin men Trackerni qo\'llab-quvvatlayman. Tez ishlaydi, bosganingda darhol javob chiqadi.',
+        uz: 'Mayli, birgalikda ko\'ramiz. Lekin men Trackerni qo\'llab-quvvatlayman. Tez ishlaydi, gazni bosganingda darhol javob chiqadi.',
         ru: 'Ладно, посмотрим вместе. Но я за Tracker. Работает быстро, нажимаешь — сразу отклик.',
       },
       nextNodeId: 'd1_conflict_both_nilufar',
@@ -237,7 +237,7 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
-        uz: 'Men esa orqa qatorda kim o\'tirishini o\'ylayman. Ikki bola bilan Tracker torlik qiladi. Lekin birga ko\'rsak, mayli.',
+        uz: 'Men esa orqa o\'rindiqlarda kim o\'tirishini o\'ylayapman. Ikki bola bilan Tracker torlik qiladi. Lekin mashinalarni birga ko\'rsak, mayli.',
         ru: 'А я думаю о том, кто будет сидеть сзади. С двумя детьми Tracker тесноват. Но если смотреть вместе, хорошо.',
       },
       nextNodeId: 'd1_compromise',
@@ -250,13 +250,13 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'stubborn',
-      background: 'bg_showroom',
+      background: 'bg_showroom_young_couple_no_people',
       characters: [
         { id: 'javlon', emotion: 'stubborn', position: 'left' },
         { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
-        uz: 'Ha, Tracker menga o\'tiradi. Yengil, chaqqon, rulda jon bor. Menga shunisi kerak.',
+        uz: 'Ha, Tracker menga yoqadi. Yengil, chaqqon, rulni yaxshi his qilsa bo\'ladi. Menga shunisi kerak.',
         ru: 'Да, Tracker мне подходит. Лёгкий, шустрый, за рулём живой. Мне именно это и нужно.',
       },
       nextNodeId: 'd1_conflict_tracker_nilufar',
@@ -285,13 +285,13 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'nilufar',
       emotion: 'happy',
-      background: 'bg_showroom',
+      background: 'bg_showroom_young_couple_no_people',
       characters: [
         { id: 'javlon', emotion: 'stubborn', position: 'left' },
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
-        uz: 'Equinoxning ichi kengroq ekan. Kreslo, sumka, bolalar narsasi hammasi sig\'adi. Men shunga qarayman.',
+        uz: 'Equinoxning ichi kengroq ekan. Kreslo, sumka, bolalar narsasi hammasi sig\'adi. Men shunga qarayapman.',
         ru: 'У Equinox салон просторнее. Кресло, сумки, детские вещи, всё поместится. Я на это и смотрю.',
       },
       nextNodeId: 'd1_conflict_equinox_javlon',
@@ -328,8 +328,8 @@ export const day1: Day = {
         {
           id: 'd1_compromise_a',
           text: {
-            uz: 'Ikkalangiz ham boshqa narsani himoya qilyapsiz, lekin ikkalasi ham uy uchun. Keling, hozir sizlar uchun qaysi masala og\'irroq ekanini ajratib olaylik.',
-            ru: 'Вы оба отстаиваете разное, но оба про дом. Давайте сначала отделим, что для вас сейчас тяжелее: удобство семьи или ощущения за рулём.',
+            uz: 'Ikkalangiz ham ikkihil narsa xohlayapsizlar. Keling, hozir sizlar uchun nima muhimroq ekanini aniqlashtirib olaylik: Oilangiz komfortimi yoki rul oldidagi hissiyotlarmi?',
+            ru: 'Вы оба хотите разного. Давайте определим, что для вас сейчас важнее: комфорт для семьи или ощущения за рулём?',
           },
           effects: [
             { type: 'add_score', dimension: 'empathy', amount: 15 },
@@ -353,7 +353,7 @@ export const day1: Day = {
         {
           id: 'd1_compromise_c',
           text: {
-            uz: 'Yana bir yo\'l bor: hozir bittasini olasiz, keyin eski mashinani topshirib boshqasiga o\'tasiz.',
+            uz: 'Yana bir yo\'l bor: hozir bittasini olasiz, keyin u eskirganda, mashinani topshirib boshqasiga alishtirasiz.',
             ru: 'Есть ещё вариант: сейчас берёте одну, потом сдаёте её и переходите на другую.',
           },
           effects: [
@@ -388,7 +388,7 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
-        uz: 'Gapingiz bor. Oila tomoni ham bor. Men faqat keyin afsus bo\'ladigan mashina olib qo\'ymaylik deyman.',
+        uz: 'Gapingizda jon bor. Oila tomoni ham bor. Men faqat keyin afsus bo\'ladigan mashina olib qo\'ymaylik deyman.',
         ru: 'В ваших словах есть смысл. Семейная сторона тоже есть. Я просто не хочу взять машину и потом жалеть.',
       },
       nextNodeId: 'd1_compromise_balanced_nilufar',
@@ -404,8 +404,8 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
-        uz: 'Mana shu. Ikkalamizni ham eshitdingiz. Endi xotirjam ko\'ramiz, keyin qaror qilamiz.',
-        ru: 'Вот. Вы услышали нас обоих. Теперь спокойно посмотрим и потом решим.',
+        uz: 'Ikkalamizni ham eshitdingiz. Endi xotirjam ko\'ramiz, keyin qaror qilamiz.',
+        ru: 'Вы услышали нас обоих. Теперь спокойно посмотрим и потом решим.',
       },
       nextNodeId: 'd1_test_drive_offer',
     },
@@ -452,7 +452,7 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'worried', position: 'right' },
       ],
       text: {
-        uz: 'Variant sifatida bor. Lekin keyin yana almashtirish bilan yugurish ham oson emas. Bir marta olib, ko\'ngil tinch bo\'lgani yaxshi.',
+        uz: 'Variant sifatida o\'ylab ko\'rsa bo\'ladi. Lekin keyin yana almashtirish ham oson emas. Bir marta olib, ko\'ngil tinch bo\'lgani yaxshi.',
         ru: 'Как вариант звучит. Но потом снова бегать, менять, терять время тоже не хочется. Лучше бы сразу понять, что нам подойдёт.',
       },
       nextNodeId: 'd1_compromise_tradein_nilufar',
@@ -489,7 +489,7 @@ export const day1: Day = {
         {
           id: 'd1_test_drive_offer_a',
           text: {
-            uz: 'Keling, gapni hozircha to\'xtataylik-da, bir aylantirib ko\'raylik. Yo\'lda ko\'p narsa bilinadi.',
+            uz: 'Keling, gapni hozircha to\'xtataylik-da, bir shu mashinada aylanib ko\'raylik. Yo\'lda ko\'p narsa bilinadi.',
             ru: 'Давайте пока отложим разговор и просто прокатимся. На дороге многое становится понятно.',
           },
           effects: [
@@ -501,8 +501,8 @@ export const day1: Day = {
         {
           id: 'd1_test_drive_offer_b',
           text: {
-            uz: 'Mayli, unda o\'tirib shartlarini gaplashaylik.',
-            ru: 'Хорошо, тогда давайте сядем и обсудим условия.',
+            uz: 'Mayli, unda o\'tirib to\'lov shartlarini gaplashaylik.',
+            ru: 'Хорошо, тогда давайте сядем и обсудим условия оплаты.',
           },
           effects: [],
           nextNodeId: 'd1_anniversary_check',
@@ -529,14 +529,14 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'stubborn',
-      background: 'bg_city_street_tashkent',
+      background: 'bg_test_drive_couple',
       characters: [
         { id: 'javlon', emotion: 'stubborn', position: 'left' },
         { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
-        uz: 'Yurishi yomon emas ekan. Gazga javobi bor. Men kutgandan yengilroq sezildi.',
-        ru: 'Едет, кстати, неплохо. На газ откликается. Ощущается легче, чем я ожидал.',
+        uz: 'Yurishi yomon emas ekan. Tortishi ham yaxshi. Men kutgandan yengilroq sezildi.',
+        ru: 'Едет, кстати, неплохо. Тяга тоже хорошая. Ощущается легче, чем я ожидал.',
       },
       nextNodeId: 'd1_test_drive_nilufar',
     },
@@ -551,8 +551,8 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
-        uz: 'Orqasi tor emas ekan. Kreslo ham sig\'adi, yoniga sumka ham tushadi. Ichkari shovqin ham bezor qilmayapti.',
-        ru: 'Сзади не тесно. Кресло встанет, рядом ещё и сумка поместится. И внутри шум не раздражает.',
+        uz: 'Orqasi tor emas ekan. Bolalar kreslosi ham sig\'adi, yoniga sumka ham tushadi. Tashqaridagi shovqin ham bezor qilmayapti.',
+        ru: 'Сзади не тесно. Детское кресло встанет, рядом ещё и сумка поместится. И шум снаружи не раздражает.',
       },
       nextNodeId: 'd1_test_drive_choice',
     },
@@ -611,8 +611,8 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
-        uz: 'Orqa eshik qulfi bilan xavfsizlik yostiqlari bor ekanmi? Men uchun shu muhim. Rahmat, shuni aytdingiz.',
-        ru: 'Есть блокировка задних дверей и подушки безопасности? Для меня вот это важно. Спасибо, что сказали.',
+        uz: 'Orqada eshik qulfi bilan xavfsizlik yostiqlari bor ekanmi? Men uchun shu muhim. Aytganingiz uchun rahmat.',
+        ru: 'Сзади есть блокировка дверей и подушки безопасности? Для меня вот это важно. Спасибо, что сказали.',
       },
       nextNodeId: 'd1_anniversary_check',
     },
@@ -627,8 +627,8 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
-        uz: 'Keyin sotganda ham odamni kuydirmasa, yomon emas. Demak, pul butunlay havoga ketmaydi.',
-        ru: 'Если потом при продаже не сильно просядет, уже неплохо. Значит, деньги не уйдут в воздух совсем.',
+        uz: 'Keyin sotganda ham qadri ko\'p yo\'qolmasa va tez sotilsa yaxshi.',
+        ru: 'Если потом при продаже не сильно потеряет в цене и быстро продастся — уже хорошо.',
       },
       nextNodeId: 'd1_anniversary_check',
     },
@@ -644,8 +644,8 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'happy', position: 'right' },
       ],
       text: {
-        uz: 'To\'g\'risi, shu jimlik yaxshi bo\'ldi. Har kim o\'zi nimani sezsa, shuni aytadi.',
-        ru: 'Если честно, эта тишина как раз к месту. Каждый сам чувствует своё.',
+        uz: 'To\'g\'risi, mazza qilib xaydadim, testdrayv uchun rahmat!',
+        ru: 'Честно говоря, с удовольствием проехался, спасибо за тест-драйв!',
       },
       nextNodeId: 'd1_anniversary_check',
     },
@@ -682,7 +682,7 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'caring', position: 'right' },
       ],
       text: {
-        uz: 'Aytgancha, kelasi hafta to\'y qilganimizga besh yil bo\'ladi. Shunga ham bir qarorga kelishimiz kerak.',
+        uz: 'Aytgancha, kelasi hafta to\'y qilganimizga besh yil bo\'ladi. Shuning uchun ham bir qarorga kelishimiz kerak.',
         ru: 'Кстати, на следующей неделе будет пять лет, как мы женаты. Так что нам и с этим надо определиться.',
       },
       effects: [{ type: 'set_flag', flag: 'knows_anniversary' }],
@@ -704,8 +704,8 @@ export const day1: Day = {
         {
           id: 'd1_closing_a',
           text: {
-            uz: 'Shoshilmang. Yana bir kun ikkalangiz kelib, odatdagi yo\'lingizda minib ko\'ring. Qaror shunda osonroq bo\'ladi.',
-            ru: 'Не спешите. Приезжайте ещё раз вдвоём и прокатитесь по своему обычному маршруту. Так решать будет проще.',
+            uz: 'Asosiysi shoshilmang. Yana bir kun ikkalangiz kelib, odatdagi yo\'lingizda minib ko\'ring. Qaror qabul qilishingiz shunda osonroq bo\'ladi.',
+            ru: 'Главное — не спешите. Приезжайте ещё раз вдвоём и прокатитесь по своему обычному маршруту. Так принять решение будет проще.',
           },
           effects: [
             { type: 'add_score', dimension: 'timing', amount: 10 },
@@ -780,8 +780,8 @@ export const day1: Day = {
         speaker: 'javlon',
         emotion: 'touched',
         text: {
-          uz: 'Ha, shu bo\'ldi. Siz bizga mashina ko\'rsatmadiz, avval bizni to\'g\'ri tushundingiz. Olamiz. Equinoxni rasmiylashtiraylik.',
-          ru: 'Вот, это точно. Вы нам не просто машину показали, вы сначала нас правильно поняли. Берём. Давайте оформлять Equinox.',
+          uz: 'Rahmat sizga! Siz bizga mashinani shunchaki sotmasdan, avval bizni to\'g\'ri tushundingiz. Bizga ma\'qul, olamiz. Equinoxni rasmiylashtiramiz.',
+          ru: 'Спасибо вам! Вы не просто продавали машину, а сначала правильно нас поняли. Нам подходит, берём. Давайте оформлять Equinox.',
         },
         characters: [
           { id: 'javlon', emotion: 'touched', position: 'left' },
@@ -802,8 +802,8 @@ export const day1: Day = {
         speaker: 'rustam',
         emotion: 'proud',
         text: {
-          uz: 'Asosiysi, bittasi bilan gaplashib turib, ikkinchisini yo\'qotmadingiz. Shu usulni ushlab qoling.',
-          ru: 'Главное, вы не потеряли одного, пока разговаривали со вторым. Держите эту линию.',
+          uz: 'Asosiysi, juftlikni ikkisini ham eshitdingiz. Shu usulni ushlab qoling.',
+          ru: 'Главное — вы выслушали обоих в паре. Держите эту линию.',
         },
         characters: [
           { id: 'rustam', emotion: 'proud', position: 'center' },
@@ -823,8 +823,8 @@ export const day1: Day = {
         speaker: 'rustam',
         emotion: 'serious',
         text: {
-          uz: 'Yomon emas. Lekin bir paytning o\'zida faqat bittasini ushlab qoldingiz. Ikkinchisi chetda qolib ketdi.',
-          ru: 'Неплохо. Но в какой-то момент вы держали только одного. Второй в разговоре остался в стороне.',
+          uz: 'Yomon emas. Lekin bir paytning o\'zida faqat bir mijoz bilan gaplashdingiz. Ikkinchisi esa chetda qolib ketdi.',
+          ru: 'Неплохо. Но в какой-то момент вы общались только с одним клиентом. А второй остался в стороне.',
         },
         characters: [
           { id: 'rustam', emotion: 'serious', position: 'center' },
@@ -845,8 +845,8 @@ export const day1: Day = {
         speaker: 'dilnoza',
         emotion: 'explaining',
         text: {
-          uz: 'Juftlikda bittasi sovusa, gap ham soviydi. Keyingi safar suhbatni ikkoviga bo\'lib olib boring.',
-          ru: 'В паре если один остывает, разговор тоже остывает. В следующий раз ведите беседу сразу на двоих.',
+          uz: 'Juftlikdan biri sovub qolsa, sotuv jarayoni ham soviydi. Keyingi safar suhbatni ikkovi bilan olib boring.',
+          ru: 'Если один в паре остывает, то и продажа остывает. В следующий раз ведите разговор сразу с обоими.',
         },
         characters: [
           { id: 'dilnoza', emotion: 'explaining', position: 'center' },

@@ -266,3 +266,40 @@ Rockstar Games concept art quality, 16:9 landscape, highly detailed, 1920x1080
 anime, cartoon, 3D render, photograph, blurry, dark, night, close-up faces,
 front-facing people, crowded, text, watermark, logo
 ```
+
+---
+
+## BG-12 | Интерьер Equinox — тест-драйв с клиентами (`bg_equinox_interior_clients`)
+
+**Используется:** Day 1 (сцена d1_test_drive — Javlon за рулём, Nilufar сзади слева, игрок — пассажир спереди справа)
+
+### Контекст:
+POV от первого лица (от игрока-продавца) с переднего пассажирского сиденья (справа). Слева за рулём — Javlon (молодой узбек, короткие тёмные волосы, борода, серая куртка-бомбер, синее поло). Сзади слева — Nilufar (молодая узбечка, длинные тёмные волнистые волосы, синее платье в цветочек, бежевый кардиган). Вид через лобовое стекло на улицы Ташкента.
+
+### Промпт:
+```
+GTA V loading screen art style, first-person POV from front passenger seat
+inside a Chevrolet Equinox SUV during a test drive, modern premium grey
+leather interior with dashboard and center console visible, a young Uzbek
+man in the driver seat on the left — short dark hair, trimmed beard, grey
+bomber jacket over dark blue polo shirt, smart watch on wrist, hands on
+steering wheel, focused confident expression, seen from side angle — a
+young Uzbek woman in the rear left seat — long dark wavy hair flowing past
+shoulders, blue floral dress with beige cardigan, warm gentle expression,
+slightly leaning forward looking through windshield, brown leather bag
+beside her — Tashkent city streets visible through windshield with traffic
+lights, lane markings, modern buildings and trees, golden hour warm sunlight
+streaming through windows casting warm tones on leather seats, Chevrolet
+Equinox steering wheel with bowtie logo visible, digital instrument cluster
+and infotainment screen glowing softly, cinematic first-person perspective
+with natural depth of field, figures shown from side/three-quarter angle,
+semi-realistic illustration, Rockstar Games concept art quality,
+16:9 landscape, 1920x1080, highly detailed
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, old car, dirty interior,
+night, rain, front-facing portraits, close-up faces, text, watermark,
+right-hand drive, people looking at camera, hijab, headscarf
+```

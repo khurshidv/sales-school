@@ -31,7 +31,7 @@ export default function CharacterSprite({
   const src = character.assetPath(emotion);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       <motion.img
         key={characterId + '-' + emotion + '-' + position}
         initial={{ opacity: 0 }}

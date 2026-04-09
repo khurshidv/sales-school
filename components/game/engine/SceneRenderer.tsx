@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import type { CharacterOnScreen } from '@/game/engine/types';
 
@@ -31,12 +32,19 @@ export default function SceneRenderer({
       className="relative w-full h-dvh overflow-hidden"
       onClick={handleClick}
     >
-      {/* Background */}
-      <img
-        src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      {/* Background with crossfade */}
+      <AnimatePresence mode="sync">
+        <motion.img
+          key={backgroundId}
+          src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
+          alt=""
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </AnimatePresence>
 
       {/* Characters */}
       {characters.map((char) => (

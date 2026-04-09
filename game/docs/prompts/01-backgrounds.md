@@ -235,3 +235,34 @@ semi-realistic illustration, Rockstar Games art style, cinematic quality,
 anime, cartoon, 3D render, photograph, blurry, night, rain, overcast,
 snow, people, text, watermark
 ```
+
+---
+
+## BG-11 | Шоурум — молодая пара клиентов (`bg_showroom_young_couple`)
+
+**Используется:** Day 2 (сцена: молодая пара входит — он к Tracker, она у Equinox)
+
+### Контекст:
+Вид от лица игрока (продавца) из глубины зала. Молодая пара вдали: муж рассматривает Tracker слева, жена остановилась у Equinox справа. Силуэты на фоне витринных окон с ярким дневным светом снаружи.
+
+### Промпт:
+```
+GTA V loading screen environment art style, wide interior shot of a modern
+Chevrolet car dealership showroom in Tashkent Uzbekistan, panoramic floor-to-ceiling
+windows with bright Tashkent city view outside, polished marble floors with
+reflections, Chevrolet Tracker SUV displayed on the left side of the showroom,
+Chevrolet Equinox displayed on the right side, dramatic spotlights on cars,
+two distant silhouettes of a young Uzbek couple browsing — a young man standing
+near the Tracker on the left admiring it, a young woman standing near the Equinox
+on the right examining it, silhouettes backlit by bright window light creating
+dramatic rim lighting, figures are small and seen from behind at distance,
+contemporary minimalist showroom architecture, warm golden ambient lighting,
+Chevrolet logo on wall, cinematic composition, semi-realistic illustration,
+Rockstar Games concept art quality, 16:9 landscape, highly detailed, 1920x1080
+```
+
+### Негативный промпт:
+```
+anime, cartoon, 3D render, photograph, blurry, dark, night, close-up faces,
+front-facing people, crowded, text, watermark, logo
+```

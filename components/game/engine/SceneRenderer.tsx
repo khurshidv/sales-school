@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
+import SoundManager from '@/lib/game/audio/SoundManager';
 import type { CharacterOnScreen } from '@/game/engine/types';
 
 interface SceneRendererProps {
@@ -24,11 +25,35 @@ export default function SceneRenderer({
 }: SceneRendererProps) {
   const hasRequestedFullscreen = useRef(false);
 
+  // Reset fullscreen flag when user exits via back gesture — next tap will re-enter
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        hasRequestedFullscreen.current = false;
+      }
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
+    };
+  }, []);
+
   const handleClick = () => {
-    // Try to enter fullscreen on first interaction (hides mobile browser chrome)
-    if (!hasRequestedFullscreen.current && document.documentElement.requestFullscreen) {
+    // Unlock audio FIRST — must happen before fullscreen consumes the user gesture
+    SoundManager.getInstance().unlock();
+
+    // Then enter fullscreen — completely hides address bar like video playback
+    if (!hasRequestedFullscreen.current) {
       hasRequestedFullscreen.current = true;
-      document.documentElement.requestFullscreen().catch(() => {});
+      const el = document.documentElement;
+      const rfs = el.requestFullscreen ?? (el as any).webkitRequestFullscreen;
+      if (rfs) {
+        rfs.call(el).then(() => {
+          (screen.orientation as any)?.lock?.('landscape').catch(() => {});
+        }).catch(() => {});
+      }
     }
     if (tapEnabled) {
       onTap();

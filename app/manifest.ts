@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Sales School — Игра',
     short_name: 'Sales School',
     start_url: '/game',
-    display: 'standalone',
+    display: 'fullscreen',
     orientation: 'landscape',
     background_color: '#0a0c12',
     theme_color: '#0a0c12',

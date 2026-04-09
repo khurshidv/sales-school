@@ -47,16 +47,17 @@ export function useAudio(eventBus: GameEventBus) {
         }
       });
 
-      document.removeEventListener('click', handleInteraction);
-      document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('click', handleInteraction, true);
+      document.removeEventListener('touchstart', handleInteraction, true);
     };
 
-    document.addEventListener('click', handleInteraction);
-    document.addEventListener('touchstart', handleInteraction);
+    // Use capture phase so audio unlocks BEFORE any other handler consumes the gesture
+    document.addEventListener('click', handleInteraction, true);
+    document.addEventListener('touchstart', handleInteraction, true);
 
     return () => {
-      document.removeEventListener('click', handleInteraction);
-      document.removeEventListener('touchstart', handleInteraction);
+      document.removeEventListener('click', handleInteraction, true);
+      document.removeEventListener('touchstart', handleInteraction, true);
     };
   }, []);
 

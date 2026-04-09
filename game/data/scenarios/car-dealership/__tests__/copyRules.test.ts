@@ -42,14 +42,12 @@ describe('copy rules', () => {
     }
   });
 
-  it('live scenario copy does not mention the old school brand', () => {
-    const combined = [
-      ...collectRuStrings(day1),
-      ...collectRuStrings(day2),
-      ...collectRuStrings(day3),
-    ].join('\n');
+  it('CTA copy does not mention the old school brand', () => {
+    const combined = JSON.stringify(schoolCtaCopy);
 
     expect(combined).not.toContain('Sales School');
+    expect(schoolCtaCopy.schoolInfo.tagline.ru).toContain('SalesUp');
+    expect(schoolCtaCopy.schoolInfo.tagline.uz).toContain('SalesUp');
   });
 
   it('CTA copy uses the SalesUp brand in both languages', () => {

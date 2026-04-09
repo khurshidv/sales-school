@@ -1,69 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { schoolCtaCopy, type SchoolCtaEnding } from './schoolCtaCopy';
 
 interface SchoolCTAProps {
-  ending: 'grandmaster' | 'success' | 'partial' | 'failure';
+  ending: SchoolCtaEnding;
   lang: 'uz' | 'ru';
   playerPhone?: string;
   onConsultation: () => void;
   onDismiss: () => void;
 }
-
-const headlines: Record<SchoolCTAProps['ending'], { uz: string; ru: string }> = {
-  grandmaster: {
-    uz: 'Siz tayyor. Keyingi qadam — professional bo\'lish.',
-    ru: 'Вы готовы. Следующий шаг — стать профессионалом.',
-  },
-  success: {
-    uz: 'Sizda asos bor. Professional dastur uni ko\'paytiradi.',
-    ru: 'У вас есть база. Профессиональная программа её умножит.',
-  },
-  partial: {
-    uz: 'O\'rganish istagi — bu allaqachon birinchi qadam.',
-    ru: 'Желание учиться — это уже первый шаг.',
-  },
-  failure: {
-    uz: 'Har bir mutaxassis bir paytlar yangi boshlovchi bo\'lgan.',
-    ru: 'Каждый эксперт когда-то был новичком.',
-  },
-};
-
-const ctaText: Record<SchoolCTAProps['ending'], { uz: string; ru: string }> = {
-  grandmaster: {
-    uz: 'Karyeramni boshlash uchun konsultatsiya olishga tayyorman',
-    ru: 'Я готов получить консультацию, чтобы начать карьеру',
-  },
-  success: {
-    uz: 'Dastur haqida ko\'proq bilmoqchiman',
-    ru: 'Расскажите подробнее о программе',
-  },
-  partial: {
-    uz: 'Ko\'nikmalarimni rivojlantirmoqchiman',
-    ru: 'Хочу развить свои навыки',
-  },
-  failure: {
-    uz: 'O\'rganishga tayyorman',
-    ru: 'Я готов начать обучение',
-  },
-};
-
-const schoolInfo = {
-  tagline: {
-    uz: 'Sales School — 3 oyda professional sotuvchi tayyorlaydi',
-    ru: 'Sales School — готовит профессиональных продавцов за 3 месяца',
-  },
-  features: {
-    uz: 'Shaxsiy mentor + amaliy mashg\'ulotlar + real mijozlar bilan simulyatsiya',
-    ru: 'Личный ментор + практические занятия + симуляции с реальными клиентами',
-  },
-  results: {
-    uz: 'Bitiruvchilar 6 oy ichida 2-3 baravar ko\'p ishlaydi',
-    ru: 'Выпускники зарабатывают в 2-3 раза больше за 6 месяцев',
-  },
-};
-
-const dismissText = { uz: 'Balki keyinroq', ru: 'Может позже' };
 
 export default function SchoolCTA({
   ending,
@@ -93,7 +39,7 @@ export default function SchoolCTA({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
         >
-          {headlines[ending][lang]}
+          {schoolCtaCopy.headlines[ending][lang]}
         </motion.h1>
 
         {/* School info */}
@@ -111,10 +57,10 @@ export default function SchoolCTA({
             }}
           >
             <p className="text-sm font-medium mb-2" style={{ color: '#e5e7eb' }}>
-              {schoolInfo.tagline[lang]}
+              {schoolCtaCopy.schoolInfo.tagline[lang]}
             </p>
             <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
-              {schoolInfo.features[lang]}
+              {schoolCtaCopy.schoolInfo.features[lang]}
             </p>
           </div>
 
@@ -126,7 +72,7 @@ export default function SchoolCTA({
             }}
           >
             <p className="text-sm" style={{ color: '#86efac' }}>
-              {schoolInfo.results[lang]}
+              {schoolCtaCopy.schoolInfo.results[lang]}
             </p>
           </div>
         </motion.div>
@@ -155,7 +101,7 @@ export default function SchoolCTA({
             boxShadow: { delay: 1.2, duration: 2, repeat: Infinity, ease: 'easeInOut' },
           }}
         >
-          {ctaText[ending][lang]}
+          {schoolCtaCopy.ctaText[ending][lang]}
         </motion.button>
 
         {/* Dismiss */}
@@ -168,7 +114,7 @@ export default function SchoolCTA({
           transition={{ delay: 1.2 }}
           whileHover={{ color: '#9ca3af' }}
         >
-          {dismissText[lang]}
+          {schoolCtaCopy.dismissText[lang]}
         </motion.button>
       </motion.div>
     </div>

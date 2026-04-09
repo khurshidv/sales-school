@@ -1043,8 +1043,8 @@ export const day3: Day = {
       emotion: null,
       background: 'bg_showroom',
       text: {
-        uz: "Sales School 3 oyda professionallarni tayyorlaydi. Bitiruvchilar yarim yil ichida 2-3 barobar ko'proq ishlaydi. Yangi boshlovchilar ham, tajribalilар ham.",
-        ru: 'Sales School готовит профессионалов за 3 месяца. Выпускники зарабатывают в 2-3 раза больше за полгода. И новички, и опытные.',
+        uz: 'Tizimli o\'qiganlar tezroq o\'sadi. 3 oy ichida amaliy darajaga chiqish mumkin — yangi boshlovchilar ham, tajribalilar ham.',
+        ru: 'Те, кто учатся системно, растут быстрее. За 3 месяца можно выйти на рабочий уровень — и новички, и опытные.',
       },
       nextNodeId: 'd3_gm_cta',
     },

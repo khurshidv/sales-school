@@ -25,28 +25,15 @@ export default function SceneRenderer({
 }: SceneRendererProps) {
   const hasRequestedFullscreen = useRef(false);
 
-  // Reset fullscreen flag when user exits via back gesture — next tap will re-enter
+  // Fullscreen via document-level capture listener — works regardless of stopPropagation
   useEffect(() => {
-    const onFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        hasRequestedFullscreen.current = false;
-      }
-    };
-    document.addEventListener('fullscreenchange', onFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', onFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
-    };
-  }, []);
-
-  const handleClick = () => {
-    // Unlock audio FIRST — must happen before fullscreen consumes the user gesture
-    SoundManager.getInstance().unlock();
-
-    // Then enter fullscreen — completely hides address bar like video playback
-    if (!hasRequestedFullscreen.current) {
+    const requestFullscreen = () => {
+      if (hasRequestedFullscreen.current) return;
       hasRequestedFullscreen.current = true;
+
+      // Unlock audio in the same gesture
+      SoundManager.getInstance().unlock();
+
       const el = document.documentElement;
       const rfs = el.requestFullscreen ?? (el as any).webkitRequestFullscreen;
       if (rfs) {
@@ -54,7 +41,28 @@ export default function SceneRenderer({
           (screen.orientation as any)?.lock?.('landscape').catch(() => {});
         }).catch(() => {});
       }
-    }
+    };
+
+    // Reset flag when user exits fullscreen (back gesture)
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        hasRequestedFullscreen.current = false;
+      }
+    };
+
+    document.addEventListener('click', requestFullscreen, true);
+    document.addEventListener('touchstart', requestFullscreen, true);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+    return () => {
+      document.removeEventListener('click', requestFullscreen, true);
+      document.removeEventListener('touchstart', requestFullscreen, true);
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', onFullscreenChange);
+    };
+  }, []);
+
+  const handleClick = () => {
     if (tapEnabled) {
       onTap();
     }

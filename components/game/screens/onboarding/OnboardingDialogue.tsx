@@ -79,10 +79,10 @@ export default function OnboardingDialogue({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      className="absolute bottom-0 left-0 right-0 min-h-[26dvh] px-6 py-5 z-10 border-t border-white/10"
+      className="absolute bottom-0 left-0 right-0 min-h-[18dvh] px-4 py-3 sm:min-h-[22dvh] sm:px-5 sm:py-4 lg:min-h-[26dvh] lg:px-6 lg:py-5 z-10 border-t border-white/10"
       style={{
         background:
-          'linear-gradient(to top, rgba(10,12,18,0.92) 0%, rgba(15,20,30,0.82) 60%, rgba(20,25,40,0.65) 100%)',
+          'linear-gradient(to top, rgba(10,12,18,0.85) 0%, rgba(15,20,30,0.70) 60%, rgba(20,25,40,0.45) 100%)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }}
@@ -91,7 +91,7 @@ export default function OnboardingDialogue({
       {/* Speaker name */}
       {speakerName && (
         <p
-          className="mb-2 text-lg font-bold uppercase tracking-[0.15em]"
+          className="mb-1 text-sm font-bold uppercase tracking-[0.12em] sm:mb-2 sm:text-base lg:text-lg sm:tracking-[0.15em]"
           style={{
             color: '#6cb4ee',
             textShadow:
@@ -104,7 +104,7 @@ export default function OnboardingDialogue({
 
       {/* Dialogue text */}
       <p
-        className="text-[#e8eaed] text-[1.15rem] leading-[1.7]"
+        className="text-[#e8eaed] text-[0.875rem] sm:text-[1rem] lg:text-[1.15rem] leading-[1.5] sm:leading-[1.7]"
         style={{
           textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
           fontWeight: 500,
@@ -126,7 +126,7 @@ export default function OnboardingDialogue({
             className="mt-4 flex gap-3 items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex-1 flex items-center gap-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3">
+            <div className="flex-1 flex items-center gap-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
               {inputConfig.prefix && (
                 <span className="text-white/60 select-none">
                   {inputConfig.prefix}
@@ -144,7 +144,7 @@ export default function OnboardingDialogue({
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder={inputConfig.placeholder}
-                className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40 text-base"
+                className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40 text-sm sm:text-base"
                 autoComplete="off"
               />
             </div>
@@ -152,7 +152,7 @@ export default function OnboardingDialogue({
               onClick={handleConfirm}
               disabled={!inputConfig.isValid}
               className={`
-                px-6 py-3 rounded-lg font-semibold text-white text-base
+                px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold text-white text-sm sm:text-base
                 border transition-all min-w-[48px] min-h-[48px]
                 ${
                   inputConfig.isValid

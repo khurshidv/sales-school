@@ -24,8 +24,8 @@ export default function GameHub() {
   // Hydrate player from Supabase on mount
   usePlayerInit();
 
-  const handleFormSubmit = async (name: string, phone: string, lang: Language, avatarId: 'male' | 'female') => {
-    setLang(lang);
+  const handleFormSubmit = async (name: string, phone: string, selectedLang: Language, avatarId: 'male' | 'female') => {
+    setLang(selectedLang);
 
     // Create player in Supabase first (source of truth)
     const serverId = await syncCreatePlayer(phone, name, avatarId);
@@ -68,6 +68,21 @@ export default function GameHub() {
 
   // Show loading while hydrating from Supabase
   if (!isInitialized || isLoading) {
+    return (
+      <>
+        <RotateDevice />
+        <div className="flex h-dvh w-dvw items-center justify-center bg-[#0a0a1a]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
+        </div>
+      </>
+    );
+  }
+
+  // Auto-redirect to game if player exists and hasn't completed any scenario
+  const hasCompletedScenario = player && player.completedScenarios.length > 0;
+
+  if (player && !hasCompletedScenario) {
+    router.replace('/game/play?scenario=car-dealership');
     return (
       <>
         <RotateDevice />

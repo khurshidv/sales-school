@@ -40,18 +40,22 @@ export default function DialogueBox({
   }
 
   return (
+    // Full-screen tap target: 1st tap completes typing, 2nd tap advances
+    <div
+      className="absolute inset-0 z-10"
+      onClick={handleClick}
+    >
     <motion.div
       key={text}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      className="absolute bottom-0 left-0 right-0 min-h-[18dvh] px-4 py-3 sm:min-h-[22dvh] sm:px-5 sm:py-4 lg:min-h-[26dvh] lg:px-6 lg:py-5 z-10 border-t border-white/10"
+      className="absolute bottom-0 left-0 right-0 min-h-[18dvh] px-4 py-3 sm:min-h-[22dvh] sm:px-5 sm:py-4 lg:min-h-[26dvh] lg:px-6 lg:py-5 border-t border-white/10"
       style={{
         background: 'linear-gradient(to top, rgba(10,12,18,0.92) 0%, rgba(15,20,30,0.82) 60%, rgba(20,25,40,0.65) 100%)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }}
-      onClick={handleClick}
     >
       {/* Back button */}
       {canGoBack && onGoBack && (
@@ -109,5 +113,6 @@ export default function DialogueBox({
         </motion.div>
       )}
     </motion.div>
+    </div>
   );
 }

@@ -4,7 +4,14 @@ import { day2 } from '../day2';
 import { day3 } from '../day3';
 import { schoolCtaCopy, type SchoolCtaEnding } from '@/components/game/screens/schoolCtaCopy';
 
-const endings: SchoolCtaEnding[] = ['grandmaster', 'success', 'partial', 'failure'];
+const endingCoverage: Record<SchoolCtaEnding, true> = {
+  grandmaster: true,
+  success: true,
+  partial: true,
+  failure: true,
+};
+
+const endings = Object.keys(endingCoverage) as SchoolCtaEnding[];
 
 function collectRuStrings(value: unknown, acc: string[] = []): string[] {
   if (Array.isArray(value)) {
@@ -84,8 +91,6 @@ describe('CTA copy rules', () => {
     const combined = JSON.stringify(schoolCtaCopy);
 
     expect(combined).not.toContain('Sales School');
-    expect(schoolCtaCopy.schoolInfo.tagline.ru).toContain('SalesUp');
-    expect(schoolCtaCopy.schoolInfo.tagline.uz).toContain('SalesUp');
   });
 
   it('CTA copy uses the SalesUp brand in both languages', () => {

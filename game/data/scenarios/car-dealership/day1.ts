@@ -39,8 +39,9 @@ export const day1: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom_entrance_exterior',
+      characters: [],
       text: {
-        uz: 'Ertalab salon hali tinch. Chiroqlar endi yoqilgan, pol hidi bilinib turibdi. Bugun Chevrolet salonidagi birinchi ish kuningiz. Ichingizda hayajon bor.',
+        uz: 'Tong, salon hali sokin. Chiroqlar endigina yoqilgan, havoda tozalik hidi ufurib turibdi. Bugun sizning "Chevrolet" salonidagi birinchi ish kuningiz. Ichingizda sezilarli hayajon bor.',
         ru: 'Утро, салон ещё тихий. Свет только включили, в воздухе запах после уборки. Сегодня ваш первый рабочий день в салоне Chevrolet. Внутри заметное волнение.',
       },
       nextNodeId: 'd1_meet_rustam',
@@ -56,8 +57,8 @@ export const day1: Day = {
         { id: 'rustam', emotion: 'friendly', position: 'center' },
       ],
       text: {
-        uz: 'Keldingizmi. Men Rustam, bosh menejer. Bu yerda avval eshitasiz, keyin gapirasiz.',
-        ru: 'Пришли. Я Рустам, главный менеджер. Здесь сначала слушают, потом говорят.',
+        uz: 'Keldingizmi. Ismim Rustam, bosh menejerman. Mijozlar bilan gaplashganda avval ularni yaxshilab eshiting, keyin esa gapiring.',
+        ru: 'Пришли. Меня зовут Рустам, я главный менеджер. Когда общаетесь с клиентами — сначала внимательно слушайте, потом говорите.',
       },
       nextNodeId: 'd1_rustam_tip',
     },
@@ -87,8 +88,8 @@ export const day1: Day = {
         { id: 'dilnoza', emotion: 'smirk', position: 'center' },
       ],
       text: {
-        uz: 'Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Men Dilnoza. Hammaning birinchi kuni shunaqa o\'tadi.',
-        ru: 'По лицу видно, ждёте первого клиента. Я Дильноза. У всех первый день проходит примерно так.',
+        uz: 'Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Ismim Dilnoza. Hammaning birinchi kuni shunaqa o\'tadi.',
+        ru: 'По лицу видно, ждёте первого клиента. Меня зовут Дильноза. У всех первый день проходит примерно так.',
       },
       nextNodeId: 'd1_dilnoza_tip',
     },
@@ -103,8 +104,8 @@ export const day1: Day = {
       ],
       effects: [{ type: 'set_flag', flag: 'met_dilnoza' }],
       text: {
-        uz: 'Oldin hammada qo\'l sovuq bo\'ladi. Faqat yuzingizdan bilinmasin. Juftlik kelsa, ikkalasiga ham tegadigan bitta sababni toping.',
-        ru: 'Перед первым клиентом всех потряхивает. Только лицом не показывайте. Когда приходит пара, найдите одну причину, которая цепляет обоих.',
+        uz: 'Birinchi mijoz oldida hamma bir oz hayajonlanadi. Faqat buni yuzingizda bildirmang. Agar juftlik kelsa, ikkalasini ham qiziqtiradigan bitta sabab toping.',
+        ru: 'Перед первым клиентом все немного волнуются. Только не показывайте это на лице. Если приходит пара — найдите одну причину, которая заинтересует обоих.',
       },
       nextNodeId: 'd1_meet_anvar',
     },
@@ -119,8 +120,8 @@ export const day1: Day = {
         { id: 'anvar', emotion: 'nervous', position: 'center' },
       ],
       text: {
-        uz: 'Salom, men Anvar. Men ham hali yangi. Mana, bugungi yozuvlar shu yerda.',
-        ru: 'Привет, я Анвар. Я тоже пока новый. Вот сегодняшние записи.',
+        uz: 'Salom, ismim Anvar. Men ham bu yerda yangi sotuvchiman. Mana, bugungi mijozlar ro\'yxati.',
+        ru: 'Привет, меня зовут Анвар. Я тоже здесь новый продавец. Вот список клиентов на сегодня.',
       },
       nextNodeId: 'd1_anvar_info',
     },
@@ -135,8 +136,8 @@ export const day1: Day = {
       ],
       effects: [{ type: 'set_flag', flag: 'met_anvar' }],
       text: {
-        uz: 'Bir juftlik yozilgan. Kirishda o\'zaro tortishib kelishganga o\'xshaydi. Unga yurishi muhim, unga esa bolalar bilan qulayi.',
-        ru: 'Записана одна пара. Похоже, они ещё на входе между собой спорили. Ему важнее как едет, ей чтобы с детьми было удобно.',
+        uz: 'Bir juftlik kelishi kerak edi. Ular o\'zaro tortishayotgan edi menimcha. Erkak uchun mashinaning yurishi muhim, ayol uchun esa bolalarga qulay bo\'lishi kerak ekan.',
+        ru: 'Должна прийти одна пара. По-моему, они между собой спорили. Мужу важно, как машина едет, а жене — чтобы детям было удобно.',
       },
       nextNodeId: 'd1_couple_enters',
     },
@@ -151,6 +152,7 @@ export const day1: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
+      characters: [],
       text: {
         uz: 'Eshik ochildi. Yosh juftlik kirdi. Er darhol Tracker tomon yurdi. Xotini esa Equinox oldida to\'xtadi.',
         ru: 'Дверь открылась. Вошла молодая пара. Муж сразу пошёл к Tracker. Жена остановилась у Equinox.',
@@ -162,14 +164,14 @@ export const day1: Day = {
       id: 'd1_who_first',
       type: 'choice',
       prompt: {
-        uz: 'Kimga birinchi yondashasiz?',
+        uz: 'Kimni yoniga birinchi borasiz?',
         ru: 'К кому подойдёте первым?',
       },
       choices: [
         {
           id: 'd1_who_first_a',
           text: {
-            uz: 'Ikkalasiga birga yondashaman: "Assalomu alaykum. Keling, birga ko\'raylik. Qaysi tomonga qarayapsizlar?"',
+            uz: 'Ikkalasini oldiga boraman: "Assalomu alaykum. Keling, birga ko\'raylik. Qaysi tomonga qarayapsizlar?"',
             ru: 'Подхожу сразу к обоим: "Здравствуйте. Давайте посмотрим вместе. К какой машине присматриваетесь?"',
           },
           effects: [
@@ -219,8 +221,8 @@ export const day1: Day = {
         { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
       ],
       text: {
-        uz: 'Mayli, birga ko\'raylik. Lekin men Tracker tarafdaman. Chaqqon, bosib ketsa javobi bor.',
-        ru: 'Ладно, давайте вместе. Но я за Tracker. Шустрый, нажимаешь и сразу есть ответ.',
+        uz: 'Mayli, birgalikda ko\'ramiz. Lekin men Trackerni qo\'llab-quvvatlayman. Tez ishlaydi, bosganingda darhol javob chiqadi.',
+        ru: 'Ладно, посмотрим вместе. Но я за Tracker. Работает быстро, нажимаешь — сразу отклик.',
       },
       nextNodeId: 'd1_conflict_both_nilufar',
     },
@@ -514,6 +516,7 @@ export const day1: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_city_street_tashkent',
+      characters: [],
       text: {
         uz: 'Shahar ichidagi odatiy yo\'l. Svetofor, burilish, biroz notekis joylar. Javlon rulda, Nilufar orqa tomonda o\'rindiqni tekshirib o\'tirdi.',
         ru: 'Обычный городской маршрут. Светофоры, повороты, местами неровная дорога. Жавлон за рулём, Нилуфар сзади проверяет, как там сидится.',

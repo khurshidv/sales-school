@@ -96,8 +96,8 @@ export const day3: Day = {
         {
           id: 'd3_prep_c',
           text: {
-            uz: "Moliya bo'limidan fleet chegirma limitini bilish",
-            ru: 'Уточнить лимиты корпоративных скидок у финансистов',
+            uz: "Moliya bo'limidan so'rash: kompaniyalarga qancha chegirma bersa bo'ladi?",
+            ru: 'Спросить у финансистов: какую скидку можно дать компании?',
           },
           nextNodeId: 'd3_anvar_check',
           effects: [
@@ -144,6 +144,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom_entrance_exterior',
+      characters: [],
       text: {
         uz: "Qora mashina keldi. Haydovchi eshikni ochdi. Kostyumli odam tushib, to'g'ri salonga kirib keldi.",
         ru: 'Подъехала чёрная машина. Водитель открыл дверь. Мужчина в костюме вышел и прошёл прямо в салон.',
@@ -225,6 +226,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_vip_lounge_hallway',
+      characters: [],
       text: {
         uz: "Abdullaev oldinga yurdi. Siz yonida — tinch, ortiqcha gapirsiz.",
         ru: 'Абдуллаев пошёл вперёд. Вы рядом — спокойно, без лишних слов.',
@@ -437,8 +439,8 @@ export const day3: Day = {
         { id: 'abdullaev', emotion: 'impressed', position: 'center' },
       ],
       text: {
-        uz: "Yig'gan taklifingiz aniq va to'g'ri edi. Yillik shartnoma — siz orqali.",
-        ru: 'Ваше предложение было собрано грамотно и точно. Годовой контракт — через вас.',
+        uz: "Taklifingiz menga ma'qul. Yillik shartnomani imzolasak bo'ladi.",
+        ru: 'Ваше предложение мне подходит. Можем подписать годовой контракт.',
       },
       effects: [
         { type: 'add_xp', amount: 200 },
@@ -520,6 +522,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
+      characters: [],
       text: {
         uz: "Tushdan keyin. Abdullaevning mashinasi ketdi. Salon tinchidi. Lekin kun hali tugamagan.",
         ru: 'После обеда. Машина Абдуллаева уехала. В салоне стало тихо. Но день ещё не закончен.',
@@ -1042,6 +1045,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
+      characters: [],
       text: {
         uz: 'Tizimli o\'qiganlar tezroq o\'sadi. 3 oy ichida amaliy darajaga chiqish mumkin — yangi boshlovchilar ham, tajribalilar ham.',
         ru: 'Те, кто учатся системно, растут быстрее. За 3 месяца можно выйти на рабочий уровень — и новички, и опытные.',
@@ -1119,6 +1123,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
+      characters: [],
       text: {
         uz: "Aynan shuni o'rgatadigan dastur bor. 3 oy, shaxsiy mentor, amaliy mashqlar.",
         ru: 'Есть программа, которая учит именно этому. 3 месяца, личный ментор, реальная практика.',
@@ -1193,6 +1198,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
+      characters: [],
       text: {
         uz: "Buni yolg'iz topish ham mumkin, lekin ustoz bilan yo'l ancha tez qisqaradi.",
         ru: 'До этого можно дойти и самому. Но с наставником и нормальной практикой путь становится короче в разы.',
@@ -1268,6 +1274,7 @@ export const day3: Day = {
       speaker: 'narrator',
       emotion: null,
       background: 'bg_showroom',
+      characters: [],
       text: {
         uz: "Sotish — bu ko'nikma. Har qanday ko'nikma singari, uni o'rganish mumkin. Buni professional o'rgatadigan odamlar bor.",
         ru: 'Продажи — это навык. Как любой навык, ему можно научиться. Есть те, кто учит этому профессионально.',

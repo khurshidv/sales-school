@@ -148,54 +148,84 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
 
   // Track characters on screen (persists across nodes without explicit characters)
   const lastCharactersRef = useRef<CharacterOnScreen[]>([]);
+  // Character history stack for correct goBack restoration
+  const characterHistoryRef = useRef<CharacterOnScreen[][]>([]);
+  const prevNodeIdRef = useRef<string | null>(null);
 
   // Reset characters when day changes
   useEffect(() => {
     lastCharactersRef.current = [];
+    characterHistoryRef.current = [];
+    prevNodeIdRef.current = null;
   }, [engine.currentDayIndex]);
 
-  const getCharacters = useCallback((): CharacterOnScreen[] => {
-    if (!node) return lastCharactersRef.current;
+  const resolveCharactersForNode = useCallback((n: typeof node): CharacterOnScreen[] => {
+    if (!n) return [];
 
     // DialogueNode with explicit characters array
-    if (node.type === 'dialogue' && (node as DialogueNode).characters) {
-      lastCharactersRef.current = (node as DialogueNode).characters!;
-      return lastCharactersRef.current;
+    if (n.type === 'dialogue' && (n as DialogueNode).characters) {
+      return (n as DialogueNode).characters!;
     }
 
     // EndNode with dialogue.characters
-    if (node.type === 'end' && (node as EndNode).dialogue?.characters) {
-      lastCharactersRef.current = (node as EndNode).dialogue!.characters!;
-      return lastCharactersRef.current;
+    if (n.type === 'end' && (n as EndNode).dialogue?.characters) {
+      return (n as EndNode).dialogue!.characters!;
     }
 
     // DialogueNode without characters → single speaker fallback
-    if (node.type === 'dialogue') {
-      const d = node as DialogueNode;
+    if (n.type === 'dialogue') {
+      const d = n as DialogueNode;
       if (d.speaker && d.speaker !== 'narrator') {
-        lastCharactersRef.current = [{
+        return [{
           id: d.speaker,
           emotion: d.emotion ?? 'neutral',
           position: 'center' as const,
         }];
       }
+      // Narrator with no characters → inherit previous (forward) or restored (back)
       return lastCharactersRef.current;
     }
 
     // EndNode single speaker fallback
-    if (node.type === 'end' && (node as EndNode).dialogue) {
-      const e = node as EndNode;
-      lastCharactersRef.current = [{
+    if (n.type === 'end' && (n as EndNode).dialogue) {
+      const e = n as EndNode;
+      return [{
         id: e.dialogue!.speaker,
         emotion: e.dialogue!.emotion ?? 'neutral',
         position: 'center' as const,
       }];
-      return lastCharactersRef.current;
     }
 
     // Choice/condition/score nodes → keep previous characters
     return lastCharactersRef.current;
-  }, [node]);
+  }, []);
+
+  const getCharacters = useCallback((): CharacterOnScreen[] => {
+    if (!node) return lastCharactersRef.current;
+
+    const currentNodeId = node.id;
+    const historyLength = session?.nodeHistory?.length ?? 0;
+
+    // Detect navigation direction by comparing with previous node
+    if (prevNodeIdRef.current !== null && prevNodeIdRef.current !== currentNodeId) {
+      const isBack = characterHistoryRef.current.length > historyLength;
+      if (isBack) {
+        // Going back: pop from character history to restore previous state
+        const restored = characterHistoryRef.current.pop();
+        if (restored !== undefined) {
+          lastCharactersRef.current = restored;
+        }
+      } else {
+        // Going forward: save current characters before updating
+        characterHistoryRef.current.push([...lastCharactersRef.current]);
+      }
+    }
+    prevNodeIdRef.current = currentNodeId;
+
+    const chars = resolveCharactersForNode(node);
+    lastCharactersRef.current = chars;
+    return chars;
+  }, [node, session?.nodeHistory?.length, resolveCharactersForNode]);
 
   const { speaker, emotion } = getSpeaker();
   const dialogueText = getDialogueText();

@@ -20,8 +20,8 @@ export const day2: Day = {
         { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
-        uz: 'Bugungi mijozni ortiqcha gap bilan ushlab bo\'lmaysiz. Biladi. Sizdan kutadigani — aniq javob.',
-        ru: 'Сегодняшнего клиента словами не впечатлишь. Она подготовлена. От вас ей нужен не блеск, а точный ответ.',
+        uz: 'Bugungi mijozga ortiqcha gaplar bilan tushuntirish shart emas. U o\'zi mashinalarni yaxshi farqiga boradi. Sizdan kutadigani — aniq va qisqa javoblar.',
+        ru: 'Сегодняшнему клиенту не нужно долго объяснять. Она сама хорошо разбирается в машинах. От вас ждёт — чётких и коротких ответов.',
       },
       nextNodeId: 'd2_anvar_files',
     },
@@ -60,6 +60,7 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'narrator',
       emotion: null,
+      characters: [],
       text: {
         uz: 'Qo\'ng\'iroq bo\'ldi: kechagi er-xotin bo\'yicha Javlon telefon qildi. Nilufar bilan gaplashibdi, Equinox ni yana bir ko\'rmoqchi ekanlar.',
         ru: 'Звонок по вчерашней паре: Жавлон сказал, что обсудили с Нилуфар и хотят ещё раз посмотреть Equinox.',
@@ -98,7 +99,7 @@ export const day2: Day = {
         {
           id: 'd2_presentation_a',
           text: {
-            uz: 'Siz tayyor kelibsiz. Unda vaqtni olmayman, faqat haqiqiy farqlarini aytaman.',
+            uz: 'Siz tayyorlanib kelibsiz. Unda vaqtni olmayman, faqat haqiqiy farqlarini aytaman.',
             ru: 'Вы пришли подготовленной. Тогда не буду отнимать время, скажу только по реальным отличиям.',
           },
           effects: [

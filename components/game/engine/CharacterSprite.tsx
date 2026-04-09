@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
 import type { CharacterPosition } from '@/game/engine/types';
 
@@ -31,17 +31,14 @@ export default function CharacterSprite({
   const src = character.assetPath(emotion);
 
   return (
-    <AnimatePresence mode="sync">
-      <motion.img
-        key={characterId + '-' + emotion + '-' + position}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isActive ? 1 : 0.6 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-        src={src}
-        alt={character.id}
-        className={`absolute bottom-0 max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
-      />
-    </AnimatePresence>
+    <motion.img
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isActive ? 1 : 0.6 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
+      src={src}
+      alt={character.id}
+      className={`absolute bottom-0 max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'brightness-75' : ''}`}
+    />
   );
 }

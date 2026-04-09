@@ -47,15 +47,17 @@ export default function SceneRenderer({
       </AnimatePresence>
 
       {/* Characters */}
-      {characters.map((char) => (
-        <CharacterSprite
-          key={char.id}
-          characterId={char.id}
-          emotion={char.emotion}
-          position={char.position}
-          isActive={char.id === activeSpeaker}
-        />
-      ))}
+      <AnimatePresence mode="sync">
+        {characters.map((char) => (
+          <CharacterSprite
+            key={char.id}
+            characterId={char.id}
+            emotion={char.emotion}
+            position={char.position}
+            isActive={!activeSpeaker || activeSpeaker === 'narrator' || char.id === activeSpeaker}
+          />
+        ))}
+      </AnimatePresence>
 
       {/* Overlay UI (DialogueBox, ChoicePanel, etc.) */}
       {children}

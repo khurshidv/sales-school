@@ -1,10 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { usePlayerStore } from '@/game/store/playerStore';
 import { useLang } from '@/lib/game/utils/lang';
 import { syncCreatePlayer } from '@/game/store/middleware/supabaseSync';
-import { setStoredPhone } from '@/lib/game/phoneStorage';
+import { setStoredPhone, getStoredPhone, clearStoredPhone } from '@/lib/game/phoneStorage';
 import { usePlayerInit } from '@/lib/game/hooks/usePlayerInit';
 import { trackEvent } from '@/lib/game/analytics';
 import OnboardingSequence from '@/components/game/screens/OnboardingSequence';
@@ -14,15 +15,47 @@ import type { Language } from '@/game/engine/types';
 
 export default function GameHub() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const player = usePlayerStore((s) => s.player);
   const isLoading = usePlayerStore((s) => s.isLoading);
   const isInitialized = usePlayerStore((s) => s.isInitialized);
   const loadPlayer = usePlayerStore((s) => s.loadPlayer);
   const setInitialized = usePlayerStore((s) => s.setInitialized);
+  const resetPlayer = usePlayerStore((s) => s.reset);
   const { lang, setLang } = useLang();
 
-  // Hydrate player from Supabase on mount
-  usePlayerInit();
+  // ?reset=1 → wipe player from Supabase + clear phone + show onboarding.
+  // Runs before usePlayerInit so hydration sees an empty localStorage.
+  const [resetDone, setResetDone] = useState(() => searchParams.get('reset') !== '1');
+
+  useEffect(() => {
+    if (resetDone) return;
+    let cancelled = false;
+    (async () => {
+      const phone = getStoredPhone();
+      if (phone) {
+        try {
+          await fetch(`/api/game/players?phone=${encodeURIComponent(phone)}`, {
+            method: 'DELETE',
+          });
+        } catch {
+          // Network errors are non-fatal — we still clear local state below.
+        }
+      }
+      clearStoredPhone();
+      resetPlayer();
+      if (cancelled) return;
+      // Strip ?reset=1 from URL so refresh doesn't re-trigger.
+      router.replace('/game');
+      setResetDone(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [resetDone, resetPlayer, router]);
+
+  // Hydrate player from Supabase on mount (waits for reset to finish).
+  usePlayerInit(resetDone);
 
   const handleFormSubmit = async (name: string, phone: string, selectedLang: Language, avatarId: 'male' | 'female') => {
     setLang(selectedLang);

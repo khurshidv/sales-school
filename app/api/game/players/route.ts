@@ -109,3 +109,30 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ player: newPlayer });
 }
+
+// DELETE /api/game/players?phone=+998XXXXXXXXX
+// Removes the player and cascades to progress, achievements, leaderboard, events.
+// Used by the ?reset=1 URL trigger on the game hub.
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const phone = searchParams.get('phone');
+
+  if (!phone) {
+    return NextResponse.json({ error: 'Phone parameter required' }, { status: 400 });
+  }
+
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (!phoneDigits.startsWith('998') || phoneDigits.length !== 12) {
+    return NextResponse.json({ error: 'Invalid phone format' }, { status: 400 });
+  }
+
+  const supabase = createAdminClient();
+
+  const { error } = await supabase.from('players').delete().eq('phone', phone);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true });
+}

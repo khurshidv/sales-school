@@ -8,8 +8,11 @@ import { getStoredPhone, clearStoredPhone } from '@/lib/game/phoneStorage';
  * Hydrates the player store from Supabase on mount.
  * Reads phone from localStorage → fetches player from server.
  * If player was deleted from Supabase, clears phone and triggers onboarding.
+ *
+ * Pass `ready = false` to defer hydration (e.g. while a ?reset=1 flow
+ * is still wiping the player on the server).
  */
-export function usePlayerInit() {
+export function usePlayerInit(ready: boolean = true) {
   const setLoading = usePlayerStore((s) => s.setLoading);
   const setInitialized = usePlayerStore((s) => s.setInitialized);
   const loadPlayer = usePlayerStore((s) => s.loadPlayer);
@@ -18,7 +21,7 @@ export function usePlayerInit() {
   const didRun = useRef(false);
 
   useEffect(() => {
-    if (didRun.current || isInitialized) return;
+    if (!ready || didRun.current || isInitialized) return;
     didRun.current = true;
 
     async function init() {
@@ -66,5 +69,5 @@ export function usePlayerInit() {
     }
 
     init();
-  }, [isInitialized, setLoading, setInitialized, loadPlayer, reset]);
+  }, [ready, isInitialized, setLoading, setInitialized, loadPlayer, reset]);
 }

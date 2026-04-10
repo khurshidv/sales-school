@@ -7,6 +7,7 @@ import { useGameEngine } from '@/lib/game/hooks/useGameEngine';
 import { useTimer } from '@/lib/game/hooks/useTimer';
 import { useAudio } from '@/lib/game/hooks/useAudio';
 import { useAssetPreloader } from '@/lib/game/hooks/useAssetPreloader';
+import { usePlayerInit } from '@/lib/game/hooks/usePlayerInit';
 import { useLang } from '@/lib/game/utils/lang';
 import { CHARACTERS } from '@/game/data/characters/index';
 import { canReplay } from '@/game/systems/CoinSystem';
@@ -48,6 +49,11 @@ function GamePlayInner() {
   const router = useRouter();
   const scenarioId = searchParams.get('scenario');
   const { lang } = useLang();
+
+  // Hydrate player store from Supabase on direct navigation / hard refresh
+  // of /game/play (usePlayerInit is otherwise only called in the /game hub).
+  // Idempotent — skipped if already initialized.
+  usePlayerInit();
 
   if (!scenarioId) {
     router.replace('/game');
@@ -384,14 +390,18 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
         onTap={handleScreenTap}
         tapEnabled={node?.type === 'dialogue' || node?.type === 'end'}
       >
-        {/* HUD */}
-        {session && player && (
+        {/* HUD — render as soon as session exists. Player hydration may
+            still be pending on direct navigation / refresh; fall back to
+            level 1 so the HUD (and its pause button, which is the only
+            entry point to PauseMenu / fullscreen toggle) is always
+            reachable. */}
+        {session && (
           <GameHUD
             lives={session.lives}
             maxLives={session.maxLives}
             score={session.score.total}
             comboCount={session.comboCount}
-            level={player.level}
+            level={player?.level ?? 1}
             onPause={handlePause}
           />
         )}
@@ -405,6 +415,8 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
             isNarrator={isNarrator}
             onGoBack={engine.goBack}
             canGoBack={engine.canGoBack}
+            onAdvance={engine.advanceDialogue}
+            lang={lang}
           />
         )}
 
@@ -427,6 +439,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
               text={(node as ChoiceNode).prompt[lang]}
               speakerName={undefined}
               isNarrator={true}
+              lang={lang}
             />
           </>
         )}

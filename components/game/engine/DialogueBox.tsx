@@ -3,6 +3,7 @@
 import { memo, useRef, useImperativeHandle, forwardRef } from 'react';
 import { m, useReducedMotion } from 'framer-motion';
 import { useTypewriter } from '@/lib/game/hooks/useTypewriter';
+import type { Language } from '@/game/engine/types';
 
 export interface DialogueBoxHandle {
   /** Call from parent on any screen tap. Returns true if handled (typing skipped), false if should advance. */
@@ -15,7 +16,19 @@ interface DialogueBoxProps {
   isNarrator: boolean;
   onGoBack?: () => void;
   canGoBack?: boolean;
+  onAdvance?: () => void;
+  lang?: Language;
 }
+
+const BACK_LABEL: Record<Language, string> = {
+  uz: 'Bir qadam orqaga',
+  ru: 'Шаг назад',
+};
+
+const NEXT_LABEL: Record<Language, string> = {
+  uz: 'Keyingisi',
+  ru: 'Далее',
+};
 
 const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function DialogueBox({
   text,
@@ -23,6 +36,8 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
   isNarrator,
   onGoBack,
   canGoBack = false,
+  onAdvance,
+  lang = 'ru',
 }, ref) {
   const shouldReduceMotion = useReducedMotion();
   const { textRef, isTyping, isTypingRef, skipToEnd } = useTypewriter(text, {
@@ -47,6 +62,18 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
   function handleGoBack(e: React.MouseEvent) {
     e.stopPropagation();
     onGoBack?.();
+  }
+
+  function handleNext(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (isTypingRef.current) {
+      skipToEnd();
+      lastSkipTimeRef.current = Date.now();
+      return;
+    }
+    if (Date.now() - lastSkipTimeRef.current > 300) {
+      onAdvance?.();
+    }
   }
 
   // min-h uses svh (not dvh) so the dialogue stays at its smallest size
@@ -108,24 +135,33 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
           style={{
             WebkitBackdropFilter: 'blur(6px)',
           }}
-          aria-label="Go back"
+          aria-label={BACK_LABEL[lang]}
         >
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Шаг назад
+          {BACK_LABEL[lang]}
         </button>
       )}
 
-      {/* Tap indicator */}
-      {!isTyping && (
-        <m.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute bottom-2 right-4 text-white/30 text-xs tracking-wider sm:bottom-3 sm:right-5"
+      {/* Next button — mirrors back button on the right side, floats above
+          the dialogue box. Shown whenever an onAdvance handler is provided
+          (i.e., the parent has a dialogue to advance). Replaces the old
+          passive ▼ tap indicator with an actionable button. */}
+      {onAdvance && (
+        <button
+          onClick={handleNext}
+          className="absolute right-3 sm:right-4 -top-7 sm:-top-8 md:-top-9 lg:-top-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/80 hover:text-white text-[10px] sm:text-xs tracking-wide transition-colors z-20"
+          style={{
+            WebkitBackdropFilter: 'blur(6px)',
+          }}
+          aria-label={NEXT_LABEL[lang]}
         >
-          ▼
-        </m.div>
+          {NEXT_LABEL[lang]}
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       )}
     </m.div>
   );

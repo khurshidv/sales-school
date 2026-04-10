@@ -403,6 +403,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
             comboCount={session.comboCount}
             level={player?.level ?? 1}
             onPause={handlePause}
+            lang={lang}
           />
         )}
 

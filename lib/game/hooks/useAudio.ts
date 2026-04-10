@@ -34,18 +34,21 @@ export function useAudio(eventBus: GameEventBus) {
       const sm = SoundManager.getInstance();
       await sm.unlock();
 
-      // Preload in background — don't block
+      // If a BGM was requested before unlock, load *that specific track*
+      // first and play it ASAP — don't make the player wait for every SFX
+      // to finish fetching. Prior behaviour awaited Promise.all over all
+      // sounds, causing a multi-second audio delay on first entry.
+      const pending = pendingBgmRef.current;
+      if (pending) {
+        pendingBgmRef.current = null;
+        sm.preload(pending).then(() => sm.playBgMusic(pending));
+      }
+
+      // Then warm the rest of the cache in the background.
       Promise.all([
         ...ALL_SFX.map((id) => sm.preload(id)),
         ...ALL_BGM.map((id) => sm.preload(id)),
-      ]).then(() => {
-        setIsReady(true);
-        // Retry pending BGM if any
-        if (pendingBgmRef.current) {
-          sm.playBgMusic(pendingBgmRef.current);
-          pendingBgmRef.current = null;
-        }
-      });
+      ]).then(() => setIsReady(true));
 
       document.removeEventListener('click', handleInteraction, true);
       document.removeEventListener('touchstart', handleInteraction, true);
@@ -74,13 +77,18 @@ export function useAudio(eventBus: GameEventBus) {
     SoundManager.getInstance().play(soundId);
   }, []);
 
-  const playBgMusic = useCallback((soundId: string) => {
+  const playBgMusic = useCallback(async (soundId: string) => {
     // If not unlocked yet, store as pending — will play once preload completes
     if (!unlockedRef.current) {
       pendingBgmRef.current = soundId;
       return;
     }
-    SoundManager.getInstance().playBgMusic(soundId);
+    const sm = SoundManager.getInstance();
+    // Ensure buffer is loaded before play. Idempotent — no-op if already
+    // cached. Prevents the "play was called but buffer not decoded yet"
+    // silent-failure path inside SoundManager.playBgMusic().
+    await sm.preload(soundId);
+    sm.playBgMusic(soundId);
   }, []);
 
   const stopBgMusic = useCallback(() => {

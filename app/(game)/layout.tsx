@@ -4,6 +4,15 @@ import MotionProvider from "@/components/game/MotionProvider";
 export const metadata: Metadata = {
   title: "Sales School — Игра",
   description: "RPG тренажёр навыков продаж",
+  manifest: "/manifest.webmanifest",
+  // Enable iOS "Add to Home Screen" → standalone mode. iOS Safari does not
+  // support programmatic fullscreen for arbitrary elements, so this is the
+  // only way to give iPhone users a chrome-free experience.
+  appleWebApp: {
+    capable: true,
+    title: "SalesUp",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {

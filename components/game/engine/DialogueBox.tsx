@@ -127,10 +127,17 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
       </p>
 
       {/* Back button — floats ABOVE the dialogue box (negative top) so it
-          never collides with the phone's bottom-edge back/gesture zone. */}
+          never collides with the phone's bottom-edge back/gesture zone.
+          onTouchEnd stopPropagation is critical: SceneRenderer's parent
+          touchend calls preventDefault() (ghost-click guard), which would
+          otherwise cancel this button's synthetic click event entirely. */}
       {canGoBack && onGoBack && (
         <button
           onClick={handleGoBack}
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            onGoBack();
+          }}
           className="absolute left-3 sm:left-4 -top-7 sm:-top-8 md:-top-9 lg:-top-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white text-[10px] sm:text-xs tracking-wide transition-colors z-20"
           style={{
             WebkitBackdropFilter: 'blur(6px)',
@@ -147,10 +154,23 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
       {/* Next button — mirrors back button on the right side, floats above
           the dialogue box. Shown whenever an onAdvance handler is provided
           (i.e., the parent has a dialogue to advance). Replaces the old
-          passive ▼ tap indicator with an actionable button. */}
+          passive ▼ tap indicator with an actionable button.
+          onTouchEnd stopPropagation: same reason as back button above —
+          prevents parent SceneRenderer from eating the touch event. */}
       {onAdvance && (
         <button
           onClick={handleNext}
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+            if (isTypingRef.current) {
+              skipToEnd();
+              lastSkipTimeRef.current = Date.now();
+              return;
+            }
+            if (Date.now() - lastSkipTimeRef.current > 300) {
+              onAdvance();
+            }
+          }}
           className="absolute right-3 sm:right-4 -top-7 sm:-top-8 md:-top-9 lg:-top-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/80 hover:text-white text-[10px] sm:text-xs tracking-wide transition-colors z-20"
           style={{
             WebkitBackdropFilter: 'blur(6px)',

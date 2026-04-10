@@ -49,16 +49,22 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
     onGoBack?.();
   }
 
+  // min-h uses svh (not dvh) so the dialogue stays at its smallest size
+  // regardless of whether the mobile browser URL bar is visible. When the
+  // URL bar collapses on scroll, extra height flows to the scene/character
+  // instead of bloating the dialogue. The rest of the project follows the
+  // dvh convention (see CLAUDE.md) — this is a deliberate exception.
   return (
     <m.div
       key={text}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      className="absolute bottom-0 left-0 right-0 z-10 min-h-[16dvh] px-2.5 py-1.5 sm:min-h-[18dvh] sm:px-3.5 sm:py-2 md:min-h-[20dvh] md:px-4 md:py-2.5 lg:min-h-[28dvh] lg:px-6 lg:py-5 xl:min-h-[30dvh] xl:px-7 border-t border-white/10 bg-gradient-to-t from-black/55 via-black/35 to-black/10 lg:from-black/90 lg:via-black/70 lg:to-black/35"
+      className="absolute bottom-0 left-0 right-0 z-10 min-h-[16svh] px-2.5 py-1.5 sm:min-h-[18svh] sm:px-3.5 sm:py-2 md:min-h-[20svh] md:px-4 md:py-2.5 lg:min-h-[28svh] lg:px-6 lg:py-5 xl:min-h-[30svh] xl:px-7 border-t border-white/10 bg-gradient-to-t from-black/55 via-black/35 to-black/10 lg:from-black/90 lg:via-black/70 lg:to-black/35"
       style={{
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
+        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.375rem)',
       }}
     >
       {/* Speaker name */}
@@ -93,11 +99,15 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
         )}
       </p>
 
-      {/* Back button */}
+      {/* Back button — floats ABOVE the dialogue box (negative top) so it
+          never collides with the phone's bottom-edge back/gesture zone. */}
       {canGoBack && onGoBack && (
         <button
           onClick={handleGoBack}
-          className="absolute bottom-2 left-3 flex items-center gap-1 text-white/30 text-[10px] tracking-wide transition-colors z-20 sm:bottom-3 sm:left-4 sm:text-xs"
+          className="absolute left-3 sm:left-4 -top-7 sm:-top-8 md:-top-9 lg:-top-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white text-[10px] sm:text-xs tracking-wide transition-colors z-20"
+          style={{
+            WebkitBackdropFilter: 'blur(6px)',
+          }}
           aria-label="Go back"
         >
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">

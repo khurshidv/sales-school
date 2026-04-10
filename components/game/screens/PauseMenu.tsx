@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 interface PauseMenuProps {
   onResume: () => void;
   onExit: () => void;
@@ -13,11 +15,39 @@ const t = {
   resume: { uz: 'Davom etish', ru: 'Продолжить' },
   muteOn: { uz: "Ovozni o'chirish", ru: 'Выключить звук' },
   muteOff: { uz: 'Ovozni yoqish', ru: 'Включить звук' },
+  fullscreenOn: { uz: "To'liq ekran", ru: 'Полный экран' },
+  fullscreenOff: { uz: 'Ekrandan chiqish', ru: 'Свернуть' },
   exit: { uz: 'Chiqish', ru: 'Выйти' },
   warning: { uz: 'Kun progressi yo\'qoladi', ru: 'Прогресс дня будет потерян' },
 } as const;
 
 export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute, lang = 'uz' }: PauseMenuProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenSupported, setFullscreenSupported] = useState(false);
+
+  useEffect(() => {
+    setFullscreenSupported(
+      typeof document !== 'undefined' && Boolean(document.fullscreenEnabled)
+    );
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    onChange();
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  async function handleToggleFullscreen(e: React.MouseEvent) {
+    e.stopPropagation();
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch {
+      // Browser may reject (e.g. not a user gesture); silently ignore.
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 z-40 bg-black/70 flex items-center justify-center"
@@ -42,6 +72,15 @@ export default function PauseMenu({ onResume, onExit, isMuted, onToggleMute, lan
             className="bg-white/10 hover:bg-white/15 w-full py-3 rounded-xl text-neutral-300 transition-colors mb-3"
           >
             {isMuted ? `🔇 ${t.muteOff[lang]}` : `🔊 ${t.muteOn[lang]}`}
+          </button>
+        )}
+
+        {fullscreenSupported && (
+          <button
+            onClick={handleToggleFullscreen}
+            className="bg-white/10 hover:bg-white/15 w-full py-3 rounded-xl text-neutral-300 transition-colors mb-3"
+          >
+            {isFullscreen ? `↙ ${t.fullscreenOff[lang]}` : `🖥 ${t.fullscreenOn[lang]}`}
           </button>
         )}
 

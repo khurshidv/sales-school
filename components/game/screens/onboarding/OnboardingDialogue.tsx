@@ -83,18 +83,16 @@ export default function OnboardingDialogue({
       onClick={handleClick}
     >
     <div
-      className="px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 border-t border-white/10"
+      className="min-h-[16dvh] px-2.5 py-1.5 sm:min-h-[18dvh] sm:px-3.5 sm:py-2 md:min-h-[20dvh] md:px-4 md:py-2.5 lg:min-h-[28dvh] lg:px-6 lg:py-5 xl:min-h-[30dvh] xl:px-7 border-t border-white/10 bg-gradient-to-t from-black/55 via-black/35 to-black/10 lg:from-black/90 lg:via-black/70 lg:to-black/35"
       style={{
-        background:
-          'linear-gradient(to top, rgba(10,12,18,0.85) 0%, rgba(15,20,30,0.70) 60%, rgba(20,25,40,0.45) 100%)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
       }}
     >
       {/* Speaker name */}
       {speakerName && (
         <p
-          className="mb-0.5 text-[0.65rem] font-bold uppercase tracking-[0.10em] sm:mb-1 sm:text-xs lg:text-sm lg:tracking-[0.12em]"
+          className="mb-0.5 text-[0.625rem] font-bold uppercase tracking-[0.12em] sm:mb-1 sm:text-[0.7rem] md:mb-1.5 md:text-[0.78rem] lg:mb-2 lg:text-base xl:text-lg sm:tracking-[0.15em]"
           style={{
             color: '#6cb4ee',
             textShadow:
@@ -107,7 +105,7 @@ export default function OnboardingDialogue({
 
       {/* Dialogue text */}
       <p
-        className="text-[#e8eaed] text-[0.78rem] sm:text-[0.85rem] lg:text-[1rem] leading-[1.4] sm:leading-[1.5]"
+        className="text-[#e8eaed] text-[0.7rem] sm:text-[0.78rem] md:text-[0.85rem] lg:text-[1.15rem] xl:text-[1.25rem] leading-[1.45] sm:leading-[1.55] md:leading-[1.6] lg:leading-[1.7]"
         style={{
           textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
           fontWeight: 500,

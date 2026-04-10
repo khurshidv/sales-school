@@ -14,9 +14,9 @@ interface CharacterSpriteProps {
 }
 
 const POSITION_CLASSES: Record<CharacterPosition, string> = {
-  left: 'left-[4%] sm:left-[8%] translate-x-0',
+  left: 'left-[2%] sm:left-[4%] md:left-[6%] lg:left-[8%] translate-x-0',
   center: 'left-1/2 -translate-x-1/2',
-  right: 'right-[4%] sm:right-[8%] translate-x-0 left-auto',
+  right: 'right-[2%] sm:right-[4%] md:right-[6%] lg:right-[8%] translate-x-0 left-auto',
 };
 
 function CharacterSprite({
@@ -38,13 +38,13 @@ function CharacterSprite({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      className={`absolute bottom-0 h-[92dvh] sm:h-[88dvh] lg:h-[85dvh] aspect-[2/3] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
+      className={`absolute bottom-0 h-[98dvh] sm:h-[94dvh] md:h-[92dvh] lg:h-[88dvh] aspect-[2/3] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
     >
       <Image
         src={src}
         alt={character.id}
         fill
-        sizes="(max-width: 768px) 40vw, 30vw"
+        sizes="(max-width: 640px) 60vw, (max-width: 1024px) 50vw, 35vw"
         className="object-contain object-bottom"
       />
     </motion.div>

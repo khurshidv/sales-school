@@ -4,18 +4,9 @@ import FadeUp from "./FadeUp";
 import BeforeAfter from "./BeforeAfter";
 import BonusTicket from "./BonusTicket";
 import { ChecklistMockup, VideoMockup, ResumeMockup } from "./BonusMockups";
-import SpeakerCard from "./SpeakerCard";
 import FAQAccordion from "./FAQAccordion";
 import CTAButton from "./CTAButton";
 import { useT } from "@/lib/i18n";
-import {
-  FOUNDER_NAME,
-  FOUNDER_STATS,
-  FOUNDER_IMAGE,
-  MENTOR_NAME,
-  MENTOR_STATS,
-  MENTOR_IMAGE,
-} from "@/lib/constants";
 
 function renderBoldOrange(text: string) {
   const parts = text.split(/\*\*(.*?)\*\*/);
@@ -92,44 +83,6 @@ export default function ValueSection() {
           </div>
 
           <FadeUp delay={400}>
-            <div className="mt-10 flex justify-center">
-              <CTAButton text={t("hero.cta")} fullWidth />
-            </div>
-          </FadeUp>
-        </div>
-
-        {/* Block C — Speakers */}
-        <div id="speakers" className="mb-[70px] md:mb-[100px]">
-          <FadeUp>
-            <h3 className="font-[family-name:var(--font-heading)] text-2xl md:text-3xl text-on-surface mb-12">
-              {t("value.speakers_heading")}
-            </h3>
-          </FadeUp>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            <FadeUp delay={100} direction="left">
-              <div className="speaker-card rounded-3xl">
-                <SpeakerCard
-                  name={FOUNDER_NAME}
-                  role={t("speaker.founder_role")}
-                  stats={FOUNDER_STATS}
-                  image={FOUNDER_IMAGE}
-                />
-              </div>
-            </FadeUp>
-            <FadeUp delay={250} direction="right">
-              <div className="speaker-card rounded-3xl">
-                <SpeakerCard
-                  name={MENTOR_NAME}
-                  role={t("speaker.mentor_role")}
-                  stats={MENTOR_STATS}
-                  image={MENTOR_IMAGE}
-                />
-              </div>
-            </FadeUp>
-          </div>
-
-          <FadeUp delay={350}>
             <div className="mt-10 flex justify-center">
               <CTAButton text={t("hero.cta")} fullWidth />
             </div>

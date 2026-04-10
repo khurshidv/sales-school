@@ -709,13 +709,13 @@ const translations = {
   "target.faq.heading": { ru: "Частые вопросы", uz: "Ko'p beriladigan savollar" },
   "target.faq.1.q": { ru: "Сколько стоит обучение?", uz: "O'qish qancha turadi?" },
   "target.faq.1.a": {
-    ru: "Стоимость и условия оплаты обсуждаются на бесплатной консультации. Есть рассрочка.",
-    uz: "Narx va to'lov shartlari bepul konsultatsiyada muhokama qilinadi. Bo'lib to'lash mavjud.",
+    ru: "Мы подберём условия под ваше финансовое состояние. Есть рассрочка и гибкие варианты оплаты — обсудим на бесплатной консультации.",
+    uz: "Biz sizning moliyaviy ahvolingizga mos sharoitlarni tanlab beramiz. Bo'lib to'lash va moslashuvchan to'lov variantlari mavjud — bepul konsultatsiyada muhokama qilamiz.",
   },
   "target.faq.2.q": { ru: "Сколько времени в день нужно уделять?", uz: "Kuniga qancha vaqt ajratish kerak?" },
   "target.faq.2.a": {
-    ru: "1-2 часа в день. Уроки доступны в записи, можно учиться в удобное время.",
-    uz: "Kuniga 1-2 soat. Darslar yozuvda mavjud, qulay vaqtda o'qish mumkin.",
+    ru: "Нужно примерно 2 часа в день.",
+    uz: "Kuniga taxminan 2 soat kerak bo'ladi.",
   },
   "target.faq.3.q": { ru: "Если у меня совсем нет опыта?", uz: "Agar umuman tajribam bo'lmasa?" },
   "target.faq.3.a": {
@@ -724,8 +724,8 @@ const translations = {
   },
   "target.faq.4.q": { ru: "Какой формат занятий?", uz: "Darslar qanday formatda?" },
   "target.faq.4.a": {
-    ru: "Онлайн-уроки в записи + живые практики с менторами + домашние задания с обратной связью.",
-    uz: "Yozuvdagi onlayn darslar + mentorlar bilan jonli amaliyot + qayta aloqa bilan uy vazifalari.",
+    ru: "Офлайн-занятия + живые практики с менторами + домашние задания с обратной связью.",
+    uz: "Offline darslar + mentorlar bilan jonli amaliyot + qayta aloqa bilan uy vazifalari.",
   },
   "target.faq.5.q": { ru: "Можно ли работать студентам?", uz: "Talabalar ishlashi mumkinmi?" },
   "target.faq.5.a": {

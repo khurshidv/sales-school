@@ -33,7 +33,7 @@ export default function PainPoints() {
             {pains.map((key, i) => (
               <FadeUp key={key} delay={i * 80}>
                 <div className="flex gap-4 items-start p-5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group">
-                  <span className="material-symbols-outlined text-error mt-0.5 shrink-0">close</span>
+                  <span className="material-symbols-outlined text-error mt-0.5 shrink-0 drop-shadow-[0_0_6px_hsl(var(--error)/0.8)] group-hover:drop-shadow-[0_0_10px_hsl(var(--error)/1)] transition-all duration-300">close</span>
                   <p className="text-base md:text-lg text-on-surface-variant group-hover:text-on-surface transition-colors">
                     {t(key)}
                   </p>

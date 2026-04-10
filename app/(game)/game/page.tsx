@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { usePlayerStore } from '@/game/store/playerStore';
 import { useLang } from '@/lib/game/utils/lang';
@@ -13,7 +13,29 @@ import ScenarioSelect from '@/components/game/screens/ScenarioSelect';
 import RotateDevice from '@/components/game/screens/RotateDevice';
 import type { Language } from '@/game/engine/types';
 
+function GameHubLoading() {
+  return (
+    <>
+      <RotateDevice />
+      <div className="flex h-full w-full items-center justify-center bg-[#0a0a1a]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
+      </div>
+    </>
+  );
+}
+
+// Next.js 16 requires useSearchParams() to be inside a <Suspense> boundary
+// during static prerendering — otherwise the build fails with
+// "missing-suspense-with-csr-bailout".
 export default function GameHub() {
+  return (
+    <Suspense fallback={<GameHubLoading />}>
+      <GameHubInner />
+    </Suspense>
+  );
+}
+
+function GameHubInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const player = usePlayerStore((s) => s.player);

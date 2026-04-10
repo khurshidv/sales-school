@@ -21,7 +21,7 @@ export default function OnboardingLangSelect({
   onSelect,
 }: OnboardingLangSelectProps) {
   const shouldReduceMotion = useReducedMotion();
-  const { displayedText, isTyping, skipToEnd } = useTypewriter(text, {
+  const { textRef, isTyping, skipToEnd } = useTypewriter(text, {
     speed: 30,
   });
 
@@ -104,7 +104,7 @@ export default function OnboardingLangSelect({
             fontWeight: 500,
           }}
         >
-          {displayedText}
+          <span ref={textRef as React.RefObject<HTMLSpanElement>} />
           {isTyping && (
             <span className="animate-pulse ml-0.5 text-white/60">|</span>
           )}

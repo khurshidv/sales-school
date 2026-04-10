@@ -30,6 +30,25 @@ class SoundManager {
     if (this.audioContext.state === 'suspended') {
       await this.audioContext.resume();
     }
+    // Fire-and-forget warm-up of the most frequently played SFX so the
+    // first correct/wrong/choice sound isn't delayed by fetch+decode.
+    this.warmupCommon();
+  }
+
+  // Preload the small set of SFX that fire on nearly every turn. Runs in
+  // parallel; individual failures are silently ignored (matches preload()).
+  private warmupCommon(): void {
+    const commonSfx = [
+      'sfx_choice_select',
+      'sfx_correct',
+      'sfx_wrong',
+      'sfx_combo',
+      'sfx_timer_tick',
+    ];
+    for (const id of commonSfx) {
+      // Do not await — let them resolve in the background.
+      this.preload(id).catch(() => {});
+    }
   }
 
   // Preload a sound file

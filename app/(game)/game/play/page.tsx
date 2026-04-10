@@ -5,6 +5,7 @@ import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useGameEngine } from '@/lib/game/hooks/useGameEngine';
 import { useTimer } from '@/lib/game/hooks/useTimer';
 import { useAudio } from '@/lib/game/hooks/useAudio';
+import { useAssetPreloader } from '@/lib/game/hooks/useAssetPreloader';
 import { useLang } from '@/lib/game/utils/lang';
 import { CHARACTERS } from '@/game/data/characters/index';
 import { canReplay } from '@/game/systems/CoinSystem';
@@ -45,6 +46,20 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
 
   const timerState = engine.session?.timerState ?? null;
   const timer = useTimer(timerState, engine.timerExpired);
+
+  // Warm asset cache: current day on mount, next day as soon as we enter
+  // `playing` state — so the transition is instant.
+  const { preloadDay } = useAssetPreloader();
+  useEffect(() => {
+    preloadDay(scenarioId, engine.currentDayIndex).catch(() => {});
+  }, [scenarioId, engine.currentDayIndex, preloadDay]);
+  useEffect(() => {
+    if (engine.flowState !== 'playing') return;
+    const nextDay = engine.currentDayIndex + 1;
+    if (engine.scenario && nextDay < engine.scenario.days.length) {
+      preloadDay(scenarioId, nextDay).catch(() => {});
+    }
+  }, [engine.flowState, engine.currentDayIndex, engine.scenario, scenarioId, preloadDay]);
 
   const dialogueBoxRef = useRef<DialogueBoxHandle>(null);
 
@@ -377,6 +392,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
               onMultiSelect={engine.selectMultiChoices}
               timerRemaining={timer.remaining}
               timeLimit={(node as ChoiceNode).timeLimit}
+              timerBarRef={timer.barRef}
             />
             <DialogueBox
               text={(node as ChoiceNode).prompt[lang]}

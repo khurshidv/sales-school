@@ -1,10 +1,12 @@
 'use client';
 
+import { memo } from 'react';
+
 interface ScoreDisplayProps {
   score: number;
 }
 
-export default function ScoreDisplay({ score }: ScoreDisplayProps) {
+function ScoreDisplay({ score }: ScoreDisplayProps) {
   return (
     <div className="flex items-center gap-1 text-[#ffd700] font-medium text-sm">
       <span>★</span>
@@ -12,3 +14,5 @@ export default function ScoreDisplay({ score }: ScoreDisplayProps) {
     </div>
   );
 }
+
+export default memo(ScoreDisplay);

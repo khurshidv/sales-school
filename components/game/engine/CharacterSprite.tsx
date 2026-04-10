@@ -1,5 +1,7 @@
 'use client';
 
+import { memo } from 'react';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
 import type { CharacterPosition } from '@/game/engine/types';
@@ -17,7 +19,7 @@ const POSITION_CLASSES: Record<CharacterPosition, string> = {
   right: 'right-[4%] sm:right-[8%] translate-x-0 left-auto',
 };
 
-export default function CharacterSprite({
+function CharacterSprite({
   characterId,
   emotion,
   position,
@@ -31,14 +33,22 @@ export default function CharacterSprite({
   const src = character.assetPath(emotion);
 
   return (
-    <motion.img
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      src={src}
-      alt={character.id}
-      className={`absolute bottom-0 max-h-[92dvh] sm:max-h-[88dvh] lg:max-h-[85dvh] w-auto pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
-    />
+      className={`absolute bottom-0 h-[92dvh] sm:h-[88dvh] lg:h-[85dvh] aspect-[2/3] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
+    >
+      <Image
+        src={src}
+        alt={character.id}
+        fill
+        sizes="(max-width: 768px) 40vw, 30vw"
+        className="object-contain object-bottom"
+      />
+    </motion.div>
   );
 }
+
+export default memo(CharacterSprite);

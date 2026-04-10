@@ -34,7 +34,7 @@ export default function OnboardingCharacterSelect({
   onSelect,
 }: OnboardingCharacterSelectProps) {
   const shouldReduceMotion = useReducedMotion();
-  const { displayedText, isTyping, skipToEnd } = useTypewriter(promptText, {
+  const { textRef, isTyping, skipToEnd } = useTypewriter(promptText, {
     speed: 30,
   });
   const [selectedId, setSelectedId] = useState<'male' | 'female' | null>(null);
@@ -65,7 +65,7 @@ export default function OnboardingCharacterSelect({
           className="text-center italic text-[#ffd700] text-base sm:text-xl"
           style={{ textShadow: '0 0 20px rgba(255,215,0,0.3), 1px 1px 3px rgba(0,0,0,0.8)' }}
         >
-          {displayedText}
+          <span ref={textRef as React.RefObject<HTMLSpanElement>} />
           {isTyping && (
             <span className="animate-pulse ml-0.5 text-white/60">|</span>
           )}

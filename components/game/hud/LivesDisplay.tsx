@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
 interface LivesDisplayProps {
@@ -8,10 +8,11 @@ interface LivesDisplayProps {
   maxLives?: number;
 }
 
-export default function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps) {
+function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps) {
   const shouldReduceMotion = useReducedMotion();
   const prevLives = useRef(lives);
   const [flash, setFlash] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(true);
 
   useEffect(() => {
     if (lives < prevLives.current) {
@@ -28,6 +29,14 @@ export default function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps)
     }
   }, [flash, lives]);
 
+  // Pause the infinite "last life" pulse when the tab is hidden — framer
+  // keeps running the RAF loop even in background tabs, wasting cycles.
+  useEffect(() => {
+    const onVisibility = () => setIsPageVisible(document.visibilityState === 'visible');
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
+
   return (
     <div className="flex items-center gap-1">
       <AnimatePresence mode="popLayout">
@@ -35,17 +44,18 @@ export default function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps)
           const filled = i < lives;
           const isLastLife = lives === 1 && i === 0;
 
+          const shouldPulse = isLastLife && !shouldReduceMotion && isPageVisible;
           return (
             <motion.span
               key={i}
               exit={{ scale: 0 }}
               animate={
-                isLastLife && !shouldReduceMotion
+                shouldPulse
                   ? { scale: [1, 1.15, 1] }
                   : { scale: 1 }
               }
               transition={
-                isLastLife && !shouldReduceMotion
+                shouldPulse
                   ? { repeat: Infinity, duration: 1 }
                   : { duration: shouldReduceMotion ? 0 : 0.3 }
               }
@@ -75,3 +85,5 @@ export default function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps)
     </div>
   );
 }
+
+export default memo(LivesDisplay);

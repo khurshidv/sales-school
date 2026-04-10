@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 interface DayIntroTransitionProps {
   dayNumber: number;
   title: string;
@@ -48,15 +50,23 @@ export default function DayIntroTransition({
         className="fixed inset-0 z-30 bg-black cursor-pointer"
         onClick={onComplete}
       >
-        {/* Background with Ken Burns */}
-        <img
-          src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover motion-reduce:!transform-none"
+        {/* Background with Ken Burns. The scale animation runs on the
+            wrapper div; next/image handles format + responsive sizes. */}
+        <div
+          className="absolute inset-0 motion-reduce:!transform-none"
           style={{
             animation: 'kenBurns 6s ease-out forwards',
           }}
-        />
+        >
+          <Image
+            src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover"
+          />
+        </div>
 
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/50" />

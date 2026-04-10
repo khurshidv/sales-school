@@ -27,7 +27,7 @@ export default function OnboardingDialogue({
   inputConfig,
 }: OnboardingDialogueProps) {
   const shouldReduceMotion = useReducedMotion();
-  const { displayedText, isTyping, skipToEnd } = useTypewriter(text, {
+  const { textRef, isTyping, skipToEnd } = useTypewriter(text, {
     speed: 30,
   });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -83,7 +83,7 @@ export default function OnboardingDialogue({
       onClick={handleClick}
     >
     <div
-      className="px-4 py-3 sm:px-5 sm:py-4 lg:px-6 lg:py-5 border-t border-white/10"
+      className="px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 border-t border-white/10"
       style={{
         background:
           'linear-gradient(to top, rgba(10,12,18,0.85) 0%, rgba(15,20,30,0.70) 60%, rgba(20,25,40,0.45) 100%)',
@@ -94,7 +94,7 @@ export default function OnboardingDialogue({
       {/* Speaker name */}
       {speakerName && (
         <p
-          className="mb-1 text-sm font-bold uppercase tracking-[0.12em] sm:mb-2 sm:text-base lg:text-lg sm:tracking-[0.15em]"
+          className="mb-0.5 text-[0.65rem] font-bold uppercase tracking-[0.10em] sm:mb-1 sm:text-xs lg:text-sm lg:tracking-[0.12em]"
           style={{
             color: '#6cb4ee',
             textShadow:
@@ -107,13 +107,13 @@ export default function OnboardingDialogue({
 
       {/* Dialogue text */}
       <p
-        className="text-[#e8eaed] text-[0.875rem] sm:text-[1rem] lg:text-[1.15rem] leading-[1.5] sm:leading-[1.7]"
+        className="text-[#e8eaed] text-[0.78rem] sm:text-[0.85rem] lg:text-[1rem] leading-[1.4] sm:leading-[1.5]"
         style={{
           textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
           fontWeight: 500,
         }}
       >
-        {displayedText}
+        <span ref={textRef as React.RefObject<HTMLSpanElement>} />
         {isTyping && (
           <span className="animate-pulse ml-0.5 text-white/60">|</span>
         )}
@@ -126,10 +126,10 @@ export default function OnboardingDialogue({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-            className="mt-4 flex gap-3 items-center"
+            className="mt-2 sm:mt-3 flex gap-2 sm:gap-3 items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex-1 flex items-center gap-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 sm:px-4 sm:py-3">
+            <div className="flex-1 flex items-center gap-1 bg-white/10 border border-white/20 rounded-lg px-2.5 py-1.5 sm:px-3 sm:py-2">
               {inputConfig.prefix && (
                 <span className="text-white/60 select-none">
                   {inputConfig.prefix}
@@ -147,7 +147,7 @@ export default function OnboardingDialogue({
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder={inputConfig.placeholder}
-                className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40 text-sm sm:text-base"
+                className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40 text-xs sm:text-sm"
                 autoComplete="off"
               />
             </div>
@@ -155,8 +155,8 @@ export default function OnboardingDialogue({
               onClick={handleConfirm}
               disabled={!inputConfig.isValid}
               className={`
-                px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold text-white text-sm sm:text-base
-                border transition-all min-w-[48px] min-h-[48px]
+                px-3 py-1.5 sm:px-5 sm:py-2 rounded-lg font-semibold text-white text-xs sm:text-sm
+                border transition-all min-w-[44px] min-h-[44px]
                 ${
                   inputConfig.isValid
                     ? 'bg-blue-500/30 border-blue-400/50 shadow-[0_0_12px_rgba(59,130,246,0.3)] hover:bg-blue-500/50 active:bg-blue-500/40'

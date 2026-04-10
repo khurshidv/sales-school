@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback, useImperativeHandle, forwardRef } from 'react';
+import { memo, useRef, useImperativeHandle, forwardRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useTypewriter } from '@/lib/game/hooks/useTypewriter';
 
@@ -25,7 +25,7 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
   canGoBack = false,
 }, ref) {
   const shouldReduceMotion = useReducedMotion();
-  const { displayedText, isTyping, isTypingRef, skipToEnd } = useTypewriter(text, {
+  const { textRef, isTyping, isTypingRef, skipToEnd } = useTypewriter(text, {
     speed: 30,
   });
   const lastSkipTimeRef = useRef(0);
@@ -75,7 +75,8 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
         </p>
       )}
 
-      {/* Dialogue text */}
+      {/* Dialogue text — textContent is mutated imperatively by useTypewriter
+          via the textRef, so this paragraph never re-renders per character. */}
       <p
         className={`leading-[1.5] sm:leading-[1.7] ${
           isNarrator
@@ -87,7 +88,7 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
           fontWeight: isNarrator ? 400 : 500,
         }}
       >
-        {displayedText}
+        <span ref={textRef as React.RefObject<HTMLSpanElement>} />
         {isTyping && (
           <span className="animate-pulse ml-0.5 text-white/60">|</span>
         )}
@@ -121,4 +122,7 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
   );
 });
 
-export default DialogueBox;
+// memo prevents re-renders when parent useGameEngine updates for unrelated
+// state (score, combo, flags). Per-character typewriter re-renders are
+// isolated by the ref-based textContent update in useTypewriter.
+export default memo(DialogueBox);

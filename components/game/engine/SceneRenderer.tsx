@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
@@ -51,18 +52,27 @@ export default function SceneRenderer({
       onClick={handleClick}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Background with crossfade */}
+      {/* Background with crossfade. next/image handles format negotiation
+          (AVIF / WebP) and responsive sizes; motion.div drives the fade so
+          framer-motion never touches the <img>. */}
       <AnimatePresence mode="sync">
-        <motion.img
+        <motion.div
           key={backgroundId}
-          src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
-          alt=""
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+          className="absolute inset-0"
+        >
+          <Image
+            src={`/assets/scenarios/car-dealership/backgrounds/${backgroundId}.jpg`}
+            alt=""
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover"
+          />
+        </motion.div>
       </AnimatePresence>
 
       {/* Characters */}

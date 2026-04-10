@@ -1,10 +1,12 @@
 'use client';
 
+import { memo } from 'react';
+
 interface ComboIndicatorProps {
   comboCount: number;
 }
 
-export default function ComboIndicator({ comboCount }: ComboIndicatorProps) {
+function ComboIndicator({ comboCount }: ComboIndicatorProps) {
   if (comboCount < 4) return null;
 
   const multiplier = comboCount >= 5 ? '×2.0' : '×1.5';
@@ -31,3 +33,5 @@ export default function ComboIndicator({ comboCount }: ComboIndicatorProps) {
     </span>
   );
 }
+
+export default memo(ComboIndicator);

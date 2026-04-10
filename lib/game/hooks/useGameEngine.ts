@@ -14,13 +14,11 @@ import { syncDayResults, syncAchievement } from '@/game/store/middleware/supabas
 import { trackEvent } from '@/lib/game/analytics';
 import type {
   Scenario,
-  Day,
   Rating,
   DayOutcome,
   ChoiceOption,
   ChoiceNode,
   EndNode,
-  GameEvent,
   DimensionScores,
 } from '@/game/engine/types';
 
@@ -64,8 +62,25 @@ const eventBus = new GameEventBus();
 // --- Hook ---
 
 export function useGameEngine(scenarioId: string) {
-  const gameStore = useGameStore();
-  const playerStore = usePlayerStore();
+  // ---- Zustand slice selectors (NOT whole-store subscriptions) ----
+  //
+  // Subscribing to the whole store (`const s = useGameStore()`) re-runs
+  // this 400-line hook on every mutation (combo +1, score +10, flag set).
+  // Slice selectors only re-run the hook when the specific field changes.
+  // Action functions are stable references in zustand, so selecting them
+  // individually does NOT cause extra re-renders.
+  const currentNode = useGameStore((s) => s.currentNode);
+  const session = useGameStore((s) => s.session);
+  const gsStartDay = useGameStore((s) => s.startDay);
+  const gsAdvanceDialogue = useGameStore((s) => s.advanceDialogue);
+  const gsSelectChoice = useGameStore((s) => s.selectChoice);
+  const gsSelectMultiChoices = useGameStore((s) => s.selectMultiChoices);
+  const gsTimerExpired = useGameStore((s) => s.timerExpired);
+  const gsResetDay = useGameStore((s) => s.resetDay);
+  const gsGoBack = useGameStore((s) => s.goBack);
+  const gsCanGoBack = useGameStore((s) => s.canGoBack);
+
+  const player = usePlayerStore((s) => s.player);
 
   const [flowState, setFlowState] = useState<GameFlowState>('idle');
   const [scenario, setScenario] = useState<Scenario | null>(null);
@@ -91,24 +106,28 @@ export function useGameEngine(scenarioId: string) {
     }
   }, [scenarioId]);
 
-  // Detect end node → trigger day completion
+  // Detect end node → trigger day completion.
+  //
+  // Deps are intentionally narrow: this effect should fire only when the
+  // scenario graph advances into an end node, not on every player stat
+  // mutation. Player actions are read imperatively via getState() inside
+  // the body to avoid re-subscribing.
   useEffect(() => {
-    const node = gameStore.currentNode;
-    if (!node || node.type !== 'end' || flowState !== 'playing') return;
+    if (!currentNode || currentNode.type !== 'end' || flowState !== 'playing') return;
     // Guard: don't process same end node twice
-    if (endNodeProcessedRef.current === node.id) return;
-    endNodeProcessedRef.current = node.id;
+    if (endNodeProcessedRef.current === currentNode.id) return;
+    endNodeProcessedRef.current = currentNode.id;
 
-    const session = gameStore.session;
     if (!session || !scenario) return;
 
-    const endNode = node as EndNode;
+    const endNode = currentNode as EndNode;
     const day = scenario.days[currentDayIndex];
     const outcome = endNode.outcome;
     const score = session.score.total;
     const rating = calculateRating(score, day.targetScore);
     const nearMiss = getNearMiss(score, day.targetScore);
-    const player = playerStore.player;
+    const currentPlayer = usePlayerStore.getState().player;
+    const playerActions = usePlayerStore.getState();
 
     // Check achievements
     const achievementContext: AchievementContext = {
@@ -117,8 +136,8 @@ export function useGameEngine(scenarioId: string) {
       dayIndex: currentDayIndex,
       isReplay: session.isReplay,
     };
-    const newAchievements = player
-      ? checkAchievements(session, player, achievementContext)
+    const newAchievements = currentPlayer
+      ? checkAchievements(session, currentPlayer, achievementContext)
       : [];
 
     // Calculate coins
@@ -128,8 +147,8 @@ export function useGameEngine(scenarioId: string) {
     // Check if first completion of this scenario
     const isFirstCompletion =
       currentDayIndex === scenario.days.length - 1 &&
-      player &&
-      !player.completedScenarios.some((r) => r.scenarioId === scenarioId);
+      currentPlayer &&
+      !currentPlayer.completedScenarios.some((r) => r.scenarioId === scenarioId);
     if (isFirstCompletion) {
       coinsEarned += getCoinsForFirstCompletion();
     }
@@ -138,13 +157,13 @@ export function useGameEngine(scenarioId: string) {
     const xpEarned = newAchievements.length * 25; // base XP per achievement
 
     // Apply rewards to player store
-    if (player) {
-      if (coinsEarned > 0) playerStore.addCoins(coinsEarned);
-      if (xpEarned > 0) playerStore.addXp(xpEarned);
+    if (currentPlayer) {
+      if (coinsEarned > 0) playerActions.addCoins(coinsEarned);
+      if (xpEarned > 0) playerActions.addXp(xpEarned);
       for (const ach of newAchievements) {
-        playerStore.addAchievement(ach);
+        playerActions.addAchievement(ach);
       }
-      playerStore.addCompletedScenario({
+      playerActions.addCompletedScenario({
         scenarioId,
         dayIndex: currentDayIndex,
         score,
@@ -156,16 +175,16 @@ export function useGameEngine(scenarioId: string) {
 
       // Sync to Supabase (with retry for reliability)
       const dayId = scenario.days[currentDayIndex]?.id ?? `day-${currentDayIndex}`;
-      syncDayResults(player.id, scenarioId, dayId, score, rating, Date.now() - session.startTime, session.choiceHistory).catch(() => {});
+      syncDayResults(currentPlayer.id, scenarioId, dayId, score, rating, Date.now() - session.startTime, session.choiceHistory).catch(() => {});
       for (const ach of newAchievements) {
-        syncAchievement(player.id, ach).catch(() => {});
+        syncAchievement(currentPlayer.id, ach).catch(() => {});
       }
 
       // Analytics
       const eventType = outcome === 'failure' ? 'day_failed' : 'day_completed';
-      trackEvent(player.id, eventType, { score, rating, dayIndex: currentDayIndex }, scenarioId, dayId);
+      trackEvent(currentPlayer.id, eventType, { score, rating, dayIndex: currentDayIndex }, scenarioId, dayId);
       if (currentDayIndex >= scenario.days.length - 1) {
-        trackEvent(player.id, 'game_completed', { totalScore: score }, scenarioId);
+        trackEvent(currentPlayer.id, 'game_completed', { totalScore: score }, scenarioId);
       }
     }
 
@@ -235,7 +254,7 @@ export function useGameEngine(scenarioId: string) {
     setDayResults(results);
     setDayResultsHistory((prev) => [...prev, results]);
     setFlowState('day_summary');
-  }, [gameStore.currentNode, flowState, scenario, currentDayIndex, scenarioId, gameStore.session, playerStore]);
+  }, [currentNode, flowState, scenario, currentDayIndex, scenarioId, session]);
 
   // --- Actions ---
 
@@ -251,10 +270,10 @@ export function useGameEngine(scenarioId: string) {
       transitioningRef.current = false;
 
       const prevState = dayIndex > 0 ? previousDayStateRef.current : undefined;
-      gameStore.startDay(scenarioId, day, prevState ?? undefined);
+      gsStartDay(scenarioId, day, prevState ?? undefined);
       setFlowState('day_intro');
     },
-    [scenario, scenarioId, gameStore],
+    [scenario, scenarioId, gsStartDay],
   );
 
   const beginPlaying = useCallback(() => {
@@ -263,35 +282,34 @@ export function useGameEngine(scenarioId: string) {
 
   const advanceDialogue = useCallback(() => {
     if (flowState !== 'playing') return;
-    const node = gameStore.currentNode;
-    if (!node) return;
-    if (node.type === 'dialogue' || node.type === 'day_intro') {
-      gameStore.advanceDialogue();
+    if (!currentNode) return;
+    if (currentNode.type === 'dialogue' || currentNode.type === 'day_intro') {
+      gsAdvanceDialogue();
     }
-  }, [flowState, gameStore]);
+  }, [flowState, currentNode, gsAdvanceDialogue]);
 
   const selectChoice = useCallback(
     (index: number) => {
       if (flowState !== 'playing') return;
       eventBus.emit({ type: 'sound_requested', soundId: 'sfx_choice_select' });
-      gameStore.selectChoice(index, playerStore.player ?? undefined);
+      gsSelectChoice(index, player ?? undefined);
     },
-    [flowState, gameStore, playerStore.player],
+    [flowState, gsSelectChoice, player],
   );
 
   const selectMultiChoices = useCallback(
     (indices: number[]) => {
       if (flowState !== 'playing') return;
       eventBus.emit({ type: 'sound_requested', soundId: 'sfx_choice_select' });
-      gameStore.selectMultiChoices(indices, playerStore.player ?? undefined);
+      gsSelectMultiChoices(indices, player ?? undefined);
     },
-    [flowState, gameStore, playerStore.player],
+    [flowState, gsSelectMultiChoices, player],
   );
 
   const timerExpired = useCallback(() => {
     eventBus.emit({ type: 'sound_requested', soundId: 'sfx_timer_expire' });
-    gameStore.timerExpired();
-  }, [gameStore]);
+    gsTimerExpired();
+  }, [gsTimerExpired]);
 
   const confirmNextDay = useCallback(() => {
     if (!scenario || !dayResults || transitioningRef.current) return;
@@ -317,7 +335,7 @@ export function useGameEngine(scenarioId: string) {
         totalScore: dayResultsHistory.reduce((sum, dr) => sum + dr.score, 0),
         dimensions: allDims,
         dayRatings: dayResultsHistory.map((dr) => dr.rating),
-        allAchievements: playerStore.player?.achievements ?? [],
+        allAchievements: player?.achievements ?? [],
         strongestDimension: strongest,
         weakestDimension: weakest,
       });
@@ -325,76 +343,98 @@ export function useGameEngine(scenarioId: string) {
     } else {
       startDay(currentDayIndex + 1);
     }
-  }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, playerStore.player]);
+  }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, player]);
 
   const goBack = useCallback(() => {
     if (flowState !== 'playing') return;
-    gameStore.goBack();
-  }, [flowState, gameStore]);
+    gsGoBack();
+  }, [flowState, gsGoBack]);
 
-  const canGoBack = flowState === 'playing' && gameStore.canGoBack();
+  // canGoBack is derived: it depends on session state which re-renders the
+  // hook, and gsCanGoBack is a stable ref that inspects the latest state.
+  const canGoBack = flowState === 'playing' && gsCanGoBack();
 
   const restartDay = useCallback(() => {
     if (!scenario) return;
     const day = scenario.days[currentDayIndex];
-    gameStore.resetDay(day);
+    gsResetDay(day);
     setDayResults(null);
     // Remove last entry from history (the failed day we're restarting)
     setDayResultsHistory((prev) => prev.filter((dr) => dr.dayIndex !== currentDayIndex));
     endNodeProcessedRef.current = null;
     transitioningRef.current = false;
     setFlowState('day_intro');
-  }, [scenario, currentDayIndex, gameStore]);
+  }, [scenario, currentDayIndex, gsResetDay]);
 
   // Available choices (filtered by conditions)
   const availableChoices = useMemo((): ChoiceOption[] => {
-    const node = gameStore.currentNode;
-    const session = gameStore.session;
-    if (!node || node.type !== 'choice' || !session) return [];
+    if (!currentNode || currentNode.type !== 'choice' || !session) return [];
     return getAvailableChoices(
-      node as ChoiceNode,
+      currentNode as ChoiceNode,
       session,
-      playerStore.player ?? undefined,
+      player ?? undefined,
     );
-  }, [gameStore.currentNode, gameStore.session, playerStore.player]);
-
-  // Auto-start first day on mount
-  useEffect(() => {
-    if (scenario && flowState === 'idle') {
-      // noop — flowState is already set to day_intro in the scenario load effect
-    }
-  }, [scenario, flowState]);
+  }, [currentNode, session, player]);
 
   // Start first day when scenario loads
   useEffect(() => {
-    if (scenario && flowState === 'day_intro' && !gameStore.session) {
+    if (scenario && flowState === 'day_intro' && !session) {
       startDay(0);
     }
-  }, [scenario, flowState, gameStore.session, startDay]);
+  }, [scenario, flowState, session, startDay]);
 
-  return {
-    // State
-    flowState,
-    currentNode: gameStore.currentNode,
-    session: gameStore.session,
-    player: playerStore.player,
-    scenario,
-    currentDayIndex,
-    dayResults,
-    finalResults,
-    availableChoices,
-    eventBus,
+  // ---- Memoized return object ----
+  //
+  // Without useMemo, every render of this hook produces a new object
+  // reference, defeating React.memo on any consumer (DialogueBox,
+  // ChoicePanel, GameHUD). With useMemo + narrow deps, consumers only
+  // re-render when a field they actually use changes.
+  return useMemo(
+    () => ({
+      // State
+      flowState,
+      currentNode,
+      session,
+      player,
+      scenario,
+      currentDayIndex,
+      dayResults,
+      finalResults,
+      availableChoices,
+      eventBus,
 
-    // Actions
-    beginPlaying,
-    advanceDialogue,
-    goBack,
-    canGoBack,
-    selectChoice,
-    selectMultiChoices,
-    timerExpired,
-    confirmNextDay,
-    restartDay,
-    startDay,
-  };
+      // Actions
+      beginPlaying,
+      advanceDialogue,
+      goBack,
+      canGoBack,
+      selectChoice,
+      selectMultiChoices,
+      timerExpired,
+      confirmNextDay,
+      restartDay,
+      startDay,
+    }),
+    [
+      flowState,
+      currentNode,
+      session,
+      player,
+      scenario,
+      currentDayIndex,
+      dayResults,
+      finalResults,
+      availableChoices,
+      beginPlaying,
+      advanceDialogue,
+      goBack,
+      canGoBack,
+      selectChoice,
+      selectMultiChoices,
+      timerExpired,
+      confirmNextDay,
+      restartDay,
+      startDay,
+    ],
+  );
 }

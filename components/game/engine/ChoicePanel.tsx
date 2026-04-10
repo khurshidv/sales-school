@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { memo, useState, useEffect, type RefObject } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 interface Choice {
@@ -15,15 +15,22 @@ interface ChoicePanelProps {
   onMultiSelect?: (indices: number[]) => void;
   timerRemaining: number | null;
   timeLimit: number | undefined;
+  /**
+   * Optional ref from useTimer — when provided, the timer bar width is
+   * driven imperatively at 60 FPS without causing React re-renders.
+   * See lib/game/hooks/useTimer.ts.
+   */
+  timerBarRef?: RefObject<HTMLDivElement | null>;
 }
 
-export default function ChoicePanel({
+function ChoicePanel({
   choices,
   onSelect,
   multiSelect,
   onMultiSelect,
   timerRemaining,
   timeLimit,
+  timerBarRef,
 }: ChoicePanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
@@ -50,11 +57,13 @@ export default function ChoicePanel({
     }
   };
 
-  const timerPercent =
-    timerRemaining !== null && timeLimit
-      ? (timerRemaining / timeLimit) * 100
-      : null;
+  // Whether to render the timer bar at all. Width is driven imperatively
+  // via timerBarRef (see useTimer) — do NOT compute a percent here, as that
+  // would re-render this component every time `timerRemaining` changes.
+  const showTimerBar = timerRemaining !== null && !!timeLimit;
 
+  // Colour class only changes when the integer-second `remaining` crosses
+  // a threshold (≤1 re-render/sec instead of 60), so this is cheap.
   const timerColor =
     timerRemaining !== null
       ? timerRemaining <= 5
@@ -73,12 +82,13 @@ export default function ChoicePanel({
       onClick={(e) => e.stopPropagation()}
       style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
     >
-      {/* Timer bar */}
-      {timerPercent !== null && (
+      {/* Timer bar — width is driven imperatively via timerBarRef (no re-renders). */}
+      {showTimerBar && (
         <div className="w-full h-1 rounded-full bg-white/10 mb-2 overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-1000 ease-linear ${timerColor}`}
-            style={{ width: `${timerPercent}%` }}
+            ref={timerBarRef}
+            className={`h-full rounded-full ${timerColor}`}
+            style={{ width: '100%' }}
           />
         </div>
       )}
@@ -144,3 +154,8 @@ export default function ChoicePanel({
     </motion.div>
   );
 }
+
+// memo: prevents re-renders when parent useGameEngine updates for unrelated
+// state. Timer bar width is driven imperatively via timerBarRef, so memo
+// is actually meaningful here (setState is bounded to ≤1×/sec).
+export default memo(ChoicePanel);

@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import LivesDisplay from './LivesDisplay';
 import ScoreDisplay from './ScoreDisplay';
 import ComboIndicator from './ComboIndicator';
@@ -14,7 +15,7 @@ interface GameHUDProps {
   onPause: () => void;
 }
 
-export default function GameHUD({
+function GameHUD({
   lives,
   maxLives,
   score,
@@ -53,3 +54,5 @@ export default function GameHUD({
     </div>
   );
 }
+
+export default memo(GameHUD);

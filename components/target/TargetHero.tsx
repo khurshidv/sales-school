@@ -74,7 +74,7 @@ export default function TargetHero() {
                 </div>
                 <div>
                   <p className="text-xs text-on-surface-variant uppercase tracking-tighter">
-                    O'rtacha oylik UZB
+                    O'rtacha oylik
                   </p>
                   <p className="text-xl font-bold text-on-surface">
                     300–400$

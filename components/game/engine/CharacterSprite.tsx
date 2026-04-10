@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import Image from 'next/image';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
 import type { CharacterPosition } from '@/game/engine/types';
 

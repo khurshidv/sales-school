@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 
 type Rating = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 

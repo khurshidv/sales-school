@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import MotionProvider from "@/components/game/MotionProvider";
 
 export const metadata: Metadata = {
   title: "Sales School — Игра",
@@ -30,7 +31,7 @@ export default function GameLayout({
         bottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
-      {children}
+      <MotionProvider>{children}</MotionProvider>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import SceneRenderer from '@/components/game/engine/SceneRenderer';
 import OnboardingDialogue from './onboarding/OnboardingDialogue';
 import OnboardingLangSelect from './onboarding/OnboardingLangSelect';

@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useRef, useImperativeHandle, forwardRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { useTypewriter } from '@/lib/game/hooks/useTypewriter';
 
 export interface DialogueBoxHandle {

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 import { useTypewriter } from '@/lib/game/hooks/useTypewriter';
 import type { Language } from '@/game/engine/types';
 

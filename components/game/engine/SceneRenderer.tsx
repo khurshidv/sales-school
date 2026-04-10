@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from 'react';
 import Image from 'next/image';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
 import type { CharacterOnScreen } from '@/game/engine/types';

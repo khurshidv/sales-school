@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useState, useEffect, type RefObject } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m, useReducedMotion } from 'framer-motion';
 
 interface Choice {
   id: string;

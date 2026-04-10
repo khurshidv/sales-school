@@ -38,7 +38,7 @@ export default function OnboardingLangSelect({
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
-          className="absolute bottom-[28dvh] left-0 right-0 px-4 py-3 z-20"
+          className="absolute bottom-[16%] sm:bottom-[18%] md:bottom-[20%] lg:bottom-[28%] xl:bottom-[30%] left-0 right-0 px-3 py-2 md:px-4 md:py-3 z-20"
           style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -75,18 +75,16 @@ export default function OnboardingLangSelect({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-        className="absolute bottom-0 left-0 right-0 min-h-[26dvh] px-6 py-5 z-10 border-t border-white/10"
+        className="absolute bottom-0 left-0 right-0 min-h-[16%] px-2.5 py-1.5 sm:min-h-[18%] sm:px-3.5 sm:py-2 md:min-h-[20%] md:px-4 md:py-2.5 lg:min-h-[28%] lg:px-6 lg:py-5 xl:min-h-[30%] xl:px-7 z-10 border-t border-white/10 bg-gradient-to-t from-black/55 via-black/35 to-black/10 lg:from-black/90 lg:via-black/70 lg:to-black/35"
         style={{
-          background:
-            'linear-gradient(to top, rgba(10,12,18,0.92) 0%, rgba(15,20,30,0.82) 60%, rgba(20,25,40,0.65) 100%)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
         }}
         onClick={handleDialogueClick}
       >
         {speakerName && (
           <p
-            className="mb-2 text-lg font-bold uppercase tracking-[0.15em]"
+            className="mb-0.5 text-[0.625rem] font-bold uppercase tracking-[0.12em] sm:mb-1 sm:text-[0.7rem] md:mb-1.5 md:text-[0.78rem] lg:mb-2 lg:text-base xl:text-lg sm:tracking-[0.15em]"
             style={{
               color: '#6cb4ee',
               textShadow:
@@ -98,7 +96,7 @@ export default function OnboardingLangSelect({
         )}
 
         <p
-          className="text-[#e8eaed] text-[1.15rem] leading-[1.7]"
+          className="text-[#e8eaed] text-[0.7rem] sm:text-[0.78rem] md:text-[0.85rem] lg:text-[1.15rem] xl:text-[1.25rem] leading-[1.45] sm:leading-[1.55] md:leading-[1.6] lg:leading-[1.7]"
           style={{
             textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
             fontWeight: 500,

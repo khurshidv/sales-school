@@ -71,7 +71,7 @@ export default function GameHub() {
     return (
       <>
         <RotateDevice />
-        <div className="flex h-dvh w-dvw items-center justify-center bg-[#0a0a1a]">
+        <div className="flex h-full w-full items-center justify-center bg-[#0a0a1a]">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
         </div>
       </>
@@ -86,7 +86,7 @@ export default function GameHub() {
     return (
       <>
         <RotateDevice />
-        <div className="flex h-dvh w-dvw items-center justify-center bg-[#0a0a1a]">
+        <div className="flex h-full w-full items-center justify-center bg-[#0a0a1a]">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white/80" />
         </div>
       </>

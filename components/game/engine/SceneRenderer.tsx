@@ -48,7 +48,7 @@ export default function SceneRenderer({
 
   return (
     <div
-      className="relative w-full h-dvh overflow-hidden"
+      className="relative w-full h-full overflow-hidden"
       onClick={handleClick}
       onTouchEnd={handleTouchEnd}
     >

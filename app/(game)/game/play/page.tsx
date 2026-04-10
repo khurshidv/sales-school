@@ -434,7 +434,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
 export default function GamePlay() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center h-dvh">
+      <div className="flex items-center justify-center h-full w-full">
         <p className="text-neutral-400">Yuklanmoqda...</p>
       </div>
     }>

@@ -38,7 +38,7 @@ function CharacterSprite({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      className={`absolute bottom-0 h-[98dvh] sm:h-[94dvh] md:h-[92dvh] lg:h-[88dvh] aspect-[2/3] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
+      className={`absolute bottom-0 h-[98%] sm:h-[96%] md:h-[94%] lg:h-[90%] aspect-[2/3] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
     >
       <Image
         src={src}

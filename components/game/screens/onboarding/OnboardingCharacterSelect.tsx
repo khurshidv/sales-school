@@ -111,7 +111,7 @@ export default function OnboardingCharacterSelect({
                         : 'brightness(0.85)',
                   }}
                   transition={{ duration: 0.3 }}
-                  className="h-[65dvh] sm:h-[72dvh] w-auto max-w-[45dvw] object-contain object-bottom pointer-events-none select-none"
+                  className="h-[65%] sm:h-[72%] md:h-[75%] w-auto max-w-[45%] object-contain object-bottom pointer-events-none select-none"
                 />
 
                 {/* Label */}

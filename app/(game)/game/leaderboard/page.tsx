@@ -8,7 +8,7 @@ export default function LeaderboardPage() {
   const { entries, playerRank, isLoading } = useLeaderboard(player?.id);
 
   return (
-    <div className="h-dvh bg-neutral-950 text-white p-6 overflow-y-auto">
+    <div className="h-full w-full bg-neutral-950 text-white p-6 overflow-y-auto">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Лидерборд</h1>

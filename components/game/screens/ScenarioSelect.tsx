@@ -34,7 +34,7 @@ export default function ScenarioSelect({
   ]
 
   return (
-    <div className="h-dvh bg-neutral-950 text-white relative overflow-hidden">
+    <div className="h-full w-full bg-neutral-950 text-white relative overflow-hidden">
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 px-4 py-3 flex items-center justify-between z-10">
         <div className="flex items-center gap-2">

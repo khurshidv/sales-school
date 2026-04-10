@@ -78,7 +78,7 @@ function ChoicePanel({
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
-      className="absolute bottom-[15dvh] sm:bottom-[24dvh] lg:bottom-[28dvh] left-0 right-0 px-3 py-1.5 sm:px-4 sm:py-3 z-20"
+      className="absolute bottom-[16%] sm:bottom-[18%] md:bottom-[20%] lg:bottom-[28%] xl:bottom-[30%] left-0 right-0 px-3 py-1.5 sm:px-4 sm:py-3 md:px-5 md:py-3 z-20"
       onClick={(e) => e.stopPropagation()}
       style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
     >

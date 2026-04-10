@@ -53,7 +53,12 @@ function GameHUD({
     <div
       className="absolute top-0 left-0 right-0 z-20 h-7 sm:h-10 flex justify-between items-center px-2 sm:px-3"
       style={{ background: 'rgba(0, 0, 0, 0.4)' }}
+      // Stop both click AND touchend — SceneRenderer's onTouchEnd calls
+      // preventDefault() to suppress ghost-click on the scene, which would
+      // also cancel clicks on HUD buttons if touchend bubbles up. Swallowing
+      // both events here keeps HUD buttons fully interactive on mobile.
       onClick={(e) => e.stopPropagation()}
+      onTouchEnd={(e) => e.stopPropagation()}
     >
       {/* Left: Lives */}
       <div className="flex items-center">

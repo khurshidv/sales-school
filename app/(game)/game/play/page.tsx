@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useGameEngine } from '@/lib/game/hooks/useGameEngine';
 import { useTimer } from '@/lib/game/hooks/useTimer';
@@ -13,15 +14,34 @@ import { trackEvent } from '@/lib/game/analytics';
 import SceneRenderer from '@/components/game/engine/SceneRenderer';
 import DialogueBox, { type DialogueBoxHandle } from '@/components/game/engine/DialogueBox';
 import ChoicePanel from '@/components/game/engine/ChoicePanel';
-import DayIntroTransition from '@/components/game/engine/DayIntroTransition';
 import GameHUD from '@/components/game/hud/GameHUD';
-import DaySummary from '@/components/game/screens/DaySummary';
-import FinalResults from '@/components/game/screens/FinalResults';
-import GameOver from '@/components/game/screens/GameOver';
-import PauseMenu from '@/components/game/screens/PauseMenu';
 import RotateDevice from '@/components/game/screens/RotateDevice';
 import type { DialogueNode, ChoiceNode, DayIntroNode, EndNode, CharacterOnScreen } from '@/game/engine/types';
 import { isGameOver } from '@/game/systems/LivesSystem';
+
+// Conditional screens — only rendered on specific flowState transitions.
+// Splitting them out of the initial play chunk shaves ~30-50 KB from first
+// load. ssr:false because they all rely on browser-only hooks/animations.
+const DayIntroTransition = dynamic(
+  () => import('@/components/game/engine/DayIntroTransition'),
+  { ssr: false },
+);
+const DaySummary = dynamic(
+  () => import('@/components/game/screens/DaySummary'),
+  { ssr: false },
+);
+const FinalResults = dynamic(
+  () => import('@/components/game/screens/FinalResults'),
+  { ssr: false },
+);
+const GameOver = dynamic(
+  () => import('@/components/game/screens/GameOver'),
+  { ssr: false },
+);
+const PauseMenu = dynamic(
+  () => import('@/components/game/screens/PauseMenu'),
+  { ssr: false },
+);
 
 function GamePlayInner() {
   const searchParams = useSearchParams();
@@ -46,6 +66,15 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
 
   const timerState = engine.session?.timerState ?? null;
   const timer = useTimer(timerState, engine.timerExpired);
+
+  // Stable callbacks so React.memo on PauseMenu/GameOver/FinalResults holds.
+  const handlePause = useCallback(() => setShowPause(true), []);
+  const handleResume = useCallback(() => setShowPause(false), []);
+  const handleExit = useCallback(() => router.push('/game'), [router]);
+  const handleGameOverRestart = useCallback(() => {
+    setShowGameOver(false);
+    engine.restartDay();
+  }, [engine.restartDay]);
 
   // Warm asset cache: current day on mount, next day as soon as we enter
   // `playing` state — so the transition is instant.
@@ -337,7 +366,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           dayRatings={fr.dayRatings}
           strongestDimension={fr.strongestDimension}
           weakestDimension={fr.weakestDimension}
-          onExit={() => router.push('/game')}
+          onExit={handleExit}
           lang={lang}
         />
       </>
@@ -363,7 +392,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
             score={session.score.total}
             comboCount={session.comboCount}
             level={player.level}
-            onPause={() => setShowPause(true)}
+            onPause={handlePause}
           />
         )}
 
@@ -406,8 +435,8 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
       {/* Pause Menu */}
       {showPause && (
         <PauseMenu
-          onResume={() => setShowPause(false)}
-          onExit={() => router.push('/game')}
+          onResume={handleResume}
+          onExit={handleExit}
           isMuted={audio.isMuted}
           onToggleMute={audio.toggleMute}
           lang={lang}
@@ -418,11 +447,8 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
       {isGameOverState && (
         <GameOver
           dayIndex={engine.currentDayIndex}
-          onRestart={() => {
-            setShowGameOver(false);
-            engine.restartDay();
-          }}
-          onExit={() => router.push('/game')}
+          onRestart={handleGameOverRestart}
+          onExit={handleExit}
           canAffordRestart={player ? canReplay(player.coins) : true}
           lang={lang}
         />

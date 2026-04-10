@@ -74,7 +74,7 @@ export default function OnboardingDialogue({
   }
 
   return (
-    <motion.div
+    <m.div
       key={text}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -120,7 +120,7 @@ export default function OnboardingDialogue({
       {/* Input field — appears after typewriter finishes */}
       <AnimatePresence>
         {inputConfig && !isTyping && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
@@ -164,22 +164,22 @@ export default function OnboardingDialogue({
             >
               →
             </button>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Tap indicator — only for pure dialogue steps */}
       {!isTyping && !inputConfig && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="absolute bottom-3 right-5 text-white/30 text-xs tracking-wider"
         >
           ▼
-        </motion.div>
+        </m.div>
       )}
     </div>
-    </motion.div>
+    </m.div>
   );
 }
 

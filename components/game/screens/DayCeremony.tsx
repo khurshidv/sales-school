@@ -152,7 +152,7 @@ export default function DayCeremony({
       <AnimatePresence mode="wait">
         {/* ── PHASE 1: REACTION ── */}
         {phase === 'reaction' && (
-          <motion.div
+          <m.div
             key="reaction"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -161,7 +161,7 @@ export default function DayCeremony({
             className="flex flex-col items-center justify-center w-full h-full px-6 text-center"
             style={{ background: outcomeBg[outcome] }}
           >
-            <motion.p
+            <m.p
               className="text-sm uppercase tracking-widest mb-4"
               style={{ color: '#9ca3af' }}
               initial={{ y: -10, opacity: 0 }}
@@ -169,8 +169,8 @@ export default function DayCeremony({
               transition={{ delay: 0.2 }}
             >
               {feedbackSpeaker}
-            </motion.p>
-            <motion.p
+            </m.p>
+            <m.p
               className="text-xl md:text-2xl font-medium max-w-xl leading-relaxed"
               style={{ color: '#e5e7eb' }}
               initial={{ y: 20, opacity: 0 }}
@@ -178,13 +178,13 @@ export default function DayCeremony({
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               &ldquo;{feedbackText}&rdquo;
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         )}
 
         {/* ── PHASE 2: SCORE REVEAL ── */}
         {phase === 'score_reveal' && (
-          <motion.div
+          <m.div
             key="score_reveal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -214,7 +214,7 @@ export default function DayCeremony({
                     <span style={{ color: '#9ca3af' }}>{val}</span>
                   </div>
                   <div className="w-full h-2 rounded-full" style={{ background: '#1f2937' }}>
-                    <motion.div
+                    <m.div
                       className="h-2 rounded-full"
                       style={{ background: '#3b82f6' }}
                       initial={{ width: 0 }}
@@ -228,7 +228,7 @@ export default function DayCeremony({
 
             {/* Rating letter */}
             {showRating && (
-              <motion.div
+              <m.div
                 className="text-center"
                 initial={{ scale: 0, rotate: -20 }}
                 animate={{ scale: 1, rotate: 0 }}
@@ -240,14 +240,14 @@ export default function DayCeremony({
                 <p className="text-xs mt-1" style={{ color: '#6b7280' }}>
                   +{xpEarned} XP
                 </p>
-              </motion.div>
+              </m.div>
             )}
-          </motion.div>
+          </m.div>
         )}
 
         {/* ── PHASE 3: ACHIEVEMENTS ── */}
         {phase === 'achievements' && (
-          <motion.div
+          <m.div
             key="achievements"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -260,7 +260,7 @@ export default function DayCeremony({
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {achievements.map((ach, i) => (
-                <motion.div
+                <m.div
                   key={ach.id}
                   className="flex flex-col items-center px-5 py-4 rounded-xl"
                   style={{
@@ -275,15 +275,15 @@ export default function DayCeremony({
                   <span className="text-sm font-medium" style={{ color: '#fbbf24' }}>
                     {ach.name}
                   </span>
-                </motion.div>
+                </m.div>
               ))}
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* ── PHASE 4: DIARY ── */}
         {phase === 'diary' && (
-          <motion.div
+          <m.div
             key="diary"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -312,12 +312,12 @@ export default function DayCeremony({
                 <span className="inline-block w-0.5 h-4 ml-0.5 animate-pulse" style={{ background: '#3d3426' }} />
               </p>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* ── PHASE 5: TEASER ── */}
         {phase === 'teaser' && nextDayTeaser && (
-          <motion.div
+          <m.div
             key="teaser"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -327,7 +327,7 @@ export default function DayCeremony({
               background: 'radial-gradient(ellipse at center, rgba(59,130,246,0.08) 0%, transparent 70%)',
             }}
           >
-            <motion.p
+            <m.p
               className="text-lg md:text-xl font-light max-w-md leading-relaxed italic"
               style={{ color: '#d1d5db' }}
               initial={{ opacity: 0, y: 10 }}
@@ -335,14 +335,14 @@ export default function DayCeremony({
               transition={{ delay: 0.3, duration: 0.8 }}
             >
               {nextDayTeaser[lang]}
-            </motion.p>
-          </motion.div>
+            </m.p>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* ── BOTTOM BUTTONS ── */}
       {(phase === 'teaser' || (phase === 'diary' && !nextDayTeaser)) && (
-        <motion.div
+        <m.div
           className="absolute bottom-6 flex items-center gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -370,7 +370,7 @@ export default function DayCeremony({
           >
             {continueLabel}
           </button>
-        </motion.div>
+        </m.div>
       )}
     </div>
   );

@@ -58,7 +58,7 @@ export default function OnboardingCharacterSelect({
 
       {/* Prompt text — top area (compact, fixed height) */}
       <div className="relative z-10 flex items-center justify-center pt-3 sm:pt-4 md:pt-5 lg:pt-8 px-3 shrink-0">
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
@@ -69,7 +69,7 @@ export default function OnboardingCharacterSelect({
           {isTyping && (
             <span className="animate-pulse ml-0.5 text-white/60">|</span>
           )}
-        </motion.p>
+        </m.p>
       </div>
 
       {/* Characters grid — fills remaining space, centered, with gap */}
@@ -80,7 +80,7 @@ export default function OnboardingCharacterSelect({
             const otherSelected = selectedId !== null && selectedId !== avatar.id;
 
             return (
-              <motion.button
+              <m.button
                 key={avatar.id}
                 initial={{
                   opacity: 0,
@@ -98,7 +98,7 @@ export default function OnboardingCharacterSelect({
                 className="group relative flex flex-col items-center justify-end cursor-pointer h-full min-w-0 flex-1 max-w-[44%] sm:max-w-[42%] md:max-w-[40%] lg:max-w-[36%]"
               >
                 {/* Character sprite — fills available height, shrinks to fit width */}
-                <motion.img
+                <m.img
                   src={avatar.src}
                   alt={avatar.label[lang]}
                   draggable={false}
@@ -133,7 +133,7 @@ export default function OnboardingCharacterSelect({
                 >
                   {avatar.label[lang]}
                 </span>
-              </motion.button>
+              </m.button>
             );
           })}
         </div>

@@ -46,7 +46,7 @@ function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps) {
 
           const shouldPulse = isLastLife && !shouldReduceMotion && isPageVisible;
           return (
-            <motion.span
+            <m.span
               key={i}
               exit={{ scale: 0 }}
               animate={
@@ -68,7 +68,7 @@ function LivesDisplay({ lives, maxLives = 3 }: LivesDisplayProps) {
                 .join(' ')}
             >
               {filled ? '♥' : '♡'}
-            </motion.span>
+            </m.span>
           );
         })}
       </AnimatePresence>

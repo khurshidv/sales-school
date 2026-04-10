@@ -33,7 +33,7 @@ function CharacterSprite({
   const src = character.assetPath(emotion);
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -47,7 +47,7 @@ function CharacterSprite({
         sizes="(max-width: 640px) 60vw, (max-width: 1024px) 50vw, 35vw"
         className="object-contain object-bottom"
       />
-    </motion.div>
+    </m.div>
   );
 }
 

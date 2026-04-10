@@ -44,6 +44,14 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Supabase origin — warms TLS before first analytics/leaderboard call. */}
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <link
+            rel="preconnect"
+            href={process.env.NEXT_PUBLIC_SUPABASE_URL}
+            crossOrigin="anonymous"
+          />
+        )}
         <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} />

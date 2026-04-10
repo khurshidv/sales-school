@@ -100,7 +100,7 @@ export default function DaySummary({
 
         {/* Rating reveal */}
         <div className="text-center mb-8">
-          <motion.div
+          <m.div
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', bounce: 0.5, duration: 0.5 }}
@@ -108,7 +108,7 @@ export default function DaySummary({
             style={{ color: RATING_COLORS[rating] }}
           >
             {rating}
-          </motion.div>
+          </m.div>
           <p className="text-neutral-400 mt-2">
             {score} / {targetScore}
           </p>

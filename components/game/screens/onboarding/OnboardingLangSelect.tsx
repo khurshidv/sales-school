@@ -34,7 +34,7 @@ export default function OnboardingLangSelect({
     <>
       {/* Choice buttons — positioned above dialogue box */}
       {!isTyping && (
-        <motion.div
+        <m.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
@@ -44,7 +44,7 @@ export default function OnboardingLangSelect({
         >
           <div className="flex flex-col gap-2">
             {LANG_OPTIONS.map((option, index) => (
-              <motion.button
+              <m.button
                 key={option.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -63,14 +63,14 @@ export default function OnboardingLangSelect({
               >
                 <span className="mr-3 text-xl">{option.flag}</span>
                 {option.label}
-              </motion.button>
+              </m.button>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       )}
 
       {/* Dialogue box */}
-      <motion.div
+      <m.div
         key={text}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function OnboardingLangSelect({
             <span className="animate-pulse ml-0.5 text-white/60">|</span>
           )}
         </p>
-      </motion.div>
+      </m.div>
     </>
   );
 }

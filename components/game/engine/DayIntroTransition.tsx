@@ -64,6 +64,7 @@ export default function DayIntroTransition({
             fill
             sizes="100vw"
             priority
+            quality={60}
             className="object-cover"
           />
         </div>

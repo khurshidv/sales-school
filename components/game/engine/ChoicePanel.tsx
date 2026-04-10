@@ -74,7 +74,7 @@ function ChoicePanel({
       : '';
 
   return (
-    <motion.div
+    <m.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
@@ -99,7 +99,7 @@ function ChoicePanel({
           const isSelected = selectedIndices.includes(index);
 
           return (
-            <motion.button
+            <m.button
               key={choice.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ function ChoicePanel({
                 </span>
               )}
               {choice.text}
-            </motion.button>
+            </m.button>
           );
         })}
       </div>
@@ -151,7 +151,7 @@ function ChoicePanel({
           </button>
         </div>
       )}
-    </motion.div>
+    </m.div>
   );
 }
 

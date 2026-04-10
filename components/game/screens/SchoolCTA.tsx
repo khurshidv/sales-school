@@ -25,14 +25,14 @@ export default function SchoolCTA({
         background: 'linear-gradient(160deg, #0a0a0a 0%, #1a1225 50%, #0f172a 100%)',
       }}
     >
-      <motion.div
+      <m.div
         className="flex flex-col items-center max-w-lg w-full px-6 py-8 gap-6 text-center"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
         {/* Headline */}
-        <motion.h1
+        <m.h1
           className="text-2xl md:text-3xl font-bold leading-tight"
           style={{ color: '#f9fafb' }}
           initial={{ opacity: 0, y: 15 }}
@@ -40,10 +40,10 @@ export default function SchoolCTA({
           transition={{ delay: 0.2, duration: 0.6 }}
         >
           {schoolCtaCopy.headlines[ending][lang]}
-        </motion.h1>
+        </m.h1>
 
         {/* School info */}
-        <motion.div
+        <m.div
           className="flex flex-col gap-3 w-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -75,10 +75,10 @@ export default function SchoolCTA({
               {schoolCtaCopy.schoolInfo.results[lang]}
             </p>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* CTA Button */}
-        <motion.button
+        <m.button
           onClick={onConsultation}
           className="w-full rounded-xl px-6 py-4 text-sm font-semibold transition-all relative overflow-hidden"
           style={{
@@ -102,10 +102,10 @@ export default function SchoolCTA({
           }}
         >
           {schoolCtaCopy.ctaText[ending][lang]}
-        </motion.button>
+        </m.button>
 
         {/* Dismiss */}
-        <motion.button
+        <m.button
           onClick={onDismiss}
           className="text-xs py-2 transition-colors"
           style={{ color: '#6b7280' }}
@@ -115,8 +115,8 @@ export default function SchoolCTA({
           whileHover={{ color: '#9ca3af' }}
         >
           {schoolCtaCopy.dismissText[lang]}
-        </motion.button>
-      </motion.div>
+        </m.button>
+      </m.div>
     </div>
   );
 }

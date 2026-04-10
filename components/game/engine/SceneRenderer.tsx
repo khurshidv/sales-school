@@ -53,10 +53,10 @@ export default function SceneRenderer({
       onTouchEnd={handleTouchEnd}
     >
       {/* Background with crossfade. next/image handles format negotiation
-          (AVIF / WebP) and responsive sizes; motion.div drives the fade so
+          (AVIF / WebP) and responsive sizes; m.div drives the fade so
           framer-motion never touches the <img>. */}
       <AnimatePresence mode="sync">
-        <motion.div
+        <m.div
           key={backgroundId}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -70,9 +70,10 @@ export default function SceneRenderer({
             fill
             sizes="100vw"
             priority
+            quality={60}
             className="object-cover"
           />
-        </motion.div>
+        </m.div>
       </AnimatePresence>
 
       {/* Characters */}

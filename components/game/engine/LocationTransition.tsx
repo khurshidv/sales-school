@@ -40,7 +40,7 @@ export default function LocationTransition({
     <div className="absolute inset-0 z-30">
       <AnimatePresence mode="wait">
         {phase === 'fadeOut' && (
-          <motion.div
+          <m.div
             key="fadeOut"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -49,7 +49,7 @@ export default function LocationTransition({
         )}
 
         {phase === 'text' && text && (
-          <motion.div
+          <m.div
             key="text"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -61,11 +61,11 @@ export default function LocationTransition({
             >
               {text}
             </p>
-          </motion.div>
+          </m.div>
         )}
 
         {phase === 'fadeIn' && (
-          <motion.div
+          <m.div
             key="fadeIn"
             initial={{ opacity: 1 }}
             animate={{ opacity: 0 }}

@@ -50,7 +50,7 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
   }
 
   return (
-    <motion.div
+    <m.div
       key={text}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -109,15 +109,15 @@ const DialogueBox = forwardRef<DialogueBoxHandle, DialogueBoxProps>(function Dia
 
       {/* Tap indicator */}
       {!isTyping && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="absolute bottom-2 right-4 text-white/30 text-xs tracking-wider sm:bottom-3 sm:right-5"
         >
           ▼
-        </motion.div>
+        </m.div>
       )}
-    </motion.div>
+    </m.div>
   );
 });
 

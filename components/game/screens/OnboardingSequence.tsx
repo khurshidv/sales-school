@@ -142,7 +142,7 @@ export default function OnboardingSequence({
       activeSpeaker="rustam"
     >
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={step}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -150,7 +150,7 @@ export default function OnboardingSequence({
           transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
         >
           {renderStepContent()}
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </SceneRenderer>
   );

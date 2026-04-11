@@ -75,6 +75,88 @@ export const day1: Day = {
         uz: 'Bugun bir juftlik kelishi kerak. Ikkisini ham xoxishlarini yaxshilab tinglang. Biri jim tursa ham, qarorni baribir ikkalasi qabul qiladi.',
         ru: 'Сегодня должна приехать пара. Внимательно выслушайте пожелания обоих. Даже если один из них будет молчать, решение всё равно примут оба.',
       },
+      nextNodeId: 'd1_exit_office_action',
+    },
+
+    d1_exit_office_action: {
+      id: 'd1_exit_office_action',
+      type: 'choice',
+      prompt: {
+        uz: '',
+        ru: '',
+      },
+      choices: [
+        {
+          id: 'exit_office',
+          text: {
+            uz: 'Kabinetdan chiqish',
+            ru: 'Выйти из кабинета',
+          },
+          nextNodeId: 'd1_exit_office_narr',
+          effects: [],
+        },
+      ],
+    },
+
+    d1_exit_office_narr: {
+      id: 'd1_exit_office_narr',
+      type: 'dialogue',
+      speaker: 'narrator',
+      emotion: null,
+      background: 'bg_showroom',
+      characters: [],
+      text: {
+        uz: 'Siz Rustamning kabinetidan chiqib, salon zaliga o\'tdingiz. Mashinalar qatorlashib turibdi. Bir chetda notanish ayol Equinox yonida turib, nimadir o\'ylayotgandek ko\'rinadi.',
+        ru: 'Вы вышли из кабинета Рустама в зал салона. Автомобили стоят в ряд. В стороне незнакомая женщина стоит у Equinox и, кажется, о чём-то размышляет.',
+      },
+      nextNodeId: 'd1_dilnoza_preintro',
+    },
+
+    d1_dilnoza_preintro: {
+      id: 'd1_dilnoza_preintro',
+      type: 'dialogue',
+      speaker: 'dilnoza',
+      emotion: 'explaining',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'dilnoza', emotion: 'explaining', position: 'center' },
+      ],
+      text: {
+        uz: 'Uch yildan beri shu Equinox yonida turaman. Lekin hali ham odamlar uni ko\'rishda hayron qolishadi. Bu mashinada siz sotmaysiz — mashina o\'zi sotadi.',
+        ru: 'Три года стою рядом с этим Equinox. Но люди до сих пор удивляются, когда видят его. В этой машине вы не продаёте — машина продаёт сама.',
+      },
+      nextNodeId: 'd1_dilnoza_notices',
+    },
+
+    d1_dilnoza_notices: {
+      id: 'd1_dilnoza_notices',
+      type: 'dialogue',
+      speaker: 'dilnoza',
+      emotion: 'smirk',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'dilnoza', emotion: 'smirk', position: 'center' },
+      ],
+      text: {
+        uz: 'Ha, siz yangimisiz? Ko\'p bo\'lmay Rustam bilan gaplashib chiqtingiz. U sizga "avval eshit, keyin gapirsiz" dedi, to\'g\'rimi?',
+        ru: 'А, вы новенький? Только вышли от Рустама. Он вам сказал "сначала слушай, потом говори" — угадала?',
+      },
+      nextNodeId: 'd1_dilnoza_self_intro',
+    },
+
+    d1_dilnoza_self_intro: {
+      id: 'd1_dilnoza_self_intro',
+      type: 'dialogue',
+      speaker: 'dilnoza',
+      emotion: 'neutral',
+      background: 'bg_showroom',
+      characters: [
+        { id: 'dilnoza', emotion: 'neutral', position: 'center' },
+      ],
+      text: {
+        uz: 'Men Dilnoza. Bu salonning eng yaxshi sotuvchisiman — unvon emas, raqam bo\'yicha. To\'rt yil ishlayapman. Hech narsa so\'ramang, faqat kuzating.',
+        ru: 'Я Дильноза. Лучший продавец этого салона — по цифрам, не по должности. Работаю четыре года. Ничего не спрашивайте, просто наблюдайте.',
+      },
       nextNodeId: 'd1_meet_dilnoza',
     },
 
@@ -529,11 +611,8 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'stubborn',
-      background: 'bg_test_drive_couple',
-      characters: [
-        { id: 'javlon', emotion: 'stubborn', position: 'left' },
-        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
-      ],
+      background: 'bg_test_drive_javlon_speaking',
+      characters: [],
       text: {
         uz: 'Yurishi yomon emas ekan. Tortishi ham yaxshi. Men kutgandan yengilroq sezildi.',
         ru: 'Едет, кстати, неплохо. Тяга тоже хорошая. Ощущается легче, чем я ожидал.',
@@ -546,10 +625,8 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'nilufar',
       emotion: 'happy',
-      characters: [
-        { id: 'javlon', emotion: 'touched', position: 'left' },
-        { id: 'nilufar', emotion: 'happy', position: 'right' },
-      ],
+      background: 'bg_test_drive_nilufar_speaking',
+      characters: [],
       text: {
         uz: 'Orqasi tor emas ekan. Bolalar kreslosi ham sig\'adi, yoniga sumka ham tushadi. Tashqaridagi shovqin ham bezor qilmayapti.',
         ru: 'Сзади не тесно. Детское кресло встанет, рядом ещё и сумка поместится. И шум снаружи не раздражает.',

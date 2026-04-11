@@ -15,7 +15,24 @@ const navItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, fontFamily: 'system-ui, sans-serif', background: '#f4f5f7' }}>
+      <head>
+        <style>{`
+          body { margin: 0; font-family: system-ui, sans-serif; background: #f4f5f7; }
+          .admin-nav-link {
+            display: block;
+            padding: 10px 20px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.15s, color 0.15s;
+          }
+          .admin-nav-link:hover {
+            background: #2a2d35;
+            color: #fff;
+          }
+        `}</style>
+      </head>
+      <body>
         <div style={{ display: 'flex', minHeight: '100vh' }}>
           {/* Sidebar */}
           <aside
@@ -44,22 +61,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <Link
                   key={item.href}
                   href={item.href}
-                  style={{
-                    display: 'block',
-                    padding: '10px 20px',
-                    color: '#d1d5db',
-                    textDecoration: 'none',
-                    fontSize: 14,
-                    transition: 'background 0.15s',
-                  }}
-                  onMouseOver={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = '#2a2d35';
-                    (e.currentTarget as HTMLElement).style.color = '#fff';
-                  }}
-                  onMouseOut={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = 'transparent';
-                    (e.currentTarget as HTMLElement).style.color = '#d1d5db';
-                  }}
+                  className="admin-nav-link"
                 >
                   {item.label}
                 </Link>

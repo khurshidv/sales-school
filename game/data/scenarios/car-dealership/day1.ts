@@ -8,7 +8,11 @@ export const day1: Day = {
     ru: 'Первый день',
   },
   rootNodeId: 'd1_day_intro',
-  targetScore: 40,
+  // После введения DIMENSION_WEIGHTS в ScoringSystem максимально возможный
+  // взвешенный счёт по идеальному пути (hidden ending) заметно выше
+  // исходных 40. Цель поднята до 55, чтобы рейтинги S/A/B/C/D
+  // соответствовали новым порогам (S ≥ 90% = 49.5, A ≥ 75% = 41.25, ...).
+  targetScore: 55,
   nextDayTeaser: {
     uz: 'Ertaga Kamola xonim keladi — hamma narsani biladi...',
     ru: 'Завтра придёт Камола — она всё знает...',
@@ -75,6 +79,21 @@ export const day1: Day = {
         uz: 'Bugun bir juftlik kelishi kerak. Ikkisini ham xoxishlarini yaxshilab tinglang. Biri jim tursa ham, qarorni baribir ikkalasi qabul qiladi.',
         ru: 'Сегодня должна приехать пара. Внимательно выслушайте пожелания обоих. Даже если один из них будет молчать, решение всё равно примут оба.',
       },
+      nextNodeId: 'd1_rustam_tip_2',
+    },
+
+    d1_rustam_tip_2: {
+      id: 'd1_rustam_tip_2',
+      type: 'dialogue',
+      speaker: 'rustam',
+      emotion: 'serious',
+      characters: [
+        { id: 'rustam', emotion: 'serious', position: 'center' },
+      ],
+      text: {
+        uz: 'Yana bir gap. Juftlikka mashina sotayotganda, ikkisini bir qaror atrofida birlashtira olsang — bu oddiy bitim emas, sovg\'aga o\'xshab qoladi. Shunda mashina o\'zi sotiladi.',
+        ru: 'И ещё. Когда продаёшь машину паре — если сможешь объединить их вокруг одного решения, это будет уже не сделка, а подарок. Тогда машина продаётся сама.',
+      },
       nextNodeId: 'd1_exit_office_action',
     },
 
@@ -82,8 +101,8 @@ export const day1: Day = {
       id: 'd1_exit_office_action',
       type: 'choice',
       prompt: {
-        uz: '',
-        ru: '',
+        uz: 'Nima qilasiz?',
+        ru: 'Что делаете?',
       },
       choices: [
         {
@@ -259,6 +278,7 @@ export const day1: Day = {
           effects: [
             { type: 'add_score', dimension: 'rapport', amount: 15 },
             { type: 'add_score', dimension: 'empathy', amount: 5 },
+            { type: 'add_score', dimension: 'discovery', amount: 8 },
             { type: 'set_flag', flag: 'addressed_both' },
           ],
           nextNodeId: 'd1_conflict_both',
@@ -401,8 +421,8 @@ export const day1: Day = {
       id: 'd1_compromise',
       type: 'choice',
       prompt: {
-        uz: 'Ikkalasi ham o\'z tanlovida turibdi. Nima deysiz?',
-        ru: 'Оба стоят на своём. Что скажете?',
+        uz: 'Ikkalasi ham o\'z tanlovida turibdi. Kimning haqligi bitimga olib keladi — birovnikimi yoki ikkalasinikimi?',
+        ru: 'Оба стоят на своём. Чья правда ведёт к покупке — одного или сразу обоих?',
       },
       timeLimit: 10,
       expireNodeId: 'd1_compromise_expired',
@@ -416,6 +436,7 @@ export const day1: Day = {
           effects: [
             { type: 'add_score', dimension: 'empathy', amount: 15 },
             { type: 'add_score', dimension: 'persuasion', amount: 10 },
+            { type: 'add_score', dimension: 'discovery', amount: 6 },
             { type: 'set_flag', flag: 'balanced_both' },
           ],
           nextNodeId: 'd1_compromise_balanced',
@@ -650,6 +671,7 @@ export const day1: Day = {
           },
           effects: [
             { type: 'add_score', dimension: 'empathy', amount: 8 },
+            { type: 'add_score', dimension: 'discovery', amount: 6 },
           ],
           nextNodeId: 'd1_test_drive_safety',
         },
@@ -734,10 +756,15 @@ export const day1: Day = {
     d1_anniversary_check: {
       id: 'd1_anniversary_check',
       type: 'condition_branch',
+      // Softer gating: игрок, который услышал обоих ИЛИ нашёл баланс,
+      // заслуживает подсказку о годовщине. Раньше требовалось И то и другое
+      // одновременно — концовка была практически недостижима (~5%).
+      // Теперь оба варианта ведут к намёку, а финальный выбор «подарок»
+      // по-прежнему gated через флаг `knows_anniversary`.
       branches: [
         {
           condition: {
-            type: 'and',
+            type: 'or',
             conditions: [
               { type: 'flag', flag: 'addressed_both' },
               { type: 'flag', flag: 'balanced_both' },

@@ -13,7 +13,9 @@ describe('Scenario Days validation', () => {
   });
 
   it('Day 1 has correct targetScore', () => {
-    expect(day1.targetScore).toBe(40);
+    // Поднят с 40 до 55 после введения DIMENSION_WEIGHTS в ScoringSystem
+    // и добавления discovery-очков в три ключевые choice-ноды Day 1.
+    expect(day1.targetScore).toBe(55);
   });
 
   it('Day 2 passes validation with 0 errors', () => {

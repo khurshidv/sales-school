@@ -21,6 +21,7 @@ interface ChoicePanelProps {
    * See lib/game/hooks/useTimer.ts.
    */
   timerBarRef?: RefObject<HTMLDivElement | null>;
+  lang?: 'uz' | 'ru';
 }
 
 function ChoicePanel({
@@ -31,6 +32,7 @@ function ChoicePanel({
   timerRemaining,
   timeLimit,
   timerBarRef,
+  lang = 'uz',
 }: ChoicePanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
@@ -82,14 +84,24 @@ function ChoicePanel({
       onClick={(e) => e.stopPropagation()}
       style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
     >
-      {/* Timer bar — width is driven imperatively via timerBarRef (no re-renders). */}
+      {/* Timer bar — width is driven imperatively via timerBarRef (no re-renders).
+          Integer-second `timerRemaining` crosses once per second, so the text
+          label re-renders ≤1×/sec — cheap. React.memo boundary preserved. */}
       {showTimerBar && (
-        <div className="w-full h-1 rounded-full bg-white/10 mb-2 overflow-hidden">
-          <div
-            ref={timerBarRef}
-            className={`h-full rounded-full ${timerColor}`}
-            style={{ width: '100%' }}
-          />
+        <div className="mb-2">
+          <div className="flex items-center justify-between mb-1 text-[11px] sm:text-xs font-medium text-white/90 tabular-nums tracking-wide">
+            <span className="uppercase text-white/60">
+              {lang === 'uz' ? 'Vaqt' : 'Время'}
+            </span>
+            <span>{Math.max(0, Math.ceil(timerRemaining ?? 0))}s</span>
+          </div>
+          <div className="w-full h-2 sm:h-2.5 rounded-full bg-black/40 border border-white/20 overflow-hidden">
+            <div
+              ref={timerBarRef}
+              className={`h-full rounded-full ${timerColor}`}
+              style={{ width: '100%' }}
+            />
+          </div>
         </div>
       )}
 

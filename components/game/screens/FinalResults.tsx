@@ -1,20 +1,13 @@
 'use client';
 
-import CTABlock from './CTABlock';
+import { DIMENSION_META } from '@/game/data/dimensions';
+import type { DimensionScores, ScoreDimension } from '@/game/engine/types';
 
 type Rating = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 
 interface FinalResultsProps {
   totalScore: number;
-  dimensions: {
-    empathy: number;
-    rapport: number;
-    timing: number;
-    expertise: number;
-    persuasion: number;
-    discovery: number;
-    opportunity: number;
-  };
+  dimensions: DimensionScores;
   dayRatings: Rating[];
   strongestDimension: string;
   weakestDimension: string;
@@ -31,24 +24,12 @@ const RATING_COLORS: Record<Rating, string> = {
   F: '#ef4444',
 };
 
-const DIMENSION_LABELS: Record<string, { uz: string; ru: string }> = {
-  empathy: { uz: 'Empatiya', ru: 'Эмпатия' },
-  rapport: { uz: 'Rapport', ru: 'Раппорт' },
-  timing: { uz: 'Tayming', ru: 'Тайминг' },
-  expertise: { uz: 'Ekspertiza', ru: 'Экспертиза' },
-  persuasion: { uz: 'Ishontirish', ru: 'Убеждение' },
-  discovery: { uz: 'Ehtiyojlarni aniqlash', ru: 'Выявление потребностей' },
-  opportunity: { uz: 'Imkoniyatlar bilan ishlash', ru: 'Работа с возможностями' },
-};
-
 const t = {
   title: { uz: 'Stajirovka natijalari', ru: 'Итоги стажировки' },
   day: { uz: 'Kun', ru: 'День' },
   totalScore: { uz: 'Umumiy ball', ru: 'Общий счёт' },
   strongest: { uz: 'Kuchli tomon', ru: 'Сильная сторона' },
   growthZone: { uz: "O'sish zonasi", ru: 'Зона роста' },
-  downloadGuide: { uz: 'Gidni yuklab oling', ru: 'Скачай гайд по' },
-  talkToExpert: { uz: 'Ekspert bilan gaplashing', ru: 'Поговори с экспертом' },
   toMenu: { uz: 'Menyuga', ru: 'В меню' },
 } as const;
 
@@ -61,11 +42,8 @@ export default function FinalResults({
   onExit,
   lang = 'uz',
 }: FinalResultsProps) {
-  const entries = Object.entries(dimensions) as [string, number][];
+  const entries = Object.entries(dimensions) as [ScoreDimension, number][];
   const maxVal = Math.max(...entries.map(([, v]) => v), 1);
-
-  const weakestLabel =
-    DIMENSION_LABELS[weakestDimension]?.[lang] || weakestDimension;
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white overflow-y-auto p-6">
@@ -99,7 +77,7 @@ export default function FinalResults({
         </div>
 
         {/* Dimension bars */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-4 mb-6">
           {entries.map(([key, value]) => {
             const isStrongest = key === strongestDimension;
             const isWeakest = key === weakestDimension;
@@ -109,29 +87,30 @@ export default function FinalResults({
                 ? '#fbbf24'
                 : '#4a90d9';
             const pct = Math.round((value / maxVal) * 100);
+            const meta = DIMENSION_META[key];
 
             return (
               <div key={key}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm text-neutral-300 flex items-center gap-1.5">
+                  <span className="text-sm font-medium text-white flex items-center gap-1.5">
                     {isStrongest && (
                       <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
                     )}
-                    {isWeakest && (
+                    {isWeakest && !isStrongest && (
                       <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
                     )}
-                    {DIMENSION_LABELS[key]?.[lang] ?? key}
+                    {meta.label[lang]}
                   </span>
                   {isStrongest && (
                     <span className="text-xs text-green-400">
                       {t.strongest[lang]}
                     </span>
                   )}
-                  {isWeakest && (
+                  {isWeakest && !isStrongest && (
                     <span className="text-xs text-yellow-400">{t.growthZone[lang]}</span>
                   )}
                 </div>
-                <div className="bg-white/10 rounded-full h-2">
+                <div className="bg-white/10 rounded-full h-2 mb-1.5">
                   <div
                     className="h-2 rounded-full"
                     style={{
@@ -141,18 +120,13 @@ export default function FinalResults({
                     }}
                   />
                 </div>
+                <p className="text-xs text-neutral-400 leading-snug">
+                  {meta.description[lang]}
+                </p>
               </div>
             );
           })}
         </div>
-
-        {/* CTA Block */}
-        <CTABlock
-          primaryTitle={`${t.downloadGuide[lang]} ${weakestLabel}`}
-          secondaryTitle={t.talkToExpert[lang]}
-          onPrimaryClick={() => alert('CTA clicked')}
-          onSecondaryClick={() => alert('CTA clicked')}
-        />
 
         {/* Exit button */}
         <button

@@ -132,23 +132,23 @@ function simulateDay(
 describe('Key Paths', () => {
   it('Path 1: Grandmaster (optimal across all 3 days)', () => {
     // Day 1: addressed_both + balanced_both -> anniversary -> hidden ending
-    // who_first_a: rapport+15, empathy+5 = 20
-    // compromise_a: empathy+15, persuasion+10 = 25 (total 45)
-    // test_drive_offer_a: rapport+5 (total 50)
-    // test_drive_choice_c (silent): rapport+10 (total 60)
+    // who_first_a: rapport+15, empathy+5, discovery+8 = 28
+    // compromise_a: empathy+15, persuasion+10, discovery+6 = 31 (total 59)
+    // test_drive_offer_a: rapport+5 (total 64)
+    // test_drive_choice_c (silent): rapport+10 (total 74)
     // anniversary_check: addressed_both + balanced_both -> knows_anniversary
-    // closing_b (anniversary): opportunity+20, empathy+10 = 30 (total 90)
+    // closing_b (anniversary): opportunity+20, empathy+10 = 30 (total 104)
     // d1_check: anniversary_surprise -> hidden
     const d1 = simulateDay(day1, {
-      d1_who_first: 0,         // addressed_both: rapport+15, empathy+5
-      d1_compromise: 0,        // balanced_both: empathy+15, persuasion+10
+      d1_who_first: 0,         // addressed_both: rapport+15, empathy+5, discovery+8
+      d1_compromise: 0,        // balanced_both: empathy+15, persuasion+10, discovery+6
       d1_test_drive_offer: 0,  // test_drive: rapport+5
       d1_test_drive_choice: 2, // silent: rapport+10
       d1_closing: 1,           // anniversary_surprise: opportunity+20, empathy+10
     });
     expect(d1.endNodeId).toBe('d1_end_hidden');
     expect(d1.outcome).toBe('hidden_ending');
-    expect(d1.state.score.total).toBe(90);
+    expect(d1.state.score.total).toBe(104);
     expect(d1.state.flags.d1_success).toBe(true);
     expect(d1.state.flags.d1_hidden).toBe(true);
     expect(d1.playerState.achievements).toContain('love_sells');
@@ -211,10 +211,13 @@ describe('Key Paths', () => {
 
   it('Path 2: All-A (always first choice)', () => {
     // Day 1: all index 0 -> good score, success
-    // who_first_a: 20, compromise_a: 25, test_drive_offer_a: 5, test_drive_choice_a: 8
+    // who_first_a: 28 (rapport+15, empathy+5, discovery+8)
+    // compromise_a: 31 (empathy+15, persuasion+10, discovery+6)
+    // test_drive_offer_a: 5 (rapport+5)
+    // test_drive_choice_a: 14 (empathy+8, discovery+6)
     // anniversary: addressed_both + balanced_both -> knows_anniversary -> closing
     // closing_a: timing+10, rapport+5 = 15
-    // Total: 20+25+5+8+15 = 73
+    // Total: 28+31+5+14+15 = 93
     const d1 = simulateDay(day1, {
       d1_who_first: 0,
       d1_compromise: 0,
@@ -222,7 +225,7 @@ describe('Key Paths', () => {
       d1_test_drive_choice: 0,
       d1_closing: 0,
     });
-    expect(d1.state.score.total).toBe(73);
+    expect(d1.state.score.total).toBe(93);
     expect(d1.endNodeId).toBe('d1_end_success'); // no anniversary_surprise -> success (73>=32)
     expect(d1.outcome).toBe('success');
     expect(d1.state.flags.d1_success).toBe(true);
@@ -278,12 +281,15 @@ describe('Key Paths', () => {
       d1_test_drive_choice: 0,
       // d1_closing: defaults to index 0
     });
-    // who_first_a: 20, compromise_expired: -5 (total 15), test_drive_offer_a: 5 (total 20)
-    // test_drive_choice_a: 8 (total 28)
-    // anniversary_check: addressed_both but not balanced_both -> fallback -> d1_closing
-    // closing default (index 0): 15 (total 43)
-    // d1_check: no anniversary_surprise, 43 >= 32 -> success
-    expect(d1.state.score.total).toBe(43);
+    // who_first_a: 28 (rapport+15, empathy+5, discovery+8)
+    // compromise_expired: -5 (total 23)
+    // test_drive_offer_a: 5 (total 28)
+    // test_drive_choice_a: 14 (empathy+8, discovery+6) (total 42)
+    // anniversary_check (after OR softening): addressed_both -> d1_anniversary_hint
+    // anniversary_hint sets knows_anniversary, then closing default
+    // closing default (index 0): 15 (total 57)
+    // d1_check: no anniversary_surprise (closing_a, not closing_b), 57 >= 32 -> success
+    expect(d1.state.score.total).toBe(57);
     expect(d1.endNodeId).toBe('d1_end_success');
 
     // Day 2: let d2_objection timer expire
@@ -365,13 +371,14 @@ describe('Key Paths', () => {
 describe('Day 1 — All Paths', () => {
   it('hidden ending (anniversary) -> highest score', () => {
     const result = simulateDay(day1, {
-      d1_who_first: 0,         // addressed_both: 20
-      d1_compromise: 0,        // balanced_both: 25
+      d1_who_first: 0,         // addressed_both: 28 (rapport+15, empathy+5, discovery+8)
+      d1_compromise: 0,        // balanced_both: 31 (empathy+15, persuasion+10, discovery+6)
       d1_test_drive_offer: 0,  // test_drive: 5
       d1_test_drive_choice: 2, // silent: 10
       d1_closing: 1,           // anniversary_surprise: 30
     });
-    expect(result.state.score.total).toBe(90);
+    // 28 + 31 + 5 + 10 + 30 = 104
+    expect(result.state.score.total).toBe(104);
     expect(result.endNodeId).toBe('d1_end_hidden');
     expect(result.outcome).toBe('hidden_ending');
     expect(result.state.flags.anniversary_surprise).toBe(true);
@@ -380,17 +387,18 @@ describe('Day 1 — All Paths', () => {
 
   it('good path without anniversary -> success', () => {
     const result = simulateDay(day1, {
-      d1_who_first: 0,         // 20
-      d1_compromise: 0,        // 25
+      d1_who_first: 0,         // 28 (+ discovery 8)
+      d1_compromise: 0,        // 31 (+ discovery 6)
       d1_test_drive_offer: 0,  // 5
-      d1_test_drive_choice: 0, // 8
+      d1_test_drive_choice: 0, // 14 (+ discovery 6)
       d1_closing: 0,           // 15
     });
-    // 20 + 25 + 5 + 8 + 15 = 73
-    expect(result.state.score.total).toBe(73);
+    // 28 + 31 + 5 + 14 + 15 = 93
+    expect(result.state.score.total).toBe(93);
     expect(result.endNodeId).toBe('d1_end_success');
     expect(result.outcome).toBe('success');
-    expect(calculateRating(73, day1.targetScore)).toBe('S'); // 73/40 = 182%
+    // Raw score 93 vs new target 55 -> 169% -> S
+    expect(calculateRating(93, day1.targetScore)).toBe('S');
   });
 
   it('middle path (approach javlon + equinox sport) -> success', () => {
@@ -780,11 +788,26 @@ describe('Edge Cases', () => {
       d1_test_drive_choice: 0,
       d1_closing: 0,
     });
-    // Verify choices recorded in history
+    // Verify choices recorded in history. Auto-advanced single-option nodes
+    // like d1_exit_office_action also appear in history, so match by nodeId
+    // rather than rigid index — the test is about CHOICE ORDER for scoring
+    // choices, not the full node trace.
     expect(result.state.choiceHistory.length).toBeGreaterThanOrEqual(4);
-    expect(result.state.choiceHistory[0].nodeId).toBe('d1_who_first');
-    expect(result.state.choiceHistory[0].choiceIndex).toBe(0);
-    expect(result.state.choiceHistory[1].nodeId).toBe('d1_compromise');
+
+    const whoFirstEntry = result.state.choiceHistory.find(
+      (h) => h.nodeId === 'd1_who_first',
+    );
+    const compromiseEntry = result.state.choiceHistory.find(
+      (h) => h.nodeId === 'd1_compromise',
+    );
+    expect(whoFirstEntry).toBeDefined();
+    expect(whoFirstEntry!.choiceIndex).toBe(0);
+    expect(compromiseEntry).toBeDefined();
+
+    // d1_who_first must come before d1_compromise in the history
+    const whoFirstIdx = result.state.choiceHistory.indexOf(whoFirstEntry!);
+    const compromiseIdx = result.state.choiceHistory.indexOf(compromiseEntry!);
+    expect(whoFirstIdx).toBeLessThan(compromiseIdx);
   });
 
   it('score dimensions can go negative but total stays correct', () => {

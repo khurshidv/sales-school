@@ -3,7 +3,72 @@
 // No React imports. No side effects.
 // ============================================================
 
-import type { Rating } from '@/game/engine/types';
+import type { Rating, ScoreDimension, DimensionScores } from '@/game/engine/types';
+
+// --- Dimension weights ---
+//
+// Не все навыки продаж одинаково важны. Взвешенная оценка ближе к
+// реальной методологии: умение закрывать сделку (opportunity) и
+// выявление потребностей (discovery) — это то, что отличает продавца
+// от консультанта и что школа продаёт сильнее всего. Знание продукта
+// (expertise) — гигиена; его легко натаскать и без школы.
+export const DIMENSION_WEIGHTS: Record<ScoreDimension, number> = {
+  opportunity: 1.5,
+  discovery:   1.4,
+  empathy:     1.2,
+  rapport:     1.2,
+  timing:      1.0,
+  persuasion:  0.9,
+  expertise:   0.8,
+};
+
+/**
+ * Weighted total across all dimensions. Используется вместо наивной
+ * суммы для итогового счёта дня — результат честнее отражает качество
+ * продажных решений игрока.
+ */
+export function calculateWeightedTotal(dims: DimensionScores): number {
+  let sum = 0;
+  for (const key of Object.keys(dims) as ScoreDimension[]) {
+    sum += dims[key] * (DIMENSION_WEIGHTS[key] ?? 1);
+  }
+  return Math.round(sum * 100) / 100;
+}
+
+/**
+ * Сильнейшее взвешенное измерение (вклад, а не просто абсолют).
+ * При равенстве — первое из порядка SCORE_DIMENSIONS.
+ */
+export function getStrongestWeighted(dims: DimensionScores): ScoreDimension {
+  let best: ScoreDimension = 'empathy';
+  let bestVal = -Infinity;
+  for (const key of Object.keys(dims) as ScoreDimension[]) {
+    const v = dims[key] * (DIMENSION_WEIGHTS[key] ?? 1);
+    if (v > bestVal) {
+      bestVal = v;
+      best = key;
+    }
+  }
+  return best;
+}
+
+/**
+ * Слабейшее взвешенное измерение. Игнорирует dimensions с 0 очков только
+ * если есть хотя бы одно положительное — иначе возвращает первое с 0.
+ * Это даёт осмысленную «зону роста» даже на коротких днях.
+ */
+export function getWeakestWeighted(dims: DimensionScores): ScoreDimension {
+  let worst: ScoreDimension = 'empathy';
+  let worstVal = Infinity;
+  for (const key of Object.keys(dims) as ScoreDimension[]) {
+    const v = dims[key] * (DIMENSION_WEIGHTS[key] ?? 1);
+    if (v < worstVal) {
+      worstVal = v;
+      worst = key;
+    }
+  }
+  return worst;
+}
 
 // --- Rating thresholds (percentage of targetScore) ---
 const RATING_THRESHOLDS: Array<{ min: number; rating: Rating }> = [

@@ -6,7 +6,13 @@ import { usePlayerStore } from '@/game/store/playerStore';
 import { getScenario } from '@/game/data/scenarios';
 import { getAvailableChoices } from '@/game/engine/ScenarioEngine';
 import { GameEventBus } from '@/game/engine/EventBus';
-import { calculateRating, getNearMiss } from '@/game/systems/ScoringSystem';
+import {
+  calculateRating,
+  getNearMiss,
+  calculateWeightedTotal,
+  getStrongestWeighted,
+  getWeakestWeighted,
+} from '@/game/systems/ScoringSystem';
 import { isGameOver, shouldLoseLife, shouldGainLife } from '@/game/systems/LivesSystem';
 import { checkAchievements, type AchievementContext } from '@/game/systems/AchievementSystem';
 import { getCoinsForOutcome, getCoinsForAchievement, getCoinsForFirstCompletion } from '@/game/systems/CoinSystem';
@@ -42,6 +48,9 @@ export interface DayResults {
   coinsEarned: number;
   xpEarned: number;
   outcome: DayOutcome;
+  /** Snapshot флагов сессии на момент end-ноды — нужен для нарратива
+   * в DaySummary (e.g. knows_anniversary, addressed_both). */
+  flags: Record<string, boolean>;
   nextDayTeaser?: { uz: string; ru: string };
   isLastDay: boolean;
 }
@@ -123,7 +132,11 @@ export function useGameEngine(scenarioId: string) {
     const endNode = currentNode as EndNode;
     const day = scenario.days[currentDayIndex];
     const outcome = endNode.outcome;
-    const score = session.score.total;
+    // Используем взвешенную сумму, а не raw total сессии. Raw total
+    // остаётся у HUD/condition_branch как есть; взвешенный показатель
+    // честнее отражает качество продажных решений и соответствует
+    // новым targetScore-ам (Day 1 = 55).
+    const score = Math.round(calculateWeightedTotal(session.score.dimensions));
     const rating = calculateRating(score, day.targetScore);
     const nearMiss = getNearMiss(score, day.targetScore);
     const currentPlayer = usePlayerStore.getState().player;
@@ -241,6 +254,7 @@ export function useGameEngine(scenarioId: string) {
       coinsEarned,
       xpEarned,
       outcome,
+      flags: { ...session.flags },
       nextDayTeaser: endNode.nextDayTeaser,
       isLastDay,
     };
@@ -327,9 +341,10 @@ export function useGameEngine(scenarioId: string) {
         }
       }
 
-      const dimEntries = Object.entries(allDims);
-      const strongest = dimEntries.reduce((a, b) => (b[1] > a[1] ? b : a))[0];
-      const weakest = dimEntries.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
+      // Взвешенные функции дают более точную оценку: «сильная сторона»
+      // теперь отражает вклад в воронку продаж, а не просто абсолютные очки.
+      const strongest = getStrongestWeighted(allDims);
+      const weakest = getWeakestWeighted(allDims);
 
       setFinalResults({
         totalScore: dayResultsHistory.reduce((sum, dr) => sum + dr.score, 0),

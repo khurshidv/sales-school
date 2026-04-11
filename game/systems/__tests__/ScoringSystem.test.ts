@@ -6,7 +6,25 @@ import {
   applyModifiers,
   getNearMiss,
   shuffleChoices,
+  calculateWeightedTotal,
+  getStrongestWeighted,
+  getWeakestWeighted,
+  DIMENSION_WEIGHTS,
 } from '@/game/systems/ScoringSystem';
+import type { DimensionScores } from '@/game/engine/types';
+
+function dims(partial: Partial<DimensionScores>): DimensionScores {
+  return {
+    empathy: 0,
+    rapport: 0,
+    timing: 0,
+    expertise: 0,
+    persuasion: 0,
+    discovery: 0,
+    opportunity: 0,
+    ...partial,
+  };
+}
 
 // ============================================================
 // 1. calculateRating — 15 tests
@@ -205,5 +223,107 @@ describe('shuffleChoices', () => {
 
   it('returns single-element array unchanged', () => {
     expect(shuffleChoices(['only'], 'seed')).toEqual(['only']);
+  });
+});
+
+// ============================================================
+// 7. calculateWeightedTotal / getStrongestWeighted / getWeakestWeighted
+// ============================================================
+describe('calculateWeightedTotal', () => {
+  it('returns 0 for all zeros', () => {
+    expect(calculateWeightedTotal(dims({}))).toBe(0);
+  });
+
+  it('applies per-dimension weights correctly', () => {
+    const result = calculateWeightedTotal(dims({ opportunity: 10 }));
+    expect(result).toBe(10 * DIMENSION_WEIGHTS.opportunity); // 15
+  });
+
+  it('sums weighted contributions across multiple dimensions', () => {
+    const result = calculateWeightedTotal(
+      dims({ discovery: 10, expertise: 10 }),
+    );
+    // discovery 1.4 + expertise 0.8 = 14 + 8 = 22
+    expect(result).toBe(22);
+  });
+
+  it('rounds to 2 decimals', () => {
+    const result = calculateWeightedTotal(dims({ persuasion: 3 }));
+    // 3 * 0.9 = 2.7
+    expect(result).toBe(2.7);
+  });
+});
+
+describe('getStrongestWeighted', () => {
+  it('returns dimension with highest weighted contribution, not highest raw', () => {
+    // raw: empathy=15, opportunity=12
+    // weighted: empathy=18, opportunity=18 — tie, should fall to first seen
+    // Clearer case: raw discovery=10, raw rapport=12
+    // weighted: discovery=14, rapport=14.4 → rapport wins
+    const result = getStrongestWeighted(
+      dims({ discovery: 10, rapport: 12 }),
+    );
+    expect(result).toBe('rapport');
+  });
+
+  it('weights can flip the result vs raw max', () => {
+    // raw: expertise=20, opportunity=15
+    // weighted: expertise=16, opportunity=22.5 → opportunity wins despite lower raw
+    const result = getStrongestWeighted(
+      dims({ expertise: 20, opportunity: 15 }),
+    );
+    expect(result).toBe('opportunity');
+  });
+
+  it('handles all-zeros without crashing', () => {
+    expect(getStrongestWeighted(dims({}))).toBeDefined();
+  });
+});
+
+describe('getWeakestWeighted', () => {
+  it('returns dimension with lowest weighted contribution', () => {
+    // All equal raw, weakest weight wins → expertise (0.8)
+    const result = getWeakestWeighted(
+      dims({
+        empathy: 5,
+        rapport: 5,
+        timing: 5,
+        expertise: 5,
+        persuasion: 5,
+        discovery: 5,
+        opportunity: 5,
+      }),
+    );
+    expect(result).toBe('expertise');
+  });
+
+  it('ignores high raw in heavily weighted dimensions', () => {
+    // opportunity=100 weighted=150, expertise=0 weighted=0 — expertise is weakest
+    const result = getWeakestWeighted(
+      dims({ opportunity: 100 }),
+    );
+    // All non-opportunity are 0 → first seen with 0 wins; key order empathy/rapport/timing/expertise/persuasion/discovery/opportunity
+    // All have weighted=0 except opportunity, so first-seen zero is empathy
+    expect(result).toBe('empathy');
+  });
+});
+
+describe('DIMENSION_WEIGHTS', () => {
+  it('has all 7 dimensions', () => {
+    expect(Object.keys(DIMENSION_WEIGHTS)).toHaveLength(7);
+  });
+
+  it('opportunity is highest weighted (1.5)', () => {
+    expect(DIMENSION_WEIGHTS.opportunity).toBe(1.5);
+    for (const w of Object.values(DIMENSION_WEIGHTS)) {
+      expect(DIMENSION_WEIGHTS.opportunity).toBeGreaterThanOrEqual(w);
+    }
+  });
+
+  it('expertise is lowest weighted (0.8)', () => {
+    expect(DIMENSION_WEIGHTS.expertise).toBe(0.8);
+    for (const w of Object.values(DIMENSION_WEIGHTS)) {
+      expect(DIMENSION_WEIGHTS.expertise).toBeLessThanOrEqual(w);
+    }
   });
 });

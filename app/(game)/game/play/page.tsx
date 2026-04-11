@@ -336,15 +336,19 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // Day Summary
   if (engine.flowState === 'day_summary' && engine.dayResults) {
     const dr = engine.dayResults;
+    const dayNumber =
+      engine.scenario?.days[dr.dayIndex]?.dayNumber ?? dr.dayIndex + 1;
     return (
       <>
         <RotateDevice />
         <DaySummary
           dayIndex={dr.dayIndex}
+          dayNumber={dayNumber}
           score={dr.score}
           targetScore={dr.targetScore}
           rating={dr.rating}
           dimensions={dr.dimensions}
+          outcome={dr.outcome}
           nearMiss={dr.nearMiss}
           unlockedAchievements={dr.unlockedAchievements}
           coinsEarned={dr.coinsEarned}
@@ -435,6 +439,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
               timerRemaining={timer.remaining}
               timeLimit={(node as ChoiceNode).timeLimit}
               timerBarRef={timer.barRef}
+              lang={lang}
             />
             <DialogueBox
               text={(node as ChoiceNode).prompt[lang]}

@@ -82,8 +82,8 @@ RU: Выйти из кабинета
 **Background:** bg_showroom
 **Characters:** Dilnoza (smirk, center)
 
-**UZ:** Ha, siz yangimisiz? Ko'p bo'lmay Rustam bilan gaplashib chiqtingiz. U sizga "avval eshit, keyin gapirsiz" dedi, to'g'rimi?
-**RU:** А, вы новенький? Только вышли от Рустама. Он вам сказал "сначала слушай, потом говори" — угадала?
+**UZ:** Siz yangi kelgan sotuvchimisiz?
+**RU:** Вы наш новый продавец?
 
 → next: d1_dilnoza_self_intro
 
@@ -93,10 +93,23 @@ RU: Выйти из кабинета
 **Background:** bg_showroom
 **Characters:** Dilnoza (neutral, center)
 
-**UZ:** Men Dilnoza. Bu salonning eng yaxshi sotuvchisiman — unvon emas, raqam bo'yicha. To'rt yil ishlayapman. Hech narsa so'ramang, faqat kuzating.
-**RU:** Я Дильноза. Лучший продавец этого салона — по цифрам, не по должности. Работаю четыре года. Ничего не спрашивайте, просто наблюдайте.
+**UZ:** Ismim Dilnoza. Bu salonning eng yaxshi sotuvchisiman, 4 yildan beri shu yerda ishlayman.
+**RU:** Меня зовут Дильноза. Я лучший продавец этого салона, работаю здесь уже 4 года.
 
-→ next: d1_meet_dilnoza
+→ next: d1_dilnoza_greet_choice
+
+---
+
+### [d1_dilnoza_greet_choice] Player — choice
+
+**Prompt UZ:** Dilnozaga javob bering:
+**Prompt RU:** Ответить Дильнозе:
+
+- **[d1_dilnoza_greet_polite]**
+  - **UZ:** Tanishganimdan xursandman, Dilnoza!
+  - **RU:** Приятно познакомиться, Дильноза!
+  - **Effects:** —
+  - → next: d1_meet_dilnoza
 
 ---
 
@@ -104,8 +117,8 @@ RU: Выйти из кабинета
 **Background:** bg_showroom
 **Characters:** Dilnoza (smirk, center)
 
-**UZ:** Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Ismim Dilnoza. Hammaning birinchi kuni shunaqa o'tadi.
-**RU:** По лицу видно, ждёте первого клиента. Меня зовут Дильноза. У всех первый день проходит примерно так.
+**UZ:** Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Hammaning birinchi kuni shunaqa o'tadi.
+**RU:** По лицу видно, ждёте первого клиента. У всех первый день проходит примерно так.
 
 → next: d1_dilnoza_tip
 

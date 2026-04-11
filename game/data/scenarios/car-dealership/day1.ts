@@ -79,21 +79,6 @@ export const day1: Day = {
         uz: 'Bugun bir juftlik kelishi kerak. Ikkisini ham xoxishlarini yaxshilab tinglang. Biri jim tursa ham, qarorni baribir ikkalasi qabul qiladi.',
         ru: 'Сегодня должна приехать пара. Внимательно выслушайте пожелания обоих. Даже если один из них будет молчать, решение всё равно примут оба.',
       },
-      nextNodeId: 'd1_rustam_tip_2',
-    },
-
-    d1_rustam_tip_2: {
-      id: 'd1_rustam_tip_2',
-      type: 'dialogue',
-      speaker: 'rustam',
-      emotion: 'serious',
-      characters: [
-        { id: 'rustam', emotion: 'serious', position: 'center' },
-      ],
-      text: {
-        uz: 'Yana bir gap. Juftlikka mashina sotayotganda, ikkisini bir qaror atrofida birlashtira olsang — bu oddiy bitim emas, sovg\'aga o\'xshab qoladi. Shunda mashina o\'zi sotiladi.',
-        ru: 'И ещё. Когда продаёшь машину паре — если сможешь объединить их вокруг одного решения, это будет уже не сделка, а подарок. Тогда машина продаётся сама.',
-      },
       nextNodeId: 'd1_exit_office_action',
     },
 
@@ -101,20 +86,76 @@ export const day1: Day = {
       id: 'd1_exit_office_action',
       type: 'choice',
       prompt: {
-        uz: 'Nima qilasiz?',
-        ru: 'Что делаете?',
+        uz: 'Kabinetdan chiqishdan oldin yana biror narsa so\'raysizmi?',
+        ru: 'Хотите ещё что-то спросить перед тем, как выйти?',
       },
       choices: [
         {
-          id: 'exit_office',
+          // Index 0 — neutral «просто выйти». Должен оставаться без
+          // эффектов: интеграционные тесты auto-выбирают index 0 для
+          // неуказанных choice-нод, менять его поведение = ломать баланс.
+          id: 'd1_exit_office_leave',
           text: {
-            uz: 'Kabinetdan chiqish',
-            ru: 'Выйти из кабинета',
+            uz: 'Rahmat, Rustam aka. Ishga o\'taman.',
+            ru: 'Спасибо, Рустам-ака. Пойду работать.',
           },
-          nextNodeId: 'd1_exit_office_narr',
           effects: [],
+          nextNodeId: 'd1_exit_office_narr',
+        },
+        {
+          id: 'd1_exit_office_ask_couples',
+          text: {
+            uz: 'Aytgancha — juftliklar bilan ishlashda yana nimaga e\'tibor berish kerak?',
+            ru: 'Кстати — на что ещё обращать внимание, когда работаешь с парой?',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'discovery', amount: 5 },
+          ],
+          nextNodeId: 'd1_rustam_couples_tip',
+        },
+        {
+          id: 'd1_exit_office_nervous',
+          text: {
+            uz: 'Rostini aytsam, biroz hayajonlanyapman. Axir bugun birinchi kun...',
+            ru: 'Честно говоря, немного волнуюсь — всё-таки первый день...',
+          },
+          effects: [
+            { type: 'add_score', dimension: 'empathy', amount: 4 },
+            { type: 'add_score', dimension: 'rapport', amount: 4 },
+          ],
+          nextNodeId: 'd1_rustam_empathy',
         },
       ],
+    },
+
+    d1_rustam_couples_tip: {
+      id: 'd1_rustam_couples_tip',
+      type: 'dialogue',
+      speaker: 'rustam',
+      emotion: 'friendly',
+      characters: [
+        { id: 'rustam', emotion: 'friendly', position: 'center' },
+      ],
+      text: {
+        uz: 'Juftliklar ko\'pincha biror muhim sana bilan kelishadi — to\'y, farzand tug\'ilishi, yubiley. Suhbatda shu sanani payqasang, uni e\'tiborsiz qoldirma. O\'sha paytda sotuv — oddiy bitim emas, sovg\'aga aylanadi.',
+        ru: 'Пары часто приходят к важной дате — свадьба, рождение ребёнка, годовщина. Если заметишь такую дату в разговоре — не проходи мимо. Именно тогда покупка перестаёт быть покупкой и становится подарком.',
+      },
+      nextNodeId: 'd1_exit_office_narr',
+    },
+
+    d1_rustam_empathy: {
+      id: 'd1_rustam_empathy',
+      type: 'dialogue',
+      speaker: 'rustam',
+      emotion: 'friendly',
+      characters: [
+        { id: 'rustam', emotion: 'friendly', position: 'center' },
+      ],
+      text: {
+        uz: 'Hayajonlanayotganingni yashirma. Mijozlar "men ham oddiy odamman" deb turgan sotuvchini har qanday texnikadan ko\'ra ko\'proq hurmat qilishadi. Shu — eng kuchli qurolimiz.',
+        ru: 'Не прячь своё волнение. Клиенты уважают продавца, который говорит «я такой же человек», больше любой техники продаж. Это — наше самое сильное оружие.',
+      },
+      nextNodeId: 'd1_exit_office_narr',
     },
 
     d1_exit_office_narr: {
@@ -157,8 +198,8 @@ export const day1: Day = {
         { id: 'dilnoza', emotion: 'smirk', position: 'center' },
       ],
       text: {
-        uz: 'Ha, siz yangimisiz? Ko\'p bo\'lmay Rustam bilan gaplashib chiqtingiz. U sizga "avval eshit, keyin gapirsiz" dedi, to\'g\'rimi?',
-        ru: 'А, вы новенький? Только вышли от Рустама. Он вам сказал "сначала слушай, потом говори" — угадала?',
+        uz: 'Siz yangi kelgan sotuvchimisiz?',
+        ru: 'Вы наш новый продавец?',
       },
       nextNodeId: 'd1_dilnoza_self_intro',
     },
@@ -173,10 +214,32 @@ export const day1: Day = {
         { id: 'dilnoza', emotion: 'neutral', position: 'center' },
       ],
       text: {
-        uz: 'Men Dilnoza. Bu salonning eng yaxshi sotuvchisiman — unvon emas, raqam bo\'yicha. To\'rt yil ishlayapman. Hech narsa so\'ramang, faqat kuzating.',
-        ru: 'Я Дильноза. Лучший продавец этого салона — по цифрам, не по должности. Работаю четыре года. Ничего не спрашивайте, просто наблюдайте.',
+        uz: 'Ismim Dilnoza. Bu salonning eng yaxshi sotuvchisiman, 4 yildan beri shu yerda ishlayman.',
+        ru: 'Меня зовут Дильноза. Я лучший продавец этого салона, работаю здесь уже 4 года.',
       },
-      nextNodeId: 'd1_meet_dilnoza',
+      nextNodeId: 'd1_dilnoza_greet_choice',
+    },
+
+    d1_dilnoza_greet_choice: {
+      id: 'd1_dilnoza_greet_choice',
+      type: 'choice',
+      prompt: {
+        uz: 'Dilnozaga javob bering:',
+        ru: 'Ответить Дильнозе:',
+      },
+      choices: [
+        {
+          // Index 0 — единственный вариант (приветствие). Без эффектов:
+          // интеграционные тесты auto-выбирают index 0.
+          id: 'd1_dilnoza_greet_polite',
+          text: {
+            uz: 'Tanishganimdan xursandman, Dilnoza!',
+            ru: 'Приятно познакомиться, Дильноза!',
+          },
+          effects: [],
+          nextNodeId: 'd1_meet_dilnoza',
+        },
+      ],
     },
 
     d1_meet_dilnoza: {
@@ -189,8 +252,8 @@ export const day1: Day = {
         { id: 'dilnoza', emotion: 'smirk', position: 'center' },
       ],
       text: {
-        uz: 'Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Ismim Dilnoza. Hammaning birinchi kuni shunaqa o\'tadi.',
-        ru: 'По лицу видно, ждёте первого клиента. Меня зовут Дильноза. У всех первый день проходит примерно так.',
+        uz: 'Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Hammaning birinchi kuni shunaqa o\'tadi.',
+        ru: 'По лицу видно, ждёте первого клиента. У всех первый день проходит примерно так.',
       },
       nextNodeId: 'd1_dilnoza_tip',
     },

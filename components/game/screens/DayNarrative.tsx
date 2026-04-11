@@ -38,17 +38,16 @@ export default function DayNarrative({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.45, delay: shouldReduceMotion ? 0 : 0.15 }}
-      className="mb-6"
     >
-      <h3 className="text-base sm:text-lg font-semibold text-white mb-3 leading-snug">
+      <h3 className="text-sm sm:text-base font-semibold text-white mb-2 leading-snug">
         {title}
       </h3>
 
-      <div className="space-y-3 text-sm sm:text-[15px] text-neutral-200 leading-relaxed whitespace-pre-line">
+      <div className="space-y-2 text-xs sm:text-sm text-neutral-200 leading-relaxed whitespace-pre-line">
         {body}
       </div>
 
-      <div className="mt-4 border-l-2 border-blue-400/60 pl-3 py-1 text-sm italic text-blue-200/90">
+      <div className="mt-2 border-l-2 border-blue-400/60 pl-2.5 py-0.5 text-xs sm:text-sm italic text-blue-200/90">
         {insight}
       </div>
     </m.section>

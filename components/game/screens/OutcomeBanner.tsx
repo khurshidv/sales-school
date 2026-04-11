@@ -68,7 +68,7 @@ export default function OutcomeBanner({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.4 }}
-      className={`rounded-2xl border ${OUTCOME_BORDERS[outcome]} p-4 sm:p-5 mb-4 flex items-center gap-4`}
+      className={`rounded-2xl border ${OUTCOME_BORDERS[outcome]} p-3 sm:p-4 flex items-center gap-3 sm:gap-4`}
       style={{ background: OUTCOME_GRADIENTS[outcome] }}
     >
       {/* Большая буква рейтинга */}
@@ -80,7 +80,7 @@ export default function OutcomeBanner({
             ? { duration: 0 }
             : { type: 'spring', bounce: 0.5, delay: 0.1, duration: 0.5 }
         }
-        className="text-6xl sm:text-7xl font-bold leading-none tabular-nums"
+        className="text-5xl sm:text-6xl font-bold leading-none tabular-nums"
         style={{ color: RATING_COLORS[rating] }}
       >
         {rating}

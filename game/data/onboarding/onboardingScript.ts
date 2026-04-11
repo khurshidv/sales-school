@@ -32,8 +32,8 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     showRustam: true,
     speakerName: { uz: 'Rustam', ru: 'Рустам' },
     text: {
-      uz: "Salom! SalesUp'ga xush kelibsiz! Men Rustam — bu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!",
-      ru: 'Привет! Добро пожаловать в SalesUp! Я Рустам — менеджер этого автосалона. Рад видеть тебя в качестве нового сотрудника!',
+      uz: "Salom! SalesUp'ga xush kelibsiz! Ismim Rustam — shu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!",
+      ru: 'Привет! Добро пожаловать в SalesUp! Меня зовут Рустам — я менеджер этого автосалона. Рад видеть тебя в качестве нового сотрудника!',
     },
   },
 
@@ -92,8 +92,8 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     showRustam: true,
     speakerName: { uz: 'Rustam', ru: 'Рустам' },
     text: {
-      uz: '{name}, telefon raqamingizni qoldiring — shunda biz siz bilan bog\'lana olamiz.',
-      ru: '{name}, оставьте ваш номер телефона — так мы сможем с вами связаться.',
+      uz: "{name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring.",
+      ru: '{name}, чтобы продолжить игру, оставьте ваш настоящий номер телефона.',
     },
     inputPlaceholder: {
       uz: 'XX XXX-XX-XX',

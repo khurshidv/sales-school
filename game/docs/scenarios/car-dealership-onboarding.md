@@ -8,8 +8,8 @@
 **Background:** bg_showroom_entrance
 **Type:** dialogue
 
-**UZ:** Salom! SalesUp'ga xush kelibsiz! Ismim Rustam — shcu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!
-**RU:** Привет! Добро пожаловать в SalesUp! Я Рустам — менеджер этого автосалона. Рад видеть тебя в качестве нового сотрудника!
+**UZ:** Salom! SalesUp'ga xush kelibsiz! Ismim Rustam — shu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!
+**RU:** Привет! Добро пожаловать в SalesUp! Меня зовут Рустам — я менеджер этого автосалона. Рад видеть тебя в качестве нового сотрудника!
 
 → next: lang_select
 
@@ -54,8 +54,8 @@
 **Background:** bg_showroom
 **Type:** phone_input (UI: telefon raqami kiritish)
 
-**UZ:** {name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring
-**RU:** {name}, оставьте ваш номер телефона — так мы сможем с вами связаться.
+**UZ:** {name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring.
+**RU:** {name}, чтобы продолжить игру, оставьте ваш настоящий номер телефона.
 
 > Placeholder: "XX XXX-XX-XX"
 

@@ -1,4 +1,4 @@
-# Den' 1: Yangi boshlanish / Новое начало
+# Day 1: Birinchi kun / Первый день
 
 **Target Score: 40**
 **Root Node: d1_day_intro**
@@ -29,6 +29,7 @@
 
 ### [d1_meet_rustam] Rustam (friendly) — dialogue
 **Background:** bg_manager_office
+**Characters:** Rustam (friendly, center)
 
 **UZ:** Salom! Ismim Rustam, bosh menejerman. Bizning jamoaga xush kelibsiz! Mijozlar bilan gaplashganda avval ularni yaxshilab eshiting, keyin esa gapiring.
 **RU:** Привет! Меня зовут Рустам, я главный менеджер. Добро пожаловать в нашу команду! Помните, когда вы разговариваете с клиентами, сначала внимательно их слушайте, а затем говорите.
@@ -38,9 +39,62 @@
 ---
 
 ### [d1_rustam_tip] Rustam (serious) — dialogue
+**Characters:** Rustam (serious, center)
 
 **UZ:** Bugun bir juftlik kelishi kerak. Ikkisini ham xoxishlarini yaxshilab tinglang. Biri jim tursa ham, qarorni baribir ikkalasi qabul qiladi.
-**RU:** Сегодня должна приехать пара. Внимательно выслушайте пожелания обоих. Даже если один из них будет молчать, решение все равно примут оба.
+**RU:** Сегодня должна приехать пара. Внимательно выслушайте пожелания обоих. Даже если один из них будет молчать, решение всё равно примут оба.
+
+→ next: d1_exit_office_action
+
+---
+
+### [d1_exit_office_action] — choice (action button)
+
+**A) exit_office**
+UZ: Kabinetdan chiqish
+RU: Выйти из кабинета
+→ leads to: d1_exit_office_narr
+
+---
+
+### [d1_exit_office_narr] Narrator — dialogue
+**Background:** bg_showroom
+
+**UZ:** Siz Rustamning kabinetidan chiqib, salon zaliga o'tdingiz. Mashinalar qatorlashib turibdi. Bir chetda notanish ayol Equinox yonida turib, nimadir o'ylayotgandek ko'rinadi.
+**RU:** Вы вышли из кабинета Рустама в зал салона. Автомобили стоят в ряд. В стороне незнакомая женщина стоит у Equinox и, кажется, о чём-то размышляет.
+
+→ next: d1_dilnoza_preintro
+
+---
+
+### [d1_dilnoza_preintro] Dilnoza (explaining) — dialogue
+**Background:** bg_showroom
+**Characters:** Dilnoza (explaining, center)
+
+**UZ:** Uch yildan beri shu Equinox yonida turaman. Lekin hali ham odamlar uni ko'rishda hayron qolishadi. Bu mashinada siz sotmaysiz — mashina o'zi sotadi.
+**RU:** Три года стою рядом с этим Equinox. Но люди до сих пор удивляются, когда видят его. В этой машине вы не продаёте — машина продаёт сама.
+
+→ next: d1_dilnoza_notices
+
+---
+
+### [d1_dilnoza_notices] Dilnoza (smirk) — dialogue
+**Background:** bg_showroom
+**Characters:** Dilnoza (smirk, center)
+
+**UZ:** Ha, siz yangimisiz? Ko'p bo'lmay Rustam bilan gaplashib chiqtingiz. U sizga "avval eshit, keyin gapirsiz" dedi, to'g'rimi?
+**RU:** А, вы новенький? Только вышли от Рустама. Он вам сказал "сначала слушай, потом говори" — угадала?
+
+→ next: d1_dilnoza_self_intro
+
+---
+
+### [d1_dilnoza_self_intro] Dilnoza (neutral) — dialogue
+**Background:** bg_showroom
+**Characters:** Dilnoza (neutral, center)
+
+**UZ:** Men Dilnoza. Bu salonning eng yaxshi sotuvchisiman — unvon emas, raqam bo'yicha. To'rt yil ishlayapman. Hech narsa so'ramang, faqat kuzating.
+**RU:** Я Дильноза. Лучший продавец этого салона — по цифрам, не по должности. Работаю четыре года. Ничего не спрашивайте, просто наблюдайте.
 
 → next: d1_meet_dilnoza
 
@@ -48,6 +102,7 @@
 
 ### [d1_meet_dilnoza] Dilnoza (smirk) — dialogue
 **Background:** bg_showroom
+**Characters:** Dilnoza (smirk, center)
 
 **UZ:** Yuzingizdan bilinib turibdi, birinchi mijozni kutyapsiz. Ismim Dilnoza. Hammaning birinchi kuni shunaqa o'tadi.
 **RU:** По лицу видно, ждёте первого клиента. Меня зовут Дильноза. У всех первый день проходит примерно так.
@@ -57,6 +112,7 @@
 ---
 
 ### [d1_dilnoza_tip] Dilnoza (smirk) — dialogue
+**Characters:** Dilnoza (smirk, center)
 **Effects:** set_flag: met_dilnoza
 
 **UZ:** Birinchi mijoz oldida hamma bir oz hayajonlanadi. Faqat buni yuzingizda bildirmang. Agar juftlik kelsa, ikkalasini ham qiziqtiradigan bitta sabab toping.
@@ -68,6 +124,7 @@
 
 ### [d1_meet_anvar] Anvar (nervous) — dialogue
 **Background:** bg_showroom
+**Characters:** Anvar (nervous, center)
 
 **UZ:** Salom, ismim Anvar. Men ham bu yerda yangi sotuvchiman. Mana, bugungi mijozlar ro'yxati.
 **RU:** Привет, меня зовут Анвар. Я тоже здесь новый продавец. Вот список клиентов на сегодня.
@@ -77,6 +134,7 @@
 ---
 
 ### [d1_anvar_info] Anvar (nervous) — dialogue
+**Characters:** Anvar (nervous, center)
 **Effects:** set_flag: met_anvar
 
 **UZ:** Bir juftlik kelishi kerak edi. Ular o'zaro tortishayotgan edi menimcha. Erkak uchun mashinaning yurishi muhim, ayol uchun esa bolalarga qulay bo'lishi kerak ekan.
@@ -86,8 +144,10 @@
 
 ---
 
+## ── MAIN: Couple Enters ──
+
 ### [d1_couple_enters] Narrator — dialogue
-**Background:** bg_showroom_young_couple.png
+**Background:** bg_showroom_young_couple
 
 **UZ:** Eshik ochildi. Yosh juftlik kirdi. Er darhol Tracker tomon yurdi. Xotini esa Equinox oldida to'xtadi.
 **RU:** Дверь открылась. Вошла молодая пара. Муж сразу пошёл к Tracker. Жена остановилась у Equinox.
@@ -102,7 +162,7 @@
 > **Prompt RU:** К кому подойдёте первым?
 
 **A) d1_who_first_a**
-UZ: Ikkalasini oldiga boraman: "Assalomu alaykum. Keling, sizga tanlov qilishda yordam beraman. Qaysi mashinalrni qarayapsizlar?"
+UZ: Ikkalasini oldiga boraman: "Assalomu alaykum. Keling, sizga tanlov qilishda yordam beraman. Qaysi mashinalarni qarayapsizlar?"
 RU: Подхожу сразу к обоим: "Здравствуйте. Давайте я помогу вам сделать выбор. Какие автомобили вы рассматриваете?"
 → leads to: d1_conflict_both
 Effects: +15 rapport, +5 empathy, set_flag: addressed_both
@@ -124,7 +184,7 @@ Effects: +8 expertise, set_flag: approached_nilufar
 ## ── BRANCH: Addressed Both ──
 
 ### [d1_conflict_both] Javlon (stubborn) — dialogue
-**Background:** bg_showroom_young_couple-no-people.png
+**Background:** bg_showroom_young_couple_no_people
 **Characters:** Javlon (stubborn, left), Nilufar (thoughtful, right)
 
 **UZ:** Mayli, birgalikda ko'ramiz. Lekin men Trackerni qo'llab-quvvatlayman. Tez ishlaydi, gazni bosganingda darhol javob chiqadi.
@@ -137,7 +197,7 @@ Effects: +8 expertise, set_flag: approached_nilufar
 ### [d1_conflict_both_nilufar] Nilufar (worried) — dialogue
 **Characters:** Javlon (neutral, left), Nilufar (worried, right)
 
-**UZ:** Men esa orqa o'rindiqlarda kim o'tirishini o'ylayapman. Ikki bola bilan Tracker torlik qiladi. Lekin mashinalarni birga  ko'rsak, mayli.
+**UZ:** Men esa orqa o'rindiqlarda kim o'tirishini o'ylayapman. Ikki bola bilan Tracker torlik qiladi. Lekin mashinalarni birga ko'rsak, mayli.
 **RU:** А я думаю о том, кто будет сидеть сзади. С двумя детьми Tracker тесноват. Но если смотреть вместе, хорошо.
 
 → next: d1_compromise
@@ -147,7 +207,7 @@ Effects: +8 expertise, set_flag: approached_nilufar
 ## ── BRANCH: Approached Javlon (Tracker) ──
 
 ### [d1_conflict_tracker] Javlon (stubborn) — dialogue
-**Background:** bg_showroom_young_couple-no-people.png
+**Background:** bg_showroom_young_couple_no_people
 **Characters:** Javlon (stubborn, left), Nilufar (worried, right)
 
 **UZ:** Ha, Tracker menga yoqadi. Yengil, chaqqon, rulni yaxshi his qilsa bo'ladi. Menga shunisi kerak.
@@ -160,7 +220,7 @@ Effects: +8 expertise, set_flag: approached_nilufar
 ### [d1_conflict_tracker_nilufar] Nilufar (worried) — dialogue
 **Characters:** Javlon (neutral, left), Nilufar (worried, right)
 
-**UZ:** Dadasi, yana o'sha gapmi? Bolalarni har kuni men olib yuraman. Meni ham bir eshitish kerak-ku.
+**UZ:** Javlon, yana o'sha gapmi? Bolalarni har kuni men olib yuraman. Meni ham bir eshitish kerak-ku.
 **RU:** Жавлон, опять то же самое? Детей каждый день вожу я. Меня тоже надо хоть раз услышать.
 
 → next: d1_compromise
@@ -170,7 +230,7 @@ Effects: +8 expertise, set_flag: approached_nilufar
 ## ── BRANCH: Approached Nilufar (Equinox) ──
 
 ### [d1_conflict_equinox] Nilufar (happy) — dialogue
-**Background:** bg_showroom_young_couple-no-people.png
+**Background:** bg_showroom_young_couple_no_people
 **Characters:** Javlon (stubborn, left), Nilufar (happy, right)
 
 **UZ:** Equinoxning ichi kengroq ekan. Kreslo, sumka, bolalar narsasi hammasi sig'adi. Men shunga qarayapman.
@@ -226,8 +286,6 @@ Effects: +8 timing, +5 opportunity
 
 → next: d1_test_drive_offer
 
-> ⚠️ Визуальный таймер на 10 секунд нужен — игрок не понимает что время истекает
-
 ---
 
 ## ── BRANCH: Compromise Balanced ──
@@ -246,7 +304,7 @@ Effects: +8 timing, +5 opportunity
 **Characters:** Javlon (thinking, left), Nilufar (happy, right)
 
 **UZ:** Ikkalamizni ham eshitdingiz. Endi xotirjam ko'ramiz, keyin qaror qilamiz.
-**RU:** Вот. Вы услышали нас обоих. Теперь спокойно посмотрим и потом решим.
+**RU:** Вы услышали нас обоих. Теперь спокойно посмотрим и потом решим.
 
 → next: d1_test_drive_offer
 
@@ -267,7 +325,7 @@ Effects: +8 timing, +5 opportunity
 ### [d1_compromise_sport_nilufar] Nilufar (thoughtful) — dialogue
 **Characters:** Javlon (thinking, left), Nilufar (thoughtful, right)
 
-**UZ:** Mayli. Lekin men avval orqa o'rindiq bilan bagajni ko'raman. O'shanda hammasini bilinadi...
+**UZ:** Mayli. Lekin men avval orqa o'rindiq bilan bagajni ko'raman. Gap o'shanda bilinadi.
 **RU:** Хорошо. Но я сначала посмотрю задний ряд и багажник. Там всё и станет понятно.
 
 → next: d1_test_drive_offer
@@ -304,14 +362,14 @@ Effects: +8 timing, +5 opportunity
 > **Prompt RU:** Как продолжите?
 
 **A) d1_test_drive_offer_a**
-UZ: Keling, gapni hozircha to'xtataylik-da, bir hu mashinada aylanib ko'raylik. Yo'lda ko'p narsa bilinadi.
+UZ: Keling, gapni hozircha to'xtataylik-da, bir shu mashinada aylanib ko'raylik. Yo'lda ko'p narsa bilinadi.
 RU: Давайте пока отложим разговор и просто прокатимся. На дороге многое становится понятно.
 → leads to: d1_test_drive
 Effects: +5 rapport, set_flag: offered_test_drive
 
 **B) d1_test_drive_offer_b**
 UZ: Mayli, unda o'tirib to'lov shartlarini gaplashaylik.
-RU: Хорошо, тогда давайте сядем и обсудим условия.
+RU: Хорошо, тогда давайте сядем и обсудим условия оплаты.
 → leads to: d1_anniversary_check
 Effects: (none)
 
@@ -328,21 +386,22 @@ Effects: (none)
 ---
 
 ### [d1_test_drive_javlon] Javlon (stubborn) — dialogue
-**Background:** couple-in-the-car-test-drive.png
-**Characters:** Javlon (stubborn, left), Nilufar (thoughtful, right)
+**Background:** bg_test_drive_javlon_speaking
+**Characters:** (none — full scene image)
 
 **UZ:** Yurishi yomon emas ekan. Tortishi ham yaxshi. Men kutgandan yengilroq sezildi.
-**RU:** Едет, кстати, неплохо. На газ откликается. Ощущается легче, чем я ожидал.
+**RU:** Едет, кстати, неплохо. Тяга тоже хорошая. Ощущается легче, чем я ожидал.
 
 → next: d1_test_drive_nilufar
 
 ---
 
 ### [d1_test_drive_nilufar] Nilufar (happy) — dialogue
-**Characters:** Javlon (touched, left), Nilufar (happy, right)
+**Background:** bg_test_drive_nilufar_speaking
+**Characters:** (none — full scene image)
 
 **UZ:** Orqasi tor emas ekan. Bolalar kreslosi ham sig'adi, yoniga sumka ham tushadi. Tashqaridagi shovqin ham bezor qilmayapti.
-**RU:** Сзади не тесно. Кресло встанет, рядом ещё и сумка поместится. И внутри шум не раздражает.
+**RU:** Сзади не тесно. Детское кресло встанет, рядом ещё и сумка поместится. И шум снаружи не раздражает.
 
 → next: d1_test_drive_choice
 
@@ -366,7 +425,7 @@ RU: Скажу, что потом при продаже она тоже держ
 Effects: +5 expertise
 
 **C) d1_test_drive_choice_c**
-UZ: Biroz jim turaman, o'zlari mashinani yaxshilab his qilib olishsin.
+UZ: Biroz jim turaman, o'zlari sezib olsin.
 RU: Немного помолчу, пусть сами почувствуют.
 → leads to: d1_test_drive_silent
 Effects: +10 rapport
@@ -376,8 +435,8 @@ Effects: +10 rapport
 ### [d1_test_drive_safety] Nilufar (happy) — dialogue
 **Characters:** Javlon (neutral, left), Nilufar (happy, right)
 
-**UZ:** Orqada eshik qulfi bilan xavfsizlik yostiqlari bor ekanmi? Men uchun shu muhim. Etganingiz uchun rahmat.
-**RU:** Есть блокировка задних дверей и подушки безопасности? Для меня вот это важно. Спасибо, что сказали.
+**UZ:** Orqada eshik qulfi bilan xavfsizlik yostiqlari bor ekanmi? Men uchun shu muhim. Aytganingiz uchun rahmat.
+**RU:** Сзади есть блокировка дверей и подушки безопасности? Для меня вот это важно. Спасибо, что сказали.
 
 → next: d1_anniversary_check
 
@@ -387,7 +446,7 @@ Effects: +10 rapport
 **Characters:** Javlon (thinking, left), Nilufar (thoughtful, right)
 
 **UZ:** Keyin sotganda ham qadri ko'p yo'qolmasa va tez sotilsa yaxshi.
-**RU:** Если потом при продаже не сильно просядет, уже неплохо. Значит, деньги не уйдут в воздух совсем.
+**RU:** Если потом при продаже не сильно потеряет в цене и быстро продастся — уже хорошо.
 
 → next: d1_anniversary_check
 
@@ -398,7 +457,7 @@ Effects: +10 rapport
 **Characters:** Javlon (touched, left), Nilufar (happy, right)
 
 **UZ:** To'g'risi, mazza qilib xaydadim, testdrayv uchun rahmat!
-**RU:** Если честно, эта тишина как раз к месту. Каждый сам чувствует своё.
+**RU:** Честно говоря, с удовольствием проехался, спасибо за тест-драйв!
 
 → next: d1_anniversary_check
 
@@ -433,7 +492,7 @@ Effects: +10 rapport
 
 **A) d1_closing_a**
 UZ: Asosiysi shoshilmang. Yana bir kun ikkalangiz kelib, odatdagi yo'lingizda minib ko'ring. Qaror qabul qilishingiz shunda osonroq bo'ladi.
-RU: Не спешите. Приезжайте ещё раз вдвоём и прокатитесь по своему обычному маршруту. Так решать будет проще.
+RU: Главное — не спешите. Приезжайте ещё раз вдвоём и прокатитесь по своему обычному маршруту. Так принять решение будет проще.
 → leads to: d1_check
 Effects: +10 timing, +5 rapport
 
@@ -468,7 +527,7 @@ Effects: +5 timing
 **Characters:** Javlon (touched, left), Nilufar (happy, right)
 
 **UZ:** Rahmat sizga! Siz bizga mashinani shunchaki sotmasdan, avval bizni to'g'ri tushundingiz. Bizga ma'qul, olamiz. Equinoxni rasmiylashtiramiz.
-**RU:** Вот, это точно. Вы нам не просто машину показали, вы сначала нас правильно поняли. Берём. Давайте оформлять Equinox.
+**RU:** Спасибо вам! Вы не просто продавали машину, а сначала правильно нас поняли. Нам подходит, берём. Давайте оформлять Equinox.
 
 ---
 
@@ -476,9 +535,10 @@ Effects: +5 timing
 **Effects:** +120 XP, set_flag: d1_success
 
 **Rustam (proud):**
+**Characters:** Rustam (proud, center)
 
-**UZ:** Asosiysi, juftlikni ikkisni ham eshitdingiz. Shu usulni ushlab qoling.
-**RU:** Главное, вы не потеряли одного, пока разговаривали со вторым. Держите эту линию.
+**UZ:** Asosiysi, juftlikni ikkisini ham eshitdingiz. Shu usulni ushlab qoling.
+**RU:** Главное — вы выслушали обоих в паре. Держите эту линию.
 
 ---
 
@@ -486,9 +546,10 @@ Effects: +5 timing
 **Effects:** +75 XP, set_flag: d1_partial
 
 **Rustam (serious):**
+**Characters:** Rustam (serious, center)
 
-**UZ:** Yomon emas. Lekin bir paytning o'zida faqat bir mijoz bilangaplashdingiz. Ikkinchisi esa chetda qolib ketdi.
-**RU:** Неплохо. Но в какой-то момент вы держали только одного. Второй в разговоре остался в стороне.
+**UZ:** Yomon emas. Lekin bir paytning o'zida faqat bir mijoz bilan gaplashdingiz. Ikkinchisi esa chetda qolib ketdi.
+**RU:** Неплохо. Но в какой-то момент вы общались только с одним клиентом. А второй остался в стороне.
 
 ---
 
@@ -496,9 +557,10 @@ Effects: +5 timing
 **Effects:** +40 XP, lose_life, set_flag: d1_fail
 
 **Dilnoza (explaining):**
+**Characters:** Dilnoza (explaining, center)
 
 **UZ:** Juftlikdan biri sovub qolsa, sotuv jarayoni ham soviydi. Keyingi safar suhbatni ikkovi bilan olib boring.
-**RU:** В паре если один остывает, разговор тоже остывает. В следующий раз ведите беседу сразу на двоих.
+**RU:** Если один в паре остывает, то и продажа остывает. В следующий раз ведите разговор сразу с обоими.
 
 ---
 

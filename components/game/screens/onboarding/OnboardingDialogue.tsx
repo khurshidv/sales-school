@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { m, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useTypewriter } from '@/lib/game/hooks/useTypewriter';
+import type { Language } from '@/game/engine/types';
 
 interface InputConfig {
   type: 'text' | 'tel';
@@ -18,13 +19,29 @@ interface OnboardingDialogueProps {
   speakerName: string;
   onAdvance: () => void;
   inputConfig?: InputConfig;
+  onGoBack?: () => void;
+  canGoBack?: boolean;
+  lang?: Language;
 }
+
+const BACK_LABEL: Record<Language, string> = {
+  uz: 'Bir qadam orqaga',
+  ru: 'Шаг назад',
+};
+
+const NEXT_LABEL: Record<Language, string> = {
+  uz: 'Keyingisi',
+  ru: 'Далее',
+};
 
 export default function OnboardingDialogue({
   text,
   speakerName,
   onAdvance,
   inputConfig,
+  onGoBack,
+  canGoBack = false,
+  lang = 'ru',
 }: OnboardingDialogueProps) {
   const shouldReduceMotion = useReducedMotion();
   const { textRef, isTyping, skipToEnd } = useTypewriter(text, {
@@ -83,10 +100,11 @@ export default function OnboardingDialogue({
       onClick={handleClick}
     >
     <div
-      className="min-h-[16dvh] px-2.5 py-1.5 sm:min-h-[18dvh] sm:px-3.5 sm:py-2 md:min-h-[20dvh] md:px-4 md:py-2.5 lg:min-h-[28dvh] lg:px-6 lg:py-5 xl:min-h-[30dvh] xl:px-7 border-t border-white/10 bg-gradient-to-t from-black/55 via-black/35 to-black/10 lg:from-black/90 lg:via-black/70 lg:to-black/35"
+      className="relative min-h-[16svh] px-2.5 py-1.5 sm:min-h-[18svh] sm:px-3.5 sm:py-2 md:min-h-[20svh] md:px-4 md:py-2.5 lg:min-h-[28svh] lg:px-6 lg:py-5 xl:min-h-[30svh] xl:px-7 border-t border-white/10 bg-gradient-to-t from-black/55 via-black/35 to-black/10 lg:from-black/90 lg:via-black/70 lg:to-black/35"
       style={{
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
+        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 0.375rem)',
       }}
     >
       {/* Speaker name */}
@@ -168,15 +186,36 @@ export default function OnboardingDialogue({
         )}
       </AnimatePresence>
 
-      {/* Tap indicator — only for pure dialogue steps */}
-      {!isTyping && !inputConfig && (
-        <m.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute bottom-3 right-5 text-white/30 text-xs tracking-wider"
+      {/* Back pill — floats above the dialogue box on the left */}
+      {canGoBack && onGoBack && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onGoBack(); }}
+          onTouchEnd={(e) => { e.stopPropagation(); onGoBack(); }}
+          className="absolute left-3 sm:left-4 -top-7 sm:-top-8 md:-top-9 lg:-top-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white text-[10px] sm:text-xs tracking-wide transition-colors z-20"
+          style={{ WebkitBackdropFilter: 'blur(6px)' }}
+          aria-label={BACK_LABEL[lang]}
         >
-          ▼
-        </m.div>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {BACK_LABEL[lang]}
+        </button>
+      )}
+
+      {/* Next pill — floats above the dialogue box on the right, only for pure dialogue steps */}
+      {!inputConfig && (
+        <button
+          onClick={(e) => { e.stopPropagation(); if (isTyping) { skipToEnd(); return; } onAdvance(); }}
+          onTouchEnd={(e) => { e.stopPropagation(); if (isTyping) { skipToEnd(); return; } onAdvance(); }}
+          className="absolute right-3 sm:right-4 -top-7 sm:-top-8 md:-top-9 lg:-top-10 flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/80 hover:text-white text-[10px] sm:text-xs tracking-wide transition-colors z-20"
+          style={{ WebkitBackdropFilter: 'blur(6px)' }}
+          aria-label={NEXT_LABEL[lang]}
+        >
+          {NEXT_LABEL[lang]}
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
       )}
     </div>
     </m.div>

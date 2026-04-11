@@ -494,7 +494,7 @@ export const day1: Day = {
         uz: 'Ikkalasi ham o\'z tanlovida turibdi. Kimning haqligi bitimga olib keladi — birovnikimi yoki ikkalasinikimi?',
         ru: 'Оба стоят на своём. Чья правда ведёт к покупке — одного или сразу обоих?',
       },
-      timeLimit: 10,
+      timeLimit: 20,
       expireNodeId: 'd1_compromise_expired',
       choices: [
         {

@@ -74,9 +74,19 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   const timer = useTimer(timerState, engine.timerExpired);
 
   // Stable callbacks so React.memo on PauseMenu/GameOver/FinalResults holds.
-  const handlePause = useCallback(() => setShowPause(true), []);
-  const handleResume = useCallback(() => setShowPause(false), []);
-  const handleExit = useCallback(() => router.push('/game'), [router]);
+  // Pause/resume also freezes the choice timer so the player can't gain
+  // extra thinking time by opening the pause menu on a timed choice.
+  const handlePause = useCallback(() => {
+    engine.pauseTimer();
+    setShowPause(true);
+  }, [engine.pauseTimer]);
+  const handleResume = useCallback(() => {
+    engine.resumeTimer();
+    setShowPause(false);
+  }, [engine.resumeTimer]);
+  // ?menu=1 tells /game to skip its "first-time → Day 1" auto-redirect
+  // and always show ScenarioSelect (used from PauseMenu / GameOver / FinalResults).
+  const handleExit = useCallback(() => router.push('/game?menu=1'), [router]);
   const handleGameOverRestart = useCallback(() => {
     setShowGameOver(false);
     engine.restartDay();

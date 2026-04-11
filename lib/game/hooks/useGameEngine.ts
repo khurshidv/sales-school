@@ -85,6 +85,8 @@ export function useGameEngine(scenarioId: string) {
   const gsSelectChoice = useGameStore((s) => s.selectChoice);
   const gsSelectMultiChoices = useGameStore((s) => s.selectMultiChoices);
   const gsTimerExpired = useGameStore((s) => s.timerExpired);
+  const gsPauseTimer = useGameStore((s) => s.pauseTimer);
+  const gsResumeTimer = useGameStore((s) => s.resumeTimer);
   const gsResetDay = useGameStore((s) => s.resetDay);
   const gsGoBack = useGameStore((s) => s.goBack);
   const gsCanGoBack = useGameStore((s) => s.canGoBack);
@@ -325,6 +327,14 @@ export function useGameEngine(scenarioId: string) {
     gsTimerExpired();
   }, [gsTimerExpired]);
 
+  const pauseTimer = useCallback(() => {
+    gsPauseTimer();
+  }, [gsPauseTimer]);
+
+  const resumeTimer = useCallback(() => {
+    gsResumeTimer();
+  }, [gsResumeTimer]);
+
   const confirmNextDay = useCallback(() => {
     if (!scenario || !dayResults || transitioningRef.current) return;
     transitioningRef.current = true;
@@ -426,6 +436,8 @@ export function useGameEngine(scenarioId: string) {
       selectChoice,
       selectMultiChoices,
       timerExpired,
+      pauseTimer,
+      resumeTimer,
       confirmNextDay,
       restartDay,
       startDay,
@@ -447,6 +459,8 @@ export function useGameEngine(scenarioId: string) {
       selectChoice,
       selectMultiChoices,
       timerExpired,
+      pauseTimer,
+      resumeTimer,
       confirmNextDay,
       restartDay,
       startDay,

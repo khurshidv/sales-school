@@ -292,7 +292,7 @@ export const day3: Day = {
         uz: "Uchta Malibu bo‘yicha taklifni qanday shakllantirasiz?",
         ru: 'Как соберёте предложение по трём Malibu?',
       },
-      timeLimit: 10,
+      timeLimit: 20,
       expireNodeId: 'd3_fleet_expired',
       choices: [
         {
@@ -612,7 +612,7 @@ export const day3: Day = {
         uz: 'Qanday yaqinlashasiz?',
         ru: 'Как подойдёте?',
       },
-      timeLimit: 10,
+      timeLimit: 20,
       expireNodeId: 'd3_sardor_approach_expired',
       choices: [
         {
@@ -735,7 +735,7 @@ export const day3: Day = {
         uz: "Sardor: - Aytishlaricha, xizmat ko‘rsatish qimmat ekan. Ehtiyot qismlar bilan ham muammolar bor ekan.",
         ru: 'Сардор: "Говорят, сервис дорогой. И с запчастями проблемы."',
       },
-      timeLimit: 10,
+      timeLimit: 20,
       expireNodeId: 'd3_objection_expired',
       choices: [
         {

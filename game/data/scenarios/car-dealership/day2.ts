@@ -197,7 +197,7 @@ export const day2: Day = {
         uz: 'Narxlardagi farq haqidagi savolga qanday javob berasiz?',
         ru: 'Что ответите на вопрос про разницу в цене?',
       },
-      timeLimit: 10,
+      timeLimit: 20,
       expireNodeId: 'd2_objection_expired',
       choices: [
         {

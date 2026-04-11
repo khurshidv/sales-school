@@ -133,10 +133,13 @@ function GameHubInner() {
     );
   }
 
-  // Auto-redirect to game if player exists and hasn't completed any scenario
+  // Auto-redirect first-time players straight into Day 1 after onboarding.
+  // Skipped when ?menu=1 is present — that's an explicit "Exit to menu" from
+  // PauseMenu / FinalResults, where the player wants to see ScenarioSelect.
+  const forceMenu = searchParams.get('menu') === '1';
   const hasCompletedScenario = player && player.completedScenarios.length > 0;
 
-  if (player && !hasCompletedScenario) {
+  if (player && !hasCompletedScenario && !forceMenu) {
     router.replace('/game/play?scenario=car-dealership');
     return (
       <>

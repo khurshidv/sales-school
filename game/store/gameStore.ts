@@ -7,8 +7,12 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { GameSessionState, Day, PlayerState, ScenarioNode, ChoiceNode, NodeHistoryEntry } from '@/game/engine/types';
 import { createInitialGameSession } from '@/game/engine/types';
-import { resolveNode, processNode, applyEffects, makeChoice, makeMultiChoice } from '@/game/engine/ScenarioEngine';
-import { evaluateCondition } from '@/game/engine/ConditionEvaluator';
+import { resolveNode, processNode, makeChoice, makeMultiChoice } from '@/game/engine/ScenarioEngine';
+import {
+  startTimer,
+  pauseTimer as pauseTimerFn,
+  resumeTimer as resumeTimerFn,
+} from '@/game/systems/TimerSystem';
 
 interface GameStore {
   session: GameSessionState | null;
@@ -21,6 +25,8 @@ interface GameStore {
   selectChoice: (choiceIndex: number, playerState?: PlayerState) => void;
   selectMultiChoices: (indices: number[], playerState?: PlayerState) => void;
   timerExpired: () => void;
+  pauseTimer: () => void;
+  resumeTimer: () => void;
   resetDay: (day: Day) => void;
   goBack: () => void;
   canGoBack: () => boolean;
@@ -38,6 +44,54 @@ function createHistoryEntry(session: GameSessionState): NodeHistoryEntry {
       comboCount: session.comboCount,
     },
   };
+}
+
+/**
+ * Resolve a node and perform the work common to every transition:
+ *
+ *   1. Auto-advance through any `condition_branch` / `score` nodes until
+ *      we land on a user-visible node (dialogue / choice / day_intro / end).
+ *   2. Start `session.timerState` if we land on a timed choice; clear it
+ *      otherwise.
+ *
+ * Why (2) lives here: `timerState` on the session is what `useTimer()`
+ * subscribes to, which in turn drives the visible progress bar in
+ * `ChoicePanel`. Before this helper existed, nothing ever populated
+ * `timerState`, so all six timed choices across the scenarios rendered
+ * without a timer bar and never expired. Centralising timer lifecycle
+ * here guarantees every transition into a timed choice starts the clock
+ * and every transition out of one clears it — impossible to forget in
+ * only one of the five call sites.
+ */
+function enterNode(
+  nodeId: string,
+  day: Day,
+  session: GameSessionState,
+  playerState?: PlayerState,
+  now: number = Date.now(),
+): { node: ScenarioNode; session: GameSessionState } {
+  let node = resolveNode(nodeId, day);
+  let currentSession: GameSessionState = { ...session, currentNodeId: nodeId };
+
+  // Auto-advance through condition_branch and score nodes
+  while (node.type === 'condition_branch' || node.type === 'score') {
+    const result = processNode(node, currentSession, playerState);
+    if (!result.nextNodeId) break;
+    currentSession = { ...result.state, currentNodeId: result.nextNodeId };
+    node = resolveNode(result.nextNodeId, day);
+  }
+
+  // Start or clear timer based on where we landed.
+  if (node.type === 'choice' && node.timeLimit) {
+    currentSession = {
+      ...currentSession,
+      timerState: startTimer(node.timeLimit, now),
+    };
+  } else if (currentSession.timerState !== null) {
+    currentSession = { ...currentSession, timerState: null };
+  }
+
+  return { node, session: currentSession };
 }
 
 export const useGameStore = create<GameStore>()(
@@ -65,12 +119,12 @@ export const useGameStore = create<GameStore>()(
         };
       }
 
-      const rootNode = resolveNode(day.rootNodeId, day);
+      const entered = enterNode(day.rootNodeId, day, initialSession);
 
       set((state) => {
-        state.session = initialSession;
+        state.session = entered.session;
         state.currentDay = day;
-        state.currentNode = rootNode;
+        state.currentNode = entered.node;
       });
     },
 
@@ -94,21 +148,13 @@ export const useGameStore = create<GameStore>()(
       // Push current position to history before advancing
       const historyEntry = createHistoryEntry(session);
       const history = [...session.nodeHistory, historyEntry].slice(-MAX_HISTORY);
+      const sessionWithHistory: GameSessionState = { ...session, nodeHistory: history };
 
-      let node = resolveNode(nextNodeId, currentDay);
-      let updatedSession = { ...session, currentNodeId: nextNodeId, nodeHistory: history };
-
-      // Auto-advance through condition_branch and score nodes
-      while (node.type === 'condition_branch' || node.type === 'score') {
-        const result = processNode(node, updatedSession);
-        if (!result.nextNodeId) break;
-        updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
-        node = resolveNode(result.nextNodeId, currentDay);
-      }
+      const entered = enterNode(nextNodeId, currentDay, sessionWithHistory);
 
       set((state) => {
-        state.session = updatedSession;
-        state.currentNode = node;
+        state.session = entered.session;
+        state.currentNode = entered.node;
       });
     },
 
@@ -123,22 +169,11 @@ export const useGameStore = create<GameStore>()(
       // a non-dialogue entry on top of the stack, which goBack() silently
       // refuses to restore — making the "Шаг назад" button appear to do nothing.
       const result = makeChoice(choiceIndex, currentNode as ChoiceNode, session, playerState);
-      const nextNode = resolveNode(result.nextNodeId, currentDay);
-
-      let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
-      let node = nextNode;
-
-      // Auto-advance through condition_branch and score nodes
-      while (node.type === 'condition_branch' || node.type === 'score') {
-        const processed = processNode(node, updatedSession);
-        if (!processed.nextNodeId) break;
-        updatedSession = { ...processed.state, currentNodeId: processed.nextNodeId };
-        node = resolveNode(processed.nextNodeId, currentDay);
-      }
+      const entered = enterNode(result.nextNodeId, currentDay, result.state, playerState);
 
       set((state) => {
-        state.session = updatedSession;
-        state.currentNode = node;
+        state.session = entered.session;
+        state.currentNode = entered.node;
       });
     },
 
@@ -150,20 +185,11 @@ export const useGameStore = create<GameStore>()(
       // See selectChoice: history is populated by advance() at the dialogue
       // before this choice; pushing the choice node itself breaks goBack().
       const result = makeMultiChoice(indices, currentNode as ChoiceNode, session, playerState);
-      let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
-      let node = resolveNode(result.nextNodeId, currentDay);
-
-      // Auto-advance through condition_branch and score nodes
-      while (node.type === 'condition_branch' || node.type === 'score') {
-        const processed = processNode(node, updatedSession, playerState);
-        if (!processed.nextNodeId) break;
-        updatedSession = { ...processed.state, currentNodeId: processed.nextNodeId };
-        node = resolveNode(processed.nextNodeId, currentDay);
-      }
+      const entered = enterNode(result.nextNodeId, currentDay, result.state, playerState);
 
       set((state) => {
-        state.session = updatedSession;
-        state.currentNode = node;
+        state.session = entered.session;
+        state.currentNode = entered.node;
       });
     },
 
@@ -174,13 +200,29 @@ export const useGameStore = create<GameStore>()(
       // Choice nodes with expireNodeId
       if (currentNode.type === 'choice' && (currentNode as ChoiceNode).expireNodeId) {
         const expireNodeId = (currentNode as ChoiceNode).expireNodeId!;
-        const expireNode = resolveNode(expireNodeId, currentDay);
+        const entered = enterNode(expireNodeId, currentDay, session);
 
         set((state) => {
-          state.session!.currentNodeId = expireNodeId;
-          state.currentNode = expireNode;
+          state.session = entered.session;
+          state.currentNode = entered.node;
         });
       }
+    },
+
+    pauseTimer: () => {
+      set((state) => {
+        if (state.session?.timerState) {
+          state.session.timerState = pauseTimerFn(state.session.timerState, Date.now());
+        }
+      });
+    },
+
+    resumeTimer: () => {
+      set((state) => {
+        if (state.session?.timerState) {
+          state.session.timerState = resumeTimerFn(state.session.timerState, Date.now());
+        }
+      });
     },
 
     resetDay: (day) => {
@@ -189,12 +231,12 @@ export const useGameStore = create<GameStore>()(
 
       const lives = session.lives;
       const newSession = createInitialGameSession(session.scenarioId, day.dayNumber - 1, day.rootNodeId);
-      const rootNode = resolveNode(day.rootNodeId, day);
+      const entered = enterNode(day.rootNodeId, day, { ...newSession, lives });
 
       set((state) => {
-        state.session = { ...newSession, lives };
+        state.session = entered.session;
         state.currentDay = day;
-        state.currentNode = rootNode;
+        state.currentNode = entered.node;
       });
     },
 
@@ -218,6 +260,9 @@ export const useGameStore = create<GameStore>()(
           lives: previous.sessionSnapshot.lives,
           comboCount: previous.sessionSnapshot.comboCount,
           nodeHistory: history,
+          // history entries are always dialogue/day_intro, so going back
+          // can never land on a timed choice — clear any residual timer.
+          timerState: null,
         };
         state.currentNode = node;
       });

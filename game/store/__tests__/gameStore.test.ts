@@ -279,4 +279,137 @@ describe('gameStore', () => {
     expect(session!.lives).toBe(2);
     expect(currentNode!.id).toBe('intro');
   });
+
+  // ==========================================================
+  // Choice timer lifecycle — regression coverage for the bug
+  // where entering a timed choice never populated timerState,
+  // leaving the visible progress bar forever hidden.
+  // ==========================================================
+
+  describe('choice timer lifecycle', () => {
+    it('entering a timed choice starts timerState', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+
+      // intro -> dialogue1 — no timer yet
+      useGameStore.getState().advanceDialogue();
+      expect(useGameStore.getState().session!.timerState).toBeNull();
+
+      // dialogue1 -> choice1 (has timeLimit: 15) — timer must start
+      useGameStore.getState().advanceDialogue();
+      const { session, currentNode } = useGameStore.getState();
+      expect(currentNode!.id).toBe('choice1');
+      expect(session!.timerState).not.toBeNull();
+      expect(session!.timerState!.duration).toBe(15);
+      expect(session!.timerState!.remaining).toBe(15);
+      expect(session!.timerState!.pausedAt).toBeNull();
+    });
+
+    it('selectChoice clears timerState when leaving a timed choice', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+
+      useGameStore.getState().advanceDialogue(); // intro -> dialogue1
+      useGameStore.getState().advanceDialogue(); // dialogue1 -> choice1
+      expect(useGameStore.getState().session!.timerState).not.toBeNull();
+
+      useGameStore.getState().selectChoice(0); // -> after_choice (dialogue)
+      expect(useGameStore.getState().currentNode!.id).toBe('after_choice');
+      expect(useGameStore.getState().session!.timerState).toBeNull();
+    });
+
+    it('timerExpired routes to expireNodeId and clears timerState', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+
+      useGameStore.getState().advanceDialogue();
+      useGameStore.getState().advanceDialogue();
+      expect(useGameStore.getState().session!.timerState).not.toBeNull();
+
+      useGameStore.getState().timerExpired();
+
+      const { currentNode, session } = useGameStore.getState();
+      expect(currentNode!.id).toBe('timeout_node');
+      expect(session!.timerState).toBeNull();
+    });
+
+    it('pauseTimer freezes the remaining time', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+      useGameStore.getState().advanceDialogue();
+      useGameStore.getState().advanceDialogue();
+
+      const beforePause = useGameStore.getState().session!.timerState!;
+      expect(beforePause.pausedAt).toBeNull();
+
+      useGameStore.getState().pauseTimer();
+
+      const afterPause = useGameStore.getState().session!.timerState!;
+      expect(afterPause.pausedAt).not.toBeNull();
+      // Remaining is frozen at pause time (≤ original 15)
+      expect(afterPause.remaining).toBeLessThanOrEqual(15);
+      expect(afterPause.remaining).toBeGreaterThan(0);
+    });
+
+    it('resumeTimer unfreezes a paused timer', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+      useGameStore.getState().advanceDialogue();
+      useGameStore.getState().advanceDialogue();
+      useGameStore.getState().pauseTimer();
+
+      expect(useGameStore.getState().session!.timerState!.pausedAt).not.toBeNull();
+
+      useGameStore.getState().resumeTimer();
+      expect(useGameStore.getState().session!.timerState!.pausedAt).toBeNull();
+    });
+
+    it('pauseTimer / resumeTimer are noops when no timer is active', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+
+      // On day_intro node, no timer active
+      expect(useGameStore.getState().session!.timerState).toBeNull();
+
+      useGameStore.getState().pauseTimer();
+      useGameStore.getState().resumeTimer();
+
+      expect(useGameStore.getState().session!.timerState).toBeNull();
+    });
+
+    it('goBack from post-choice dialogue clears timerState', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+      useGameStore.getState().advanceDialogue(); // -> dialogue1
+      useGameStore.getState().advanceDialogue(); // -> choice1 (timer starts)
+      useGameStore.getState().selectChoice(0);   // -> after_choice (timer cleared)
+
+      expect(useGameStore.getState().currentNode!.id).toBe('after_choice');
+
+      // goBack from after_choice should return to dialogue1 (choice is skipped)
+      useGameStore.getState().goBack();
+      const { currentNode, session } = useGameStore.getState();
+      expect(currentNode!.type).toBe('dialogue');
+      expect(session!.timerState).toBeNull();
+    });
+
+    it('goBack then advanceDialogue restarts a fresh timer', () => {
+      const day = createTestDay();
+      useGameStore.getState().startDay('car-dealership', day);
+      useGameStore.getState().advanceDialogue();
+      useGameStore.getState().advanceDialogue(); // on choice1, timer running
+      useGameStore.getState().selectChoice(0);   // -> after_choice
+      useGameStore.getState().goBack();          // -> dialogue1 (timer cleared)
+
+      expect(useGameStore.getState().session!.timerState).toBeNull();
+
+      // Re-advance into the choice — a brand-new timer should start
+      useGameStore.getState().advanceDialogue();
+      const { currentNode, session } = useGameStore.getState();
+      expect(currentNode!.id).toBe('choice1');
+      expect(session!.timerState).not.toBeNull();
+      expect(session!.timerState!.duration).toBe(15);
+      expect(session!.timerState!.remaining).toBe(15);
+    });
+  });
 });

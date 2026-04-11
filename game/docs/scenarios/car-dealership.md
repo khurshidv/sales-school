@@ -558,7 +558,7 @@ nextNodeId: "d2_objection"
 prompt:
   uz: "Narx e'tiroziga qanday javob berasiz?"
   ru: "Как ответите на возражение по цене?"
-timeLimit: 10
+timeLimit: 20
 
 choices:
   A)
@@ -890,7 +890,7 @@ nextNodeId: "d3_compromise"
 prompt:
   uz: "Qanday kelishuv topasiz?"
   ru: "Как найдёте компромисс?"
-timeLimit: 10
+timeLimit: 20
 
 choices:
   A)
@@ -1250,7 +1250,7 @@ nextNodeId: "d4_fleet"
 prompt:
   uz: "3 ta Malibu uchun qanday taqdimot qilasiz?"
   ru: "Как представите 3 Malibu для флота?"
-timeLimit: 10
+timeLimit: 20
 
 choices:
   A)
@@ -1534,7 +1534,7 @@ nextNodeId: "d5_approach"
 prompt:
   uz: "Nima qilasiz?"
   ru: "Что сделаете?"
-timeLimit: 10
+timeLimit: 20
 
 choices:
   A)
@@ -1685,7 +1685,7 @@ nextNodeId: "d5_objection_choice"
 prompt:
   uz: "Qanday javob berasiz?"
   ru: "Как ответите?"
-timeLimit: 10
+timeLimit: 20
 
 choices:
   A)

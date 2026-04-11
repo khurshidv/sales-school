@@ -54,33 +54,9 @@
 **Background:** bg_showroom
 **Type:** phone_input (UI: telefon raqami kiritish)
 
-**UZ:** {name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring 
+**UZ:** {name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring
 **RU:** {name}, оставьте ваш номер телефона — так мы сможем с вами связаться.
 
 > Placeholder: "XX XXX-XX-XX"
-
-→ next: pre_avatar
-
----
-
-### [pre_avatar] Rustam (proud) — dialogue
-**Background:** bg_showroom
-**Type:** dialogue
-
-**UZ:** Zo'r, {name}! Endi o'z avataringizni tanlang — saloningizda qanday ko'rinishda bo'lasiz?
-**RU:** Отлично, {name}! Теперь выберите свой аватар — как вы будете выглядеть в салоне?
-
-→ next: character_select
-
-// Я решил убрать выбор аватара из игры полностью
-
----
-
-### [character_select] — character_select
-**Background:** bg_showroom
-**Type:** character_select (UI: avatar tanlash ekrani, Rustam ko'rinmaydi)
-
-**UZ:** O'z avataringizni tanlang
-**RU:** Выберите свой аватар
 
 → **Onboarding tugaydi. O'yin boshlanadi: Den' 1**

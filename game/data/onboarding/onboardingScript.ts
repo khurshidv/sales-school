@@ -9,8 +9,7 @@ export type OnboardingStepType =
   | 'dialogue'
   | 'lang_select'
   | 'name_input'
-  | 'phone_input'
-  | 'character_select';
+  | 'phone_input';
 
 export interface OnboardingStep {
   id: string;
@@ -102,33 +101,6 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     },
   },
 
-  // Step 5 — Transition to character select
-  {
-    id: 'pre_avatar',
-    type: 'dialogue',
-    background: 'bg_showroom',
-    rustamEmotion: 'proud',
-    showRustam: true,
-    speakerName: { uz: 'Rustam', ru: 'Рустам' },
-    text: {
-      uz: "Zo'r, {name}! Endi o'z avataringizni tanlang — saloningizda qanday ko'rinishda bo'lasiz?",
-      ru: 'Отлично, {name}! Теперь выберите свой аватар — как вы будете выглядеть в салоне?',
-    },
-  },
-
-  // Step 6 — Character/avatar select
-  {
-    id: 'character_select',
-    type: 'character_select',
-    background: 'bg_showroom',
-    rustamEmotion: 'proud',
-    showRustam: false,
-    speakerName: { uz: '', ru: '' },
-    text: {
-      uz: "O'z avataringizni tanlang",
-      ru: 'Выберите свой аватар',
-    },
-  },
 ];
 
 /** Resolve {name} placeholders in step text */

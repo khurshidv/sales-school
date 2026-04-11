@@ -79,11 +79,11 @@ function GameHubInner() {
   // Hydrate player from Supabase on mount (waits for reset to finish).
   usePlayerInit(resetDone);
 
-  const handleFormSubmit = async (name: string, phone: string, selectedLang: Language, avatarId: 'male' | 'female') => {
+  const handleFormSubmit = async (name: string, phone: string, selectedLang: Language) => {
     setLang(selectedLang);
 
     // Create player in Supabase first (source of truth)
-    const serverId = await syncCreatePlayer(phone, name, avatarId);
+    const serverId = await syncCreatePlayer(phone, name);
     if (serverId) {
       // Store phone locally for identification
       setStoredPhone(phone);
@@ -103,7 +103,7 @@ function GameHubInner() {
           id: serverId,
           phone,
           displayName: name,
-          avatarId,
+          avatarId: 'male',
           level: 1,
           totalXp: 0,
           totalScore: 0,

@@ -5,7 +5,6 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion';
 import SceneRenderer from '@/components/game/engine/SceneRenderer';
 import OnboardingDialogue from './onboarding/OnboardingDialogue';
 import OnboardingLangSelect from './onboarding/OnboardingLangSelect';
-import OnboardingCharacterSelect from './onboarding/OnboardingCharacterSelect';
 import {
   ONBOARDING_STEPS,
   getStepText,
@@ -51,12 +50,7 @@ const IOS_HINT_COPY = {
 } as const;
 
 interface OnboardingSequenceProps {
-  onSubmit: (
-    name: string,
-    phone: string,
-    lang: Language,
-    avatarId: 'male' | 'female',
-  ) => void;
+  onSubmit: (name: string, phone: string, lang: Language) => void;
 }
 
 export default function OnboardingSequence({
@@ -130,11 +124,7 @@ export default function OnboardingSequence({
   }
 
   function handlePhoneConfirm() {
-    if (phoneDigits.length === 9) advance();
-  }
-
-  function handleAvatarSelect(avatarId: 'male' | 'female') {
-    onSubmit(name.trim(), `+998${phoneDigits}`, lang, avatarId);
+    if (phoneDigits.length === 9) onSubmit(name.trim(), `+998${phoneDigits}`, lang);
   }
 
   // Render the correct overlay based on step type
@@ -201,16 +191,6 @@ export default function OnboardingSequence({
               prefix: '+998',
               isValid: phoneDigits.length === 9,
             }}
-          />
-        );
-
-      case 'character_select':
-        return (
-          <OnboardingCharacterSelect
-            key={`avatar-${step}`}
-            promptText={stepText}
-            lang={lang}
-            onSelect={handleAvatarSelect}
           />
         );
 

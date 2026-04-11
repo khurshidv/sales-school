@@ -8,7 +8,7 @@
 **Background:** bg_showroom_entrance
 **Type:** dialogue
 
-**UZ:** Salom! SalesUp'ga xush kelibsiz! Men Rustam — bu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!
+**UZ:** Salom! SalesUp'ga xush kelibsiz! Ismim Rustam — shcu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!
 **RU:** Привет! Добро пожаловать в SalesUp! Я Рустам — менеджер этого автосалона. Рад видеть тебя в качестве нового сотрудника!
 
 → next: lang_select
@@ -54,7 +54,7 @@
 **Background:** bg_showroom
 **Type:** phone_input (UI: telefon raqami kiritish)
 
-**UZ:** {name}, telefon raqamingizni qoldiring — shunda biz siz bilan bog'lana olamiz.
+**UZ:** {name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring 
 **RU:** {name}, оставьте ваш номер телефона — так мы сможем с вами связаться.
 
 > Placeholder: "XX XXX-XX-XX"
@@ -71,6 +71,8 @@
 **RU:** Отлично, {name}! Теперь выберите свой аватар — как вы будете выглядеть в салоне?
 
 → next: character_select
+
+// Я решил убрать выбор аватара из игры полностью
 
 ---
 

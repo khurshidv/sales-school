@@ -1,7 +1,6 @@
 'use client';
 
 import { memo } from 'react';
-import Image from 'next/image';
 import { m, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
 import type { CharacterPosition } from '@/game/engine/types';
@@ -32,20 +31,27 @@ function CharacterSprite({
 
   const src = character.assetPath(emotion);
 
+  // Note: используем plain <img> вместо next/image с `fill`, потому что
+  // ассеты персонажей имеют разные соотношения сторон (некоторые 2:3,
+  // некоторые 3:4). `aspect-[2/3]` на контейнере + `object-contain`
+  // визуально искажали спрайты не-2:3 — они читались как «сжатые по
+  // горизонтали». Plain img + `h-full w-auto` даёт каждому спрайту
+  // отрисовываться в его НАТУРАЛЬНОЙ пропорции, ширина контейнера
+  // подстраивается под intrinsic ratio файла.
   return (
     <m.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-      className={`absolute bottom-0 h-[98%] sm:h-[96%] md:h-[94%] lg:h-[90%] aspect-[2/3] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
+      className={`absolute bottom-0 h-[98%] sm:h-[96%] md:h-[94%] lg:h-[90%] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={src}
         alt={character.id}
-        fill
-        sizes="(max-width: 640px) 60vw, (max-width: 1024px) 50vw, 35vw"
-        className="object-contain object-bottom"
+        className="h-full w-auto object-contain object-bottom block"
+        draggable={false}
       />
     </m.div>
   );

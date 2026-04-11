@@ -884,8 +884,8 @@ export const day3: Day = {
         { id: 'dilnoza', emotion: 'neutral', position: 'right' },
       ],
       text: {
-        uz: "Sardor aka... Siz edingiz demak. Xo'sh, yangi hamkasbimiz qanday ishladi?",
-        ru: 'Сардор... Вот оно что. Ну, как вам наш новый коллега?',
+        uz: "Sardor aka... Xo'sh, yangi hamkasbimiz qanday ishladi?",
+        ru: 'Сардор... Ну, как вам наш новый коллега?',
       },
       nextNodeId: 'd3_grandmaster_check',
     },

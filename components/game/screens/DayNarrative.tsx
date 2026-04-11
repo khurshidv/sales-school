@@ -39,15 +39,15 @@ export default function DayNarrative({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.45, delay: shouldReduceMotion ? 0 : 0.15 }}
     >
-      <h3 className="text-sm sm:text-base font-semibold text-white mb-2 leading-snug">
+      <h3 className="text-[11px] sm:text-xs lg:text-base font-semibold text-white mb-1 leading-snug">
         {title}
       </h3>
 
-      <div className="space-y-2 text-xs sm:text-sm text-neutral-200 leading-relaxed whitespace-pre-line">
+      <div className="space-y-1 lg:space-y-3 text-[10px] sm:text-[11px] lg:text-[15px] text-neutral-200 leading-tight lg:leading-relaxed whitespace-pre-line">
         {body}
       </div>
 
-      <div className="mt-2 border-l-2 border-blue-400/60 pl-2.5 py-0.5 text-xs sm:text-sm italic text-blue-200/90">
+      <div className="mt-1.5 border-l-2 border-blue-400/60 pl-2 py-0.5 text-[10px] sm:text-[11px] lg:text-sm italic text-blue-200/90 leading-tight lg:leading-snug">
         {insight}
       </div>
     </m.section>

@@ -222,7 +222,7 @@ export const day1: Day = {
       ],
       text: {
         uz: 'Mayli, birgalikda ko\'ramiz. Lekin men Trackerni qo\'llab-quvvatlayman. Tez ishlaydi, gazni bosganingda darhol javob chiqadi.',
-        ru: 'Ладно, посмотрим вместе. Но я за Tracker. Работает быстро, нажимаешь — сразу отклик.',
+        ru: 'Ладно, посмотрим вместе. Но я за Tracker. Работает быстро, газ нажимаешь — сразу отклик.',
       },
       nextNodeId: 'd1_conflict_both_nilufar',
     },
@@ -319,7 +319,7 @@ export const day1: Day = {
       id: 'd1_compromise',
       type: 'choice',
       prompt: {
-        uz: 'Ikkalasi ham o\'z gapida turibdi. Nima deysiz?',
+        uz: 'Ikkalasi ham o\'z tanlovida turibdi. Nima deysiz?',
         ru: 'Оба стоят на своём. Что скажете?',
       },
       timeLimit: 10,
@@ -329,7 +329,7 @@ export const day1: Day = {
           id: 'd1_compromise_a',
           text: {
             uz: 'Ikkalangiz ham ikkihil narsa xohlayapsizlar. Keling, hozir sizlar uchun nima muhimroq ekanini aniqlashtirib olaylik: Oilangiz komfortimi yoki rul oldidagi hissiyotlarmi?',
-            ru: 'Вы оба хотите разного. Давайте определим, что для вас сейчас важнее: комфорт для семьи или ощущения за рулём?',
+            ru: 'Вы оба отстаиваете разное, но оба про дом. Давайте сначала отделим, что для вас сейчас тяжелее: удобство семьи или ощущения за рулём.',
           },
           effects: [
             { type: 'add_score', dimension: 'empathy', amount: 15 },
@@ -341,7 +341,7 @@ export const day1: Day = {
         {
           id: 'd1_compromise_b',
           text: {
-            uz: 'Equinox faqat oilaviy emas. Yurishi ham sust emas. Avval ichini ko\'ramiz, keyin rulda o\'zingiz his qilasiz.',
+            uz: 'Equinox faqat oila uchun emas. Yurishi ham sust emas. Avval ichini ko\'raylik, keyin rulda o\'zingiz o\'tirib his qilib ko\'rasiz.',
             ru: 'Equinox не только семейный. И едет он не вяло. Сначала посмотрим салон, потом сами почувствуете за рулём.',
           },
           effects: [

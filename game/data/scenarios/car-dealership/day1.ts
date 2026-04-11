@@ -352,9 +352,14 @@ export const day1: Day = {
             uz: 'Javlon tomonga boraman: "Assalomu alaykum. Tracker ko\'ryapsizmi?"',
             ru: 'Подхожу к Жавлону: "Здравствуйте. Смотрите Tracker?"',
           },
+          // Критическая методологическая ошибка: работа с парой требует
+          // внимания к обоим. Подход только к одному клиенту даёт штраф
+          // к empathy и ставит hard-флаг, который блокирует success в
+          // d1_check — как в реальной продаже автомобиля паре.
           effects: [
-            { type: 'add_score', dimension: 'timing', amount: 8 },
+            { type: 'add_score', dimension: 'empathy', amount: -5 },
             { type: 'set_flag', flag: 'approached_javlon' },
+            { type: 'set_flag', flag: 'ce_ignored_partner' },
           ],
           nextNodeId: 'd1_conflict_tracker',
         },
@@ -364,9 +369,11 @@ export const day1: Day = {
             uz: 'Nilufar tomonga boraman: "Assalomu alaykum. Equinoxga qarayapsizmi?"',
             ru: 'Подхожу к Нилуфар: "Здравствуйте. Смотрите Equinox?"',
           },
+          // Критическая методологическая ошибка — см. d1_who_first_b.
           effects: [
-            { type: 'add_score', dimension: 'expertise', amount: 8 },
+            { type: 'add_score', dimension: 'empathy', amount: -5 },
             { type: 'set_flag', flag: 'approached_nilufar' },
+            { type: 'set_flag', flag: 'ce_ignored_partner' },
           ],
           nextNodeId: 'd1_conflict_equinox',
         },
@@ -522,9 +529,13 @@ export const day1: Day = {
             uz: 'Yana bir yo\'l bor: hozir bittasini olasiz, keyin u eskirganda, mashinani topshirib boshqasiga alishtirasiz.',
             ru: 'Есть ещё вариант: сейчас берёте одну, потом сдаёте её и переходите на другую.',
           },
+          // Это не компромисс, а отложенная проблема. Пара уходит думать
+          // и не возвращается. Soft-флаг ce_weak_compromise в d1_check
+          // ограничивает исход до partial.
           effects: [
-            { type: 'add_score', dimension: 'timing', amount: 8 },
-            { type: 'add_score', dimension: 'opportunity', amount: 5 },
+            { type: 'add_score', dimension: 'discovery', amount: -5 },
+            { type: 'add_score', dimension: 'rapport', amount: -5 },
+            { type: 'set_flag', flag: 'ce_weak_compromise' },
           ],
           nextNodeId: 'd1_compromise_tradein',
         },
@@ -670,7 +681,14 @@ export const day1: Day = {
             uz: 'Mayli, unda o\'tirib to\'lov shartlarini gaplashaylik.',
             ru: 'Хорошо, тогда давайте сядем и обсудим условия оплаты.',
           },
-          effects: [],
+          // Пропуск тест-драйва в авто-продаже — критическая ошибка.
+          // Hard-флаг ce_skipped_test_drive в d1_check направляет в
+          // failure даже при нормальных остальных очках.
+          effects: [
+            { type: 'add_score', dimension: 'timing', amount: -8 },
+            { type: 'add_score', dimension: 'discovery', amount: -5 },
+            { type: 'set_flag', flag: 'ce_skipped_test_drive' },
+          ],
           nextNodeId: 'd1_anniversary_check',
         },
       ],
@@ -896,8 +914,11 @@ export const day1: Day = {
             uz: 'Istasangiz, hafta oxirigacha shu variantni ushlab turamiz. Uyda yana gaplashib, keyin aytasiz.',
             ru: 'Если хотите, до конца недели удержим этот вариант за вами. Дома ещё раз обсудите и потом скажете.',
           },
+          // Это не закрытие, а откладывание решения. Флаг
+          // soft_close_no_decision ограничивает исход до partial.
           effects: [
             { type: 'add_score', dimension: 'timing', amount: 5 },
+            { type: 'set_flag', flag: 'soft_close_no_decision' },
           ],
           nextNodeId: 'd1_check',
         },
@@ -908,18 +929,70 @@ export const day1: Day = {
     // ENDINGS
     // ============================================================
 
+    // d1_check — routing based on critical-error flags + score.
+    //
+    // Логика:
+    //   1. Hard CE (ce_ignored_partner или ce_skipped_test_drive) → fail
+    //      независимо от очков. В реальной продаже паре/без тест-драйва
+    //      сделки не бывает.
+    //   2. Hidden — anniversary_surprise + addressed_both + test_drive
+    //      (все три сигнала «мастерского» дня должны совпасть).
+    //   3. Soft CE (ce_weak_compromise или soft_close_no_decision) →
+    //      cap на partial. Очки не спасают.
+    //   4. Success — достаточный score И addressed_both И offered_test_drive.
+    //      То есть базовая методология должна быть соблюдена.
+    //   5. Partial по score, иначе fallback → fail.
     d1_check: {
       id: 'd1_check',
       type: 'condition_branch',
       branches: [
+        // 1. Hard critical errors → failure
         {
-          condition: { type: 'flag', flag: 'anniversary_surprise' },
+          condition: {
+            type: 'or',
+            conditions: [
+              { type: 'flag', flag: 'ce_ignored_partner' },
+              { type: 'flag', flag: 'ce_skipped_test_drive' },
+            ],
+          },
+          nextNodeId: 'd1_end_fail',
+        },
+        // 2. Hidden ending — anniversary surprise + addressed both + test drive
+        {
+          condition: {
+            type: 'and',
+            conditions: [
+              { type: 'flag', flag: 'anniversary_surprise' },
+              { type: 'flag', flag: 'addressed_both' },
+              { type: 'flag', flag: 'offered_test_drive' },
+            ],
+          },
           nextNodeId: 'd1_end_hidden',
         },
+        // 3. Soft critical errors → partial (cap)
         {
-          condition: { type: 'score_gte', value: 32 },
+          condition: {
+            type: 'or',
+            conditions: [
+              { type: 'flag', flag: 'ce_weak_compromise' },
+              { type: 'flag', flag: 'soft_close_no_decision' },
+            ],
+          },
+          nextNodeId: 'd1_end_partial',
+        },
+        // 4. Success — score OK AND base methodology (both + test drive)
+        {
+          condition: {
+            type: 'and',
+            conditions: [
+              { type: 'score_gte', value: 32 },
+              { type: 'flag', flag: 'addressed_both' },
+              { type: 'flag', flag: 'offered_test_drive' },
+            ],
+          },
           nextNodeId: 'd1_end_success',
         },
+        // 5. Partial by score (catch-all for mediocre but not broken runs)
         {
           condition: { type: 'score_gte', value: 18 },
           nextNodeId: 'd1_end_partial',
@@ -986,8 +1059,8 @@ export const day1: Day = {
         speaker: 'rustam',
         emotion: 'serious',
         text: {
-          uz: 'Yomon emas. Lekin bir paytning o\'zida faqat bir mijoz bilan gaplashdingiz. Ikkinchisi esa chetda qolib ketdi.',
-          ru: 'Неплохо. Но в какой-то момент вы общались только с одним клиентом. А второй остался в стороне.',
+          uz: "Ikkalasini ham eshitdingiz — bu yaxshi. Lekin yopishda murosa sust chiqdi yoki qaror ochiq qoldi. Bunaqa mijozlar uyga o'ylagani ketib, ko'pincha qaytmaydi.",
+          ru: 'Обоих выслушали — это хорошо. Но закрытие получилось слабым или решение осталось открытым. Такие клиенты уезжают думать — и часто не возвращаются.',
         },
         characters: [
           { id: 'rustam', emotion: 'serious', position: 'center' },

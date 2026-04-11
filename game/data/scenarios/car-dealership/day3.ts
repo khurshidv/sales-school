@@ -699,10 +699,14 @@ export const day3: Day = {
             uz: "Byudjetingiz qancha?",
             ru: 'Какой у вас бюджет?',
           },
+          // «Какой у вас бюджет?» в лоб — клиент чувствует, что его
+          // видят только как кошелёк. Soft-ошибка ce_shallow_discovery
+          // блокирует grandmaster в финальной проверке.
           nextNodeId: 'd3_objection',
           effects: [
-            { type: 'add_score', dimension: 'discovery', amount: 5 },
-            { type: 'add_score', dimension: 'timing', amount: 3 },
+            { type: 'add_score', dimension: 'discovery', amount: -3 },
+            { type: 'add_score', dimension: 'rapport', amount: -5 },
+            { type: 'set_flag', flag: 'ce_shallow_discovery' },
           ],
         },
         {
@@ -711,10 +715,13 @@ export const day3: Day = {
             uz: "Oila uchun — Equinox yoki Tracker. Ko'rsatay.",
             ru: 'Для семьи — Equinox или Tracker. Давайте покажу.',
           },
+          // Преждевременное предложение модели без выяснения потребностей.
+          // Soft-ошибка ce_premature_pitch блокирует grandmaster.
           nextNodeId: 'd3_objection',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 5 },
-            { type: 'add_score', dimension: 'discovery', amount: -3 },
+            { type: 'add_score', dimension: 'discovery', amount: -8 },
+            { type: 'set_flag', flag: 'ce_premature_pitch' },
           ],
         },
       ],
@@ -891,10 +898,56 @@ export const day3: Day = {
     },
 
     // ── Grandmaster Check ────────────────────────────────────
+    //
+    // Логика:
+    //   1. Две или более критических ошибок за день 3 → fail.
+    //      Grandmaster не должен достигаться, если игрок оступился.
+    //   2. Grandmaster — все фирменные флаги + score >= 63 + нет CE.
+    //   3. Одна soft CE → cap на partial (даже при высоком score).
+    //   4. Success по score.
+    //   5. Partial/fail fallback.
     d3_grandmaster_check: {
       id: 'd3_grandmaster_check',
       type: 'condition_branch',
       branches: [
+        // 1. Two or more critical errors → fail
+        {
+          condition: {
+            type: 'or',
+            conditions: [
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'ce_shallow_discovery' },
+                  { type: 'flag', flag: 'ce_premature_pitch' },
+                ],
+              },
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'ce_shallow_discovery' },
+                  { type: 'flag', flag: 'pressure_close' },
+                ],
+              },
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'ce_premature_pitch' },
+                  { type: 'flag', flag: 'pressure_close' },
+                ],
+              },
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'judged_by_appearance' },
+                  { type: 'flag', flag: 'pressure_close' },
+                ],
+              },
+            ],
+          },
+          nextNodeId: 'd3_end_fail',
+        },
+        // 2. Grandmaster — pristine path + high score + no CE
         {
           condition: {
             type: 'and',
@@ -910,14 +963,33 @@ export const day3: Day = {
                   { type: 'flag', flag: 'd2_success' },
                 ],
               },
+              { type: 'not', condition: { type: 'flag', flag: 'ce_shallow_discovery' } },
+              { type: 'not', condition: { type: 'flag', flag: 'ce_premature_pitch' } },
+              { type: 'not', condition: { type: 'flag', flag: 'pressure_close' } },
+              { type: 'not', condition: { type: 'flag', flag: 'judged_by_appearance' } },
             ],
           },
           nextNodeId: 'd3_end_grandmaster',
         },
+        // 3. Single soft CE → partial cap
+        {
+          condition: {
+            type: 'or',
+            conditions: [
+              { type: 'flag', flag: 'ce_shallow_discovery' },
+              { type: 'flag', flag: 'ce_premature_pitch' },
+              { type: 'flag', flag: 'pressure_close' },
+              { type: 'flag', flag: 'judged_by_appearance' },
+            ],
+          },
+          nextNodeId: 'd3_end_partial',
+        },
+        // 4. Success by score
         {
           condition: { type: 'score_gte', value: 56 },
           nextNodeId: 'd3_end_success',
         },
+        // 5. Partial by score
         {
           condition: { type: 'score_gte', value: 30 },
           nextNodeId: 'd3_end_partial',

@@ -359,6 +359,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           onReplayDay={engine.restartDay}
           canReplay={player ? canReplay(player.coins) : false}
           lang={lang}
+          flags={dr.flags}
         />
       </>
     );

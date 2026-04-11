@@ -38,6 +38,11 @@ interface DaySummaryProps {
   onReplayDay: () => void;
   canReplay: boolean;
   lang?: 'uz' | 'ru';
+  /**
+   * Session flags at end of day. Forwarded to DayNarrative to render
+   * the diagnostic critical-errors block for partial/failure outcomes.
+   */
+  flags?: Record<string, boolean>;
 }
 
 const t = {
@@ -80,6 +85,7 @@ export default function DaySummary({
   onReplayDay,
   canReplay,
   lang = 'uz',
+  flags,
 }: DaySummaryProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -114,7 +120,12 @@ export default function DaySummary({
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 flex-1 min-h-0 mt-2 sm:mt-3 lg:mt-4">
           {/* LEFT column — narrative side */}
           <div className="flex flex-col gap-2 min-h-0 overflow-y-auto pr-1 -mr-1">
-            <DayNarrative dayNumber={dayNumber} outcome={outcome} lang={lang} />
+            <DayNarrative
+              dayNumber={dayNumber}
+              outcome={outcome}
+              lang={lang}
+              flags={flags}
+            />
 
             {nearMiss && (
               <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-2.5 py-1.5 lg:p-3">

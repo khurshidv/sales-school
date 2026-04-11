@@ -115,9 +115,14 @@ export const day2: Day = {
             uz: 'Malibu yomon variant emas. Keling, mashinani qisqa ko\'rib chiqamiz, keyin narxga qaytamiz.',
             ru: 'Malibu вариант хороший. Давайте коротко пройдёмся по машине, потом вернёмся к цене.',
           },
+          // Камола уже изучила Malibu и сравнила с K5 (d2_anvar_files).
+          // Предлагать ей «короткий обзор машины» — значит пересказывать
+          // то, что она знает. Soft-флаг ce_wasted_her_time в d2_check
+          // ограничивает исход до partial.
           effects: [
-            { type: 'add_score', amount: 10, dimension: 'expertise' },
-            { type: 'set_flag', flag: 'standard_pitch' },
+            { type: 'add_score', amount: -8, dimension: 'expertise' },
+            { type: 'add_score', amount: -5, dimension: 'rapport' },
+            { type: 'set_flag', flag: 'ce_wasted_her_time' },
           ],
           nextNodeId: 'd2_kamola_obj_value',
         },
@@ -227,10 +232,14 @@ export const day2: Day = {
             uz: 'Xohlasangiz chegirma tomonni ham so\'rab ko\'raman, lekin avval mashinaning o\'zini tushuntirib beray.',
             ru: 'Если хотите, могу отдельно уточнить по скидке. Но сначала честно объясню саму машину, чтобы не уводить разговор в сторону.',
           },
+          // Клиент задал прямой вопрос про разницу в цене. Этот ответ
+          // уводит в скидку и «ещё раз о машине» — манипуляция, не ответ.
+          // Soft-флаг ce_dodged_price ограничивает исход до partial.
           effects: [
             { type: 'add_score', amount: -5, dimension: 'persuasion' },
             { type: 'add_score', amount: 3, dimension: 'empathy' },
             { type: 'set_flag', flag: 'offered_discount' },
+            { type: 'set_flag', flag: 'ce_dodged_price' },
           ],
           nextNodeId: 'd2_kamola_reacts_discount',
         },
@@ -240,7 +249,12 @@ export const day2: Day = {
     d2_objection_expired: {
       id: 'd2_objection_expired',
       type: 'score',
-      effects: [{ type: 'add_score', amount: -8, dimension: 'timing' }],
+      // Таймаут на ценовом вопросе = молчание. С точки зрения клиента
+      // это уход от прямого ответа — ставим ce_dodged_price.
+      effects: [
+        { type: 'add_score', amount: -8, dimension: 'timing' },
+        { type: 'set_flag', flag: 'ce_dodged_price' },
+      ],
       narrator: {
         uz: 'Pauza cho\'zildi. Kamola aniqlik kutmoqda.',
         ru: 'Пауза затянулась. Камола ждёт конкретики.',
@@ -496,9 +510,13 @@ export const day2: Day = {
             uz: 'Agar bugun qaror qilsangiz, men shartlarni alohida kelishib ko\'rishga harakat qilaman.',
             ru: 'Если решите сегодня, я попробую отдельно согласовать для вас условия.',
           },
+          // «Решите сегодня — будут условия» = давление. С подготовленным
+          // клиентом вроде Камолы это срабатывает как красный флаг.
+          // pressure_close учитывается в CRITICAL_ERROR_INSIGHTS и
+          // в d2_check → cap на partial.
           effects: [
             { type: 'add_score', amount: 5, dimension: 'timing' },
-            { type: 'add_score', amount: -3, dimension: 'rapport' },
+            { type: 'add_score', amount: -10, dimension: 'rapport' },
             { type: 'set_flag', flag: 'pressure_close' },
           ],
           nextNodeId: 'd2_check',
@@ -519,24 +537,83 @@ export const day2: Day = {
       ],
     },
 
+    // d2_check — routing based on critical-error flags + score.
+    //
+    // Логика:
+    //   1. Две soft-ошибки в одном дне (любая пара) → fail.
+    //      С подготовленным клиентом два промаха = потеря сделки.
+    //   2. Hidden — respected_knowledge + score >= 40 + ни одной ошибки.
+    //   3. Одна soft-ошибка → cap на partial, очки не помогают.
+    //   4. Success — score >= 35, без флагов ошибок.
+    //   5. Partial по score, иначе fail.
     d2_check: {
       id: 'd2_check',
       type: 'condition_branch',
       branches: [
+        // 1. Any two soft critical errors → failure
+        {
+          condition: {
+            type: 'or',
+            conditions: [
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'ce_wasted_her_time' },
+                  { type: 'flag', flag: 'pressure_close' },
+                ],
+              },
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'ce_wasted_her_time' },
+                  { type: 'flag', flag: 'ce_dodged_price' },
+                ],
+              },
+              {
+                type: 'and',
+                conditions: [
+                  { type: 'flag', flag: 'pressure_close' },
+                  { type: 'flag', flag: 'ce_dodged_price' },
+                ],
+              },
+            ],
+          },
+          nextNodeId: 'd2_end_fail',
+        },
+        // 2. Hidden — respected knowledge + score >= 40 (no CE flags, implicit
+        //    since branch 1 already filtered out double-error cases and this
+        //    branch doesn't match with pressure_close/ce_dodged_price alone).
         {
           condition: {
             type: 'and',
             conditions: [
               { type: 'score_gte', value: 40 },
               { type: 'flag', flag: 'respected_knowledge' },
+              { type: 'not', condition: { type: 'flag', flag: 'ce_wasted_her_time' } },
+              { type: 'not', condition: { type: 'flag', flag: 'pressure_close' } },
+              { type: 'not', condition: { type: 'flag', flag: 'ce_dodged_price' } },
             ],
           },
           nextNodeId: 'd2_end_hidden',
         },
+        // 3. Single soft critical error → cap at partial
+        {
+          condition: {
+            type: 'or',
+            conditions: [
+              { type: 'flag', flag: 'ce_wasted_her_time' },
+              { type: 'flag', flag: 'pressure_close' },
+              { type: 'flag', flag: 'ce_dodged_price' },
+            ],
+          },
+          nextNodeId: 'd2_end_partial',
+        },
+        // 4. Success by score (no CE flags at this point)
         {
           condition: { type: 'score_gte', value: 35 },
           nextNodeId: 'd2_end_success',
         },
+        // 5. Partial fallback
         {
           condition: { type: 'score_gte', value: 20 },
           nextNodeId: 'd2_end_partial',

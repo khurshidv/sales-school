@@ -50,30 +50,30 @@ export const day1Narratives: Record<DayOutcome, DayNarrative> = {
   },
   partial: {
     title: {
-      uz: 'Siz bittasini eshitdingiz. Ikkinchisi sizdan uzoqlashdi',
-      ru: 'Вы услышали одного. Второй остался в стороне',
+      uz: 'Qaror ochiq qoldi',
+      ru: 'Решение осталось открытым',
     },
     body: {
-      uz: 'Qaror birgalikda qabul qilinadi. Lekin siz suhbatni bir tomonga og\'dirib yubordingiz — ehtimol, "asosiy qaror qabul qiluvchi" deb o\'ylaganingiz uchun. Natijada ikkinchi odamda "meni e\'tiborga olishmadi" degan his qoldi.\n\nShu his — eng xavfli narsa: u bitimni qabul qilishdan emas, uydagi suhbatlarda qaytadan paydo bo\'ladi. Va ko\'pincha uyda mashinani qaytarish haqida qaror chiqadi.',
-      ru: 'Решения в паре принимаются вдвоём. Но вы увели разговор в одну сторону — возможно, потому что решили, что "главный" именно этот. В результате у второго остался осадок: "меня не услышали".\n\nЭтот осадок — самое опасное. Он срабатывает не в момент сделки, а дома, в разговорах на кухне. И часто именно на кухне принимается решение вернуть машину.',
+      uz: "Siz asosiy qismini to'g'ri qildingiz: juftlikning ikkalasini eshitdingiz, mashinani ko'rsatdingiz. Lekin yopish qismida siz mijozning qarorini kelajakka surdingiz — \"uyda o'ylab ko'ring\" yoki \"keyin almashtirasiz\" tipidagi taklif bilan.\n\nRealda bunday mijozlar uyga ketgach, fikr aynan o'sha \"keyin\"ga aylanadi. Uydagi stol atrofida sotuv aynan shu lahzada yo'qoladi.",
+      ru: 'Основное вы сделали правильно: выслушали обоих в паре, показали машину. Но на закрытии вы отодвинули решение клиента в будущее — «подумайте дома» или «потом обменяете».\n\nВ реальности такие клиенты уезжают думать, и за кухонным столом это самое «потом» превращается в «нет». Продажа теряется именно здесь.',
     },
     insight: {
-      uz: 'Juftlikka sotish — bu ikkita alohida sotuv emas. Bu — ikki odamni bitta qarorga olib kelish sanatidir.',
-      ru: 'Продажа паре — это не две отдельные продажи. Это искусство привести двух людей к одному решению.',
+      uz: "Yopish — bu mijozni shoshirish emas, balki uni aynan hozir aniq qadam qo'yishga yordam berishdir.",
+      ru: 'Закрытие — это не спешка, а помощь клиенту сделать конкретный шаг именно сейчас, пока он ещё в контексте.',
     },
   },
   failure: {
     title: {
-      uz: 'Bitim bo\'lmadi. Lekin bu — boshlanish',
-      ru: 'Сделка не состоялась. Но это — начало',
+      uz: 'Sotuv bo\'lmadi',
+      ru: 'Продажи не было',
     },
     body: {
-      uz: 'Juftlik salonni tark etdi, qo\'llari bo\'sh. Siz ularga mashinani ko\'rsatdingiz, lekin ularni bir-biriga ko\'rsatolmadingiz. Ular kelganlaridan ko\'ra bir-biriga uzoqroq holda ketishdi.\n\nBu — har bir sotuvchining birinchi darsi: odam mahsulot uchun kelmaydi, o\'z hayotidagi masalani hal qilish uchun keladi. Masalani ko\'rmaganingizda, mahsulot ham foydasiz bo\'lib qoladi.',
-      ru: 'Пара вышла из салона с пустыми руками. Вы показали им машину, но не смогли показать их друг другу. Они ушли, став дальше друг от друга, чем пришли.\n\nЭто первый урок любого продавца: человек приходит не за товаром, а чтобы решить задачу в своей жизни. Если вы не видите задачу — товар бесполезен.',
+      uz: 'Juftlik qo\'llari bo\'sh chiqib ketdi. Real bozorda bunday mijozlar qaytmaydi — ular uyda gaplashib, boshqa salonga borishadi. Bugungi kun usulga oid kamida bitta jiddiy xato bilan o\'tdi — quyida aynan qaysilari ekanligini ko\'rishingiz mumkin.\n\nBu — sotuvchining birinchi imtihoni. Asosiysi — xatolarni yashirmaslik, ularni aniq ko\'rish va keyingi safar boshqacha qilish.',
+      ru: 'Пара вышла с пустыми руками. В реальности такие клиенты не возвращаются — они обсудят дома и поедут в другой салон. Сегодня в продаже сорвались не мелочи, а как минимум одна методическая ошибка — ниже вы увидите, какая именно.\n\nЭто первый экзамен продавца. Главное — не прятать ошибки, а увидеть их конкретно и в следующий раз сделать иначе.',
     },
     insight: {
       uz: 'Har bir "yo\'q" — bu "nima uchun" degan savoldir. Javobni topa olganlar kuchli sotuvchilarga aylanishadi.',
-      ru: 'Каждое "нет" — это вопрос "почему". Те, кто находит ответ, становятся сильными продавцами.',
+      ru: 'Каждое «нет» — это вопрос «почему». Те, кто находит ответ, становятся сильными продавцами.',
     },
   },
 };

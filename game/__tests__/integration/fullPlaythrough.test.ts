@@ -292,15 +292,16 @@ describe('Key Paths', () => {
     expect(d1.state.score.total).toBe(57);
     expect(d1.endNodeId).toBe('d1_end_success');
 
-    // Day 2: let d2_objection timer expire
+    // Day 2: let d2_objection timer expire + pressure close
     const d2 = simulateDay(day2, {
       d2_presentation: 2,      // asked_priorities: discovery+8, empathy+5 = 13
-      // d2_objection has expireNodeId -> expire: timing-8 (total 5)
-      d2_test_drive_offer: 1,  // skip test drive: timing+3 (total 8)
-      d2_closing: 1,           // pressure_close: timing+5, rapport-3 = 2 (total 10)
+      // d2_objection has expireNodeId -> expire: timing-8 + ce_dodged_price
+      d2_test_drive_offer: 1,  // skip test drive: timing+3
+      d2_closing: 1,           // pressure: timing+5, rapport-10 + pressure_close = -5
     });
-    expect(d2.state.score.total).toBe(10);
-    // 10 < 20 -> fail
+    // 13 + (-8) + 3 + (-5) = 3
+    expect(d2.state.score.total).toBe(3);
+    // Two soft critical errors (ce_dodged_price + pressure_close) -> fail
     expect(d2.endNodeId).toBe('d2_end_fail');
     expect(d2.outcome).toBe('failure');
     // End effects include lose_life
@@ -330,16 +331,18 @@ describe('Key Paths', () => {
   });
 
   it('Path 4: Comeback Kid (fail then replay to success)', () => {
-    // Day 1: worst path -> failure
+    // Day 1: worst path -> failure via critical errors
     const d1fail = simulateDay(day1, {
-      d1_who_first: 2,     // approached_nilufar: expertise+8
+      d1_who_first: 2,     // approached_nilufar: empathy-5 + ce_ignored_partner (hard)
       // d1_compromise expires: timing-5
-      d1_test_drive_offer: 1, // skip test drive
-      d1_closing: 2,          // special_price: timing+5
+      d1_test_drive_offer: 1, // skip test drive: timing-8 discovery-5 + ce_skipped_test_drive (hard)
+      d1_closing: 2,          // hold weekend: timing+5 + soft_close_no_decision
     });
-    // 8 + (-5) + 0 + 5 = 8
-    expect(d1fail.state.score.total).toBe(8);
-    expect(d1fail.endNodeId).toBe('d1_end_fail'); // 8 < 18
+    // -5 + (-5) + (-13) + 5 = -18
+    expect(d1fail.state.score.total).toBe(-18);
+    expect(d1fail.state.flags.ce_ignored_partner).toBe(true);
+    expect(d1fail.state.flags.ce_skipped_test_drive).toBe(true);
+    expect(d1fail.endNodeId).toBe('d1_end_fail'); // hard CE -> fail
     expect(d1fail.outcome).toBe('failure');
     expect(d1fail.state.lives).toBe(2); // 3 - 1 from end effect
 
@@ -401,60 +404,76 @@ describe('Day 1 — All Paths', () => {
     expect(calculateRating(93, day1.targetScore)).toBe('S');
   });
 
-  it('middle path (approach javlon + equinox sport) -> success', () => {
+  it('middle path (approach only Javlon) -> failure via ce_ignored_partner', () => {
+    // Раньше этот путь считался "средним" (50 очков → success).
+    // После ребаланса: подход только к одному в паре — hard critical
+    // error, которая всегда ведёт к failure независимо от очков.
     const result = simulateDay(day1, {
-      d1_who_first: 1,         // timing+8
+      d1_who_first: 1,         // approached_javlon: empathy-5 + ce_ignored_partner (hard)
       d1_compromise: 1,        // expertise+12, persuasion+5 = 17
-      d1_test_drive_offer: 0,  // rapport+5
+      d1_test_drive_offer: 0,  // rapport+5 (offered_test_drive)
       d1_test_drive_choice: 1, // expertise+5
       d1_closing: 0,           // timing+10, rapport+5 = 15
     });
-    // 8 + 17 + 5 + 5 + 15 = 50
-    expect(result.state.score.total).toBe(50);
-    expect(result.endNodeId).toBe('d1_end_success');
-    expect(result.outcome).toBe('success');
+    // -5 + 17 + 5 + 5 + 15 = 37
+    expect(result.state.score.total).toBe(37);
+    expect(result.state.flags.ce_ignored_partner).toBe(true);
+    expect(result.endNodeId).toBe('d1_end_fail');
+    expect(result.outcome).toBe('failure');
   });
 
   it('worst path (approached nilufar + expire + skip test drive) -> failure', () => {
     const result = simulateDay(day1, {
-      d1_who_first: 2,          // expertise+8
+      d1_who_first: 2,          // approached_nilufar: empathy-5 + ce_ignored_partner
       // d1_compromise expires: timing-5
-      d1_test_drive_offer: 1,   // skip test drive, no effects
-      d1_closing: 2,            // timing+5
+      d1_test_drive_offer: 1,   // skip: timing-8 discovery-5 + ce_skipped_test_drive
+      d1_closing: 2,            // timing+5 + soft_close_no_decision
     });
-    // 8 + (-5) + 0 + 5 = 8
-    expect(result.state.score.total).toBe(8);
+    // -5 + (-5) + (-13) + 5 = -18
+    expect(result.state.score.total).toBe(-18);
+    expect(result.state.flags.ce_ignored_partner).toBe(true);
+    expect(result.state.flags.ce_skipped_test_drive).toBe(true);
     expect(result.endNodeId).toBe('d1_end_fail');
     expect(result.outcome).toBe('failure');
     expect(result.state.lives).toBe(2); // lost 1 from end effects
   });
 
-  it('partial path', () => {
+  it('partial path via weak compromise (tradein)', () => {
+    // Новый partial-путь: методология не сломана (обратились к обоим,
+    // предложили тест-драйв), но компромисс был "перекладыванием
+    // проблемы" (trade-in) → soft CE → cap на partial.
     const result = simulateDay(day1, {
-      d1_who_first: 2,         // expertise+8
-      d1_compromise: 2,        // timing+8, opportunity+5 = 13
-      d1_test_drive_offer: 1,  // skip test drive
-      d1_closing: 0,           // timing+10, rapport+5 = 15
+      d1_who_first: 0,         // addressed_both: rapport+15 empathy+5 discovery+8 = 28
+      d1_compromise: 2,        // tradein: discovery-5 rapport-5 + ce_weak_compromise = -10
+      d1_test_drive_offer: 0,  // rapport+5 (offered_test_drive)
+      d1_test_drive_choice: 0, // empathy+8 discovery+6 = 14
+      d1_closing: 0,           // timing+10 rapport+5 = 15
     });
-    // 8 + 13 + 0 + 15 = 36
-    expect(result.state.score.total).toBe(36);
-    // 36 >= 32 -> success actually
-    expect(result.endNodeId).toBe('d1_end_success');
-    // For partial: need 18 <= score < 32
-    // Let's try: who_first_c(8) + compromise_expire(-5) + test_drive_offer_b(0) + closing_c(5) = 8
-    // That's failure. Hard to get exactly 18-31 range...
-    // Skip test drive + trade-in approach:
-    // who_first_b(8) + compromise_c(13) + test_drive_offer_b(0) + closing_c(5) = 26
-    const partial = simulateDay(day1, {
-      d1_who_first: 1,         // timing+8
-      d1_compromise: 2,        // timing+8, opportunity+5 = 13
-      d1_test_drive_offer: 1,  // skip
-      d1_closing: 2,           // timing+5
+    // 28 + (-10) + 5 + 14 + 15 = 52
+    expect(result.state.score.total).toBe(52);
+    expect(result.state.flags.ce_weak_compromise).toBe(true);
+    expect(result.state.flags.addressed_both).toBe(true);
+    expect(result.state.flags.offered_test_drive).toBe(true);
+    // Even with score 52 (above success threshold of 32), soft CE caps at partial
+    expect(result.endNodeId).toBe('d1_end_partial');
+    expect(result.outcome).toBe('partial');
+  });
+
+  it('partial path via indecisive closing', () => {
+    // Всё методически правильно, но закрытие "hold till weekend" —
+    // не закрытие. Soft CE soft_close_no_decision → cap на partial.
+    const result = simulateDay(day1, {
+      d1_who_first: 0,         // addressed_both: 28
+      d1_compromise: 0,        // balanced: 31 (empathy+15 persuasion+10 discovery+6)
+      d1_test_drive_offer: 0,  // 5
+      d1_test_drive_choice: 0, // 14
+      d1_closing: 2,           // hold weekend: timing+5 + soft_close_no_decision
     });
-    // 8 + 13 + 0 + 5 = 26
-    expect(partial.state.score.total).toBe(26);
-    expect(partial.endNodeId).toBe('d1_end_partial'); // 18 <= 26 < 32
-    expect(partial.outcome).toBe('partial');
+    // 28 + 31 + 5 + 14 + 5 = 83
+    expect(result.state.score.total).toBe(83);
+    expect(result.state.flags.soft_close_no_decision).toBe(true);
+    expect(result.endNodeId).toBe('d1_end_partial');
+    expect(result.outcome).toBe('partial');
   });
 });
 
@@ -521,18 +540,60 @@ describe('Day 2 — All Paths', () => {
     expect(result.endNodeId).toBe('d2_end_hidden');
   });
 
-  it('objection timer expires -> low score -> fail', () => {
+  it('objection timer expires + pressure close -> two soft CEs -> fail', () => {
     const result = simulateDay(day2, {
-      d2_presentation: 2,      // discovery+8, empathy+5 = 13
-      // d2_objection expires: timing-8
+      d2_presentation: 2,      // asked_priorities: discovery+8, empathy+5 = 13
+      // d2_objection expires: timing-8 + ce_dodged_price
       d2_test_drive_offer: 1,  // skip test drive: timing+3
-      d2_closing: 1,           // pressure: timing+5, rapport-3 = 2
+      d2_closing: 1,           // pressure: timing+5, rapport-10 + pressure_close = -5
     });
-    // 13 + (-8) + 3 + 2 = 10
-    expect(result.state.score.total).toBe(10);
+    // 13 + (-8) + 3 + (-5) = 3
+    expect(result.state.score.total).toBe(3);
+    expect(result.state.flags.ce_dodged_price).toBe(true);
+    expect(result.state.flags.pressure_close).toBe(true);
+    // Two soft critical errors -> failure
     expect(result.endNodeId).toBe('d2_end_fail');
     expect(result.outcome).toBe('failure');
     expect(result.state.lives).toBe(2); // lost 1
+  });
+
+  it('wasted her time (standard pitch) -> single soft CE -> partial cap', () => {
+    // Даже с высоким score единственная soft-ошибка (презентация
+    // подготовленной клиентке) капает исход на partial.
+    const result = simulateDay(
+      day2,
+      {
+        d2_presentation: 1,      // standard pitch: expertise-8 rapport-5 + ce_wasted_her_time
+        d2_objection: 0,         // value_reframe: persuasion+15 expertise+5 = 20
+        d2_test_drive_offer: 0,  // timing+10 persuasion+5 = 15
+        d2_test_drive_choice: 0, // expertise+10
+        d2_closing: 2,           // soft close: rapport+10 empathy+5 = 15
+      },
+      { lives: 3, flags: { d1_success: true } },
+    );
+    // callback+5, (-13) + 20 + 15 + 10 + 15 = 52
+    expect(result.state.score.total).toBe(52);
+    expect(result.state.flags.ce_wasted_her_time).toBe(true);
+    expect(result.endNodeId).toBe('d2_end_partial');
+    expect(result.outcome).toBe('partial');
+  });
+
+  it('wasted her time + pressure close -> two CEs -> fail', () => {
+    // Игрок, который одновременно пересказал известное И попытался
+    // «дожать» — теряет сделку, даже если счёт формально норма.
+    const result = simulateDay(day2, {
+      d2_presentation: 1,      // ce_wasted_her_time
+      d2_objection: 0,         // value_reframe (no CE)
+      d2_test_drive_offer: 0,  // 15
+      d2_test_drive_choice: 0, // 10
+      d2_closing: 1,           // pressure_close
+    });
+    // (-13) + 20 + 15 + 10 + (-5) = 27
+    expect(result.state.score.total).toBe(27);
+    expect(result.state.flags.ce_wasted_her_time).toBe(true);
+    expect(result.state.flags.pressure_close).toBe(true);
+    expect(result.endNodeId).toBe('d2_end_fail');
+    expect(result.outcome).toBe('failure');
   });
 });
 
@@ -811,17 +872,16 @@ describe('Edge Cases', () => {
   });
 
   it('score dimensions can go negative but total stays correct', () => {
-    // Day 1: expire compromise (-5 timing) then skip test drive
+    // Day 1: worst-case path with multiple critical errors.
     const result = simulateDay(day1, {
-      d1_who_first: 2,          // expertise+8
+      d1_who_first: 2,          // empathy-5 + ce_ignored_partner
       // d1_compromise expires: timing-5
-      d1_test_drive_offer: 1,   // skip test drive
-      d1_closing: 2,            // timing+5
+      d1_test_drive_offer: 1,   // timing-8 discovery-5 + ce_skipped_test_drive
+      d1_closing: 2,            // timing+5 + soft_close_no_decision
     });
-    // Individual dimension: timing started from -5, then +5 = 0
-    // But this depends on whether timing was used elsewhere. Let's just verify totals.
-    expect(result.state.score.total).toBe(8); // 8+(-5)+0+5 = 8
-    expect(result.state.score.total).toBeLessThan(18); // failure territory
+    // -5 + (-5) + (-13) + 5 = -18
+    expect(result.state.score.total).toBe(-18);
+    expect(result.state.score.total).toBeLessThan(0); // deep negative
     expect(result.endNodeId).toBe('d1_end_fail');
   });
 });

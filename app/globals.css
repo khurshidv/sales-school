@@ -519,6 +519,69 @@
   padding-right: env(safe-area-inset-right, 0px);
 }
 
+/* === Game: ScenarioSelect brand utilities === */
+.mesh-game-dark {
+  background:
+    radial-gradient(at 15% 20%, rgba(232, 121, 10, 0.08) 0%, transparent 45%),
+    radial-gradient(at 85% 80%, rgba(148, 74, 0, 0.06) 0%, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(232, 121, 10, 0.02) 0%, transparent 70%),
+    #0a0a0a;
+}
+
+.glass-card-dark {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+}
+.glass-card-dark:hover {
+  border-color: rgba(232, 121, 10, 0.22);
+  background: linear-gradient(180deg, rgba(232, 121, 10, 0.04) 0%, rgba(232, 121, 10, 0.01) 100%);
+}
+
+.badge-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.badge-shimmer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-220%) skewX(-15deg);
+  pointer-events: none;
+  animation: btn-flash 3s ease-in-out infinite;
+}
+
+.scenario-active-card {
+  position: relative;
+  background: linear-gradient(135deg, #2a1a0a 0%, #1f1208 50%, #0d0604 100%);
+  border-radius: 0.75rem;
+  isolation: isolate;
+}
+.scenario-active-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #e8790a 0%, #ff9a3c 50%, #944a00 100%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  z-index: 1;
+}
+
 /* === GTA V Game UI Utilities === */
 .gta-text-shadow {
   text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.4);

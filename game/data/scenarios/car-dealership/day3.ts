@@ -434,7 +434,7 @@ export const day3: Day = {
       type: 'dialogue',
       speaker: 'abdullaev',
       emotion: 'impressed',
-      background: 'bg_vip_lounge',
+      background: 'bg_showroom',
       characters: [
         { id: 'abdullaev', emotion: 'impressed', position: 'center' },
       ],

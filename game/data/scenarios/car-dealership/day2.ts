@@ -373,8 +373,8 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'impressed', position: 'center' },
       ],
       text: {
-        uz: 'Hmm... osmasi K5 ga qaraganda yumshoqroq ekan. Salon ham yig\'iqroq, tinchroq sezilyapti.',
-        ru: 'Хм... подвеска мягче, чем у K5. И салон ощущается собраннее, тише.',
+        uz: 'Hmm yurishi... K5 ga qaraganda yumshoqroq ekan. Salon ham yig\'iqroq, tinchroq sezilyapti.',
+        ru: 'Хм, едет... мягче, чем K5. И салон ощущается собраннее, тише.',
       },
       nextNodeId: 'd2_test_drive_choice',
     },

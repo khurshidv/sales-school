@@ -225,8 +225,8 @@ Effects: +3 timing
 ### [d2_kamola_drives] Kamola (impressed) — dialogue
 **Background:** bg_test_drive_city
 
-**UZ:** Hmm... osmasi K5 ga qaraganda yumshoqroq ekan. Salon ham yig'iqroq, tinchroq sezilyapti.
-**RU:** Хм... подвеска мягче, чем у K5. И салон ощущается собраннее, тише.
+**UZ:** Hmm yurishi... K5 ga qaraganda yumshoqroq ekan. Salon ham yig'iqroq, tinchroq sezilyapti.
+**RU:** Хм, едет... мягче, чем K5. И салон ощущается собраннее, тише.
 
 → next: d2_test_drive_choice
 

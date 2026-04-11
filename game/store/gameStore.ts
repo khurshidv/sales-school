@@ -117,12 +117,12 @@ export const useGameStore = create<GameStore>()(
       if (!session || !currentDay || !currentNode) return;
       if (currentNode.type !== 'choice') return;
 
-      // Push current position to history before choice
-      const historyEntry = createHistoryEntry(session);
-      const history = [...session.nodeHistory, historyEntry].slice(-MAX_HISTORY);
-
-      const sessionWithHistory = { ...session, nodeHistory: history };
-      const result = makeChoice(choiceIndex, currentNode as ChoiceNode, sessionWithHistory, playerState);
+      // Do not push the choice node to history: the dialogue that led into
+      // this choice was already pushed by advance(), so goBack() restores to
+      // the pre-choice state correctly. Pushing the choice itself would leave
+      // a non-dialogue entry on top of the stack, which goBack() silently
+      // refuses to restore — making the "Шаг назад" button appear to do nothing.
+      const result = makeChoice(choiceIndex, currentNode as ChoiceNode, session, playerState);
       const nextNode = resolveNode(result.nextNodeId, currentDay);
 
       let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
@@ -147,12 +147,9 @@ export const useGameStore = create<GameStore>()(
       if (!session || !currentDay || !currentNode) return;
       if (currentNode.type !== 'choice') return;
 
-      // Push current position to history before multi-choice
-      const historyEntry = createHistoryEntry(session);
-      const history = [...session.nodeHistory, historyEntry].slice(-MAX_HISTORY);
-
-      const sessionWithHistory = { ...session, nodeHistory: history };
-      const result = makeMultiChoice(indices, currentNode as ChoiceNode, sessionWithHistory, playerState);
+      // See selectChoice: history is populated by advance() at the dialogue
+      // before this choice; pushing the choice node itself breaks goBack().
+      const result = makeMultiChoice(indices, currentNode as ChoiceNode, session, playerState);
       let updatedSession = { ...result.state, currentNodeId: result.nextNodeId };
       let node = resolveNode(result.nextNodeId, currentDay);
 

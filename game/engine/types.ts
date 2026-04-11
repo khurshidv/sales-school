@@ -103,6 +103,9 @@ export interface EndNode {
     speaker: string;
     emotion: string | null;
     text: LocalizedText;
+    /** Optional background override for the end scene. If omitted,
+     * the previously-seen background is inherited (как у DialogueNode). */
+    background?: string;
     characters?: CharacterOnScreen[];
   };
   nextDayTeaser?: LocalizedText;

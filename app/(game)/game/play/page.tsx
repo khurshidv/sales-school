@@ -182,6 +182,11 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
       lastBackgroundRef.current = (node as DialogueNode).background!;
     } else if (node.type === 'day_intro') {
       lastBackgroundRef.current = (node as DayIntroNode).background;
+    } else if (
+      node.type === 'end' &&
+      (node as EndNode).dialogue?.background
+    ) {
+      lastBackgroundRef.current = (node as EndNode).dialogue!.background!;
     }
     return lastBackgroundRef.current;
   }, [node]);

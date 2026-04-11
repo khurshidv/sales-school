@@ -858,10 +858,10 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'nilufar',
       emotion: 'caring',
-      characters: [
-        { id: 'javlon', emotion: 'neutral', position: 'left' },
-        { id: 'nilufar', emotion: 'caring', position: 'right' },
-      ],
+      // In-car scene: Нилуфар говорит — фон показывает её активной,
+      // Жавлон уже затемнён на самом фоне. Отдельные спрайты убраны.
+      background: 'bg_test_drive_nilufar_speaking',
+      characters: [],
       text: {
         uz: 'Aytgancha, kelasi hafta to\'y qilganimizga besh yil bo\'ladi. Shuning uchun ham bir qarorga kelishimiz kerak.',
         ru: 'Кстати, на следующей неделе будет пять лет, как мы женаты. Так что нам и с этим надо определиться.',
@@ -1015,14 +1015,14 @@ export const day1: Day = {
       dialogue: {
         speaker: 'javlon',
         emotion: 'touched',
+        // In-car scene: Жавлон благодарит — фон показывает его активным.
+        // Отдельные спрайты убраны.
+        background: 'bg_test_drive_javlon_speaking',
         text: {
           uz: 'Rahmat sizga! Siz bizga mashinani shunchaki sotmasdan, avval bizni to\'g\'ri tushundingiz. Bizga ma\'qul, olamiz. Equinoxni rasmiylashtiramiz.',
           ru: 'Спасибо вам! Вы не просто продавали машину, а сначала правильно нас поняли. Нам подходит, берём. Давайте оформлять Equinox.',
         },
-        characters: [
-          { id: 'javlon', emotion: 'touched', position: 'left' },
-          { id: 'nilufar', emotion: 'happy', position: 'right' },
-        ],
+        characters: [],
       },
     },
 

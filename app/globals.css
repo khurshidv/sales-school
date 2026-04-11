@@ -519,24 +519,13 @@
   padding-right: env(safe-area-inset-right, 0px);
 }
 
-/* === Game: ScenarioSelect brand utilities === */
-.mesh-game-dark {
+/* === Game: ScenarioSelect brand utilities (light theme) === */
+.mesh-game-light {
   background:
-    radial-gradient(at 15% 20%, rgba(232, 121, 10, 0.08) 0%, transparent 45%),
-    radial-gradient(at 85% 80%, rgba(148, 74, 0, 0.06) 0%, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(232, 121, 10, 0.02) 0%, transparent 70%),
-    #0a0a0a;
-}
-
-.glass-card-dark {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
-}
-.glass-card-dark:hover {
-  border-color: rgba(232, 121, 10, 0.22);
-  background: linear-gradient(180deg, rgba(232, 121, 10, 0.04) 0%, rgba(232, 121, 10, 0.01) 100%);
+    radial-gradient(at 12% 18%, #ffdcc6 0%, transparent 48%),
+    radial-gradient(at 88% 82%, #ffeedd 0%, transparent 52%),
+    radial-gradient(at 50% 55%, #fdf7ef 0%, transparent 80%),
+    #fbf9f5;
 }
 
 .badge-shimmer {
@@ -561,25 +550,55 @@
   animation: btn-flash 3s ease-in-out infinite;
 }
 
-.scenario-active-card {
+.scenario-featured-card {
   position: relative;
-  background: linear-gradient(135deg, #2a1a0a 0%, #1f1208 50%, #0d0604 100%);
-  border-radius: 0.75rem;
+  background:
+    linear-gradient(150deg, #ffffff 0%, #fff6eb 55%, #ffdcc6 100%);
+  border-radius: 1.25rem;
   isolation: isolate;
+  box-shadow:
+    0 20px 60px -18px rgba(232, 121, 10, 0.4),
+    0 8px 24px -12px rgba(148, 74, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.4s ease;
 }
-.scenario-active-card::before {
+.scenario-featured-card::before {
   content: "";
   position: absolute;
   inset: 0;
-  padding: 2px;
+  padding: 2.5px;
   border-radius: inherit;
-  background: linear-gradient(135deg, #e8790a 0%, #ff9a3c 50%, #944a00 100%);
+  background: linear-gradient(135deg, #e8790a 0%, #ff9a3c 40%, #ffdcc6 70%, #e8790a 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   -webkit-mask-composite: xor;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
+}
+.scenario-featured-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow:
+    0 28px 80px -18px rgba(232, 121, 10, 0.55),
+    0 12px 32px -12px rgba(148, 74, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.scenario-locked-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(221, 193, 176, 0.3);
+  border-radius: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+.scenario-locked-card:hover {
+  transform: translateX(-3px);
+  border-color: rgba(232, 121, 10, 0.28);
+  background: rgba(255, 246, 235, 0.85);
+  box-shadow: 0 8px 24px -10px rgba(232, 121, 10, 0.18);
 }
 
 /* === GTA V Game UI Utilities === */

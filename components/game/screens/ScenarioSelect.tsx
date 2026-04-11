@@ -13,23 +13,29 @@ const t = {
   soon: { uz: 'Tez kunda', ru: 'Скоро' },
   level: { uz: 'Daraja', ru: 'Уровень' },
   chevrolet: { uz: 'Chevrolet avtosaloni', ru: 'Автосалон Chevrolet' },
-  duration: { uz: "5 kun · 7-10 daq", ru: '5 дней · 7-10 мин' },
-  unlockHint: { uz: "Avtosalonni o'ting → ko'chmas mulkni oching!", ru: 'Пройди автосалон → открой недвижимость!' },
+  duration: { uz: '5 kun · 7–10 daq', ru: '5 дней · 7–10 мин' },
+  unlockHint: {
+    uz: "Avtosalonni o'ting → ko'chmas mulkni oching!",
+    ru: 'Пройди автосалон → открой недвижимость!',
+  },
   realEstate: { uz: "Ko'chmas mulk", ru: 'Недвижимость' },
   electronics: { uz: 'Elektronika', ru: 'Электроника' },
   furniture: { uz: 'Mebel', ru: 'Мебель' },
-} as const;
+  play: { uz: 'BOSHLASH', ru: 'НАЧАТЬ' },
+  select: { uz: 'SCENARIY TANLANG', ru: 'ВЫБОР СЦЕНАРИЯ' },
+} as const
 
 type LockedCard = {
-  icon: string;
-  titleKey: 'realEstate' | 'electronics' | 'furniture';
-};
+  icon: string
+  titleKey: 'realEstate' | 'electronics' | 'furniture'
+  days: string
+}
 
 const lockedCards: LockedCard[] = [
-  { icon: 'home', titleKey: 'realEstate' },
-  { icon: 'smartphone', titleKey: 'electronics' },
-  { icon: 'chair', titleKey: 'furniture' },
-];
+  { icon: 'home', titleKey: 'realEstate', days: '5' },
+  { icon: 'smartphone', titleKey: 'electronics', days: '4' },
+  { icon: 'chair', titleKey: 'furniture', days: '3' },
+]
 
 export default function ScenarioSelect({
   playerName,
@@ -39,130 +45,181 @@ export default function ScenarioSelect({
   lang = 'uz',
 }: ScenarioSelectProps) {
   return (
-    <div className="h-full w-full mesh-game-dark text-white relative overflow-hidden">
-      {/* Background orbs — premium depth */}
+    <div className="h-full w-full mesh-game-light text-on-surface relative overflow-hidden">
+      {/* Ambient orbs for depth */}
       <div
         className="glow-orb"
         style={{
-          width: 320,
-          height: 320,
-          top: -80,
+          width: 340,
+          height: 340,
+          top: -100,
           left: -80,
-          background: 'radial-gradient(circle, rgba(232,121,10,0.35) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(232,121,10,0.25) 0%, transparent 70%)',
         }}
       />
       <div
         className="glow-orb"
         style={{
-          width: 260,
-          height: 260,
-          bottom: -60,
+          width: 280,
+          height: 280,
+          bottom: -80,
           right: -60,
-          background: 'radial-gradient(circle, rgba(148,74,0,0.3) 0%, transparent 70%)',
-          animationDelay: '1.2s',
+          background: 'radial-gradient(circle, rgba(148,74,0,0.18) 0%, transparent 70%)',
+          animationDelay: '1.5s',
         }}
       />
 
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 px-4 py-3 flex items-center justify-between z-20">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#e8790a] to-[#944a00] flex items-center justify-center font-heading font-bold text-sm text-white shadow-lg shadow-[#e8790a]/20">
+      <div className="absolute top-0 left-0 right-0 px-5 py-3 flex items-center justify-between z-20">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff9a3c] via-[#e8790a] to-[#944a00] flex items-center justify-center font-heading font-bold text-sm text-white"
+            style={{ boxShadow: '0 6px 18px -4px rgba(232,121,10,0.5), inset 0 1px 0 rgba(255,255,255,0.35)' }}
+          >
             {playerName.charAt(0).toUpperCase()}
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="text-sm font-heading font-semibold text-white">{playerName}</span>
-            <span className="text-[10px] font-heading uppercase tracking-widest text-[#ffdcc6]/60">
+            <span className="text-sm font-heading font-bold text-on-surface">{playerName}</span>
+            <span className="text-[10px] font-heading uppercase tracking-widest text-on-surface-variant/70">
               Lv.{playerLevel}
             </span>
           </div>
         </div>
 
-        {/* Coin pill — brand orange */}
-        <div className="flex items-center gap-1.5 bg-[#e8790a]/10 border border-[#e8790a]/30 rounded-full px-3 py-1 backdrop-blur-sm">
-          <span className="material-symbols-outlined text-[#ff9a3c]" style={{ fontSize: 16 }}>
+        {/* Center title */}
+        <span className="hidden sm:block font-heading text-[11px] uppercase tracking-[0.3em] text-on-surface-variant/60">
+          {t.select[lang]}
+        </span>
+
+        {/* Coin pill */}
+        <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md border border-[#e8790a]/25 rounded-full px-3 py-1.5 shadow-sm">
+          <span
+            className="material-symbols-outlined text-[#e8790a]"
+            style={{ fontSize: 16, fontVariationSettings: "'FILL' 1" }}
+          >
             paid
           </span>
-          <span className="font-heading font-bold text-sm text-[#ff9a3c]">{playerCoins}</span>
+          <span className="font-heading font-bold text-sm text-[#944a00]">{playerCoins}</span>
         </div>
       </div>
 
-      {/* Main row: active card + locked grid */}
-      <div className="absolute inset-0 flex items-center gap-3 px-5 pt-14 pb-14">
-        {/* === Active card === */}
+      {/* Main bento layout: featured (left) + vertical locked stack (right) */}
+      <div className="absolute inset-0 pt-16 pb-12 px-5 flex items-center gap-4">
+        {/* === FEATURED CARD — dominant === */}
         <button
           onClick={() => onSelectScenario('car-dealership')}
-          className="scenario-active-card flex-none w-[38%] max-w-[300px] h-[86%] relative overflow-hidden animate-pulse-glow group"
+          className="scenario-featured-card group flex-none w-[58%] max-w-[520px] h-full overflow-hidden text-left"
         >
-          {/* Badge "OCHIQ / ОТКРЫТ" — green with shimmer sweep */}
-          <span className="badge-shimmer absolute top-2.5 right-2.5 bg-[#22c55e] text-[10px] px-2.5 py-0.5 rounded-full font-heading font-bold uppercase tracking-wider text-white z-20 shadow-md shadow-[#22c55e]/30">
-            {t.open[lang]}
-          </span>
-
-          {/* Background image */}
+          {/* Soft warm background image */}
           <img
             src="/assets/scenarios/car-dealership/backgrounds/bg_showroom.jpg"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-luminosity"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.08] group-hover:opacity-[0.12] transition-opacity duration-500"
           />
 
-          {/* Warm orange wash */}
-          <div
-            className="absolute inset-0 z-[1] pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(ellipse at 50% 40%, rgba(232,121,10,0.18) 0%, transparent 60%)',
-            }}
-          />
+          {/* Top row: level pill + open badge */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+            <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm border border-[#e8790a]/30 rounded-full px-3 py-1">
+              <span
+                className="material-symbols-outlined text-[#e8790a]"
+                style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}
+              >
+                star
+              </span>
+              <span className="font-heading text-[10px] uppercase tracking-[0.2em] font-bold text-[#944a00]">
+                {t.level[lang]} 1
+              </span>
+            </div>
 
-          <div className="flex flex-col items-center justify-center h-full px-3 gap-2 relative z-[2]">
+            <span className="badge-shimmer bg-[#22c55e] text-white text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_4px_12px_rgba(34,197,94,0.35)]">
+              {t.open[lang]}
+            </span>
+          </div>
+
+          {/* Hero car — centered */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <img
               src="/assets/scenarios/car-dealership/cars/car_all_lineup.webp"
               alt="Chevrolet"
-              className="w-28 h-auto transition-transform duration-500 group-hover:scale-105"
-              style={{ filter: 'drop-shadow(0 0 24px rgba(232,121,10,0.45))' }}
+              className="w-[72%] max-w-[380px] h-auto transition-transform duration-500 group-hover:scale-[1.04] group-hover:-translate-y-1"
+              style={{
+                filter:
+                  'drop-shadow(0 18px 28px rgba(148,74,0,0.28)) drop-shadow(0 0 40px rgba(232,121,10,0.25))',
+              }}
             />
-            <span className="font-heading text-[#ff9a3c] text-[10px] uppercase tracking-[0.25em] font-semibold mt-1">
-              {t.level[lang]} 1
-            </span>
-            <span className="font-heading text-white font-bold text-center text-base leading-tight">
-              {t.chevrolet[lang]}
-            </span>
-            <span className="text-[#ffdcc6]/60 text-[11px] font-body">{t.duration[lang]}</span>
           </div>
 
-          {/* Play button — uses brand cta-btn gradient */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-            <div className="cta-btn w-12 h-12 rounded-full flex items-center justify-center">
-              <span className="text-white text-base ml-0.5 font-bold">▶</span>
+          {/* Bottom meta panel */}
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 pt-10 z-10">
+            <div className="flex items-end justify-between gap-3">
+              <div className="flex flex-col">
+                <h2 className="font-heading font-bold text-on-surface text-xl leading-tight tracking-tight">
+                  {t.chevrolet[lang]}
+                </h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span
+                    className="material-symbols-outlined text-on-surface-variant/70"
+                    style={{ fontSize: 14 }}
+                  >
+                    schedule
+                  </span>
+                  <span className="text-[11px] font-body font-medium text-on-surface-variant/80">
+                    {t.duration[lang]}
+                  </span>
+                </div>
+              </div>
+
+              {/* Play pill button */}
+              <div className="cta-btn flex items-center gap-2 px-4 py-2.5 rounded-full pointer-events-none">
+                <span className="font-heading font-bold text-white text-[11px] uppercase tracking-[0.15em]">
+                  {t.play[lang]}
+                </span>
+                <span className="text-white text-sm leading-none">▶</span>
+              </div>
             </div>
           </div>
         </button>
 
-        {/* === Locked cards — uniform grid === */}
-        <div className="grid grid-cols-3 gap-3 flex-1 h-[78%]">
-          {lockedCards.map((card) => (
+        {/* === LOCKED STACK — small vertical list === */}
+        <div className="flex-1 h-full flex flex-col justify-center gap-2.5 min-w-0">
+          {lockedCards.map((card, idx) => (
             <div
               key={card.titleKey}
               aria-disabled="true"
-              className="glass-card-dark rounded-xl relative overflow-hidden flex flex-col items-center justify-center gap-2 px-2"
+              className="scenario-locked-card flex items-center gap-3 px-4 py-3 h-[28%] min-h-0"
+              style={{
+                opacity: 1 - idx * 0.08,
+              }}
             >
-              <span
-                className="material-symbols-outlined text-[#ffdcc6]/25"
-                style={{ fontSize: 36 }}
-              >
-                {card.icon}
-              </span>
-              <span className="font-heading text-white/40 text-[11px] text-center leading-tight font-semibold">
-                {t[card.titleKey][lang]}
-              </span>
-              <div className="flex flex-col items-center gap-1 mt-1">
+              {/* Icon block */}
+              <div className="flex-none w-11 h-11 rounded-xl bg-gradient-to-br from-[#ffdcc6]/60 to-[#f5e8da]/40 border border-[#ddc1b0]/40 flex items-center justify-center">
                 <span
-                  className="material-symbols-outlined text-[#ffdcc6]/30"
-                  style={{ fontSize: 18 }}
+                  className="material-symbols-outlined text-[#944a00]/45"
+                  style={{ fontSize: 22 }}
+                >
+                  {card.icon}
+                </span>
+              </div>
+
+              {/* Text block */}
+              <div className="flex-1 min-w-0 flex flex-col">
+                <span className="font-heading font-bold text-[13px] text-on-surface/55 leading-tight truncate">
+                  {t[card.titleKey][lang]}
+                </span>
+                <span className="font-body text-[10px] text-on-surface-variant/60 mt-0.5">
+                  {card.days} {lang === 'uz' ? 'kun' : 'дней'}
+                </span>
+              </div>
+
+              {/* Lock state */}
+              <div className="flex-none flex flex-col items-center gap-0.5">
+                <span
+                  className="material-symbols-outlined text-on-surface-variant/50"
+                  style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}
                 >
                   lock
                 </span>
-                <span className="font-heading text-[#ffdcc6]/40 text-[9px] uppercase tracking-widest font-semibold">
+                <span className="font-heading text-[8px] uppercase tracking-wider font-bold text-on-surface-variant/50">
                   {t.soon[lang]}
                 </span>
               </div>
@@ -171,8 +228,8 @@ export default function ScenarioSelect({
         </div>
       </div>
 
-      {/* Bottom hint — brand gradient */}
-      <p className="absolute bottom-4 left-0 right-0 text-center font-heading text-sm font-semibold px-4 z-10">
+      {/* Bottom hint */}
+      <p className="absolute bottom-3 left-0 right-0 text-center font-heading text-xs font-semibold px-4 z-10">
         <span className="text-gradient-orange">{t.unlockHint[lang]}</span>
       </p>
     </div>

@@ -137,8 +137,8 @@ export const day1: Day = {
         { id: 'rustam', emotion: 'friendly', position: 'center' },
       ],
       text: {
-        uz: 'Juftliklar ko\'pincha biror muhim sana bilan kelishadi — to\'y, farzand tug\'ilishi, yubiley. Suhbatda shu sanani payqasang, uni e\'tiborsiz qoldirma. O\'sha paytda sotuv — oddiy bitim emas, sovg\'aga aylanadi.',
-        ru: 'Пары часто приходят к важной дате — свадьба, рождение ребёнка, годовщина. Если заметишь такую дату в разговоре — не проходи мимо. Именно тогда покупка перестаёт быть покупкой и становится подарком.',
+        uz: 'Juftliklar ko\'pincha biror muhim sana bilan kelishadi — to\'y, farzand tug\'ilishi, yubiley. Suhbatda shu sanani payqasangiz, uni e\'tiborsiz qoldirmang. O\'sha paytda sotuv — oddiy bitim emas, sovg\'aga aylanadi.',
+        ru: 'Пары часто приходят к важной дате — свадьба, рождение ребёнка, годовщина. Если заметите такую дату в разговоре — не проходите мимо. Именно тогда покупка перестаёт быть покупкой и становится подарком.',
       },
       nextNodeId: 'd1_exit_office_narr',
     },
@@ -152,8 +152,8 @@ export const day1: Day = {
         { id: 'rustam', emotion: 'friendly', position: 'center' },
       ],
       text: {
-        uz: 'Hayajonlanayotganingni yashirma. Mijozlar "men ham oddiy odamman" deb turgan sotuvchini har qanday texnikadan ko\'ra ko\'proq hurmat qilishadi. Shu — eng kuchli qurolimiz.',
-        ru: 'Не прячь своё волнение. Клиенты уважают продавца, который говорит «я такой же человек», больше любой техники продаж. Это — наше самое сильное оружие.',
+        uz: 'Hayajonlanayotganingizni yashirmang. Mijozlar "men ham oddiy odamman" deb turgan sotuvchini har qanday texnikadan ko\'ra ko\'proq hurmat qilishadi. Shu — eng kuchli qurolimiz.',
+        ru: 'Не прячьте своё волнение. Клиенты уважают продавца, который говорит «я такой же человек», больше любой техники продаж. Это — наше самое сильное оружие.',
       },
       nextNodeId: 'd1_exit_office_narr',
     },
@@ -768,10 +768,11 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'nilufar',
       emotion: 'happy',
-      characters: [
-        { id: 'javlon', emotion: 'neutral', position: 'left' },
-        { id: 'nilufar', emotion: 'happy', position: 'right' },
-      ],
+      // Car interior: говорящий обозначен вариантом фона
+      // (*_nilufar_speaking / *_javlon_speaking), спрайты скрыты —
+      // фон уже показывает обоих в машине, а активный подсвечен.
+      background: 'bg_test_drive_nilufar_speaking',
+      characters: [],
       text: {
         uz: 'Orqada eshik qulfi bilan xavfsizlik yostiqlari bor ekanmi? Men uchun shu muhim. Aytganingiz uchun rahmat.',
         ru: 'Сзади есть блокировка дверей и подушки безопасности? Для меня вот это важно. Спасибо, что сказали.',
@@ -784,10 +785,8 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'thinking',
-      characters: [
-        { id: 'javlon', emotion: 'thinking', position: 'left' },
-        { id: 'nilufar', emotion: 'thoughtful', position: 'right' },
-      ],
+      background: 'bg_test_drive_javlon_speaking',
+      characters: [],
       text: {
         uz: 'Keyin sotganda ham qadri ko\'p yo\'qolmasa va tez sotilsa yaxshi.',
         ru: 'Если потом при продаже не сильно потеряет в цене и быстро продастся — уже хорошо.',
@@ -800,11 +799,8 @@ export const day1: Day = {
       type: 'dialogue',
       speaker: 'javlon',
       emotion: 'touched',
-      background: 'bg_city_street_tashkent',
-      characters: [
-        { id: 'javlon', emotion: 'touched', position: 'left' },
-        { id: 'nilufar', emotion: 'happy', position: 'right' },
-      ],
+      background: 'bg_test_drive_javlon_speaking',
+      characters: [],
       text: {
         uz: 'To\'g\'risi, mazza qilib xaydadim, testdrayv uchun rahmat!',
         ru: 'Честно говоря, с удовольствием проехался, спасибо за тест-драйв!',

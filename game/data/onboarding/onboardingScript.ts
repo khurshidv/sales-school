@@ -33,7 +33,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     speakerName: { uz: 'Rustam', ru: 'Рустам' },
     text: {
       uz: "Salom! SalesUp'ga xush kelibsiz! Ismim Rustam — shu avtosalonning menejeri. Sizni yangi xodim sifatida ko'rib turganimdan xursandman!",
-      ru: 'Привет! Добро пожаловать в SalesUp! Меня зовут Рустам — я менеджер этого автосалона. Рад видеть тебя в качестве нового сотрудника!',
+      ru: 'Привет! Добро пожаловать в SalesUp! Меня зовут Рустам — я менеджер этого автосалона. Рад видеть вас в качестве нового сотрудника!',
     },
   },
 

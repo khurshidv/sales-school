@@ -368,10 +368,11 @@ export const day2: Day = {
       type: 'dialogue',
       speaker: 'kamola',
       emotion: 'impressed',
+      // Car interior scene — sprite скрыт, фон уже показывает Камолу
+      // за рулём. Разные фоны (driver / passenger POV) используются
+      // вместо отдельных спрайтов.
       background: 'bg_test_drive_city',
-      characters: [
-        { id: 'kamola', emotion: 'impressed', position: 'center' },
-      ],
+      characters: [],
       text: {
         uz: 'Hmm yurishi... K5 ga qaraganda yumshoqroq ekan. Salon ham yig\'iqroq, tinchroq sezilyapti.',
         ru: 'Хм, едет... мягче, чем K5. И салон ощущается собраннее, тише.',
@@ -444,9 +445,7 @@ export const day2: Day = {
       speaker: 'kamola',
       emotion: 'impressed',
       background: 'bg_test_drive_city',
-      characters: [
-        { id: 'kamola', emotion: 'impressed', position: 'center' },
-      ],
+      characters: [],
       text: {
         uz: 'Tushunarli. Uzoq yo\'lda oyoq kamroq charchaydi, mashina ham tekisroq yuradi.',
         ru: 'Понятно. На длинной дороге нога меньше устаёт, и машина идёт ровнее.',
@@ -460,9 +459,7 @@ export const day2: Day = {
       speaker: 'kamola',
       emotion: 'impressed',
       background: 'bg_test_drive_city',
-      characters: [
-        { id: 'kamola', emotion: 'impressed', position: 'center' },
-      ],
+      characters: [],
       text: {
         uz: 'Rulda boshqacha bilinadi. Jadvalda buni bunaqa ko\'rmaydi odam.',
         ru: 'За рулём это воспринимается иначе. По таблице так не видно.',

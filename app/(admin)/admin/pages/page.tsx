@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getPagesSummary } from '@/lib/admin/page-queries';
+import DateRangePicker from '@/components/admin/DateRangePicker';
 import type { PageSummary } from '@/lib/admin/types';
 
 function fmt(n: number) {
@@ -79,19 +80,27 @@ function PageCard({ data }: { data: PageSummary }) {
   );
 }
 
-export default async function PagesOverview() {
+export default async function PagesOverview({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
+  const sp = await searchParams;
   const now = new Date();
-  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const pages = await getPagesSummary(thirtyDaysAgo, now);
+  const to = sp.to ? new Date(sp.to) : now;
+  const from = sp.from ? new Date(sp.from) : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const pages = await getPagesSummary(from, to);
 
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
         Страницы
       </h1>
-      <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
-        Аналитика маркетинговых страниц за последние 30 дней
+      <p style={{ color: '#6b7280', marginBottom: 16, fontSize: 14 }}>
+        Аналитика маркетинговых страниц
       </p>
+
+      <DateRangePicker />
 
       <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
         {pages.map((p) => (

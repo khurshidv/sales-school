@@ -12,59 +12,81 @@ import type {
 export async function getFunnelStats(): Promise<FunnelStats> {
   const admin = createAdminClient();
 
-  const [visitors, registered, started, completed] = await Promise.all([
-    admin
-      .from('game_events')
-      .select('player_id', { count: 'exact', head: true })
-      .eq('event_type', 'game_started'),
-    admin.from('players').select('*', { count: 'exact', head: true }),
-    admin
-      .from('game_events')
-      .select('player_id', { count: 'exact', head: true })
-      .eq('event_type', 'day_started'),
-    admin
-      .from('completed_scenarios')
-      .select('player_id', { count: 'exact', head: true }),
+  // Use raw SQL via RPC to get COUNT(DISTINCT player_id) for accurate unique counts
+  const { data } = await admin.rpc('get_admin_funnel_stats');
+
+  if (data) {
+    return {
+      visitors: data.visitors ?? 0,
+      registered: data.registered ?? 0,
+      started: data.started ?? 0,
+      completed: data.completed ?? 0,
+    };
+  }
+
+  // Fallback: deduplicate in JS if RPC not yet deployed
+  const [visitorsRes, registeredRes, startedRes, completedRes] = await Promise.all([
+    admin.from('game_events').select('player_id').eq('event_type', 'game_started'),
+    admin.from('players').select('id', { count: 'exact', head: true }),
+    admin.from('game_events').select('player_id').eq('event_type', 'day_started'),
+    admin.from('completed_scenarios').select('player_id'),
   ]);
 
   return {
-    visitors: visitors.count ?? 0,
-    registered: registered.count ?? 0,
-    started: started.count ?? 0,
-    completed: completed.count ?? 0,
+    visitors: new Set(visitorsRes.data?.map((r) => r.player_id)).size,
+    registered: registeredRes.count ?? 0,
+    started: new Set(startedRes.data?.map((r) => r.player_id)).size,
+    completed: new Set(completedRes.data?.map((r) => r.player_id)).size,
   };
 }
 
-export async function getPlayers(): Promise<Player[]> {
+export async function getPlayers(
+  options: { limit?: number; offset?: number; search?: string; sortBy?: string; sortAsc?: boolean } = {},
+): Promise<{ players: Player[]; total: number }> {
   const admin = createAdminClient();
+  const { limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false } = options;
 
-  const [playersRes, eventsRes] = await Promise.all([
-    admin
-      .from('players')
-      .select('id, display_name, phone, utm_source, utm_medium, utm_campaign, referrer, created_at')
-      .order('created_at', { ascending: false })
-      .limit(200),
-    admin
-      .from('game_events')
-      .select('player_id, created_at')
-      .order('created_at', { ascending: false }),
-  ]);
+  // Get players with count
+  let query = admin
+    .from('players')
+    .select('id, display_name, phone, utm_source, utm_medium, utm_campaign, referrer, created_at', { count: 'exact' });
 
+  if (search) {
+    query = query.or(`display_name.ilike.%${search}%,phone.ilike.%${search}%`);
+  }
+
+  query = query.order(sortBy, { ascending: sortAsc }).range(offset, offset + limit - 1);
+
+  const playersRes = await query;
   const players = playersRes.data ?? [];
-  const events = eventsRes.data ?? [];
+  const total = playersRes.count ?? 0;
 
-  // Build a map of player_id → latest event created_at
+  if (players.length === 0) {
+    return { players: [], total };
+  }
+
+  // Get last activity only for the current page of players (not ALL events)
+  const playerIds = players.map((p) => p.id);
+  const { data: activityData } = await admin
+    .from('game_events')
+    .select('player_id, created_at')
+    .in('player_id', playerIds)
+    .order('created_at', { ascending: false });
+
   const lastActivityMap = new Map<string, string>();
-  for (const e of events) {
+  for (const e of activityData ?? []) {
     if (!lastActivityMap.has(e.player_id)) {
       lastActivityMap.set(e.player_id, e.created_at);
     }
   }
 
-  return players.map((p) => ({
-    ...p,
-    last_activity: lastActivityMap.get(p.id) ?? null,
-  }));
+  return {
+    players: players.map((p) => ({
+      ...p,
+      last_activity: lastActivityMap.get(p.id) ?? null,
+    })),
+    total,
+  };
 }
 
 export async function getGameMetrics(): Promise<GameMetrics> {

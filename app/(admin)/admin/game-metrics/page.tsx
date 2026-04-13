@@ -1,5 +1,7 @@
 import { getGameMetrics } from '@/lib/admin/queries';
 
+export const revalidate = 60;
+
 const RATING_COLORS: Record<string, string> = {
   S: '#f59e0b',
   A: '#10b981',

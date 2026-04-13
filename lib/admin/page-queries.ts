@@ -103,14 +103,17 @@ export async function getLeads(
 export async function getLeadCounts(): Promise<Record<string, number>> {
   const admin = createAdminClient();
 
-  const { data } = await admin
-    .from('leads')
-    .select('source_page');
+  // Use COUNT with head:true instead of fetching all rows
+  const [allRes, ...pageResults] = await Promise.all([
+    admin.from('leads').select('*', { count: 'exact', head: true }),
+    ...PAGE_SLUGS.map((slug) =>
+      admin.from('leads').select('*', { count: 'exact', head: true }).eq('source_page', slug),
+    ),
+  ]);
 
-  const counts: Record<string, number> = { all: 0 };
-  for (const row of data ?? []) {
-    counts.all++;
-    counts[row.source_page] = (counts[row.source_page] ?? 0) + 1;
-  }
+  const counts: Record<string, number> = { all: allRes.count ?? 0 };
+  PAGE_SLUGS.forEach((slug, i) => {
+    counts[slug] = pageResults[i].count ?? 0;
+  });
   return counts;
 }

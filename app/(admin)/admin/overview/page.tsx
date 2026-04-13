@@ -1,13 +1,7 @@
 import { getFunnelStats } from '@/lib/admin/queries';
+import { fmt, pct } from '@/lib/admin/formatters';
 
-function fmt(n: number) {
-  return n.toLocaleString('en-US');
-}
-
-function pct(part: number, total: number) {
-  if (total === 0) return '—';
-  return `${Math.round((part / total) * 100)}%`;
-}
+export const revalidate = 60;
 
 interface KpiCardProps {
   label: string;
@@ -96,19 +90,19 @@ export default async function OverviewPage() {
       label: 'Зарегистрированы (имя + тел)',
       value: stats.registered,
       color: '#8b5cf6',
-      conversion: pct(stats.registered, stats.visitors),
+      conversion: `${pct(stats.registered, stats.visitors)} от старта · ${pct(stats.registered, stats.visitors)} шаг`,
     },
     {
       label: 'Начали первый день',
       value: stats.started,
       color: '#ec4899',
-      conversion: pct(stats.started, stats.visitors),
+      conversion: `${pct(stats.started, stats.visitors)} от старта · ${pct(stats.started, stats.registered)} шаг`,
     },
     {
       label: 'Завершили сценарий',
       value: stats.completed,
       color: '#f59e0b',
-      conversion: pct(stats.completed, stats.visitors),
+      conversion: `${pct(stats.completed, stats.visitors)} от старта · ${pct(stats.completed, stats.started)} шаг`,
     },
   ];
 
@@ -134,13 +128,13 @@ export default async function OverviewPage() {
           label="Начали День 1"
           value={stats.started}
           color="#ec4899"
-          conversion={pct(stats.started, stats.visitors)}
+          conversion={pct(stats.started, stats.registered)}
         />
         <KpiCard
           label="Завершили сценарий"
           value={stats.completed}
           color="#f59e0b"
-          conversion={pct(stats.completed, stats.visitors)}
+          conversion={pct(stats.completed, stats.started)}
         />
       </div>
 

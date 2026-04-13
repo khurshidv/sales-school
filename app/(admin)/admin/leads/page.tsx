@@ -1,21 +1,12 @@
 import Link from 'next/link';
 import { getLeads, getLeadCounts } from '@/lib/admin/page-queries';
+import { formatDate, maskPhone } from '@/lib/admin/formatters';
 import type { Lead } from '@/lib/admin/types';
 
 const PAGE_NAMES: Record<string, string> = {
   home: 'Вебинар',
   target: 'Курс',
 };
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 const thStyle: React.CSSProperties = {
   padding: '10px 14px',
@@ -78,7 +69,7 @@ function LeadsTable({ leads }: { leads: Lead[] }) {
             <tr key={lead.id} style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
               <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{formatDate(lead.created_at)}</td>
               <td style={{ ...tdStyle, fontWeight: 500, color: '#111827' }}>{lead.name}</td>
-              <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{lead.phone}</td>
+              <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{maskPhone(lead.phone)}</td>
               <td style={tdStyle}><PageBadge slug={lead.source_page} /></td>
               <td style={tdStyle}>
                 {lead.utm_source ? (
@@ -125,9 +116,26 @@ export default async function LeadsPage({
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
         Заявки
       </h1>
-      <p style={{ color: '#6b7280', marginBottom: 24, fontSize: 14 }}>
-        Регистрации с маркетинговых страниц · {counts.all ?? 0} всего
-      </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
+          Регистрации с маркетинговых страниц · {counts.all ?? 0} всего
+        </p>
+        <a
+          href="/api/admin/export?type=leads"
+          style={{
+            padding: '7px 16px',
+            fontSize: 13,
+            fontWeight: 500,
+            border: '1px solid #d1d5db',
+            borderRadius: 8,
+            textDecoration: 'none',
+            color: '#374151',
+            background: '#fff',
+          }}
+        >
+          Экспорт CSV
+        </a>
+      </div>
 
       {/* Filter Tabs */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>

@@ -104,11 +104,11 @@ export default function ScenarioSelect({
       </div>
 
       {/* Main bento layout: featured (left) + vertical locked stack (right) */}
-      <div className="absolute inset-0 pt-16 pb-12 px-5 flex items-stretch gap-4">
-        {/* === FEATURED CARD — same height as locked stack === */}
+      <div className="absolute inset-0 pt-16 pb-12 px-5 flex items-center gap-4">
+        {/* === FEATURED CARD — height matches locked stack === */}
         <button
           onClick={() => onSelectScenario('car-dealership')}
-          className="scenario-featured-card group flex-none w-[48%] max-w-[420px] overflow-hidden text-left"
+          className="scenario-featured-card group flex-none w-[48%] max-w-[420px] h-[75%] overflow-hidden text-left"
         >
           {/* Background showroom image */}
           <img
@@ -168,7 +168,7 @@ export default function ScenarioSelect({
         </button>
 
         {/* === LOCKED STACK — small vertical list === */}
-        <div className="flex-1 flex flex-col justify-center gap-2.5 min-w-0">
+        <div className="flex-1 h-[75%] flex flex-col justify-center gap-2.5 min-w-0">
           {lockedCards.map((card, idx) => (
             <div
               key={card.titleKey}

@@ -1,5 +1,7 @@
 import { getLeaderboard } from '@/lib/admin/queries';
 
+export const revalidate = 60;
+
 const LEVEL_COLORS: Record<number, string> = {
   1: '#9ca3af',
   2: '#60a5fa',
@@ -48,9 +50,26 @@ export default async function LeaderboardPage() {
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
         Лидерборд
       </h1>
-      <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
-        Топ {entries.length} игроков по очкам
-      </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+        <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
+          Топ {entries.length} игроков по очкам
+        </p>
+        <a
+          href="/api/admin/export?type=leaderboard"
+          style={{
+            padding: '7px 16px',
+            fontSize: 13,
+            fontWeight: 500,
+            border: '1px solid #d1d5db',
+            borderRadius: 8,
+            textDecoration: 'none',
+            color: '#374151',
+            background: '#fff',
+          }}
+        >
+          Экспорт CSV
+        </a>
+      </div>
 
       <div
         style={{

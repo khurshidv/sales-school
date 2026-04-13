@@ -81,23 +81,41 @@ export async function getPageAnalytics(
 }
 
 export async function getLeads(
-  slug?: string,
-  limit = 200,
-): Promise<Lead[]> {
+  options: {
+    slug?: string;
+    limit?: number;
+    offset?: number;
+    search?: string;
+    sortBy?: string;
+    sortAsc?: boolean;
+    from?: string;
+    to?: string;
+  } = {},
+): Promise<{ leads: Lead[]; total: number }> {
   const admin = createAdminClient();
+  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to } = options;
 
   let query = admin
     .from('leads')
-    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at')
-    .order('created_at', { ascending: false })
-    .limit(limit);
+    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at', { count: 'exact' });
 
   if (slug) {
     query = query.eq('source_page', slug);
   }
+  if (search) {
+    query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
+  }
+  if (from) {
+    query = query.gte('created_at', `${from}T00:00:00`);
+  }
+  if (to) {
+    query = query.lte('created_at', `${to}T23:59:59`);
+  }
 
-  const { data } = await query;
-  return data ?? [];
+  query = query.order(sortBy, { ascending: sortAsc }).range(offset, offset + limit - 1);
+
+  const { data, count } = await query;
+  return { leads: data ?? [], total: count ?? 0 };
 }
 
 export async function getLeadCounts(): Promise<Record<string, number>> {

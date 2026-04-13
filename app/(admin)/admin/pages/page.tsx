@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getPagesSummary } from '@/lib/admin/page-queries';
 import DateRangePicker from '@/components/admin/DateRangePicker';
+import RefreshButton from '@/components/admin/RefreshButton';
 import type { PageSummary } from '@/lib/admin/types';
 
 function fmt(n: number) {
@@ -93,9 +94,12 @@ export default async function PagesOverview({
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Страницы
-      </h1>
+      <div className="admin-page-header">
+        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#111827' }}>
+          Страницы
+        </h1>
+        <RefreshButton />
+      </div>
       <p style={{ color: '#6b7280', marginBottom: 16, fontSize: 14 }}>
         Аналитика маркетинговых страниц
       </p>

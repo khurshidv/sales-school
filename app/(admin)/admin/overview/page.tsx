@@ -1,5 +1,6 @@
 import { getFunnelStats } from '@/lib/admin/queries';
 import { fmt, pct } from '@/lib/admin/formatters';
+import RefreshButton from '@/components/admin/RefreshButton';
 
 export const revalidate = 60;
 
@@ -108,9 +109,12 @@ export default async function OverviewPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Обзор
-      </h1>
+      <div className="admin-page-header">
+        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#111827' }}>
+          Обзор
+        </h1>
+        <RefreshButton />
+      </div>
       <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
         Воронка и ключевые метрики по всем игрокам
       </p>

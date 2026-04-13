@@ -46,6 +46,18 @@
   overflow-y: auto;
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
 /* Mobile burger button */
 .admin-burger {
   display: none;

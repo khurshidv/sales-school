@@ -41,10 +41,10 @@ export async function getFunnelStats(): Promise<FunnelStats> {
 }
 
 export async function getPlayers(
-  options: { limit?: number; offset?: number; search?: string; sortBy?: string; sortAsc?: boolean } = {},
+  options: { limit?: number; offset?: number; search?: string; sortBy?: string; sortAsc?: boolean; from?: string; to?: string } = {},
 ): Promise<{ players: Player[]; total: number }> {
   const admin = createAdminClient();
-  const { limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false } = options;
+  const { limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to } = options;
 
   // Get players with count
   let query = admin
@@ -53,6 +53,12 @@ export async function getPlayers(
 
   if (search) {
     query = query.or(`display_name.ilike.%${search}%,phone.ilike.%${search}%`);
+  }
+  if (from) {
+    query = query.gte('created_at', `${from}T00:00:00`);
+  }
+  if (to) {
+    query = query.lte('created_at', `${to}T23:59:59`);
   }
 
   query = query.order(sortBy, { ascending: sortAsc }).range(offset, offset + limit - 1);
@@ -89,18 +95,30 @@ export async function getPlayers(
   };
 }
 
-export async function getGameMetrics(): Promise<GameMetrics> {
+export async function getGameMetrics(
+  options: { from?: string; to?: string } = {},
+): Promise<GameMetrics> {
   const admin = createAdminClient();
+  const { from, to } = options;
 
-  const [completionsRes, dayEventsRes] = await Promise.all([
-    admin
-      .from('completed_scenarios')
-      .select('score, rating, time_taken, scenario_id'),
-    admin
-      .from('game_events')
-      .select('day_id, event_type, player_id')
-      .in('event_type', ['day_started', 'day_completed', 'day_failed', 'dropped_off']),
-  ]);
+  let completionsQuery = admin
+    .from('completed_scenarios')
+    .select('score, rating, time_taken, scenario_id, created_at');
+  let eventsQuery = admin
+    .from('game_events')
+    .select('day_id, event_type, player_id, created_at')
+    .in('event_type', ['day_started', 'day_completed', 'day_failed', 'dropped_off']);
+
+  if (from) {
+    completionsQuery = completionsQuery.gte('created_at', `${from}T00:00:00`);
+    eventsQuery = eventsQuery.gte('created_at', `${from}T00:00:00`);
+  }
+  if (to) {
+    completionsQuery = completionsQuery.lte('created_at', `${to}T23:59:59`);
+    eventsQuery = eventsQuery.lte('created_at', `${to}T23:59:59`);
+  }
+
+  const [completionsRes, dayEventsRes] = await Promise.all([completionsQuery, eventsQuery]);
 
   const completions = completionsRes.data ?? [];
   const dayEvents = dayEventsRes.data ?? [];
@@ -178,12 +196,22 @@ export async function getGameMetrics(): Promise<GameMetrics> {
   return { avg_score: avgScore, total_completions: totalCompletions, ratings, scenarios, dayDropoff };
 }
 
-export async function getLeaderboard(): Promise<LeaderboardEntry[]> {
+export async function getLeaderboard(
+  options: { search?: string; sortBy?: string; sortAsc?: boolean; limit?: number } = {},
+): Promise<LeaderboardEntry[]> {
   const admin = createAdminClient();
-  const { data } = await admin
+  const { search, sortBy = 'total_score', sortAsc = false, limit = 50 } = options;
+
+  let query = admin
     .from('leaderboard')
-    .select('player_id, display_name, total_score, scenarios_completed, level, updated_at')
-    .order('total_score', { ascending: false })
-    .limit(50);
+    .select('player_id, display_name, total_score, scenarios_completed, level, updated_at');
+
+  if (search) {
+    query = query.ilike('display_name', `%${search}%`);
+  }
+
+  query = query.order(sortBy, { ascending: sortAsc }).limit(limit);
+
+  const { data } = await query;
   return data ?? [];
 }

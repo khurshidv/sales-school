@@ -1,4 +1,5 @@
 import { getLeaderboard } from '@/lib/admin/queries';
+import RefreshButton from '@/components/admin/RefreshButton';
 
 export const revalidate = 60;
 
@@ -47,9 +48,12 @@ export default async function LeaderboardPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Лидерборд
-      </h1>
+      <div className="admin-page-header">
+        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#111827' }}>
+          Лидерборд
+        </h1>
+        <RefreshButton />
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
           Топ {entries.length} игроков по очкам

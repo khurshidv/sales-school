@@ -1,5 +1,6 @@
 import { getPlayers } from '@/lib/admin/queries';
 import { formatDate, maskPhone } from '@/lib/admin/formatters';
+import RefreshButton from '@/components/admin/RefreshButton';
 
 const tdStyle: React.CSSProperties = {
   padding: '12px 16px',
@@ -39,9 +40,12 @@ export default async function ParticipantsPage({
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Участники
-      </h1>
+      <div className="admin-page-header">
+        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#111827' }}>
+          Участники
+        </h1>
+        <RefreshButton />
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
           {total} зарегистрировано

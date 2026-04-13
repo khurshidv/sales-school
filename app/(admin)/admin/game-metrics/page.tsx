@@ -1,4 +1,5 @@
 import { getGameMetrics } from '@/lib/admin/queries';
+import RefreshButton from '@/components/admin/RefreshButton';
 
 export const revalidate = 60;
 
@@ -42,9 +43,12 @@ export default async function GameMetricsPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Метрики игры
-      </h1>
+      <div className="admin-page-header">
+        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#111827' }}>
+          Метрики игры
+        </h1>
+        <RefreshButton />
+      </div>
       <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
         Очки, рейтинги и прогресс игроков
       </p>

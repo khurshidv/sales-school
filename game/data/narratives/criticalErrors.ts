@@ -30,11 +30,11 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
   ce_ignored_partner: {
     level: 'hard',
     title: {
-      uz: 'Ikkinchisini eshitmadim',
+      uz: `Ikkinchisini eshitmadim`,
       ru: 'Не услышали второго',
     },
     insight: {
-      uz: 'Er-xotin birgalikda qaror qabul qiladi. Biriga murojaat qilganingda, ikkinchisida "meni eshitmadinglar" degan taassurot qoladi - uyda esa aynan u mashinaga "yo‘q" deydi.',
+      uz: `Er-xotin birgalikda qaror qabul qiladi. Biriga murojaat qilganingda, ikkinchisida "meni eshitmadinglar" degan taassurot qoladi - uyda esa aynan u mashinaga "yo'q" deydi.`,
       ru: 'В паре решение принимают оба. Когда вы обратились к одному, у второго остался осадок «меня не услышали» — и дома именно он скажет машине «нет».',
     },
   },
@@ -42,11 +42,11 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
   ce_weak_compromise: {
     level: 'soft',
     title: {
-      uz: 'Murosasiz-kechiktirilgan muammo',
+      uz: `Murosasiz-kechiktirilgan muammo`,
       ru: 'Не компромисс — отложенная проблема',
     },
     insight: {
-      uz: '"Hozir sotib oling, keyin almashtirasiz" - bu yechim emas, kelajakdagi ikkinchi muammodir. Er-xotin buni darhol payqab, qaror qabul qilmasdan, o‘ylab ko‘rishga ketishdi.',
+      uz: `"Hozir sotib oling, keyin almashtirasiz" - bu yechim emas, kelajakdagi ikkinchi muammodir. Er-xotin buni darhol payqab, qaror qabul qilmasdan, o'ylab ko'rishga ketishdi.`,
       ru: '«Сейчас купите, потом обменяете» — это не решение, а вторая проблема в будущем. Пара это почувствовала сразу и ушла думать, не приняв решения.',
     },
   },
@@ -54,11 +54,11 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
   ce_skipped_test_drive: {
     level: 'hard',
     title: {
-      uz: 'Bitim test-drayvsiz amalga oshmaydi',
+      uz: `Bitim test-drayvsiz amalga oshmaydi`,
       ru: 'Без тест-драйва сделки не бывает',
     },
     insight: {
-      uz: 'Sotuvda avtomobil sinov drayveri rasmiyatchilik emas, balki mijozning o\'ziga "bu mening mashinam"degan paytidir. Uni o\'tkazib yuborganingizdan so\'ng, siz ushbu daqiqani bitimdan olib qo\'ydingiz.',
+      uz: `Sotuvda avtomobil sinov drayveri rasmiyatchilik emas, balki mijozning o\'ziga "bu mening mashinam"degan paytidir. Uni o\'tkazib yuborganingizdan so\'ng, siz ushbu daqiqani bitimdan olib qo\'ydingiz.`,
       ru: 'В продаже авто тест-драйв — не формальность, а момент, когда клиент сам себе говорит «это моя машина». Пропустив его, вы отняли у сделки именно этот момент.',
     },
   },
@@ -72,7 +72,7 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
       ru: 'Подготовленному клиенту — общие слова',
     },
     insight: {
-      uz: 'Kamola allaqachon Malibu’ni o‘rganib, uni K5 bilan solishtirib ko‘rgan ekan. Sen unga o‘zi bilgan narsalarni aytib bera boshlading - u esa "vaqtimni behuda olyapsizlar" deb o‘yladi.',
+      uz: `Kamola allaqachon Malibu'ni o'rganib, uni K5 bilan solishtirib ko'rgan ekan. Sen unga o'zi bilgan narsalarni aytib bera boshlading - u esa "vaqtimni behuda olyapsizlar" deb o'yladi.`,
       ru: 'Камола уже изучила Malibu и сравнила с K5. Вы начали пересказывать ей то, что она и так знала — и она подумала «вы тратите моё время».',
     },
   },
@@ -80,11 +80,11 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
   ce_dodged_price: {
     level: 'soft',
     title: {
-      uz: 'Narx masalasidan uzoqlashdi',
+      uz: `Narx masalasidan uzoqlashdi`,
       ru: 'Ушли от вопроса о цене',
     },
     insight: {
-      uz: 'Mijoz to\'g\'ridan — to\'g\'ri savol berdi - "nima uchun qo\'shimcha to\'lov?». To\'g\'ridan-to\'g\'ri javob berish o\'rniga, ular chegirmaga yoki "keyinroq"ketishdi. Tayyorlangan mijoz buni darhol o\'qiydi-va ishonch pasayadi.',
+      uz: `Mijoz to\'g\'ridan — to\'g\'ri savol berdi - "nima uchun qo\'shimcha to\'lov?». To\'g\'ridan-to\'g\'ri javob berish o\'rniga, ular chegirmaga yoki "keyinroq"ketishdi. Tayyorlangan mijoz buni darhol o\'qiydi-va ishonch pasayadi.`,
       ru: 'Клиент задал прямой вопрос — «за что доплата?». Вместо прямого ответа ушли в скидку или «позже». Подготовленный клиент это считывает мгновенно — и доверие падает.',
     },
   },
@@ -92,11 +92,11 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
   pressure_close: {
     level: 'soft',
     title: {
-      uz: 'Yopish bosimi',
+      uz: `Yopish bosimi`,
       ru: 'Давление в закрытии',
     },
     insight: {
-      uz: '"Bugun qaror qabul qilsangiz, chegirma bo‘ladi" - bu taklif emas, bosimdir. Mijoz manipulyatsiyani sezishi bilan bitim barbod bo‘ladi.',
+      uz: `"Bugun qaror qabul qilsangiz, chegirma bo'ladi" - bu taklif emas, bosimdir. Mijoz manipulyatsiyani sezishi bilan bitim barbod bo'ladi.`,
       ru: '«Решите сегодня — будет скидка» — это давление, а не предложение. Как только клиент чувствует манипуляцию, сделка испаряется.',
     },
   },
@@ -106,11 +106,11 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
   ce_shallow_discovery: {
     level: 'soft',
     title: {
-      uz: 'Byudjet savol emas',
+      uz: `Byudjet savol emas`,
       ru: 'Бюджет — это не вопрос',
     },
     insight: {
-      uz: 'Birinchi savol "byudjetingiz qancha?" emas. Avval oila, yo‘nalishlar, ehtiyojlar - shundan keyingina pul haqida so‘z boradi. Aks holda mijoz o‘zini faqat hamyon sifatida ko‘rayotganini his qiladi.',
+      uz: `Birinchi savol "byudjetingiz qancha?" emas. Avval oila, yo'nalishlar, ehtiyojlar - shundan keyingina pul haqida so'z boradi. Aks holda mijoz o'zini faqat hamyon sifatida ko'rayotganini his qiladi.`,
       ru: 'Первый вопрос не «какой у вас бюджет?». Сначала семья, маршруты, потребности — и только потом деньги. Иначе клиент чувствует, что его видят только как кошелёк.',
     },
   },
@@ -122,7 +122,7 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
       ru: 'Предложили, не услышав',
     },
     insight: {
-      uz: '"Oila uchun - Equinox yoki Tracker" ehtiyojlarni aniqlamasdan - bu taxmin. Mijoz buni sezadi va yopiladi.',
+      uz: `"Oila uchun - Equinox yoki Tracker" ehtiyojlarni aniqlamasdan - bu taxmin. Mijoz buni sezadi va yopiladi.`,
       ru: '«Для семьи — Equinox или Tracker» без выяснения потребностей — это догадка. Клиент это чувствует и закрывается.',
     },
   },
@@ -134,7 +134,7 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
       ru: 'Оценили клиента по внешнему виду',
     },
     insight: {
-      uz: ‘- "Kobaltni ko\’ryapsizmi?" - oddiy kiyingan bo\’lsa, arzonroq bo\’ladi-da. Bu noto\’g\’ri qarash. Mijoz aynan undan uzoqlashadi.’,
+      uz: `- "Kobaltni ko\'ryapsizmi?" - oddiy kiyingan bo\'lsa, arzonroq bo\'ladi-da. Bu noto\'g\'ri qarash. Mijoz aynan undan uzoqlashadi.`,
       ru: '«Cobalt смотрите?» — просто одетый значит подешевле. Это предубеждение. И клиент отстраняется именно от него.',
     },
   },

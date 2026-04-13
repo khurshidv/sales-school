@@ -18,11 +18,11 @@ import TargetMobileNav from "@/components/target/TargetMobileNav";
 import PageTracker from "@/components/analytics/PageTracker";
 
 export const metadata: Metadata = {
-  title: "Sales School — Профессия от $800/мес | Обучение + трудоустройство",
+  title: "Sales Up — Профессия от $800/мес | Обучение + трудоустройство",
   description:
     "Нет опыта? Не проблема. Мы доведём тебя до первой зарплаты от $800 в продажах. Обучение, практика и реальное трудоустройство.",
   openGraph: {
-    title: "Sales School — Профессия от $800/мес",
+    title: "Sales Up — Профессия от $800/мес",
     description:
       "Обучение + практика + реальное трудоустройство. 99% учеников находят работу.",
     type: "website",

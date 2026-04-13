@@ -30,8 +30,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Sales School",
-  description: "Sales School — обучение продажам",
+  title: "Sales Up",
+  description: "Sales Up — обучение продажам",
 };
 
 export default function RootLayout({

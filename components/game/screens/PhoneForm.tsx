@@ -43,7 +43,7 @@ export default function PhoneForm({ onSubmit }: PhoneFormProps) {
       onSubmit={handleSubmit}
       className="flex flex-col items-center justify-center h-full w-full bg-neutral-950 text-white p-6"
     >
-      <h1 className="text-3xl font-bold mb-1">Sales School</h1>
+      <h1 className="text-3xl font-bold mb-1">Sales Up</h1>
       <p className="text-white/60 mb-8">RPG тренажёр продаж</p>
 
       {/* Name */}

@@ -4,7 +4,7 @@ export const day2: Day = {
   id: 'car-day2',
   dayNumber: 2,
   title: {
-    uz: 'Talabchan mijoz',
+    uz: `Talabchan mijoz`,
     ru: 'Требовательный клиент',
   },
   rootNodeId: 'd2_intro',
@@ -20,7 +20,7 @@ export const day2: Day = {
         { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
-        uz: 'Bugungi mijozga uzoq tushuntirish shart emas. U o‘zi mashinalarni yaxshi tushunadi. Sizdan aniq va qisqa javob kutadi.',
+        uz: `Bugungi mijozga uzoq tushuntirish shart emas. U o'zi mashinalarni yaxshi tushunadi. Sizdan aniq va qisqa javob kutadi.`,
         ru: 'Сегодняшнему клиенту не нужно долго объяснять. Она сама хорошо разбирается в машинах. От вас ждёт — чётких и коротких ответов.',
       },
       nextNodeId: 'd2_anvar_files',
@@ -37,7 +37,7 @@ export const day2: Day = {
         { id: 'anvar', emotion: 'nervous', position: 'right' },
       ],
       text: {
-        uz: 'Rustam aka, Kamola allaqachon kelibdi. Malibuni ko‘rib, K5 bilan ham solishtiribdi.',
+        uz: `Rustam aka, Kamola allaqachon kelibdi. Malibuni ko'rib, K5 bilan ham solishtiribdi.`,
         ru: 'Рустам-ака, Камола уже приезжала. Malibu посмотрела, с K5 тоже сравнила.',
       },
       nextNodeId: 'd2_callback_check',
@@ -62,7 +62,7 @@ export const day2: Day = {
       emotion: null,
       characters: [],
       text: {
-        uz: 'Kecha bo‘lib o‘tgan juftlik haqida qo‘ng‘iroq bo‘ldi: Javlon Nilufar bilan maslahatlashganini va Equinoxni yana bir bor ko‘rishni istashayotganini aytdi.',
+        uz: `Kecha bo'lib o'tgan juftlik haqida qo'ng'iroq bo'ldi: Javlon Nilufar bilan maslahatlashganini va Equinoxni yana bir bor ko'rishni istashayotganini aytdi.`,
         ru: 'Звонок по вчерашней паре: Жавлон сказал, что обсудили с Нилуфар и хотят ещё раз посмотреть Equinox.',
       },
       effects: [
@@ -82,7 +82,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'confident', position: 'center' },
       ],
       text: {
-        uz: 'Salom alaykum. Men Malibu haqida so‘ramoqchiman. K5 bilan solishtirib ko‘rdim. Reklamasiz, sodda tilda tushuntirib bera olasizmi, bu yerda qanday farq bor?',
+        uz: `Salom alaykum. Men Malibu haqida so'ramoqchiman. K5 bilan solishtirib ko'rdim. Reklamasiz, sodda tilda tushuntirib bera olasizmi, bu yerda qanday farq bor?`,
         ru: 'Здравствуйте. Я по Malibu. С K5 уже сравнила. Сможете без рекламы по-простому объяснить, за что здесь разница?',
       },
       nextNodeId: 'd2_presentation',
@@ -92,14 +92,14 @@ export const day2: Day = {
       id: 'd2_presentation',
       type: 'choice',
       prompt: {
-        uz: 'Kamola bilan suhbatni qanday boshlaysan?',
+        uz: `Kamola bilan suhbatni qanday boshlaysan?`,
         ru: 'Как начнёте разговор с Камолой?',
       },
       choices: [
         {
           id: 'd2_presentation_a',
           text: {
-            uz: 'Tayyorgarlik bilan kelgan ekansiz. Unday bo‘lsa, vaqtingizni olmayman, faqat haqiqiy farqlar haqida gapiraman.',
+            uz: `Tayyorgarlik bilan kelgan ekansiz. Unday bo'lsa, vaqtingizni olmayman, faqat haqiqiy farqlar haqida gapiraman.`,
             ru: 'Вы пришли подготовленной. Тогда не буду отнимать время, скажу только по реальным отличиям.',
           },
           effects: [
@@ -112,7 +112,7 @@ export const day2: Day = {
         {
           id: 'd2_presentation_b',
           text: {
-            uz: 'Malibu yaxshi variant ekan. Mashinani qisqacha ko‘rib chiqaylik, keyin narxiga qaytamiz.',
+            uz: `Malibu yaxshi variant ekan. Mashinani qisqacha ko'rib chiqaylik, keyin narxiga qaytamiz.`,
             ru: 'Malibu вариант хороший. Давайте коротко пройдёмся по машине, потом вернёмся к цене.',
           },
           // Камола уже изучила Malibu и сравнила с K5 (d2_anvar_files).
@@ -129,7 +129,7 @@ export const day2: Day = {
         {
           id: 'd2_presentation_c',
           text: {
-            uz: 'Siz uchun hozir qaysi jihat muhimroq: qulaylik, texnologiyalarmi yoki mashinaning haydashdagi his-tuyg‘ulari?',
+            uz: `Siz uchun hozir qaysi jihat muhimroq: qulaylik, texnologiyalarmi yoki mashinaning haydashdagi his-tuyg'ulari?`,
             ru: 'Для вас сейчас что на первом месте: комфорт, технологии или то, как машина ощущается в езде?',
           },
           effects: [
@@ -152,7 +152,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: ‘Mayli. Ammo variantlar ro’yxatini o’zim ham ko’rib chiqdim. 3 ming dollar farq - faqat shu kichik qo’shimchalar uchunmi?’,
+        uz: `Mayli. Ammo variantlar ro'yxatini o'zim ham ko'rib chiqdim. 3 ming dollar farq - faqat shu kichik qo'shimchalar uchunmi?`,
         ru: 'Хорошо. Но список опций я и сама посмотрела. 3 тысячи разницы - только за эти мелкие допы?',
       },
       nextNodeId: 'd2_objection',
@@ -168,7 +168,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: ‘Umumiy gaplarni avval ham eshitganman. K5 - 25 ming, Malibu - 28 ming. Bu 3 ming dollarga amalda nima olaman?’,
+        uz: `Umumiy gaplarni avval ham eshitganman. K5 - 25 ming, Malibu - 28 ming. Bu 3 ming dollarga amalda nima olaman?`,
         ru: 'Общие слова я уже слышала. K5 — 25 тысяч, Malibu — 28. За эти 3 тысячи что я получаю на практике?',
       },
       nextNodeId: 'd2_objection',
@@ -184,7 +184,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'confident', position: 'center' },
       ],
       text: {
-        uz: ‘Qulaylik va texnologiyalar. Ammo buni men allaqachon taqqoslab bo’lganman. Savol boshqa masalada: bu 3 ming dollarlik qo’shimcha to’lov nimani qoplaydi?’,
+        uz: `Qulaylik va texnologiyalar. Ammo buni men allaqachon taqqoslab bo'lganman. Savol boshqa masalada: bu 3 ming dollarlik qo'shimcha to'lov nimani qoplaydi?`,
         ru: 'Комфорт и технологии. Но это я уже сравнила. Вопрос в другом: что закрывает эта доплата в 3 тысячи?',
       },
       nextNodeId: 'd2_objection',
@@ -194,7 +194,7 @@ export const day2: Day = {
       id: 'd2_objection',
       type: 'choice',
       prompt: {
-        uz: 'Narxlardagi farq haqidagi savolga qanday javob berasiz?',
+        uz: `Narxlardagi farq haqidagi savolga qanday javob berasiz?`,
         ru: 'Что ответите на вопрос про разницу в цене?',
       },
       timeLimit: 20,
@@ -203,7 +203,7 @@ export const day2: Day = {
         {
           id: 'd2_objection_a',
           text: {
-            uz: 'Bu yerda farq faqat imkoniyatlarda emas. U kelajakdagi xarajatlaringizning bir qismini ham qoplaydi. Ikki yil davomida ushbu qo‘shimcha to‘lovning bir qismi qaytarib beriladi.',
+            uz: `Bu yerda farq faqat imkoniyatlarda emas. U kelajakdagi xarajatlaringizning bir qismini ham qoplaydi. Ikki yil davomida ushbu qo'shimcha to'lovning bir qismi qaytarib beriladi.`,
             ru: 'Здесь разница не только в опциях. Она ещё и часть ваших будущих расходов снимает. За два года кусок этой доплаты возвращается.',
           },
           effects: [
@@ -216,7 +216,7 @@ export const day2: Day = {
         {
           id: 'd2_objection_b',
           text: {
-            uz: 'Qayta sotishda keyinchalik kamroq zarar ko‘rasiz. Bu ham pul, shunchaki sotib olingan kuni emas.',
+            uz: `Qayta sotishda keyinchalik kamroq zarar ko'rasiz. Bu ham pul, shunchaki sotib olingan kuni emas.`,
             ru: 'При перепродаже вы потом теряете меньше. Это тоже деньги, просто не в день покупки.',
           },
           effects: [
@@ -229,7 +229,7 @@ export const day2: Day = {
         {
           id: 'd2_objection_c',
           text: {
-            uz: 'Xohlasangiz, chegirma haqida alohida aniqlashtirib berishim mumkin. Lekin avval suhbatni boshqa tomonga burmaslik uchun mashinaning o‘zini ochiqchasiga tushuntirib beraman.',
+            uz: `Xohlasangiz, chegirma haqida alohida aniqlashtirib berishim mumkin. Lekin avval suhbatni boshqa tomonga burmaslik uchun mashinaning o'zini ochiqchasiga tushuntirib beraman.`,
             ru: 'Если хотите, могу отдельно уточнить по скидке. Но сначала честно объясню саму машину, чтобы не уводить разговор в сторону.',
           },
           // Клиент задал прямой вопрос про разницу в цене. Этот ответ
@@ -256,7 +256,7 @@ export const day2: Day = {
         { type: 'set_flag', flag: 'ce_dodged_price' },
       ],
       narrator: {
-        uz: 'Sukunat cho‘zilib ketdi. Kamola aniq ma’lumot kutyapti.',
+        uz: `Sukunat cho'zilib ketdi. Kamola aniq ma'lumot kutyapti.`,
         ru: 'Пауза затянулась. Камола ждёт конкретики.',
       },
       nextNodeId: 'd2_kamola_reacts_timeout',
@@ -272,7 +272,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Agar xizmat ikki yilga yopilsa, bu jiddiy masala. Mayli, davom etamiz.',
+        uz: `Agar xizmat ikki yilga yopilsa, bu jiddiy masala. Mayli, davom etamiz.`,
         ru: 'Если сервис на два года закрыт, это уже предметный разговор. Ладно, давайте дальше.',
       },
       nextNodeId: 'd2_test_drive_offer',
@@ -288,7 +288,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Qayta sotishni ham hisobga olaman. Ammo bu asosiy dalil emas. Mashinaning o‘ziga kelsak, yana qanday afzalliklar bor?',
+        uz: `Qayta sotishni ham hisobga olaman. Ammo bu asosiy dalil emas. Mashinaning o'ziga kelsak, yana qanday afzalliklar bor?`,
         ru: 'Перепродажу я тоже учитываю. Но это не главный аргумент. Что ещё есть по самой машине?',
       },
       nextNodeId: 'd2_test_drive_offer',
@@ -304,7 +304,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'skeptical', position: 'center' },
       ],
       text: {
-        uz: 'Chegirmani keyinroq muhokama qilishimiz mumkin. Hozircha meni boshqa narsa qiziqtiryapti: nega aynan shu mashina?',
+        uz: `Chegirmani keyinroq muhokama qilishimiz mumkin. Hozircha meni boshqa narsa qiziqtiryapti: nega aynan shu mashina?`,
         ru: 'Скидку можно обсудить и позже. Меня пока интересует другое: почему именно эта машина?',
       },
       nextNodeId: 'd2_test_drive_offer',
@@ -320,7 +320,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'skeptical', position: 'center' },
       ],
       text: {
-        uz: 'Tushundim. Demak, narxlardagi farq tufayli hozircha aniq javob yo‘q ekan-da.',
+        uz: `Tushundim. Demak, narxlardagi farq tufayli hozircha aniq javob yo'q ekan-da.`,
         ru: 'Поняла. Значит, по разнице в цене внятного ответа у вас пока нет.',
       },
       nextNodeId: 'd2_test_drive_offer',
@@ -332,14 +332,14 @@ export const day2: Day = {
       id: 'd2_test_drive_offer',
       type: 'choice',
       prompt: {
-        uz: 'Kamola hali qaror qabul qilmagan. Davom ettiraymi?',
+        uz: `Kamola hali qaror qabul qilmagan. Davom ettiraymi?`,
         ru: 'Камола ещё не приняла решение. Как продолжите?',
       },
       choices: [
         {
           id: 'd2_test_drive_offer_a',
           text: {
-            uz: 'Qisqacha aylanib chiqaylik. Rulda o‘tirganimizda bunday narsalar odatda ortiqcha gap-so‘zsiz tushunarli bo‘ladi.',
+            uz: `Qisqacha aylanib chiqaylik. Rulda o'tirganimizda bunday narsalar odatda ortiqcha gap-so'zsiz tushunarli bo'ladi.`,
             ru: 'Давайте коротко проедем. За рулём такие вещи обычно становятся понятнее без лишних слов.',
           },
           effects: [
@@ -352,7 +352,7 @@ export const day2: Day = {
         {
           id: 'd2_test_drive_offer_b',
           text: {
-            uz: 'Xohlasangiz, shu yerning o‘zida qisqacha xulosa qilib o‘tamiz. Savollaringiz bormi?',
+            uz: `Xohlasangiz, shu yerning o'zida qisqacha xulosa qilib o'tamiz. Savollaringiz bormi?`,
             ru: 'Если хотите, прямо здесь коротко подведём итог. У вас ещё есть вопросы?',
           },
           effects: [
@@ -371,7 +371,7 @@ export const day2: Day = {
       background: 'bg_test_drive_city',
       characters: [],
       text: {
-        uz: 'Kamola rulga o‘tirdi. Shaharda qog‘ozda ifodalab bo‘lmaydigan narsalarni darhol his qilish mumkin.',
+        uz: `Kamola rulga o'tirdi. Shaharda qog'ozda ifodalab bo'lmaydigan narsalarni darhol his qilish mumkin.`,
         ru: 'Камола села за руль. В городе сразу лучше чувствуются вещи, которые на бумаге не объяснишь.',
       },
       nextNodeId: 'd2_kamola_drives',
@@ -398,14 +398,14 @@ export const day2: Day = {
       id: 'd2_test_drive_choice',
       type: 'choice',
       prompt: {
-        uz: 'Kamola rulda o‘tirgan paytda o‘zingizni qanday tutasiz?',
+        uz: `Kamola rulda o'tirgan paytda o'zingizni qanday tutasiz?`,
         ru: 'Как себя поведёте, пока Камола за рулём?',
       },
       choices: [
         {
           id: 'd2_test_drive_choice_a',
           text: {
-            uz: 'Xohlasangiz, to‘g‘ri yo‘lda kruiz rejimini yoqing. Shunda mashina qanday tezlikda harakatlanayotganini xotirjamroq his qilasiz.',
+            uz: `Xohlasangiz, to'g'ri yo'lda kruiz rejimini yoqing. Shunda mashina qanday tezlikda harakatlanayotganini xotirjamroq his qilasiz.`,
             ru: 'Если хотите, включите круиз на прямом участке. Так спокойнее чувствуется, как машина держит ход.',
           },
           effects: [
@@ -417,7 +417,7 @@ export const day2: Day = {
         {
           id: 'd2_test_drive_choice_b',
           text: {
-            uz: 'Keyingi manevrda 360° kameraga qarang. Shahar avtoturargohida uning foydasi darhol seziladi.',
+            uz: `Keyingi manevrda 360° kameraga qarang. Shahar avtoturargohida uning foydasi darhol seziladi.`,
             ru: 'На следующем манёвре посмотрите на камеру 360°. В городской парковке её польза сразу видна.',
           },
           effects: [
@@ -429,7 +429,7 @@ export const day2: Day = {
         {
           id: 'd2_test_drive_choice_c',
           text: {
-            uz: 'Hech narsa qo‘shmayapman. Mashinani o‘zi xotirjam his qilsin.',
+            uz: `Hech narsa qo'shmayapman. Mashinani o'zi xotirjam his qilsin.`,
             ru: 'Ничего не добавляю. Пусть спокойно сама почувствует машину.',
           },
           effects: [
@@ -461,7 +461,7 @@ export const day2: Day = {
       background: 'bg_test_drive_city',
       characters: [],
       text: {
-        uz: 'Tushunarli. Uzoq yo‘lda oyoq kamroq charchaydi va mashina tekisroq yuradi.',
+        uz: `Tushunarli. Uzoq yo'lda oyoq kamroq charchaydi va mashina tekisroq yuradi.`,
         ru: 'Понятно. На длинной дороге нога меньше устаёт, и машина идёт ровнее.',
       },
       nextNodeId: 'd2_closing',
@@ -475,7 +475,7 @@ export const day2: Day = {
       background: 'bg_test_drive_city',
       characters: [],
       text: {
-        uz: 'Rulda o‘tirganda bu boshqacha qabul qilinadi. Jadvalda bunday ko‘rinmaydi.',
+        uz: `Rulda o'tirganda bu boshqacha qabul qilinadi. Jadvalda bunday ko'rinmaydi.`,
         ru: 'За рулём это воспринимается иначе. По таблице так не видно.',
       },
       nextNodeId: 'd2_closing',
@@ -487,14 +487,14 @@ export const day2: Day = {
       id: 'd2_closing',
       type: 'choice',
       prompt: {
-        uz: 'Suhbatni qanday tugatish kerak?',
+        uz: `Suhbatni qanday tugatish kerak?`,
         ru: 'Как завершите разговор?',
       },
       choices: [
         {
           id: 'd2_closing_a',
           text: {
-            uz: 'Xohlasangiz, bugungi suhbatning qisqacha mazmunini telegram orqali yuboraman. Shunda hamma narsani yana bir bor diqqat bilan tekshirish osonroq bo‘ladi.',
+            uz: `Xohlasangiz, bugungi suhbatning qisqacha mazmunini telegram orqali yuboraman. Shunda hamma narsani yana bir bor diqqat bilan tekshirish osonroq bo'ladi.`,
             ru: 'Если хотите, я скину вам в телеграм короткую выжимку по сегодняшнему разговору. Так будет проще спокойно ещё раз всё сверить.',
           },
           effects: [
@@ -507,7 +507,7 @@ export const day2: Day = {
         {
           id: 'd2_closing_b',
           text: {
-            uz: 'Bugun qaror qilsangiz, siz uchun alohida shartlarni kelishib ko‘raman.',
+            uz: `Bugun qaror qilsangiz, siz uchun alohida shartlarni kelishib ko'raman.`,
             ru: 'Если решите сегодня, я попробую отдельно согласовать для вас условия.',
           },
           // «Решите сегодня — будут условия» = давление. С подготовленным
@@ -524,7 +524,7 @@ export const day2: Day = {
         {
           id: 'd2_closing_c',
           text: {
-            uz: 'Shoshilmang. Xotirjam o‘ylab ko‘ring. Savollaringiz bo‘lsa, yozing - suvga cho‘ktirmasdan, aniq javob beraman.',
+            uz: `Shoshilmang. Xotirjam o'ylab ko'ring. Savollaringiz bo'lsa, yozing - suvga cho'ktirmasdan, aniq javob beraman.`,
             ru: 'Не спешите. Спокойно подумайте. Если появятся вопросы, напишите — отвечу уже без воды, по делу.',
           },
           effects: [
@@ -636,7 +636,7 @@ export const day2: Day = {
         speaker: 'kamola',
         emotion: 'impressed',
         text: {
-          uz: 'Hech bo‘lmasa mening vaqtimni bekorga o‘tkazmadingiz - bu kamdan-kam uchraydigan holat. Aloqa ma’lumotlarini qoldiring. Ehtimol, do‘stimga ham siz haqingizda xabar berarman.',
+          uz: `Hech bo'lmasa mening vaqtimni bekorga o'tkazmadingiz - bu kamdan-kam uchraydigan holat. Aloqa ma'lumotlarini qoldiring. Ehtimol, do'stimga ham siz haqingizda xabar berarman.`,
           ru: 'Вы хотя бы не тратили моё время впустую — это редкость. Оставьте контакт. Возможно, я ещё и подруге вас перешлю.',
         },
       },
@@ -654,7 +654,7 @@ export const day2: Day = {
         speaker: 'rustam',
         emotion: 'proud',
         text: {
-          uz: 'Kamola tayyor mijoz edi. Sen bahslashmading va bosim o‘tkazmading. Aynan shu narsa natija berdi.',
+          uz: `Kamola tayyor mijoz edi. Sen bahslashmading va bosim o'tkazmading. Aynan shu narsa natija berdi.`,
           ru: 'Камола была подготовленным клиентом. Вы не спорили и не давили. Это и сработало.',
         },
       },
@@ -672,7 +672,7 @@ export const day2: Day = {
         speaker: 'rustam',
         emotion: 'serious',
         text: {
-          uz: 'Kamola suhbatni oxirigacha eshitdi, ammo qaytib keladimi-yo‘qmi, noma’lum. Narxlardagi farq haqida aniqroq javob kerak edi.',
+          uz: `Kamola suhbatni oxirigacha eshitdi, ammo qaytib keladimi-yo'qmi, noma'lum. Narxlardagi farq haqida aniqroq javob kerak edi.`,
           ru: 'Камола разговор дослушала, но вернётся ли — непонятно. По разнице в цене нужен был более точный ответ.',
         },
       },
@@ -691,7 +691,7 @@ export const day2: Day = {
         speaker: 'rustam',
         emotion: 'disappointed',
         text: {
-          uz: 'Kamola chiqib ketdi. Tayyorlangan mijoz umumiy gaplarni darhol eshitadi. Unga ma’ruza emas, aniq javob kerak.',
+          uz: `Kamola chiqib ketdi. Tayyorlangan mijoz umumiy gaplarni darhol eshitadi. Unga ma'ruza emas, aniq javob kerak.`,
           ru: 'Камола ушла. Подготовленный клиент сразу слышит общие слова. Ему нужна не лекция, а точный ответ.',
         },
       },

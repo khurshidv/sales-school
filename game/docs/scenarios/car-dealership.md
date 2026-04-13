@@ -359,8 +359,8 @@ dialogue:
   uz: "Ajoyib! Siz hozirgina 'ehtiyojlarni aniqlash' texnikasini sezdingizmi? Yaxshi sotuvchilar buni ataylab, tizimli qiladi. Dilnoza shu sababli oyiga 15 million oladi."
   ru: "Отлично! Вы только что применили технику 'выявление потребностей' — почувствовали? Хорошие продавцы делают это намеренно, системно. Именно поэтому Дильноза зарабатывает 15 миллионов в месяц."
 course_hint:
-  uz: "💡 Bu texnika Sales School dasturining 2-modulida chuqur o'rgatiladi"
-  ru: "💡 Эта техника подробно разбирается в модуле 2 программы Sales School"
+  uz: "💡 Bu texnika Sales Up dasturining 2-modulida chuqur o'rgatiladi"
+  ru: "💡 Эта техника подробно разбирается в модуле 2 программы Sales Up"
 ```
 
 ---
@@ -378,8 +378,8 @@ dialogue:
   uz: "Yomon emas. Lekin professional sotuvchi savollarni tasodifan emas, tizim bilan beradi — SPIN texnikasi deyiladi. Shuning uchun yaxshi sotuvchilar o'rtacha ish haqi 2-3 baravar ko'p oladi."
   ru: "Неплохо. Но профессиональный продавец задаёт вопросы не случайно, а по системе — это называется техника SPIN. Именно поэтому хорошие продавцы зарабатывают в 2-3 раза больше среднего."
 course_hint:
-  uz: "💡 SPIN texnikasi — Sales School dasturining asosiy modullaridan biri"
-  ru: "💡 Техника SPIN — один из ключевых модулей программы Sales School"
+  uz: "💡 SPIN texnikasi — Sales Up dasturining asosiy modullaridan biri"
+  ru: "💡 Техника SPIN — один из ключевых модулей программы Sales Up"
 ```
 
 ---
@@ -398,8 +398,8 @@ dialogue:
   uz: "Hech gap yo'q. Bilasizmi, men ham birinchi yilda shunday xato qilganman. Farq shundaki — men o'sha xatolardan tizimli o'rgandim. Ana shunday tizim bor, o'rgatadigan."
   ru: "Ничего. Знаете, я в первый год делал те же ошибки. Разница в том — я учился на них системно. Есть такая система, которой учат."
 course_hint:
-  uz: "💡 Qayta urinib ko'ring — yoki Sales School dasturida tizimni o'rganing"
-  ru: "💡 Попробуйте ещё раз — или освойте систему в программе Sales School"
+  uz: "💡 Qayta urinib ko'ring — yoki Sales Up dasturida tizimni o'rganing"
+  ru: "💡 Попробуйте ещё раз — или освойте систему в программе Sales Up"
 ```
 
 ### Таблица баллов Day 1
@@ -1858,14 +1858,14 @@ effects: [
 dialogue:
   speaker: "sardor"
   emotion: "impressed"
-  uz: "Ajoyib. 5 kunda siz odatda 3 oy vaqt oladigan narsalarni o'rgandingiz. Bu — iste'dod. Lekin bilasizmi, bu faqat boshlanishi. Haqiqiy professional bo'lish uchun tizim kerak — Sales School ana shunday tizim."
-  ru: "Отлично. За 5 дней вы освоили то, на что обычно уходит 3 месяца. Это — талант. Но знаете, это только начало. Чтобы стать настоящим профессионалом — нужна система. Sales School — это такая система."
+  uz: "Ajoyib. 5 kunda siz odatda 3 oy vaqt oladigan narsalarni o'rgandingiz. Bu — iste'dod. Lekin bilasizmi, bu faqat boshlanishi. Haqiqiy professional bo'lish uchun tizim kerak — Sales Up ana shunday tizim."
+  ru: "Отлично. За 5 дней вы освоили то, на что обычно уходит 3 месяца. Это — талант. Но знаете, это только начало. Чтобы стать настоящим профессионалом — нужна система. Sales Up — это такая система."
 cta_screen:
   type: "full_screen_cta"
   uz: "Siz potentsialini ko'rsatdingiz. Endi uni pul topishga aylantiring."
   ru: "Вы показали потенциал. Теперь превратите его в доход."
-  button_uz: "Sales School haqida bilish →"
-  button_ru: "Узнать о Sales School →"
+  button_uz: "Sales Up haqida bilish →"
+  button_ru: "Узнать о Sales Up →"
   subtext_uz: "3 oylik offline kurs | Toshkent | Keyingi guruh: [sana]"
   subtext_ru: "3-месячный офлайн курс | Ташкент | Следующий поток: [дата]"
 ```
@@ -1887,8 +1887,8 @@ dialogue:
   ru: "Хороший результат. Вы работаете на интуиции — это хорошо. Но топовые продавцы работают на интуиции + системе. Хотите освоить ту систему?"
 cta_screen:
   type: "soft_cta"
-  uz: "Intuitsiyani tizimga aylantiring — Sales School bilan."
-  ru: "Превратите интуицию в систему — с Sales School."
+  uz: "Intuitsiyani tizimga aylantiring — Sales Up bilan."
+  ru: "Превратите интуицию в систему — с Sales Up."
   button_uz: "Ko'proq bilish →"
   button_ru: "Узнать больше →"
   subtext_uz: "3 oylik offline kurs | Toshkent"
@@ -1913,8 +1913,8 @@ cta_screen:
   type: "motivational_cta"
   uz: "Potensialingiz bor. Uni ochish uchun tizim kerak."
   ru: "Потенциал есть. Нужна система чтобы его раскрыть."
-  button_uz: "Sales School — tizimli o'rganish →"
-  button_ru: "Sales School — системное обучение →"
+  button_uz: "Sales Up — tizimli o'rganish →"
+  button_ru: "Sales Up — системное обучение →"
   subtext_uz: "3 oylik offline kurs | Toshkent"
   subtext_ru: "3-месячный офлайн курс | Ташкент"
 ```
@@ -1938,8 +1938,8 @@ cta_screen:
   type: "empathy_cta"
   uz: "Hamma birinchi bor xato qiladi. Muhimi — qanday o'rganish."
   ru: "Все ошибаются в первый раз. Важно — как учиться дальше."
-  button_uz: "Sales School bilan tizimli boshlash →"
-  button_ru: "Начать системно с Sales School →"
+  button_uz: "Sales Up bilan tizimli boshlash →"
+  button_ru: "Начать системно с Sales Up →"
   subtext_uz: "3 oylik offline kurs | Toshkent | Mentor bilan"
   subtext_ru: "3-месячный офлайн курс | Ташкент | С наставником"
 ```
@@ -2014,7 +2014,7 @@ cta_screen:
 
 ---
 
-## Воронка: связи с курсом Sales School
+## Воронка: связи с курсом Sales Up
 
 ### Логика прогрева по дням
 
@@ -2067,11 +2067,11 @@ cta_screen:
 ### Текст на заблокированных карточках
 
 **uz:**
-> 🔒 Bu stsenariy Sales School kursini tugatganlar uchun ochiladi.
+> 🔒 Bu stsenariy Sales Up kursini tugatganlar uchun ochiladi.
 > Kursda o'rgangan texnikalarni yangi sohada sinab ko'ring.
 
 **ru:**
-> 🔒 Этот сценарий открывается для выпускников курса Sales School.
+> 🔒 Этот сценарий открывается для выпускников курса Sales Up.
 > Примените техники из курса в новой сфере.
 
 ### Почему это работает

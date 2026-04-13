@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Admin — Sales School',
+  title: 'Admin — Sales Up',
 };
 
 const navItems = [
@@ -53,7 +53,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               }}
             >
               <div style={{ fontSize: 11, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-                Sales School
+                Sales Up
               </div>
               <div style={{ fontSize: 16, fontWeight: 700 }}>Admin Panel</div>
             </div>
@@ -69,7 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               ))}
             </nav>
             <div style={{ padding: '16px 20px', borderTop: '1px solid #2a2d35', fontSize: 12, color: '#4b5563' }}>
-              Sales School © 2026
+              Sales Up © 2026
             </div>
           </aside>
 

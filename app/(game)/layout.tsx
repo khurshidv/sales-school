@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import MotionProvider from "@/components/game/MotionProvider";
 
 export const metadata: Metadata = {
-  title: "Sales School — Игра",
+  title: "Sales Up — Игра",
   description: "RPG тренажёр навыков продаж",
   manifest: "/manifest.webmanifest",
   // Enable iOS "Add to Home Screen" → standalone mode. iOS Safari does not

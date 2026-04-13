@@ -57,7 +57,7 @@ export default function TargetHero() {
               <img
                 className="w-full h-auto object-cover"
                 src={TARGET_HERO_IMAGE}
-                alt="Sales School professional"
+                alt="Sales Up professional"
                 width={600}
                 height={750}
                 loading="eager"

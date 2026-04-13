@@ -249,8 +249,8 @@ const translations = {
   },
   "faq.4.q": { ru: "Что будут продавать?", uz: "Nima sotiladi?" },
   "faq.4.a": {
-    ru: "В конце расскажем про курс Sales School. Но вебинар полезен и без покупки — уйдёте с планом и 3 материалами.",
-    uz: "Oxirida Sales School kursi haqida aytamiz. Lekin vebinar xaridsiz ham foydali — reja va 3 ta material bilan ketasiz.",
+    ru: "В конце расскажем про курс Sales Up. Но вебинар полезен и без покупки — уйдёте с планом и 3 материалами.",
+    uz: "Oxirida Sales Up kursi haqida aytamiz. Lekin vebinar xaridsiz ham foydali — reja va 3 ta material bilan ketasiz.",
   },
 
   /* ══════════════════════════ FOOTER / NAV ══════════════════════════ */
@@ -267,8 +267,8 @@ const translations = {
 
   /* ══════════════════════════ SPEAKERS ══════════════════════════ */
   "speaker.founder_role": {
-    ru: "Founder of Sales School. 12 лет в международных продажах.",
-    uz: "Sales School asoschisi. Xalqaro savdoda 12 yillik tajriba.",
+    ru: "Founder of Sales Up. 12 лет в международных продажах.",
+    uz: "Sales Up asoschisi. Xalqaro savdoda 12 yillik tajriba.",
   },
   "speaker.mentor_role": {
     ru: "Head of Sales Training. Обучила более 1000 новичков.",
@@ -461,8 +461,8 @@ const translations = {
     uz: "Oddiy ish",
   },
   "target.loss.chart_school": {
-    ru: "Sales School",
-    uz: "Sales School",
+    ru: "Sales Up",
+    uz: "Sales Up",
   },
   "target.loss.chart_year": {
     ru: "Через 1 год",
@@ -524,8 +524,8 @@ const translations = {
 
   /* --- Target Product Benefits --- */
   "target.product.heading": {
-    ru: "Sales School — школа, где продажи становятся вашей профессией",
-    uz: "Sales School — sotish sizning kasbingizga aylanadigan maktab",
+    ru: "Sales Up — школа, где продажи становятся вашей профессией",
+    uz: "Sales Up — sotish sizning kasbingizga aylanadigan maktab",
   },
   "target.product.desc": {
     ru: "Мы не учим «впаривать». Мы учим выстраивать долгосрочные отношения с клиентами и зарабатывать на этом легально и много.",

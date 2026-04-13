@@ -1,7 +1,7 @@
 export const WEBINAR_DATE = "2026-04-25T19:00:00+05:00";
 export const TG_LINK = "#"; // [TG-ссылка] — заменить
 export const FOUNDER_NAME = "Александр Волк";
-export const FOUNDER_ROLE = "Founder of Sales School. 12 лет в международных продажах.";
+export const FOUNDER_ROLE = "Founder of Sales Up. 12 лет в международных продажах.";
 export const FOUNDER_STATS = ["12 YEARS", "500+ DEALS"];
 export const FOUNDER_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuCjSOFa4jdZbXlyZbhMOeWyp8pzdV1Mk6ynhbT3XqwlDz7q51JL5O4wVvESUhK_mWs70cjRoc-IkEHKP-WDLoDJAZ_gJGJMarnpbGgOEHGuHF8w676QD0Ew9DEk7dbtBlfHoZtq3WCRGkc_PDMtMBprBLJ6F3lSOAZsFac1O9TWkGG2AyqC3muEO7CvY15lErRk2EsJ5tAPbTVY86OuOu3fWyY0zLwLBsO9-tgd4Z08TWOhYW6wuirXzW1fjsr_LSE4cDo6VsRLPrZy=w320-h320";
 export const MENTOR_NAME = "Мария Светлова";

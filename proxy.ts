@@ -23,7 +23,7 @@ export function proxy(request: NextRequest) {
 
   return new NextResponse('Unauthorized', {
     status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Sales School Admin"' },
+    headers: { 'WWW-Authenticate': 'Basic realm="Sales Up Admin"' },
   });
 }
 

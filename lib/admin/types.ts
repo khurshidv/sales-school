@@ -102,12 +102,10 @@ export interface PageBreakdowns {
 }
 
 export interface Lead {
-  visitor_id: string;
-  session_id: string;
-  page_slug: string;
-  cta_id: string;
-  cta_text: string;
-  section: string;
+  id: string;
+  name: string;
+  phone: string;
+  source_page: string;
   utm_source: string | null;
   utm_medium: string | null;
   utm_campaign: string | null;

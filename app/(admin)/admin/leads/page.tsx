@@ -7,24 +7,11 @@ const PAGE_NAMES: Record<string, string> = {
   target: 'Курс',
 };
 
-const SECTION_NAMES: Record<string, string> = {
-  hero: 'Герой',
-  action: 'Действие',
-  value_before_after: 'До/После',
-  value_bonuses: 'Бонусы',
-  value_faq: 'FAQ',
-  sticky: 'Sticky-бар',
-  mobile_nav: 'Моб. навигация',
-  final_cta: 'Финальный CTA',
-  loss_aversion: 'Потеря',
-  header: 'Шапка',
-  mobile_menu: 'Моб. меню',
-};
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -63,17 +50,11 @@ function PageBadge({ slug }: { slug: string }) {
   );
 }
 
-function DeviceBadge({ type }: { type: string | null }) {
-  if (!type) return <span style={{ color: '#d1d5db' }}>—</span>;
-  const icons: Record<string, string> = { mobile: '📱', desktop: '💻', tablet: '📟' };
-  return <span>{icons[type] ?? ''} {type}</span>;
-}
-
 function LeadsTable({ leads }: { leads: Lead[] }) {
   if (leads.length === 0) {
     return (
       <p style={{ padding: 40, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
-        Пока нет заявок. Данные появятся после первых кликов на CTA.
+        Пока нет заявок. Данные появятся после первых регистраций.
       </p>
     );
   }
@@ -84,20 +65,21 @@ function LeadsTable({ leads }: { leads: Lead[] }) {
         <thead>
           <tr>
             <th style={thStyle}>Дата</th>
+            <th style={thStyle}>Имя</th>
+            <th style={thStyle}>Телефон</th>
             <th style={thStyle}>Страница</th>
-            <th style={thStyle}>Секция</th>
             <th style={thStyle}>UTM Источник</th>
             <th style={thStyle}>UTM Кампания</th>
             <th style={thStyle}>Устройство</th>
-            <th style={thStyle}>Браузер</th>
           </tr>
         </thead>
         <tbody>
           {leads.map((lead, i) => (
-            <tr key={`${lead.session_id}-${lead.created_at}`} style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
+            <tr key={lead.id} style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
               <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{formatDate(lead.created_at)}</td>
-              <td style={tdStyle}><PageBadge slug={lead.page_slug} /></td>
-              <td style={{ ...tdStyle, fontSize: 12, color: '#6b7280' }}>{SECTION_NAMES[lead.section] ?? (lead.section || '—')}</td>
+              <td style={{ ...tdStyle, fontWeight: 500, color: '#111827' }}>{lead.name}</td>
+              <td style={{ ...tdStyle, fontFamily: 'monospace' }}>{lead.phone}</td>
+              <td style={tdStyle}><PageBadge slug={lead.source_page} /></td>
               <td style={tdStyle}>
                 {lead.utm_source ? (
                   <span style={{ background: '#dbeafe', color: '#2563eb', padding: '2px 8px', borderRadius: 99, fontSize: 12, fontWeight: 500 }}>
@@ -108,8 +90,9 @@ function LeadsTable({ leads }: { leads: Lead[] }) {
                 )}
               </td>
               <td style={{ ...tdStyle, fontSize: 12, color: '#6b7280' }}>{lead.utm_campaign ?? '—'}</td>
-              <td style={tdStyle}><DeviceBadge type={lead.device_type} /></td>
-              <td style={{ ...tdStyle, fontSize: 12, color: '#6b7280' }}>{lead.browser ?? '—'}</td>
+              <td style={{ ...tdStyle, fontSize: 12, color: '#6b7280' }}>
+                {lead.device_type === 'mobile' ? '📱 моб.' : lead.device_type === 'desktop' ? '💻 десктоп' : lead.device_type ?? '—'}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -143,7 +126,7 @@ export default async function LeadsPage({
         Заявки
       </h1>
       <p style={{ color: '#6b7280', marginBottom: 24, fontSize: 14 }}>
-        Клики по CTA-кнопкам на маркетинговых страницах · {counts.all ?? 0} всего
+        Регистрации с маркетинговых страниц · {counts.all ?? 0} всего
       </p>
 
       {/* Filter Tabs */}

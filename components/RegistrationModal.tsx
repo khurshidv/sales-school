@@ -1,13 +1,26 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useModal } from "@/lib/modal-context";
 import { useT } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/client";
+import { getUTMParams } from "@/lib/analytics/utm";
+import { detectDeviceType, detectBrowser } from "@/lib/analytics/device";
+
+function getSourcePage(): string {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname;
+  if (path.startsWith('/target')) return 'target';
+  return 'home';
+}
 
 export default function RegistrationModal() {
   const { isOpen, closeModal } = useModal();
   const { t } = useT();
   const cardRef = useRef<HTMLDivElement>(null);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -63,9 +76,31 @@ export default function RegistrationModal() {
 
         {/* Form */}
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
+            if (submitting) return;
+            setSubmitting(true);
+            try {
+              const utm = getUTMParams();
+              const supabase = createClient();
+              await supabase.from('leads').insert({
+                name: name.trim(),
+                phone: phone.trim(),
+                source_page: getSourcePage(),
+                utm_source: utm.utm_source,
+                utm_medium: utm.utm_medium,
+                utm_campaign: utm.utm_campaign,
+                device_type: detectDeviceType(),
+                browser: detectBrowser(),
+                referrer: utm.referrer,
+              });
+            } catch {
+              // fire-and-forget, don't block Telegram redirect
+            }
             window.open('https://t.me/salesup_uz', '_blank', 'noopener');
+            setSubmitting(false);
+            setName('');
+            setPhone('');
             closeModal();
           }}
           className="flex flex-col gap-4"
@@ -74,12 +109,16 @@ export default function RegistrationModal() {
             type="text"
             placeholder={t("modal.name")}
             required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary-container/40 focus:border-primary-container/40 focus:outline-none transition-all"
           />
           <input
             type="tel"
             placeholder={t("modal.phone")}
             required
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary-container/40 focus:border-primary-container/40 focus:outline-none transition-all"
           />
 

@@ -87,47 +87,30 @@ export async function getLeads(
   const admin = createAdminClient();
 
   let query = admin
-    .from('page_events')
-    .select('visitor_id, session_id, page_slug, event_data, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at')
-    .eq('event_type', 'cta_click')
+    .from('leads')
+    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at')
     .order('created_at', { ascending: false })
     .limit(limit);
 
   if (slug) {
-    query = query.eq('page_slug', slug);
+    query = query.eq('source_page', slug);
   }
 
   const { data } = await query;
-
-  return (data ?? []).map((row) => ({
-    visitor_id: row.visitor_id,
-    session_id: row.session_id,
-    page_slug: row.page_slug,
-    cta_id: (row.event_data as Record<string, string>)?.cta_id ?? '',
-    cta_text: (row.event_data as Record<string, string>)?.cta_text ?? '',
-    section: (row.event_data as Record<string, string>)?.section ?? '',
-    utm_source: row.utm_source,
-    utm_medium: row.utm_medium,
-    utm_campaign: row.utm_campaign,
-    device_type: row.device_type,
-    browser: row.browser,
-    referrer: row.referrer,
-    created_at: row.created_at,
-  }));
+  return data ?? [];
 }
 
 export async function getLeadCounts(): Promise<Record<string, number>> {
   const admin = createAdminClient();
 
   const { data } = await admin
-    .from('page_events')
-    .select('page_slug')
-    .eq('event_type', 'cta_click');
+    .from('leads')
+    .select('source_page');
 
   const counts: Record<string, number> = { all: 0 };
   for (const row of data ?? []) {
     counts.all++;
-    counts[row.page_slug] = (counts[row.page_slug] ?? 0) + 1;
+    counts[row.source_page] = (counts[row.source_page] ?? 0) + 1;
   }
   return counts;
 }

@@ -110,11 +110,11 @@ export default function ScenarioSelect({
           onClick={() => onSelectScenario('car-dealership')}
           className="scenario-featured-card group flex-none w-[58%] max-w-[520px] h-full overflow-hidden text-left"
         >
-          {/* Soft warm background image */}
+          {/* Background showroom image */}
           <img
             src="/assets/scenarios/car-dealership/backgrounds/bg_showroom.jpg"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.08] group-hover:opacity-[0.12] transition-opacity duration-500"
+            className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500"
           />
 
           {/* Top row: level pill + open badge */}
@@ -134,19 +134,6 @@ export default function ScenarioSelect({
             <span className="badge-shimmer bg-[#22c55e] text-white text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_4px_12px_rgba(34,197,94,0.35)]">
               {t.open[lang]}
             </span>
-          </div>
-
-          {/* Hero car — centered */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <img
-              src="/assets/scenarios/car-dealership/cars/car_all_lineup.webp"
-              alt="Chevrolet"
-              className="w-[72%] max-w-[380px] h-auto transition-transform duration-500 group-hover:scale-[1.04] group-hover:-translate-y-1"
-              style={{
-                filter:
-                  'drop-shadow(0 18px 28px rgba(148,74,0,0.28)) drop-shadow(0 0 40px rgba(232,121,10,0.25))',
-              }}
-            />
           </div>
 
           {/* Bottom meta panel */}

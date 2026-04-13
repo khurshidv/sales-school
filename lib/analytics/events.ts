@@ -107,8 +107,9 @@ export function initPageTracking(pageSlug: string): () => void {
   document.addEventListener('visibilitychange', onVisibilityChange);
   window.addEventListener('pagehide', trackLeave);
 
-  // 4. Cleanup
+  // 4. Cleanup — also fires page_leave on SPA navigation (React unmount)
   return () => {
+    trackLeave();
     window.removeEventListener('scroll', onScroll);
     document.removeEventListener('visibilitychange', onVisibilityChange);
     window.removeEventListener('pagehide', trackLeave);

@@ -100,3 +100,19 @@ export interface PageBreakdowns {
   scroll_depth: ScrollDepthEntry[];
   daily_views: DailyViews[];
 }
+
+export interface Lead {
+  visitor_id: string;
+  session_id: string;
+  page_slug: string;
+  cta_id: string;
+  cta_text: string;
+  section: string;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  device_type: string | null;
+  browser: string | null;
+  referrer: string | null;
+  created_at: string;
+}

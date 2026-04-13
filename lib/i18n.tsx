@@ -317,7 +317,7 @@ const translations = {
   },
   "target.hero.heading": {
     ru: "Нет опыта? Не проблема. Мы доведём тебя до первой зарплаты от $800 в продажах",
-    uz: "Tajriba yo'qmi? Muammo emas. Biz sizni sotuvda $800 dan birinchi oylikkacha olib boramiz",
+    uz: "Tajriba yo'qmi? Muammo emas. Biz sizga sotuvlar sohasida $800 dollardan boshlanadigan ilk oylikka chiqishga yordam beramiz",
   },
   "target.hero.subheading": {
     ru: "Обучение + практика + реальное трудоустройство",

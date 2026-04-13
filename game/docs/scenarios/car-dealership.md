@@ -27,7 +27,6 @@
 | `player` | Игрок | Новый консультант | — | Определяется выборами | — |
 | `rustam` | Рустам ака | Менеджер/ментор | 45 | Строгий но справедливый, отцовская фигура | friendly, serious, proud, disappointed |
 | `dilnoza` | Дильноза | Старший коллега | 30 | Конкурентная но помогает, прямая | neutral, smirk, helpful |
-| `anvar` | Анвар | Младший коллега | 22 | Старательный, иногда ошибается | nervous, eager, embarrassed |
 
 ### Клиенты (по дням)
 
@@ -428,7 +427,7 @@ course_hint:
 
 ### Нод-граф
 ```
-d2_intro → d2_anvar_files → d2_callback_check [BRANCH] → d2_kamola_enters
+d2_intro → d2_callback_check [BRANCH] → d2_kamola_enters
 → d2_presentation [CHOICE]
   A → d2_kamola_obj_features ──┐
   B → d2_kamola_obj_value ─────┼→ d2_objection [CHOICE 10с]
@@ -1112,7 +1111,7 @@ dialogue:
 
 ### Нод-граф
 ```
-d4_intro → d4_preparation [CHOICE: 2 из 3] → d4_anvar_helps [BRANCH]
+d4_intro → d4_preparation [CHOICE: 2 из 3] → d4_dilnoza_intel [BRANCH]
 → d4_abdullaev_enters → d4_greeting [CHOICE]
   A → d4_abdullaev_reacts_vip ──────┐
   B → d4_abdullaev_reacts_direct ───┼→ d4_fleet [CHOICE 10с]

@@ -53,7 +53,7 @@ export const day3: Day = {
         { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
-        uz: "Abdullaev hamma narsani birinchi daqiqadayoq baholaydi. Tayyorgarliksiz maydonga tushsangiz, ikkinchi imkoniyat bo‘lmaydi.",
+        uz: "Abdullaev hamma narsani birinchi daqiqadayoq baholaydi. Tayyorgarliksiz maydonga tushsangiz, ikkinchi imkoniyat bo'lmaydi.",
         ru: 'Абдуллаев оценивает всё в первую минуту. Выйдете неподготовленным — второго шанса не будет.',
       },
       nextNodeId: 'd3_preparation',
@@ -75,7 +75,7 @@ export const day3: Day = {
             uz: "Uning kompaniyasini internetda o'rganing",
             ru: 'Изучить его компанию в интернете',
           },
-          nextNodeId: 'd3_anvar_check',
+          nextNodeId: 'd3_dilnoza_intel',
           effects: [
             { type: 'add_score', dimension: 'expertise', amount: 8 },
             { type: 'set_flag', flag: 'researched_company' },
@@ -84,10 +84,10 @@ export const day3: Day = {
         {
           id: 'd3_prep_b',
           text: {
-            uz: "Rustamdan VIP-protokol haqida so‘ra.",
+            uz: "Rustamdan VIP-protokol haqida so'ra.",
             ru: 'Спросить у Рустама о VIP-протоколе',
           },
-          nextNodeId: 'd3_anvar_check',
+          nextNodeId: 'd3_dilnoza_intel',
           effects: [
             { type: 'add_score', dimension: 'rapport', amount: 8 },
             { type: 'set_flag', flag: 'knows_vip_protocol' },
@@ -96,10 +96,10 @@ export const day3: Day = {
         {
           id: 'd3_prep_c',
           text: {
-            uz: "Moliyachilardan so‘rash kerak: kompaniyaga qancha chegirma berish mumkin?",
+            uz: "Moliyachilardan so'rash kerak: kompaniyaga qancha chegirma berish mumkin?",
             ru: 'Спросить у финансистов: какую скидку можно дать компании?',
           },
-          nextNodeId: 'd3_anvar_check',
+          nextNodeId: 'd3_dilnoza_intel',
           effects: [
             { type: 'add_score', dimension: 'opportunity', amount: 8 },
             { type: 'set_flag', flag: 'has_discount_authority' },
@@ -108,31 +108,31 @@ export const day3: Day = {
       ],
     },
 
-    // ── Anvar Check ──────────────────────────────────────────
-    d3_anvar_check: {
-      id: 'd3_anvar_check',
+    // ── Dilnoza Intel (conditional on researched_company) ────
+    d3_dilnoza_intel: {
+      id: 'd3_dilnoza_intel',
       type: 'condition_branch',
       branches: [
         {
           condition: { type: 'flag', flag: 'researched_company' },
-          nextNodeId: 'd3_anvar_info',
+          nextNodeId: 'd3_dilnoza_cobalt_tip',
         },
       ],
       fallbackNodeId: 'd3_abdullaev_arrives',
     },
 
-    d3_anvar_info: {
-      id: 'd3_anvar_info',
+    d3_dilnoza_cobalt_tip: {
+      id: 'd3_dilnoza_cobalt_tip',
       type: 'dialogue',
-      speaker: 'anvar',
-      emotion: 'eager',
+      speaker: 'dilnoza',
+      emotion: 'explaining',
       background: 'bg_manager_office',
       characters: [
-        { id: 'anvar', emotion: 'eager', position: 'center' },
+        { id: 'dilnoza', emotion: 'explaining', position: 'center' },
       ],
       text: {
-        uz: "Bir narsa topdim... o’tgan yili ular 12 ta Cobalt sotib olishgan ekan. Ehtimol, parkni yangilashni rejalashtirishayotgandir.",
-        ru: 'Кое-что нашёл — в прошлом году они купили 12 Cobalt. Возможно, планируют обновление парка.',
+        uz: "Foydali ma'lumot topdim — o'tgan yili ular 12 ta Cobalt sotib olishgan ekan. Ehtimol, parkni yangilashni rejalashtirishayotgandir.",
+        ru: 'Нашла полезную информацию — в прошлом году они купили 12 Cobalt. Возможно, планируют обновление парка.',
       },
       nextNodeId: 'd3_abdullaev_arrives',
     },
@@ -146,7 +146,7 @@ export const day3: Day = {
       background: 'bg_showroom_entrance_exterior',
       characters: [],
       text: {
-        uz: "Qora rangli mashina kelib to‘xtadi. Haydovchi eshikni ochdi. Kostyum kiygan erkak tushib, to‘g‘ri salonga kirdi.",
+        uz: "Qora rangli mashina kelib to'xtadi. Haydovchi eshikni ochdi. Kostyum kiygan erkak tushib, to'g'ri salonga kirdi.",
         ru: 'Подъехала чёрная машина. Водитель открыл дверь. Мужчина в костюме вышел и прошёл прямо в салон.',
       },
       nextNodeId: 'd3_abdullaev_enters',
@@ -194,7 +194,7 @@ export const day3: Day = {
         {
           id: 'd3_greeting_b',
           text: {
-            uz: "Xush kelibsiz! Malibuni ko‘rsatib beray.",
+            uz: "Xush kelibsiz! Malibuni ko'rsatib beray.",
             ru: 'Добро пожаловать! Давайте покажу Malibu.',
           },
           nextNodeId: 'd3_abdullaev_reacts_direct',
@@ -205,7 +205,7 @@ export const day3: Day = {
         {
           id: 'd3_greeting_c',
           text: {
-            uz: "Kompaniyangiz avval ham park sotib olganini ko‘rib chiqdim. Buning uchun ikkita tushunarli variant tayyorlab qo‘ydim.",
+            uz: "Kompaniyangiz avval ham park sotib olganini ko'rib chiqdim. Buning uchun ikkita tushunarli variant tayyorlab qo'ydim.",
             ru: 'Посмотрел, как ваша компания уже покупала парк раньше. Под это подготовил два понятных варианта.',
           },
           nextNodeId: 'd3_abdullaev_reacts_research',
@@ -261,7 +261,7 @@ export const day3: Day = {
         { id: 'abdullaev', emotion: 'neutral', position: 'center' },
       ],
       text: {
-        uz: "Mayli. Mana bu yerga ko‘rsatinglar. Faqat qisqa qilib.",
+        uz: "Mayli. Mana bu yerga ko'rsatinglar. Faqat qisqa qilib.",
         ru: 'Ладно. Показывайте здесь. Только коротко.',
       },
       nextNodeId: 'd3_fleet',
@@ -278,7 +278,7 @@ export const day3: Day = {
         { id: 'abdullaev', emotion: 'impressed', position: 'center' },
       ],
       text: {
-        uz: "Demak, o‘rganib chiqdinglar. Yaxshi. Agar tayyor biror narsa bo‘lsa, ko‘rsating.",
+        uz: "Demak, o'rganib chiqdinglar. Yaxshi. Agar tayyor biror narsa bo'lsa, ko'rsating.",
         ru: 'Значит, изучили. Хорошо. Если есть что-то готовое — показывайте.',
       },
       nextNodeId: 'd3_fleet',
@@ -289,7 +289,7 @@ export const day3: Day = {
       id: 'd3_fleet',
       type: 'choice',
       prompt: {
-        uz: "Uchta Malibu bo‘yicha taklifni qanday shakllantirasiz?",
+        uz: "Uchta Malibu bo'yicha taklifni qanday shakllantirasiz?",
         ru: 'Как соберёте предложение по трём Malibu?',
       },
       timeLimit: 20,
@@ -298,7 +298,7 @@ export const day3: Day = {
         {
           id: 'd3_fleet_a',
           text: {
-            uz: 'Biz mashinalarni "yalang‘och" holda bermaymiz: paketni darhol xizmat ko‘rsatish, kuzatib borish va korporativ shartlar bilan yig‘amiz.',
+            uz: "Biz mashinalarni \"yalang'och\" holda bermaymiz: paketni darhol xizmat ko'rsatish, kuzatib borish va korporativ shartlar bilan yig'amiz.",
             ru: 'Мы не отдаём машины "голыми": собираем пакет сразу с сервисом, сопровождением и корпоративными условиями.',
           },
           nextNodeId: 'd3_wife_car',
@@ -345,7 +345,7 @@ export const day3: Day = {
         { type: 'add_score', dimension: 'timing', amount: -8 },
       ],
       narrator: {
-        uz: "Abdullayev soatiga qaradi. Bir og‘iz ham gapirmadi.",
+        uz: "Abdullayev soatiga qaradi. Bir og'iz ham gapirmadi.",
         ru: 'Абдуллаев посмотрел на часы. Не сказал ни слова.',
       },
       nextNodeId: 'd3_wife_car',
@@ -356,14 +356,14 @@ export const day3: Day = {
       id: 'd3_wife_car',
       type: 'choice',
       prompt: {
-        uz: "Tahoe haqida nimalarni ta’kidlamoqchisiz?",
+        uz: "Tahoe haqida nimalarni ta'kidlamoqchisiz?",
         ru: 'Что подчеркнёте по Tahoe?',
       },
       choices: [
         {
           id: 'd3_wife_a',
           text: {
-            uz: "Xotiningiz uchun qulay mashina yig’amiz: yumshoq o’rindiq, chiroyli salon, yaxshi ovoz va har kuni his qilinadigan mayda qulayliklar.",
+            uz: "Xotiningiz uchun qulay mashina yig'amiz: yumshoq o'rindiq, chiroyli salon, yaxshi ovoz va har kuni his qilinadigan mayda qulayliklar.",
             ru: 'Для супруги соберём машину с упором на комфорт: посадка, салон, звук и все мелочи, которые чувствуются каждый день.',
           },
           nextNodeId: 'd3_abd_check',
@@ -376,7 +376,7 @@ export const day3: Day = {
         {
           id: 'd3_wife_b',
           text: {
-            uz: "Quvvati: 5,3L V8, 355 ot kuchi Yo‘l shohi.",
+            uz: "Quvvati: 5,3L V8, 355 ot kuchi Yo'l shohi.",
             ru: 'Мощность: 5.3L V8, 355 л.с. Король дороги.',
           },
           nextNodeId: 'd3_abd_check',
@@ -387,7 +387,7 @@ export const day3: Day = {
         {
           id: 'd3_wife_c',
           text: {
-            uz: "Agar sizga qulay bo‘lsa, bularning barchasini to‘rtta alohida mashina bilan emas, balki yagona yaxlit yechim bilan yopib qo‘yishimiz mumkin.",
+            uz: "Agar sizga qulay bo'lsa, bularning barchasini to'rtta alohida mashina bilan emas, balki yagona yaxlit yechim bilan yopib qo'yishimiz mumkin.",
             ru: 'Если вам удобно, можем закрыть всё это не четырьмя разрозненными машинами, а одним цельным решением.',
           },
           nextNodeId: 'd3_abd_check',
@@ -439,7 +439,7 @@ export const day3: Day = {
         { id: 'abdullaev', emotion: 'impressed', position: 'center' },
       ],
       text: {
-        uz: "Taklifingiz menga ma’qul. Bir yillik shartnoma imzolashimiz mumkin.",
+        uz: "Taklifingiz menga ma'qul. Bir yillik shartnoma imzolashimiz mumkin.",
         ru: 'Ваше предложение мне подходит. Можем подписать годовой контракт.',
       },
       effects: [
@@ -462,7 +462,7 @@ export const day3: Day = {
         { id: 'rustam', emotion: 'proud', position: 'center' },
       ],
       text: {
-        uz: "Juda soz. Bunday mijozlar bilan so‘zamollik emas, tayyorgarlik ishlaydi.",
+        uz: "Juda soz. Bunday mijozlar bilan so'zamollik emas, tayyorgarlik ishlaydi.",
         ru: 'Неплохо. С такими клиентами работает не красноречие, а подготовка.',
       },
       effects: [
@@ -502,7 +502,7 @@ export const day3: Day = {
         { id: 'rustam', emotion: 'disappointed', position: 'center' },
       ],
       text: {
-        uz: "U ketdi. Hech narsa demadi. Shunchaki o‘rnidan turib, chiqib ketdi. Bunday odamlar ikkinchi marta kelmaydi.",
+        uz: "U ketdi. Hech narsa demadi. Shunchaki o'rnidan turib, chiqib ketdi. Bunday odamlar ikkinchi marta kelmaydi.",
         ru: 'Он ушёл. Ничего не сказал. Просто встал и ушёл. Такие люди второй раз не приходят.',
       },
       effects: [
@@ -524,7 +524,7 @@ export const day3: Day = {
       background: 'bg_showroom',
       characters: [],
       text: {
-        uz: "Tushlikdan so‘ng. Abdullayevning mashinasi jo‘nab ketdi. Salon jim bo‘lib qoldi. Ammo kun hali tugamagan edi.",
+        uz: "Tushlikdan so'ng. Abdullayevning mashinasi jo'nab ketdi. Salon jim bo'lib qoldi. Ammo kun hali tugamagan edi.",
         ru: 'После обеда. Машина Абдуллаева уехала. В салоне стало тихо. Но день ещё не закончен.',
       },
       nextNodeId: 'd3_rustam_mid',
@@ -540,7 +540,7 @@ export const day3: Day = {
         { id: 'rustam', emotion: 'serious', position: 'center' },
       ],
       text: {
-        uz: "Xotirjam bo‘lmanglar. Bugun yana kimdir kelishi mumkin.",
+        uz: "Xotirjam bo'lmanglar. Bugun yana kimdir kelishi mumkin.",
         ru: 'Не расслабляйтесь. Сегодня может зайти ещё кто-нибудь.',
       },
       nextNodeId: 'd3_dilnoza_check',
@@ -575,7 +575,7 @@ export const day3: Day = {
         { id: 'dilnoza', emotion: 'helpful', position: 'center' },
       ],
       text: {
-        uz: "Bu kunlarda yaxshi ishladingiz. Bir narsa: eng oddiy ko‘ringan odam ko‘pincha eng muhim shaxs bo‘lib chiqadi.",
+        uz: "Bu kunlarda yaxshi ishladingiz. Bir narsa: eng oddiy ko'ringan odam ko'pincha eng muhim shaxs bo'lib chiqadi.",
         ru: 'Вы хорошо работали эти дни. Одно: самый обычный на вид человек часто оказывается самым важным.',
       },
       effects: [
@@ -598,7 +598,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'observing', position: 'center' },
       ],
       text: {
-        uz: "Zalga oddiy kiyingan bir erkak kirib keldi. Hech narsaga qo‘l cho‘zmay, hech kimni chaqirmaydi. Shunchaki qarab turibdi.",
+        uz: "Zalga oddiy kiyingan bir erkak kirib keldi. Hech narsaga qo'l cho'zmay, hech kimni chaqirmaydi. Shunchaki qarab turibdi.",
         ru: 'В зал зашёл просто одетый мужчина. Ни к чему не тянется, никого не зовёт. Просто смотрит.',
       },
       nextNodeId: 'd3_sardor_approach',
@@ -618,7 +618,7 @@ export const day3: Day = {
         {
           id: 'd3_sardor_approach_a',
           text: {
-            uz: "Salom alaykum. Xotirjam tomosha qiling. Zarur bo‘lsam, yoningizda turaman.",
+            uz: "Salom alaykum. Xotirjam tomosha qiling. Zarur bo'lsam, yoningizda turaman.",
             ru: 'Здравствуйте. Спокойно смотрите. Если понадоблюсь, я рядом.',
           },
           nextNodeId: 'd3_needs',
@@ -643,7 +643,7 @@ export const day3: Day = {
         {
           id: 'd3_sardor_approach_c',
           text: {
-            uz: "Kobaltni ko’ryapsizmi? Bizda uni ko’pincha sotib olishadi.",
+            uz: "Kobaltni ko'ryapsizmi? Bizda uni ko'pincha sotib olishadi.",
             ru: 'Cobalt смотрите? Его у нас чаще всего и берут.',
           },
           nextNodeId: 'd3_needs',
@@ -665,7 +665,7 @@ export const day3: Day = {
         { type: 'add_score', dimension: 'rapport', amount: -5 },
       ],
       narrator: {
-        uz: "Sen yaqinlashmading. U o‘zi zalni aylanib yurardi.",
+        uz: "Sen yaqinlashmading. U o'zi zalni aylanib yurardi.",
         ru: 'Вы не подошли. Он сам бродил по залу.',
       },
       nextNodeId: 'd3_needs',
@@ -683,7 +683,7 @@ export const day3: Day = {
         {
           id: 'd3_needs_a',
           text: {
-            uz: "Oilangiz haqida so‘zlab bersangiz - farzandlaringiz nechta, qayerlarga borasiz, nimalarni qadrlayapsiz?",
+            uz: "Oilangiz haqida so'zlab bersangiz - farzandlaringiz nechta, qayerlarga borasiz, nimalarni qadrlayapsiz?",
             ru: 'Расскажите о семье — сколько детей, куда ездите, что важно?',
           },
           nextNodeId: 'd3_objection',
@@ -712,7 +712,7 @@ export const day3: Day = {
         {
           id: 'd3_needs_c',
           text: {
-            uz: "Oila uchun - Equinox yoki Tracker. Ko‘rsatib beray.",
+            uz: "Oila uchun - Equinox yoki Tracker. Ko'rsatib beray.",
             ru: 'Для семьи — Equinox или Tracker. Давайте покажу.',
           },
           // Преждевременное предложение модели без выяснения потребностей.
@@ -732,7 +732,7 @@ export const day3: Day = {
       id: 'd3_objection',
       type: 'choice',
       prompt: {
-        uz: "Sardor: - Aytishlaricha, xizmat ko‘rsatish qimmat ekan. Ehtiyot qismlar bilan ham muammolar bor ekan.",
+        uz: "Sardor: - Aytishlaricha, xizmat ko'rsatish qimmat ekan. Ehtiyot qismlar bilan ham muammolar bor ekan.",
         ru: 'Сардор: "Говорят, сервис дорогой. И с запчастями проблемы."',
       },
       timeLimit: 20,
@@ -741,7 +741,7 @@ export const day3: Day = {
         {
           id: 'd3_objection_a',
           text: {
-            uz: "Bu savol ko‘p so‘raladi. Ochig‘ini aytsam, oddiy rasmiy xizmatda odamlar tasavvur qilganidan ancha kamroq muammolar mavjud.",
+            uz: "Bu savol ko'p so'raladi. Ochig'ini aytsam, oddiy rasmiy xizmatda odamlar tasavvur qilganidan ancha kamroq muammolar mavjud.",
             ru: 'Этот вопрос часто задают. Если честно, при нормальном официальном сервисе там намного меньше проблем, чем люди себе представляют.',
           },
           nextNodeId: 'd3_sardor_closing',
@@ -754,7 +754,7 @@ export const day3: Day = {
         {
           id: 'd3_objection_b',
           text: {
-            uz: "Yo‘q, hozir bunday muammo yo‘q.",
+            uz: "Yo'q, hozir bunday muammo yo'q.",
             ru: 'Нет, сейчас такой проблемы уже нет.',
           },
           nextNodeId: 'd3_sardor_closing',
@@ -820,7 +820,7 @@ export const day3: Day = {
         {
           id: 'd3_closing_b',
           text: {
-            uz: "Aloqa ma’lumotlarimni qoldiraman. O‘ylab ko‘rib, qo‘ng‘iroq qiling.",
+            uz: "Aloqa ma'lumotlarimni qoldiraman. O'ylab ko'rib, qo'ng'iroq qiling.",
             ru: 'Оставлю свои контакты. Подумайте и позвоните.',
           },
           nextNodeId: 'd3_reveal',
@@ -873,7 +873,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'revealing', position: 'center' },
       ],
       text: {
-        uz: "Aslida men oddiy mijoz sifatida emas, boshqa maqsadda kelganman. Meni sizlarning ishingizni ko‘rish uchun yuborishgan.",
+        uz: "Aslida men oddiy mijoz sifatida emas, boshqa maqsadda kelganman. Meni sizlarning ishingizni ko'rish uchun yuborishgan.",
         ru: 'На самом деле я пришёл не как обычный клиент. Меня отправили посмотреть, как вы работаете.',
       },
       nextNodeId: 'd3_team_reaction',
@@ -891,7 +891,7 @@ export const day3: Day = {
         { id: 'dilnoza', emotion: 'neutral', position: 'right' },
       ],
       text: {
-        uz: "Sardor... Xo‘sh, yangi hamkasbimiz sizga yoqdimi?",
+        uz: "Sardor... Xo'sh, yangi hamkasbimiz sizga yoqdimi?",
         ru: 'Сардор... Ну, как вам наш новый коллега?',
       },
       nextNodeId: 'd3_grandmaster_check',
@@ -1025,7 +1025,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'impressed', position: 'center' },
       ],
       text: {
-        uz: "Yaxshi ishladingiz. Ko‘pchilik bu darajaga ancha keyinroq chiqadi.",
+        uz: "Yaxshi ishladingiz. Ko'pchilik bu darajaga ancha keyinroq chiqadi.",
         ru: 'Хорошо отработали. Большинство выходят на этот уровень значительно позже.',
       },
       nextNodeId: 'd3_gm_sardor2',
@@ -1057,7 +1057,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
-        uz: "Men ko‘plab sotuvchilarni ko‘rganman. Eng iqtidorlilar emas, balki tizimli ravishda shug‘ullanadiganlar o‘sib bormoqda.",
+        uz: "Men ko'plab sotuvchilarni ko'rganman. Eng iqtidorlilar emas, balki tizimli ravishda shug'ullanadiganlar o'sib bormoqda.",
         ru: 'Я видел много продавцов. Растут не самые талантливые, а те, кто тренируются системно.',
       },
       nextNodeId: 'd3_gm_sardor4',
@@ -1073,7 +1073,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'satisfied', position: 'center' },
       ],
       text: {
-        uz: "Davom ettirmoqchi bo‘lsangiz, tizim, amaliyot va ustoz kerak bo‘ladi. Aynan shuni ta’minlaydigan dastur mavjud.",
+        uz: "Davom ettirmoqchi bo'lsangiz, tizim, amaliyot va ustoz kerak bo'ladi. Aynan shuni ta'minlaydigan dastur mavjud.",
         ru: 'Если хотите продолжить — нужна система, практика и наставник. Есть программа, которая даёт именно это.',
       },
       nextNodeId: 'd3_gm_dilnoza',
@@ -1089,7 +1089,7 @@ export const day3: Day = {
         { id: 'dilnoza', emotion: 'proud', position: 'center' },
       ],
       text: {
-        uz: "Men ushbu dasturni tugatdim. Birinchi yilning o‘zida maoshim 3 barobar oshdi.",
+        uz: "Men ushbu dasturni tugatdim. Birinchi yilning o'zida maoshim 3 barobar oshdi.",
         ru: 'Я окончила эту программу. Зарплата выросла в 3 раза за первый год.',
       },
       nextNodeId: 'd3_gm_rustam',
@@ -1119,7 +1119,7 @@ export const day3: Day = {
       background: 'bg_showroom',
       characters: [],
       text: {
-        uz: 'Tizimli o‘qiganlar tezroq o‘sadi. 3 oy ichida yangi boshlovchilar ham, tajribali mutaxassislar ham ish darajasiga chiqishi mumkin.',
+        uz: "Tizimli o'qiganlar tezroq o'sadi. 3 oy ichida yangi boshlovchilar ham, tajribali mutaxassislar ham ish darajasiga chiqishi mumkin.",
         ru: 'Те, кто учатся системно, растут быстрее. За 3 месяца можно выйти на рабочий уровень — и новички, и опытные.',
       },
       nextNodeId: 'd3_gm_cta',
@@ -1134,7 +1134,7 @@ export const day3: Day = {
         speaker: 'sardor',
         emotion: 'impressed',
         text: {
-          uz: "Sizda barcha zarur narsalar borligini isbotladingiz. Keyingi qadam: buni har kuni muntazam bajarishni o‘rganish. Bu haqiqiy martabaning boshlanishi.",
+          uz: "Sizda barcha zarur narsalar borligini isbotladingiz. Keyingi qadam: buni har kuni muntazam bajarishni o'rganish. Bu haqiqiy martabaning boshlanishi.",
           ru: 'Вы доказали, что у вас есть всё необходимое. Следующий шаг: научиться делать это стабильно, каждый день. Это начало настоящей карьеры.',
         },
         characters: [
@@ -1183,7 +1183,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
-        uz: "Sizda sezgi bor ekan. Endi unga tayanch kerak: tizim, amaliyot va o‘z xatolarini tahlil qilish.",
+        uz: "Sizda sezgi bor ekan. Endi unga tayanch kerak: tizim, amaliyot va o'z xatolarini tahlil qilish.",
         ru: 'Чутьё у вас есть. Теперь ему нужна опора: система, практика и разбор собственных ошибок.',
       },
       nextNodeId: 'd3_s_school',
@@ -1197,7 +1197,7 @@ export const day3: Day = {
       background: 'bg_showroom',
       characters: [],
       text: {
-        uz: "Aynan shuni o‘rgatadigan dastur mavjud. 3 oy, shaxsiy murabbiy, haqiqiy amaliyot.",
+        uz: "Aynan shuni o'rgatadigan dastur mavjud. 3 oy, shaxsiy murabbiy, haqiqiy amaliyot.",
         ru: 'Есть программа, которая учит именно этому. 3 месяца, личный ментор, реальная практика.',
       },
       nextNodeId: 'd3_s_cta',
@@ -1242,7 +1242,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
-        uz: "Yomon emas. Imkoniyat bor, lekin u hali to‘liq ishga solinmagan.",
+        uz: "Yomon emas. Imkoniyat bor, lekin u hali to'liq ishga solinmagan.",
         ru: 'Неплохо. Потенциал есть, но он ещё не раскрыт полностью.',
       },
       nextNodeId: 'd3_p_sardor2',
@@ -1258,7 +1258,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'neutral', position: 'center' },
       ],
       text: {
-        uz: "Tajribali murabbiy va tizimli ta’lim - bu ikkisini qo‘shsangiz, natija o‘zgaradi.",
+        uz: "Tajribali murabbiy va tizimli ta'lim - bu ikkisini qo'shsangiz, natija o'zgaradi.",
         ru: 'Опытный ментор и системное обучение — добавьте эти два, и результат изменится.',
       },
       nextNodeId: 'd3_p_school',
@@ -1272,7 +1272,7 @@ export const day3: Day = {
       background: 'bg_showroom',
       characters: [],
       text: {
-        uz: "Bunga o‘z kuchingiz bilan ham erishishingiz mumkin. Ammo ustoz va oddiy amaliyot bilan bu yo‘l bir necha barobar qisqaradi.",
+        uz: "Bunga o'z kuchingiz bilan ham erishishingiz mumkin. Ammo ustoz va oddiy amaliyot bilan bu yo'l bir necha barobar qisqaradi.",
         ru: 'До этого можно дойти и самому. Но с наставником и нормальной практикой путь становится короче в разы.',
       },
       nextNodeId: 'd3_p_cta',
@@ -1287,7 +1287,7 @@ export const day3: Day = {
         speaker: 'sardor',
         emotion: 'satisfied',
         text: {
-          uz: "O‘qishga intilish - bu allaqachon birinchi qadamdir.",
+          uz: "O'qishga intilish - bu allaqachon birinchi qadamdir.",
           ru: 'Желание учиться — это уже первый шаг.',
         },
         characters: [
@@ -1318,7 +1318,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'neutral_alt', position: 'center' },
       ],
       text: {
-        uz: "Natijasi qoniqarsiz. Bilasizmi? Aksariyat odamlar bunga urinib ham ko’rishmaydi.",
+        uz: "Natijasi qoniqarsiz. Bilasizmi? Aksariyat odamlar bunga urinib ham ko'rishmaydi.",
         ru: 'Результат слабый. Но знаете что? Большинство людей даже не пытаются.',
       },
       nextNodeId: 'd3_f_sardor2',
@@ -1348,7 +1348,7 @@ export const day3: Day = {
       background: 'bg_showroom',
       characters: [],
       text: {
-        uz: "Sotuvchilik - bu mahorat. Har qanday mahorat singari, uni ham o‘rganish mumkin. Buni professional darajada o‘rgatadiganlar ham bor.",
+        uz: "Sotuvchilik - bu mahorat. Har qanday mahorat singari, uni ham o'rganish mumkin. Buni professional darajada o'rgatadiganlar ham bor.",
         ru: 'Продажи — это навык. Как любой навык, ему можно научиться. Есть те, кто учит этому профессионально.',
       },
       nextNodeId: 'd3_f_cta',
@@ -1363,7 +1363,7 @@ export const day3: Day = {
         speaker: 'sardor',
         emotion: 'satisfied',
         text: {
-          uz: 'Boshlash uchun "iste’dodli" bo‘lish shart emas. Muhimi, to‘g‘ri muhitga tushib, to‘g‘ri tartibda o‘qish.',
+          uz: "Boshlash uchun \"iste'dodli\" bo'lish shart emas. Muhimi, to'g'ri muhitga tushib, to'g'ri tartibda o'qish.",
           ru: 'Чтобы начать, не нужно быть "талантом". Важнее попасть в правильную среду и учиться в правильном порядке.',
         },
         characters: [

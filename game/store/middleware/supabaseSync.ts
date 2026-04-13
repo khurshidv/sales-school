@@ -25,6 +25,7 @@ async function syncWithRetry(
 export async function syncCreatePlayer(
   phone: string,
   displayName: string,
+  deviceFingerprint?: string,
   utm?: { source?: string; medium?: string; campaign?: string; referrer?: string },
 ): Promise<string | null> {
   // Returns server-side player ID or null on error
@@ -36,6 +37,7 @@ export async function syncCreatePlayer(
         phone,
         displayName,
         avatarId: 'male',
+        deviceFingerprint: deviceFingerprint || undefined,
         utmSource: utm?.source,
         utmMedium: utm?.medium,
         utmCampaign: utm?.campaign,

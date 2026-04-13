@@ -23,23 +23,6 @@ export const day2: Day = {
         uz: `Bugungi mijozga uzoq tushuntirish shart emas. U o'zi mashinalarni yaxshi tushunadi. Sizdan aniq va qisqa javob kutadi.`,
         ru: 'Сегодняшнему клиенту не нужно долго объяснять. Она сама хорошо разбирается в машинах. От вас ждёт — чётких и коротких ответов.',
       },
-      nextNodeId: 'd2_anvar_files',
-    },
-
-    d2_anvar_files: {
-      id: 'd2_anvar_files',
-      type: 'dialogue',
-      speaker: 'anvar',
-      emotion: 'nervous',
-      background: 'bg_manager_office',
-      characters: [
-        { id: 'rustam', emotion: 'serious', position: 'left' },
-        { id: 'anvar', emotion: 'nervous', position: 'right' },
-      ],
-      text: {
-        uz: `Rustam aka, Kamola allaqachon kelibdi. Malibuni ko'rib, K5 bilan ham solishtiribdi.`,
-        ru: 'Рустам-ака, Камола уже приезжала. Malibu посмотрела, с K5 тоже сравнила.',
-      },
       nextNodeId: 'd2_callback_check',
     },
 

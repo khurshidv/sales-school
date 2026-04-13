@@ -2,22 +2,47 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 // GET /api/game/players?phone=+XXXXXXXXXXX
+// GET /api/game/players?deviceId=UUID — fallback lookup by device fingerprint
 // Returns full player state from Supabase (source of truth)
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const phone = searchParams.get('phone');
-
-  if (!phone || !phone.startsWith('+') || phone.replace(/\D/g, '').length < 8) {
-    return NextResponse.json({ error: 'Invalid phone format' }, { status: 400 });
-  }
+  const deviceId = searchParams.get('deviceId');
 
   const supabase = createAdminClient();
 
-  const { data: player } = await supabase
-    .from('players')
-    .select('*')
-    .eq('phone', phone)
-    .single();
+  let player: Record<string, unknown> | null = null;
+
+  if (phone && phone.startsWith('+') && phone.replace(/\D/g, '').length >= 8) {
+    // Primary: lookup by phone
+    const { data } = await supabase
+      .from('players')
+      .select('*')
+      .eq('phone', phone)
+      .single();
+    player = data;
+  } else if (deviceId) {
+    // Fallback: lookup by device fingerprint (for when IG WebView cleared localStorage)
+    const { data } = await supabase
+      .from('players')
+      .select('*')
+      .eq('device_fingerprint', deviceId)
+      .order('last_seen_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    player = data;
+  } else {
+    return NextResponse.json({ error: 'Provide phone or deviceId' }, { status: 400 });
+  }
+
+  if (player) {
+    // Update last_seen_at for 24h re-onboarding tracking
+    supabase
+      .from('players')
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq('id', player.id)
+      .then(() => {});
+  }
 
   if (!player) {
     return NextResponse.json({ player: null });
@@ -46,6 +71,7 @@ export async function GET(request: Request) {
       totalXp: player.total_xp ?? 0,
       totalScore: player.total_score ?? 0,
       coins: player.coins ?? 0,
+      lastSeenAt: player.last_seen_at ?? player.created_at,
       achievements: (achievements ?? []).map((a: { achievement_id: string }) => a.achievement_id),
       completedScenarios: (completed ?? []).map((c: { scenario_id: string; day_id: string; score: number; rating: string; time_taken: number }) => ({
         scenarioId: c.scenario_id,
@@ -62,7 +88,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { phone, displayName, avatarId, utmSource, utmMedium, utmCampaign, referrer } = body;
+  const { phone, displayName, avatarId, deviceFingerprint, utmSource, utmMedium, utmCampaign, referrer } = body;
 
   if (!phone || !phone.startsWith('+') || phone.replace(/\D/g, '').length < 8) {
     return NextResponse.json({ error: 'Invalid phone format' }, { status: 400 });
@@ -78,6 +104,14 @@ export async function POST(request: Request) {
     .single();
 
   if (existing) {
+    // Update device fingerprint if provided (links this device to existing player)
+    if (deviceFingerprint && existing.device_fingerprint !== deviceFingerprint) {
+      supabase
+        .from('players')
+        .update({ device_fingerprint: deviceFingerprint, last_seen_at: new Date().toISOString() })
+        .eq('id', existing.id)
+        .then(() => {});
+    }
     return NextResponse.json({ player: existing });
   }
 
@@ -88,6 +122,7 @@ export async function POST(request: Request) {
       phone,
       display_name: displayName,
       avatar_id: avatarId || 'male',
+      device_fingerprint: deviceFingerprint || null,
       utm_source: utmSource || null,
       utm_medium: utmMedium || null,
       utm_campaign: utmCampaign || null,

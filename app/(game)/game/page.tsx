@@ -7,6 +7,7 @@ import { useLang } from '@/lib/game/utils/lang';
 import { syncCreatePlayer } from '@/game/store/middleware/supabaseSync';
 import { setStoredPhone, getStoredPhone, clearStoredPhone } from '@/lib/game/phoneStorage';
 import { usePlayerInit } from '@/lib/game/hooks/usePlayerInit';
+import { getDeviceId } from '@/lib/game/deviceId';
 import { trackEvent } from '@/lib/game/analytics';
 import OnboardingSequence from '@/components/game/screens/OnboardingSequence';
 import ScenarioSelect from '@/components/game/screens/ScenarioSelect';
@@ -46,6 +47,37 @@ function GameHubInner() {
   const resetPlayer = usePlayerStore((s) => s.reset);
   const { lang, setLang } = useLang();
 
+  // Check for active (in-progress) session in Supabase
+  const [hasActiveSession, setHasActiveSession] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
+
+  // 24h re-onboarding: if player's lastSeenAt > 24h, force onboarding
+  // but remember the player so same phone restores progress
+  const [forceReOnboarding, setForceReOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!player?.id) {
+      setSessionChecked(true);
+      return;
+    }
+
+    // Check 24h threshold
+    if (player.lastSeenAt) {
+      const hoursSinceLastSeen = (Date.now() - new Date(player.lastSeenAt).getTime()) / (1000 * 60 * 60);
+      if (hoursSinceLastSeen >= 24) {
+        setForceReOnboarding(true);
+      }
+    }
+
+    fetch(`/api/game/progress?playerId=${encodeURIComponent(player.id)}&scenarioId=car-dealership`)
+      .then((r) => r.json())
+      .then((data) => {
+        setHasActiveSession(!!data.progress?.sessionState);
+      })
+      .catch(() => {})
+      .finally(() => setSessionChecked(true));
+  }, [player?.id, player?.lastSeenAt]);
+
   // ?reset=1 → wipe player from Supabase + clear phone + show onboarding.
   // Runs before usePlayerInit so hydration sees an empty localStorage.
   const [resetDone, setResetDone] = useState(() => searchParams.get('reset') !== '1');
@@ -82,8 +114,11 @@ function GameHubInner() {
   const handleFormSubmit = async (name: string, phone: string, selectedLang: Language) => {
     setLang(selectedLang);
 
+    // Get device fingerprint to link this device to the player
+    const deviceFingerprint = await getDeviceId();
+
     // Create player in Supabase first (source of truth)
-    const serverId = await syncCreatePlayer(phone, name);
+    const serverId = await syncCreatePlayer(phone, name, deviceFingerprint);
     if (serverId) {
       // Store phone locally for identification
       setStoredPhone(phone);
@@ -94,6 +129,7 @@ function GameHubInner() {
         const data = await res.json();
         if (data.player) {
           loadPlayer(data.player);
+          setForceReOnboarding(false);
           setInitialized();
           trackEvent(data.player.id, 'game_started');
         }
@@ -111,6 +147,7 @@ function GameHubInner() {
           achievements: [],
           completedScenarios: [],
         });
+        setForceReOnboarding(false);
         setInitialized();
         trackEvent(serverId, 'game_started');
       }
@@ -122,7 +159,7 @@ function GameHubInner() {
   };
 
   // Show loading while hydrating from Supabase
-  if (!isInitialized || isLoading) {
+  if (!isInitialized || isLoading || !sessionChecked) {
     return (
       <>
         <RotateDevice />
@@ -139,7 +176,8 @@ function GameHubInner() {
   const forceMenu = searchParams.get('menu') === '1';
   const hasCompletedScenario = player && player.completedScenarios.length > 0;
 
-  if (player && !hasCompletedScenario && !forceMenu) {
+  // Don't auto-redirect if we're forcing re-onboarding (24h rule)
+  if (player && !hasCompletedScenario && !forceMenu && !hasActiveSession && !forceReOnboarding) {
     router.replace('/game/play?scenario=car-dealership');
     return (
       <>
@@ -151,10 +189,33 @@ function GameHubInner() {
     );
   }
 
+  // Determine game state for the menu button
+  const totalDays = 3;
+  const completedDayCount = player
+    ? new Set(player.completedScenarios.filter((r) => r.scenarioId === 'car-dealership').map((r) => r.dayIndex)).size
+    : 0;
+  const isGameFullyCompleted = completedDayCount >= totalDays;
+
+  const handleNewGame = async () => {
+    // Clear saved progress so game starts fresh from Day 1
+    if (player?.id) {
+      try {
+        await fetch('/api/game/progress', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playerId: player.id, scenarioId: 'car-dealership' }),
+        });
+      } catch {
+        // Non-fatal — game will start fresh anyway
+      }
+    }
+    router.push('/game/play?scenario=car-dealership');
+  };
+
   return (
     <>
       <RotateDevice />
-      {!player ? (
+      {!player || forceReOnboarding ? (
         <OnboardingSequence onSubmit={handleFormSubmit} />
       ) : (
         <ScenarioSelect
@@ -162,6 +223,9 @@ function GameHubInner() {
           playerLevel={player.level}
           playerCoins={player.coins}
           onSelectScenario={handleSelectScenario}
+          onNewGame={handleNewGame}
+          hasActiveSession={hasActiveSession}
+          isGameFullyCompleted={isGameFullyCompleted}
           lang={lang}
         />
       )}

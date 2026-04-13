@@ -40,15 +40,6 @@ const dilnoza: CharacterDefinition = {
   dimensions: DEFAULT_DIMS,
 };
 
-const anvar: CharacterDefinition = {
-  id: 'anvar',
-  name: { uz: 'Anvar', ru: 'Anvar' },
-  role: 'colleague',
-  emotions: ['nervous', 'eager', 'embarrassed', 'worried'],
-  assetPath: makeAssetPath('anvar'),
-  dimensions: DEFAULT_DIMS,
-};
-
 // --- Client Characters ---
 
 const bobur: CharacterDefinition = {
@@ -120,7 +111,6 @@ const sardor: CharacterDefinition = {
 export const CHARACTERS: Record<string, CharacterDefinition> = {
   rustam,
   dilnoza,
-  anvar,
   bobur,
   kamola,
   javlon,
@@ -129,7 +119,7 @@ export const CHARACTERS: Record<string, CharacterDefinition> = {
   sardor,
 };
 
-export const TEAM_IDS = ['rustam', 'dilnoza', 'anvar'] as const;
+export const TEAM_IDS = ['rustam', 'dilnoza'] as const;
 export const CLIENT_IDS = [
   'bobur',
   'kamola',

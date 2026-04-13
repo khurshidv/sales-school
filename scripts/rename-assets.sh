@@ -41,13 +41,6 @@ cp "$PROCESSED/characters/CHR-T02_Woman_sales_consultant_202604071625_2.png" "$D
 cp "$PROCESSED/characters/CHR-T02_Woman_sales_consultant_202604071625_3.png" "$DEST/characters/chr_dilnoza_explaining.png"
 echo "  ✓ Dilnoza (4 emotions)"
 
-# CHR-T03 Anvar
-cp "$PROCESSED/characters/CHR-T03_Young_man_sales_"*.png "$DEST/characters/chr_anvar_nervous.png"
-cp "$PROCESSED/characters/CHR-T03_Enthusiastic_smile_with_"*.png "$DEST/characters/chr_anvar_eager.png"
-cp "$PROCESSED/characters/CHR-T03_Young_man_rubbing_"*.png "$DEST/characters/chr_anvar_embarrassed.png"
-cp "$PROCESSED/characters/CHR-T03_Young_man_clasped_"*.png "$DEST/characters/chr_anvar_worried.png"
-echo "  ✓ Anvar (4 emotions)"
-
 # CHR-C01 Bobur
 cp "$PROCESSED/characters/CHR-C01_Uzbek_man_holding_"*.png "$DEST/characters/chr_bobur_neutral.png"
 cp "$PROCESSED/characters/CHR-C01_Man_thinking_with_"*.png "$DEST/characters/chr_bobur_thoughtful.png"

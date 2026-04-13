@@ -271,38 +271,6 @@ export const day1: Day = {
         uz: 'Birinchi mijoz oldida hamma bir oz hayajonlanadi. Faqat buni yuzingizda bildirmang. Agar juftlik kelsa, ikkalasini ham qiziqtiradigan bitta sabab toping.',
         ru: 'Перед первым клиентом все немного волнуются. Только не показывайте это на лице. Если приходит пара — найдите одну причину, которая заинтересует обоих.',
       },
-      nextNodeId: 'd1_meet_anvar',
-    },
-
-    d1_meet_anvar: {
-      id: 'd1_meet_anvar',
-      type: 'dialogue',
-      speaker: 'anvar',
-      emotion: 'nervous',
-      background: 'bg_showroom',
-      characters: [
-        { id: 'anvar', emotion: 'nervous', position: 'center' },
-      ],
-      text: {
-        uz: 'Salom, ismim Anvar. Men ham bu yerda yangi sotuvchiman. Mana, bugungi mijozlar ro\'yxati.',
-        ru: 'Привет, меня зовут Анвар. Я тоже здесь новый продавец. Вот список клиентов на сегодня.',
-      },
-      nextNodeId: 'd1_anvar_info',
-    },
-
-    d1_anvar_info: {
-      id: 'd1_anvar_info',
-      type: 'dialogue',
-      speaker: 'anvar',
-      emotion: 'nervous',
-      characters: [
-        { id: 'anvar', emotion: 'nervous', position: 'center' },
-      ],
-      effects: [{ type: 'set_flag', flag: 'met_anvar' }],
-      text: {
-        uz: 'Bir juftlik kelishi kerak edi. Ular o\'zaro tortishayotgan edi menimcha. Erkak uchun mashinaning yurishi muhim, ayol uchun esa bolalarga qulay bo\'lishi kerak ekan.',
-        ru: 'Должна прийти одна пара. По-моему, они между собой спорили. Мужу важно, как машина едет, а жене — чтобы детям было удобно.',
-      },
       nextNodeId: 'd1_couple_enters',
     },
 

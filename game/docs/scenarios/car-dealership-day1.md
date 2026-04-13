@@ -131,28 +131,6 @@ RU: Выйти из кабинета
 **UZ:** Birinchi mijoz oldida hamma bir oz hayajonlanadi. Faqat buni yuzingizda bildirmang. Agar juftlik kelsa, ikkalasini ham qiziqtiradigan bitta sabab toping.
 **RU:** Перед первым клиентом все немного волнуются. Только не показывайте это на лице. Если приходит пара — найдите одну причину, которая заинтересует обоих.
 
-→ next: d1_meet_anvar
-
----
-
-### [d1_meet_anvar] Anvar (nervous) — dialogue
-**Background:** bg_showroom
-**Characters:** Anvar (nervous, center)
-
-**UZ:** Salom, ismim Anvar. Men ham bu yerda yangi sotuvchiman. Mana, bugungi mijozlar ro'yxati.
-**RU:** Привет, меня зовут Анвар. Я тоже здесь новый продавец. Вот список клиентов на сегодня.
-
-→ next: d1_anvar_info
-
----
-
-### [d1_anvar_info] Anvar (nervous) — dialogue
-**Characters:** Anvar (nervous, center)
-**Effects:** set_flag: met_anvar
-
-**UZ:** Bir juftlik kelishi kerak edi. Ular o'zaro tortishayotgan edi menimcha. Erkak uchun mashinaning yurishi muhim, ayol uchun esa bolalarga qulay bo'lishi kerak ekan.
-**RU:** Должна прийти одна пара. По-моему, они между собой спорили. Мужу важно, как машина едет, а жене — чтобы детям было удобно.
-
 → next: d1_couple_enters
 
 ---

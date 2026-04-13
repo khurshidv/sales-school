@@ -11,17 +11,6 @@
 **UZ:** Bugungi mijozga ortiqcha gaplar bilan tushuntirish shart emas. U o'zi mashinalarni yaxshi farqiga boradi. Sizdan kutadigani — aniq va qisqa javoblar.
 **RU:** Сегодняшнему клиенту не нужно долго объяснять. Она сама хорошо разбирается в машинах. От вас ждёт — чётких и коротких ответов.
 
-→ next: d2_anvar_files
-
----
-
-### [d2_anvar_files] Anvar (nervous) — dialogue
-**Background:** bg_manager_office
-**Characters:** Rustam (serious, left), Anvar (nervous, right)
-
-**UZ:** Rustam aka, Kamola xonim oldin ham kelgan. Malibu ni ko'rib chiqqan, K5 bilan ham solishtirib bo'lgan.
-**RU:** Рустам-ака, Камола уже приезжала. Malibu посмотрела, с K5 тоже сравнила.
-
 → next: d2_callback_check
 
 ---

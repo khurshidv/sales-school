@@ -73,3 +73,32 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ success: true });
 }
+
+/**
+ * DELETE /api/game/progress
+ * Body: { playerId, scenarioId }
+ * Removes all non-completed progress for the given player+scenario.
+ * Used when starting a new game after completing all days.
+ */
+export async function DELETE(request: Request) {
+  const { playerId, scenarioId } = await request.json();
+
+  if (!playerId || !scenarioId) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+
+  const supabase = createAdminClient();
+
+  const { error } = await supabase
+    .from('game_progress')
+    .delete()
+    .eq('player_id', playerId)
+    .eq('scenario_id', scenarioId)
+    .eq('is_completed', false);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}

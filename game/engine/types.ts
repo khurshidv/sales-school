@@ -245,6 +245,7 @@ export interface PlayerState {
   totalXp: number;
   totalScore: number;
   coins: number;
+  lastSeenAt?: string;
   achievements: string[];
   completedScenarios: CompletedScenarioRecord[];
 }

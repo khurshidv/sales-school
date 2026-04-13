@@ -5,6 +5,9 @@ interface ScenarioSelectProps {
   playerLevel: number
   playerCoins: number
   onSelectScenario: (scenarioId: string) => void
+  onNewGame?: () => void
+  hasActiveSession?: boolean
+  isGameFullyCompleted?: boolean
   lang?: 'uz' | 'ru'
 }
 
@@ -22,6 +25,8 @@ const t = {
   electronics: { uz: 'Elektronika', ru: 'Электроника' },
   furniture: { uz: 'Mebel', ru: 'Мебель' },
   play: { uz: 'BOSHLASH', ru: 'НАЧАТЬ' },
+  continue: { uz: 'DAVOM ETISH', ru: 'ПРОДОЛЖИТЬ' },
+  newGame: { uz: 'QAYTA BOSHLASH', ru: 'НАЧАТЬ ЗАНОВО' },
   select: { uz: 'SCENARIY TANLANG', ru: 'ВЫБОР СЦЕНАРИЯ' },
 } as const
 
@@ -42,8 +47,30 @@ export default function ScenarioSelect({
   playerLevel,
   playerCoins,
   onSelectScenario,
+  onNewGame,
+  hasActiveSession = false,
+  isGameFullyCompleted = false,
   lang = 'uz',
 }: ScenarioSelectProps) {
+  // Button label logic:
+  // - Has in-progress session → "ПРОДОЛЖИТЬ"
+  // - Game fully completed → "НАЧАТЬ ЗАНОВО"
+  // - Default (first time / no session) → "НАЧАТЬ"
+  const buttonLabel = hasActiveSession
+    ? t.continue[lang]
+    : isGameFullyCompleted
+      ? t.newGame[lang]
+      : t.play[lang];
+
+  const buttonIcon = hasActiveSession ? '▶' : isGameFullyCompleted ? '↻' : '▶';
+
+  const handleMainAction = () => {
+    if (isGameFullyCompleted && !hasActiveSession && onNewGame) {
+      onNewGame();
+    } else {
+      onSelectScenario('car-dealership');
+    }
+  };
   return (
     <div className="h-full w-full mesh-game-light text-on-surface relative overflow-hidden">
       {/* Ambient orbs for depth */}
@@ -107,7 +134,7 @@ export default function ScenarioSelect({
       <div className="absolute inset-0 pt-16 pb-12 px-5 flex items-center gap-4">
         {/* === FEATURED CARD — height matches locked stack === */}
         <button
-          onClick={() => onSelectScenario('car-dealership')}
+          onClick={handleMainAction}
           className="scenario-featured-card group flex-none w-[48%] max-w-[420px] h-[75%] overflow-hidden text-left"
         >
           {/* Background showroom image — full opacity */}
@@ -164,12 +191,12 @@ export default function ScenarioSelect({
                 </div>
               </div>
 
-              {/* Play pill button */}
+              {/* Play / Continue / New Game pill button */}
               <div className="cta-btn flex items-center gap-2 px-4 py-2.5 rounded-full pointer-events-none">
                 <span className="font-heading font-bold text-white text-[11px] uppercase tracking-[0.15em]">
-                  {t.play[lang]}
+                  {buttonLabel}
                 </span>
-                <span className="text-white text-sm leading-none">▶</span>
+                <span className="text-white text-sm leading-none">{buttonIcon}</span>
               </div>
             </div>
           </div>

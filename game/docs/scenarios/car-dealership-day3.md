@@ -47,34 +47,35 @@
 **A) d3_prep_a**
 UZ: Uning kompaniyasini internetdan o'rganish
 RU: Изучить его компанию в интернете
-→ leads to: d3_anvar_check
+→ leads to: d3_dilnoza_intel
 Effects: +8 expertise, set_flag: researched_company
 
 **B) d3_prep_b**
 UZ: Rustamdan VIP protokolini so'rash
 RU: Спросить у Рустама о VIP-протоколе
-→ leads to: d3_anvar_check
+→ leads to: d3_dilnoza_intel
 Effects: +8 rapport, set_flag: knows_vip_protocol
 
 **C) d3_prep_c**
 UZ: Moliya bo'limidan so'rash: kompaniyalarga qancha chegirma bersa bo'ladi?
 RU: Спросить у финансистов: какую скидку можно дать компании?
-→ leads to: d3_anvar_check
+→ leads to: d3_dilnoza_intel
 Effects: +8 opportunity, set_flag: has_discount_authority
 
 ---
 
-### [d3_anvar_check] — condition_branch
-- **If** flag: researched_company → d3_anvar_info
+### [d3_dilnoza_intel] — condition_branch
+- **If** flag: researched_company → d3_dilnoza_cobalt_tip
 - **Fallback** → d3_abdullaev_arrives
 
 ---
 
-### [d3_anvar_info] Anvar (eager) — dialogue
+### [d3_dilnoza_cobalt_tip] Dilnoza (explaining) — dialogue
 **Background:** bg_manager_office
+**Characters:** Dilnoza (explaining, center)
 
 **UZ:** Bitta narsa topdim — o'tgan yili 12 ta Cobalt olgan ekan. Park yangilashni rejalashtirgan bo'lishi mumkin.
-**RU:** Кое-что нашёл — в прошлом году они купили 12 Cobalt. Возможно, планируют обновление парка.
+**RU:** Кое-что нашла — в прошлом году они купили 12 Cobalt. Возможно, планируют обновление парка.
 
 → next: d3_abdullaev_arrives
 

@@ -2,12 +2,19 @@
 
 import { useEffect, useRef } from 'react';
 import { usePlayerStore } from '@/game/store/playerStore';
-import { getStoredPhone, clearStoredPhone } from '@/lib/game/phoneStorage';
+import { getStoredPhone, clearStoredPhone, setStoredPhone } from '@/lib/game/phoneStorage';
+import { getDeviceId } from '@/lib/game/deviceId';
 
 /**
  * Hydrates the player store from Supabase on mount.
- * Reads phone from localStorage → fetches player from server.
- * If player was deleted from Supabase, clears phone and triggers onboarding.
+ *
+ * Lookup order:
+ * 1. Phone from localStorage → fetch by phone
+ * 2. Device fingerprint (IndexedDB/cookie) → fetch by deviceId
+ *    (handles Instagram WebView clearing localStorage)
+ *
+ * If player found by device but not by phone (phone was cleared),
+ * we re-store the phone locally for next time.
  *
  * Pass `ready = false` to defer hydration (e.g. while a ?reset=1 flow
  * is still wiping the player on the server).
@@ -28,44 +35,48 @@ export function usePlayerInit(ready: boolean = true) {
       setLoading(true);
 
       const phone = getStoredPhone();
-      if (!phone) {
-        setInitialized();
-        return;
+
+      // Strategy 1: lookup by phone (fast, reliable when localStorage survives)
+      if (phone) {
+        try {
+          const res = await fetch(`/api/game/players?phone=${encodeURIComponent(phone)}`);
+          const data = await res.json();
+
+          if (data.player) {
+            loadPlayer(data.player);
+            setInitialized();
+            return;
+          }
+          // Player deleted from Supabase
+          clearStoredPhone();
+        } catch (err) {
+          console.warn('[usePlayerInit] Phone lookup failed:', err);
+        }
       }
 
+      // Strategy 2: lookup by device fingerprint
+      // (Instagram WebView may have cleared localStorage but IndexedDB/cookie survived)
       try {
-        const res = await fetch(`/api/game/players?phone=${encodeURIComponent(phone)}`);
+        const deviceId = await getDeviceId();
+        const res = await fetch(`/api/game/players?deviceId=${encodeURIComponent(deviceId)}`);
         const data = await res.json();
 
         if (data.player) {
+          // Re-store phone locally so next load is faster
+          if (data.player.phone) {
+            setStoredPhone(data.player.phone);
+          }
           loadPlayer(data.player);
           setInitialized();
-        } else {
-          // Player deleted from Supabase
-          clearStoredPhone();
-          reset();
-          setInitialized();
+          return;
         }
       } catch (err) {
-        console.warn('[usePlayerInit] Network error, retrying in 2s...', err);
-        // Retry once after 2s on network error
-        setTimeout(async () => {
-          try {
-            const res = await fetch(`/api/game/players?phone=${encodeURIComponent(phone)}`);
-            const data = await res.json();
-            if (data.player) {
-              loadPlayer(data.player);
-            } else {
-              clearStoredPhone();
-              reset();
-            }
-          } catch {
-            // Give up — keep loading state so user sees spinner, not broken onboarding
-            console.warn('[usePlayerInit] Retry failed, showing loading state');
-          }
-          setInitialized();
-        }, 2000);
+        console.warn('[usePlayerInit] Device lookup failed:', err);
       }
+
+      // No player found — will show onboarding
+      reset();
+      setInitialized();
     }
 
     init();

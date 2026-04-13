@@ -4,7 +4,6 @@ import { memo } from 'react';
 import Image from 'next/image';
 import { m, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
-import { getCharacterBlur } from '@/game/data/scenarios/car-dealership/blur-hashes';
 import type { CharacterPosition } from '@/game/engine/types';
 
 interface CharacterSpriteProps {
@@ -32,13 +31,11 @@ function CharacterSprite({
   if (!character) return null;
 
   const src = character.assetPath(emotion);
-  const blurUrl = getCharacterBlur(src);
   const { width, height } = character.dimensions;
 
-  // Using next/image with explicit width/height (not `fill`) preserves each
-  // sprite's natural aspect ratio. AVIF/WebP format negotiation + responsive
-  // sizing happen automatically. The container still uses h-full so the
-  // visual behaviour is identical to the old plain <img> approach.
+  // No blur placeholder for sprites — they use WebP with transparency,
+  // and JPEG blur hashes turn transparent areas black (ugly flash).
+  // The framer-motion fade-in handles the perceived loading instead.
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -54,8 +51,6 @@ function CharacterSprite({
         height={height}
         sizes="(max-width: 640px) 40vw, 30vw"
         quality={60}
-        placeholder={blurUrl ? 'blur' : 'empty'}
-        blurDataURL={blurUrl}
         className="h-full w-auto object-contain object-bottom block"
         draggable={false}
       />

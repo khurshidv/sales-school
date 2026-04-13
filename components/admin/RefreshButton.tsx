@@ -11,7 +11,7 @@ export default function RefreshButton() {
   function handleRefresh() {
     startTransition(() => {
       router.refresh();
-      setLastRefresh(new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+      setLastRefresh(new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Asia/Tashkent' }));
     });
   }
 

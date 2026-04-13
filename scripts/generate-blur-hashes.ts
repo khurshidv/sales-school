@@ -73,12 +73,10 @@ async function main() {
     join(ASSETS_ROOT, 'backgrounds'),
     'backgrounds',
   );
-  const characters = await processDirectory(
-    join(ASSETS_ROOT, 'characters'),
-    'characters',
-  );
+  // Character sprites are WebP with transparency — JPEG blur hashes
+  // turn transparent areas black, causing an ugly flash. Skip them.
 
-  const all = { ...backgrounds, ...characters };
+  const all = { ...backgrounds };
   const count = Object.keys(all).length;
 
   // Generate TypeScript output

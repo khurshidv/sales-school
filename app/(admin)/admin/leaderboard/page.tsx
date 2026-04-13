@@ -64,9 +64,9 @@ export default async function LeaderboardPage({
         </h1>
         <RefreshButton />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
-          Топ {entries.length} игроков по очкам
+          {entries.length} игроков
         </p>
         <a
           href="/api/admin/export?type=leaderboard"
@@ -85,6 +85,11 @@ export default async function LeaderboardPage({
         </a>
       </div>
 
+      <TableFilters
+        showSearch
+        searchPlaceholder="Поиск по имени..."
+      />
+
       <div
         style={{
           background: '#fff',
@@ -102,10 +107,10 @@ export default async function LeaderboardPage({
             <thead>
               <tr>
                 <th style={{ ...thStyle, width: 60 }}>Место</th>
-                <th style={thStyle}>Игрок</th>
-                <th style={thStyle}>Уровень</th>
-                <th style={thStyle}>Сценарии</th>
-                <th style={{ ...thStyle, textAlign: 'right' }}>Общий счёт</th>
+                <SortableHeader column="display_name" label="Игрок" />
+                <SortableHeader column="level" label="Уровень" />
+                <SortableHeader column="scenarios_completed" label="Сценарии" />
+                <SortableHeader column="total_score" label="Общий счёт" />
               </tr>
             </thead>
             <tbody>

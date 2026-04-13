@@ -45,6 +45,8 @@ export default function ActionSection() {
             <CTAButton
               text={t("action.cta")}
               size="large"
+              trackSlug="home"
+              trackSection="action"
               glow
             />
             <p className="mt-8 text-on-surface-variant/60 font-semibold italic">

@@ -82,7 +82,7 @@ export default function LossAversion() {
           </FadeUp>
 
           <FadeUp delay={300}>
-            <CTAButton text={t("target.loss.cta")} size="large" />
+            <CTAButton text={t("target.loss.cta")} size="large" trackSlug="target" trackSection="loss_aversion" />
           </FadeUp>
         </div>
       </div>

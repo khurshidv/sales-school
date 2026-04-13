@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useT, type TranslationKey } from "@/lib/i18n";
 import { useModal } from "@/lib/modal-context";
+import { trackCTAClick } from "@/lib/analytics/events";
 
 const NAV_ITEMS: { key: TranslationKey; href: string }[] = [
   { key: "target.nav.about", href: "#about" },
@@ -44,7 +45,7 @@ export default function TargetHeader() {
           </button>
 
           <button
-            onClick={openModal}
+            onClick={() => { trackCTAClick('target', 'header_cta', t("target.nav.cta"), 'header'); openModal(); }}
             className="cta-btn text-white font-bold px-5 py-2.5 rounded-full hover:scale-105 transition-all text-sm"
           >
             {t("target.nav.cta")}
@@ -84,7 +85,7 @@ export default function TargetHeader() {
             </a>
           ))}
           <button
-            onClick={() => { openModal(); setMobileOpen(false); }}
+            onClick={() => { trackCTAClick('target', 'mobile_menu_cta', t("target.nav.cta"), 'mobile_menu'); openModal(); setMobileOpen(false); }}
             className="w-full cta-btn text-white font-bold px-5 py-3 rounded-full text-sm mt-2"
           >
             {t("target.nav.cta")}

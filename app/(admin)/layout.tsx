@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 
 const navItems = [
   { href: '/admin/overview', label: 'Overview' },
+  { href: '/admin/pages', label: 'Страницы' },
   { href: '/admin/participants', label: 'Participants' },
   { href: '/admin/game-metrics', label: 'Game Metrics' },
   { href: '/admin/leaderboard', label: 'Leaderboard' },

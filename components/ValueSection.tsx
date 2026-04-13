@@ -61,7 +61,7 @@ export default function ValueSection() {
             </div>
             <BeforeAfter />
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("hero.cta")} fullWidth />
+              <CTAButton text={t("hero.cta")} fullWidth trackSlug="home" trackSection="value_before_after" />
             </div>
           </div>
         </FadeUp>
@@ -84,7 +84,7 @@ export default function ValueSection() {
 
           <FadeUp delay={400}>
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("hero.cta")} fullWidth />
+              <CTAButton text={t("hero.cta")} fullWidth trackSlug="home" trackSection="value_bonuses" />
             </div>
           </FadeUp>
         </div>
@@ -219,7 +219,7 @@ export default function ValueSection() {
           <div className="max-w-4xl mx-auto px-6">
             <FAQAccordion />
             <div className="mt-10 flex justify-center">
-              <CTAButton text={t("action.cta")} size="large" glow fullWidth />
+              <CTAButton text={t("action.cta")} size="large" glow fullWidth trackSlug="home" trackSection="value_faq" />
             </div>
           </div>
         </FadeUp>

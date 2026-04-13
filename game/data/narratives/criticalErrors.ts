@@ -134,7 +134,7 @@ export const CRITICAL_ERROR_INSIGHTS: Record<string, CriticalErrorInsight> = {
       ru: 'Оценили клиента по внешнему виду',
     },
     insight: {
-      uz: '- "Kobaltni ko‘ryapsanmi?" - oddiy kiyingan bo‘lsa, arzonroq bo‘ladi-da. Bu noto‘g‘ri qarash. Mijoz aynan undan uzoqlashadi.',
+      uz: ‘- "Kobaltni ko\’ryapsizmi?" - oddiy kiyingan bo\’lsa, arzonroq bo\’ladi-da. Bu noto\’g\’ri qarash. Mijoz aynan undan uzoqlashadi.’,
       ru: '«Cobalt смотрите?» — просто одетый значит подешевле. Это предубеждение. И клиент отстраняется именно от него.',
     },
   },

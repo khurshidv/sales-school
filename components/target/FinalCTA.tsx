@@ -28,7 +28,7 @@ export default function FinalCTA() {
         </FadeUp>
         <FadeUp delay={200}>
           <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
-            <CTAButton text={t("target.cta.primary")} size="large" glow />
+            <CTAButton text={t("target.cta.primary")} size="large" glow trackSlug="target" trackSection="final_cta" />
             <button className="bg-surface-container hover:bg-surface-container-high border border-outline-variant/20 text-on-surface font-bold px-8 md:px-12 py-4 md:py-5 rounded-full text-base md:text-lg transition-all">
               {t("target.cta.secondary")}
             </button>

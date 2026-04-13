@@ -45,7 +45,7 @@ export default function TargetHero() {
 
           <FadeUp delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <CTAButton text={t("target.hero.cta")} size="large" glow />
+              <CTAButton text={t("target.hero.cta")} size="large" glow trackSlug="target" trackSection="hero" />
             </div>
           </FadeUp>
         </div>

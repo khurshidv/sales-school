@@ -131,7 +131,7 @@ export const day3: Day = {
         { id: 'anvar', emotion: 'eager', position: 'center' },
       ],
       text: {
-        uz: "Biror narsa topdim - o‘tgan yili ular 12 ta Cobalt sotib olishgan ekan. Ehtimol, parkni yangilashni rejalashtirishayotgandir.",
+        uz: "Bir narsa topdim... o’tgan yili ular 12 ta Cobalt sotib olishgan ekan. Ehtimol, parkni yangilashni rejalashtirishayotgandir.",
         ru: 'Кое-что нашёл — в прошлом году они купили 12 Cobalt. Возможно, планируют обновление парка.',
       },
       nextNodeId: 'd3_abdullaev_arrives',
@@ -162,7 +162,7 @@ export const day3: Day = {
         { id: 'abdullaev', emotion: 'impatient', position: 'center' },
       ],
       text: {
-        uz: 'Salom alaykum. Vaqt oz qoldi. Ish uchun uchta Malibu, uy uchun bitta Tahoe kerak. Faqat ish yuzasidan gaplashing.',
+        uz: 'Salom alaykum. Vaqtim kamroq edi. Ish uchun uchta Malibu, uy uchun bitta Tahoe kerak. Faqat ish yuzasidan gaplashing.',
         ru: 'Здравствуйте. Времени мало. Три Malibu для работы, один Tahoe для дома. Говорите только по делу.',
       },
       nextNodeId: 'd3_greeting',
@@ -228,7 +228,7 @@ export const day3: Day = {
       background: 'bg_vip_lounge_hallway',
       characters: [],
       text: {
-        uz: "Abdullayev oldinga yurdi. Yoningizda bo‘lsangiz - xotirjam, ortiqcha gap-so‘zsiz.",
+        uz: "Abdullayev oldinga yurdi. Siz Abdullayevni VIP mijozlar uchun alohida xonaga taklif qildingiz.",
         ru: 'Абдуллаев пошёл вперёд. Вы рядом — спокойно, без лишних слов.',
       },
       nextNodeId: 'd3_vip_arrival',
@@ -363,7 +363,7 @@ export const day3: Day = {
         {
           id: 'd3_wife_a',
           text: {
-            uz: "Turmush o‘rtog‘im uchun qulaylikka urg‘u berilgan avtomobil yig‘amiz: o‘rindiq, salon, ovoz va har kuni seziladigan barcha mayda-chuydalar.",
+            uz: "Xotiningiz uchun qulay mashina yig’amiz: yumshoq o’rindiq, chiroyli salon, yaxshi ovoz va har kuni his qilinadigan mayda qulayliklar.",
             ru: 'Для супруги соберём машину с упором на комфорт: посадка, салон, звук и все мелочи, которые чувствуются каждый день.',
           },
           nextNodeId: 'd3_abd_check',
@@ -643,7 +643,7 @@ export const day3: Day = {
         {
           id: 'd3_sardor_approach_c',
           text: {
-            uz: "Kobaltni ko‘ryapsanmi? Bizda uni ko‘pincha sotib olishadi.",
+            uz: "Kobaltni ko’ryapsizmi? Bizda uni ko’pincha sotib olishadi.",
             ru: 'Cobalt смотрите? Его у нас чаще всего и берут.',
           },
           nextNodeId: 'd3_needs',
@@ -1318,7 +1318,7 @@ export const day3: Day = {
         { id: 'sardor', emotion: 'neutral_alt', position: 'center' },
       ],
       text: {
-        uz: "Natijasi qoniqarsiz. Bilasanmi? Aksariyat odamlar bunga urinib ham ko‘rishmaydi.",
+        uz: "Natijasi qoniqarsiz. Bilasizmi? Aksariyat odamlar bunga urinib ham ko’rishmaydi.",
         ru: 'Результат слабый. Но знаете что? Большинство людей даже не пытаются.',
       },
       nextNodeId: 'd3_f_sardor2',

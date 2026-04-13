@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { WEBINAR_DATE } from "@/lib/constants";
 import { useModal } from "@/lib/modal-context";
 import { useT, type TranslationKey } from "@/lib/i18n";
+import { trackCTAClick } from "@/lib/analytics/events";
 
 function formatDateShort(iso: string, monthFn: (key: TranslationKey) => string) {
   const parts = iso.split("T")[0].split("-");
@@ -52,7 +53,7 @@ export default function MobileBottomNav() {
 
       <button
         type="button"
-        onClick={openModal}
+        onClick={() => { trackCTAClick('home', 'mobile_nav', t("nav.grab_seat"), 'mobile_nav'); openModal(); }}
         className="flex items-center gap-2 cta-btn text-white rounded-full px-8 py-3 cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
       >
         <span className="text-xs font-bold uppercase tracking-widest">

@@ -15,6 +15,7 @@ import TargetFAQ from "@/components/target/TargetFAQ";
 import FinalCTA from "@/components/target/FinalCTA";
 import TargetFooter from "@/components/target/TargetFooter";
 import TargetMobileNav from "@/components/target/TargetMobileNav";
+import PageTracker from "@/components/analytics/PageTracker";
 
 export const metadata: Metadata = {
   title: "Sales School — Профессия от $800/мес | Обучение + трудоустройство",
@@ -32,6 +33,7 @@ export const metadata: Metadata = {
 export default function TargetPage() {
   return (
     <>
+      <PageTracker slug="target" />
       <TargetHeader />
       <main>
         <TargetHero />

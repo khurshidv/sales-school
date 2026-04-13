@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { WEBINAR_DATE } from "@/lib/constants";
 import { useModal } from "@/lib/modal-context";
 import { useT, type TranslationKey } from "@/lib/i18n";
+import { trackCTAClick } from "@/lib/analytics/events";
 
 function formatDate(iso: string, monthFn: (key: TranslationKey) => string) {
   const parts = iso.split("T")[0].split("-");
@@ -54,7 +55,7 @@ export default function StickyBar() {
 
         <button
           type="button"
-          onClick={openModal}
+          onClick={() => { trackCTAClick('home', 'sticky_bar', t("nav.grab_seat"), 'sticky'); openModal(); }}
           className="inline-flex items-center rounded-full bg-primary-container px-5 py-2.5 text-sm font-semibold text-white cursor-pointer transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]"
         >
           {t("nav.grab_seat")}

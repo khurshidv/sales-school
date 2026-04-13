@@ -152,7 +152,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Mayli. Ammo variantlar ro‘yxatini o‘zim ham ko‘rib chiqdim. 3 ming so‘m farq - faqat shu kichik qo‘shimchalar uchunmi?',
+        uz: ‘Mayli. Ammo variantlar ro’yxatini o’zim ham ko’rib chiqdim. 3 ming dollar farq - faqat shu kichik qo’shimchalar uchunmi?’,
         ru: 'Хорошо. Но список опций я и сама посмотрела. 3 тысячи разницы - только за эти мелкие допы?',
       },
       nextNodeId: 'd2_objection',
@@ -168,7 +168,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'checking', position: 'center' },
       ],
       text: {
-        uz: 'Umumiy gaplarni avval ham eshitganman. K5 - 25 ming, Malibu - 28 ming. Bu 3 ming so‘mga amalda nima olaman?',
+        uz: ‘Umumiy gaplarni avval ham eshitganman. K5 - 25 ming, Malibu - 28 ming. Bu 3 ming dollarga amalda nima olaman?’,
         ru: 'Общие слова я уже слышала. K5 — 25 тысяч, Malibu — 28. За эти 3 тысячи что я получаю на практике?',
       },
       nextNodeId: 'd2_objection',
@@ -184,7 +184,7 @@ export const day2: Day = {
         { id: 'kamola', emotion: 'confident', position: 'center' },
       ],
       text: {
-        uz: 'Qulaylik va texnologiyalar. Ammo buni men allaqachon taqqoslab bo‘lganman. Savol boshqa masalada: bu 3 ming so‘mlik qo‘shimcha to‘lov nimani qoplaydi?',
+        uz: ‘Qulaylik va texnologiyalar. Ammo buni men allaqachon taqqoslab bo’lganman. Savol boshqa masalada: bu 3 ming dollarlik qo’shimcha to’lov nimani qoplaydi?’,
         ru: 'Комфорт и технологии. Но это я уже сравнила. Вопрос в другом: что закрывает эта доплата в 3 тысячи?',
       },
       nextNodeId: 'd2_objection',

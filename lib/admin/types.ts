@@ -52,3 +52,51 @@ export interface LeaderboardEntry {
   level: number;
   updated_at: string;
 }
+
+// Page Analytics types
+
+export interface PageSummary {
+  page_slug: string;
+  total_views: number;
+  unique_visitors: number;
+  bounce_rate: number;
+  avg_duration_ms: number;
+  conversion_rate: number;
+}
+
+export interface UTMBreakdown {
+  source: string;
+  medium: string;
+  campaign: string;
+  views: number;
+  unique_visitors: number;
+}
+
+export interface DeviceBreakdown {
+  device_type: string;
+  count: number;
+}
+
+export interface ReferrerBreakdown {
+  referrer: string;
+  count: number;
+}
+
+export interface ScrollDepthEntry {
+  depth: number;
+  count: number;
+}
+
+export interface DailyViews {
+  date: string;
+  views: number;
+  unique_visitors: number;
+}
+
+export interface PageBreakdowns {
+  utm_breakdown: UTMBreakdown[];
+  device_breakdown: DeviceBreakdown[];
+  referrer_breakdown: ReferrerBreakdown[];
+  scroll_depth: ScrollDepthEntry[];
+  daily_views: DailyViews[];
+}

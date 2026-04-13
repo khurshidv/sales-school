@@ -1,6 +1,7 @@
 "use client";
 
 import { useModal } from "@/lib/modal-context";
+import { trackCTAClick } from "@/lib/analytics/events";
 
 export default function CTAButton({
   text,
@@ -8,20 +9,31 @@ export default function CTAButton({
   glow = false,
   className = "",
   fullWidth = false,
+  trackSlug,
+  trackSection,
 }: {
   text: string;
   size?: "default" | "large";
   glow?: boolean;
   className?: string;
   fullWidth?: boolean;
+  trackSlug?: string;
+  trackSection?: string;
 }) {
   const { openModal } = useModal();
   const isLarge = size === "large";
 
+  const handleClick = () => {
+    if (trackSlug) {
+      trackCTAClick(trackSlug, 'cta_button', text, trackSection);
+    }
+    openModal();
+  };
+
   return (
     <button
       type="button"
-      onClick={openModal}
+      onClick={handleClick}
       className={`
         group inline-flex items-center gap-3 rounded-full
         cta-btn text-white cursor-pointer

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useModal } from "@/lib/modal-context";
 import { useT } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { getUTMParams } from "@/lib/analytics/utm";
 import { detectDeviceType, detectBrowser } from "@/lib/analytics/device";
+import PhoneInput from "@/components/ui/PhoneInput";
+import { getCountryById, DEFAULT_COUNTRY_ID } from "@/lib/phone-countries";
 
 function getSourcePage(): string {
   if (typeof window === 'undefined') return 'home';
@@ -19,8 +21,19 @@ export default function RegistrationModal() {
   const { t } = useT();
   const cardRef = useRef<HTMLDivElement>(null);
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneDigits, setPhoneDigits] = useState('');
+  const [countryId, setCountryId] = useState(DEFAULT_COUNTRY_ID);
+  const [fullPhone, setFullPhone] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const country = getCountryById(countryId);
+  const isValid = name.trim().length > 0 && phoneDigits.length === country.digits;
+
+  const handlePhoneChange = useCallback((digits: string, cId: string, full: string) => {
+    setPhoneDigits(digits);
+    setCountryId(cId);
+    setFullPhone(full);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -78,14 +91,14 @@ export default function RegistrationModal() {
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            if (submitting) return;
+            if (submitting || !isValid) return;
             setSubmitting(true);
             try {
               const utm = getUTMParams();
               const supabase = createClient();
               await supabase.from('leads').insert({
                 name: name.trim(),
-                phone: phone.trim(),
+                phone: fullPhone,
                 source_page: getSourcePage(),
                 utm_source: utm.utm_source,
                 utm_medium: utm.utm_medium,
@@ -100,7 +113,9 @@ export default function RegistrationModal() {
             window.open('https://t.me/salesup_uz', '_blank', 'noopener');
             setSubmitting(false);
             setName('');
-            setPhone('');
+            setPhoneDigits('');
+            setCountryId(DEFAULT_COUNTRY_ID);
+            setFullPhone('');
             closeModal();
           }}
           className="flex flex-col gap-4"
@@ -113,18 +128,25 @@ export default function RegistrationModal() {
             onChange={(e) => setName(e.target.value)}
             className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary-container/40 focus:border-primary-container/40 focus:outline-none transition-all"
           />
-          <input
-            type="tel"
+
+          <PhoneInput
+            value={phoneDigits}
+            countryId={countryId}
+            onChange={handlePhoneChange}
             placeholder={t("modal.phone")}
-            required
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary-container/40 focus:border-primary-container/40 focus:outline-none transition-all"
+            className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface focus-within:ring-2 focus-within:ring-primary-container/40 focus-within:border-primary-container/40 transition-all"
+            inputClassName="text-on-surface placeholder:text-on-surface-variant/50"
+            dropdownClassName="bg-white border-outline-variant/20 shadow-xl"
           />
 
           <button
             type="submit"
-            className="cta-btn w-full rounded-full px-8 py-4 text-white font-bold tracking-wide text-base mt-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            disabled={!isValid || submitting}
+            className={`cta-btn w-full rounded-full px-8 py-4 text-white font-bold tracking-wide text-base mt-2 transition-all duration-200 ${
+              !isValid || submitting
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:scale-[1.02] active:scale-[0.98]'
+            }`}
           >
             {t("modal.submit")}
           </button>

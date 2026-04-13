@@ -1,38 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import PhoneInput from '@/components/ui/PhoneInput'
+import { getCountryById, DEFAULT_COUNTRY_ID } from '@/lib/phone-countries'
 
 interface PhoneFormProps {
   onSubmit: (name: string, phone: string, lang: 'uz' | 'ru', avatarId: 'male' | 'female') => void
 }
 
-function formatPhone(digits: string): string {
-  const d = digits.slice(0, 9)
-  if (d.length <= 2) return d
-  if (d.length <= 5) return `${d.slice(0, 2)} ${d.slice(2)}`
-  if (d.length <= 7) return `${d.slice(0, 2)} ${d.slice(2, 5)}-${d.slice(5)}`
-  return `${d.slice(0, 2)} ${d.slice(2, 5)}-${d.slice(5, 7)}-${d.slice(7)}`
-}
-
 export default function PhoneForm({ onSubmit }: PhoneFormProps) {
   const [name, setName] = useState('')
   const [phoneDigits, setPhoneDigits] = useState('')
+  const [countryId, setCountryId] = useState(DEFAULT_COUNTRY_ID)
+  const [fullPhone, setFullPhone] = useState('')
   const [lang, setLang] = useState<'uz' | 'ru'>('uz')
   const [avatarId, setAvatarId] = useState<'male' | 'female'>('male')
 
-  const isValid = name.trim().length > 0 && phoneDigits.length === 9
+  const country = getCountryById(countryId)
+  const isValid = name.trim().length > 0 && phoneDigits.length === country.digits
 
-  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const raw = e.target.value.replace(/\D/g, '')
-    if (raw.length <= 9) {
-      setPhoneDigits(raw)
-    }
-  }
+  const handlePhoneChange = useCallback((digits: string, cId: string, full: string) => {
+    setPhoneDigits(digits)
+    setCountryId(cId)
+    setFullPhone(full)
+  }, [])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!isValid) return
-    onSubmit(name.trim(), `+998${phoneDigits}`, lang, avatarId)
+    onSubmit(name.trim(), fullPhone, lang, avatarId)
   }
 
   const inputClass =
@@ -57,16 +53,14 @@ export default function PhoneForm({ onSubmit }: PhoneFormProps) {
       />
 
       {/* Phone */}
-      <div className={`${inputClass} mb-4 flex items-center gap-1`}>
-        <span className="text-white/60 select-none">+998</span>
-        <input
-          type="tel"
-          value={formatPhone(phoneDigits)}
-          onChange={handlePhoneChange}
-          placeholder="XX XXX-XX-XX"
-          className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40"
-        />
-      </div>
+      <PhoneInput
+        value={phoneDigits}
+        countryId={countryId}
+        onChange={handlePhoneChange}
+        className={`${inputClass} mb-4`}
+        inputClassName="text-white placeholder:text-white/40"
+        dropdownClassName="bg-neutral-900 border-white/20 text-white"
+      />
 
       {/* Language toggle */}
       <div className="flex gap-2 mb-6 w-full max-w-sm">

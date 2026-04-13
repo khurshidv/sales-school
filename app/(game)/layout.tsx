@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import MotionProvider from "@/components/game/MotionProvider";
+import SWRegistration from "@/components/game/SWRegistration";
 
 export const metadata: Metadata = {
   title: "Sales Up — Игра",
@@ -40,6 +41,7 @@ export default function GameLayout({
         bottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
+      <SWRegistration />
       <MotionProvider>{children}</MotionProvider>
     </div>
   );

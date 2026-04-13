@@ -27,24 +27,27 @@ export function useAudio(eventBus: GameEventBus) {
 
   // Unlock AudioContext on first user interaction + preload
   useEffect(() => {
-    const handleInteraction = async () => {
+    const handleInteraction = () => {
       if (unlockedRef.current) return;
       unlockedRef.current = true;
 
       const sm = SoundManager.getInstance();
-      await sm.unlock();
 
-      // If a BGM was requested before unlock, load *that specific track*
-      // first and play it ASAP — don't make the player wait for every SFX
-      // to finish fetching. Prior behaviour awaited Promise.all over all
-      // sounds, causing a multi-second audio delay on first entry.
+      // CRITICAL: unlock() must be SYNCHRONOUS — no await before it.
+      // iOS Safari requires AudioContext creation + resume() + first
+      // AudioBufferSourceNode.start() all in the same synchronous call
+      // stack as the user gesture. Any async gap kills it.
+      sm.unlock();
+
+      // Preload BGM buffers in background (SFX already started by unlock).
+      // Once the pending BGM track is loaded, play it.
       const pending = pendingBgmRef.current;
       if (pending) {
         pendingBgmRef.current = null;
         sm.preload(pending).then(() => sm.playBgMusic(pending));
       }
 
-      // Then warm the rest of the cache in the background.
+      // Warm the rest of the cache in the background.
       Promise.all([
         ...ALL_SFX.map((id) => sm.preload(id)),
         ...ALL_BGM.map((id) => sm.preload(id)),
@@ -84,9 +87,7 @@ export function useAudio(eventBus: GameEventBus) {
       return;
     }
     const sm = SoundManager.getInstance();
-    // Ensure buffer is loaded before play. Idempotent — no-op if already
-    // cached. Prevents the "play was called but buffer not decoded yet"
-    // silent-failure path inside SoundManager.playBgMusic().
+    // Ensure buffer is loaded before play. preload() is idempotent.
     await sm.preload(soundId);
     sm.playBgMusic(soundId);
   }, []);

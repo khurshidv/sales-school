@@ -9,6 +9,8 @@ export interface CharacterDefinition {
   role: string;
   emotions: string[];
   assetPath: (emotion: string) => string;
+  /** Native sprite dimensions for next/image sizing. */
+  dimensions: { width: number; height: number };
 }
 
 function makeAssetPath(id: string) {
@@ -18,12 +20,15 @@ function makeAssetPath(id: string) {
 
 // --- Team Characters ---
 
+const DEFAULT_DIMS = { width: 765, height: 1024 };
+
 const rustam: CharacterDefinition = {
   id: 'rustam',
   name: { uz: 'Rustam', ru: 'Rustam' },
   role: 'manager',
   emotions: ['friendly', 'serious', 'proud', 'disappointed', 'neutral'],
   assetPath: makeAssetPath('rustam'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const dilnoza: CharacterDefinition = {
@@ -32,6 +37,7 @@ const dilnoza: CharacterDefinition = {
   role: 'mentor',
   emotions: ['neutral', 'smirk', 'helpful', 'explaining', 'proud'],
   assetPath: makeAssetPath('dilnoza'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const anvar: CharacterDefinition = {
@@ -40,6 +46,7 @@ const anvar: CharacterDefinition = {
   role: 'colleague',
   emotions: ['nervous', 'eager', 'embarrassed', 'worried'],
   assetPath: makeAssetPath('anvar'),
+  dimensions: DEFAULT_DIMS,
 };
 
 // --- Client Characters ---
@@ -50,6 +57,7 @@ const bobur: CharacterDefinition = {
   role: 'client',
   emotions: ['neutral', 'thoughtful', 'interested', 'happy', 'surprised'],
   assetPath: makeAssetPath('bobur'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const kamola: CharacterDefinition = {
@@ -58,6 +66,7 @@ const kamola: CharacterDefinition = {
   role: 'client',
   emotions: ['confident', 'skeptical', 'impressed', 'checking', 'neutral', 'approving'],
   assetPath: makeAssetPath('kamola'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const javlon: CharacterDefinition = {
@@ -66,6 +75,7 @@ const javlon: CharacterDefinition = {
   role: 'client',
   emotions: ['stubborn', 'thinking', 'touched', 'neutral', 'softened'],
   assetPath: makeAssetPath('javlon'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const nilufar: CharacterDefinition = {
@@ -74,6 +84,7 @@ const nilufar: CharacterDefinition = {
   role: 'client',
   emotions: ['worried', 'thoughtful', 'happy', 'caring'],
   assetPath: makeAssetPath('nilufar'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const abdullaev: CharacterDefinition = {
@@ -82,6 +93,7 @@ const abdullaev: CharacterDefinition = {
   role: 'client',
   emotions: ['impatient', 'neutral', 'impressed', 'poker', 'evaluating'],
   assetPath: makeAssetPath('abdullaev'),
+  dimensions: DEFAULT_DIMS,
 };
 
 const sardor: CharacterDefinition = {
@@ -100,6 +112,7 @@ const sardor: CharacterDefinition = {
     'measured',
   ],
   assetPath: makeAssetPath('sardor'),
+  dimensions: DEFAULT_DIMS,
 };
 
 // --- Registry ---

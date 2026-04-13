@@ -45,3 +45,23 @@ export function pct(part: number, total: number): string {
   if (total === 0) return '—';
   return `${Math.round((part / total) * 100)}%`;
 }
+
+/**
+ * Normalize a date/datetime string for Supabase queries.
+ * - "2026-03-23" → "2026-03-23T00:00:00" (start of day)
+ * - "2026-03-23T14:30" → "2026-03-23T14:30:00" (exact time)
+ */
+export function normalizeFrom(val: string): string {
+  if (val.includes('T')) return val.length === 16 ? `${val}:00` : val;
+  return `${val}T00:00:00`;
+}
+
+/**
+ * Normalize "to" date for Supabase queries.
+ * - "2026-03-25" → "2026-03-25T23:59:59" (end of day)
+ * - "2026-03-25T12:00" → "2026-03-25T12:00:00" (exact time)
+ */
+export function normalizeTo(val: string): string {
+  if (val.includes('T')) return val.length === 16 ? `${val}:00` : val;
+  return `${val}T23:59:59`;
+}

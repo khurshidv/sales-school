@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
+import { normalizeFrom, normalizeTo } from './formatters';
 import type {
   DayDropoff,
   FunnelStats,
@@ -36,16 +37,16 @@ export async function getFunnelStats(
   let completedQuery = admin.from('completed_scenarios').select('player_id, created_at');
 
   if (from) {
-    visitorsQuery = visitorsQuery.gte('created_at', `${from}T00:00:00`);
-    registeredQuery = registeredQuery.gte('created_at', `${from}T00:00:00`);
-    startedQuery = startedQuery.gte('created_at', `${from}T00:00:00`);
-    completedQuery = completedQuery.gte('created_at', `${from}T00:00:00`);
+    visitorsQuery = visitorsQuery.gte('created_at', normalizeFrom(from));
+    registeredQuery = registeredQuery.gte('created_at', normalizeFrom(from));
+    startedQuery = startedQuery.gte('created_at', normalizeFrom(from));
+    completedQuery = completedQuery.gte('created_at', normalizeFrom(from));
   }
   if (to) {
-    visitorsQuery = visitorsQuery.lte('created_at', `${to}T23:59:59`);
-    registeredQuery = registeredQuery.lte('created_at', `${to}T23:59:59`);
-    startedQuery = startedQuery.lte('created_at', `${to}T23:59:59`);
-    completedQuery = completedQuery.lte('created_at', `${to}T23:59:59`);
+    visitorsQuery = visitorsQuery.lte('created_at', normalizeTo(to));
+    registeredQuery = registeredQuery.lte('created_at', normalizeTo(to));
+    startedQuery = startedQuery.lte('created_at', normalizeTo(to));
+    completedQuery = completedQuery.lte('created_at', normalizeTo(to));
   }
 
   const [visitorsRes, registeredRes, startedRes, completedRes] = await Promise.all([
@@ -75,10 +76,10 @@ export async function getPlayers(
     query = query.or(`display_name.ilike.%${search}%,phone.ilike.%${search}%`);
   }
   if (from) {
-    query = query.gte('created_at', `${from}T00:00:00`);
+    query = query.gte('created_at', normalizeFrom(from));
   }
   if (to) {
-    query = query.lte('created_at', `${to}T23:59:59`);
+    query = query.lte('created_at', normalizeTo(to));
   }
 
   query = query.order(sortBy, { ascending: sortAsc }).range(offset, offset + limit - 1);
@@ -130,12 +131,12 @@ export async function getGameMetrics(
     .in('event_type', ['day_started', 'day_completed', 'day_failed', 'dropped_off']);
 
   if (from) {
-    completionsQuery = completionsQuery.gte('created_at', `${from}T00:00:00`);
-    eventsQuery = eventsQuery.gte('created_at', `${from}T00:00:00`);
+    completionsQuery = completionsQuery.gte('created_at', normalizeFrom(from));
+    eventsQuery = eventsQuery.gte('created_at', normalizeFrom(from));
   }
   if (to) {
-    completionsQuery = completionsQuery.lte('created_at', `${to}T23:59:59`);
-    eventsQuery = eventsQuery.lte('created_at', `${to}T23:59:59`);
+    completionsQuery = completionsQuery.lte('created_at', normalizeTo(to));
+    eventsQuery = eventsQuery.lte('created_at', normalizeTo(to));
   }
 
   const [completionsRes, dayEventsRes] = await Promise.all([completionsQuery, eventsQuery]);

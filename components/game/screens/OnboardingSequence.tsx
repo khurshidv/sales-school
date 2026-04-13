@@ -10,6 +10,7 @@ import {
   getStepText,
 } from '@/game/data/onboarding/onboardingScript';
 import type { Language, CharacterOnScreen } from '@/game/engine/types';
+import { useOnboardingPreloader } from '@/lib/game/hooks/useOnboardingPreloader';
 
 function detectIOS(): boolean {
   if (typeof navigator === 'undefined') return false;
@@ -61,6 +62,9 @@ export default function OnboardingSequence({
   const [lang, setLang] = useState<Language>('uz');
   const [name, setName] = useState('');
   const [phoneDigits, setPhoneDigits] = useState('');
+
+  // Stealth preload Day 1 assets while user fills onboarding
+  useOnboardingPreloader(step, 1);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fullscreenApiSupported, setFullscreenApiSupported] = useState(false);

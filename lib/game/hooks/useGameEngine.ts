@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useGameStore } from '@/game/store/gameStore';
 import { usePlayerStore } from '@/game/store/playerStore';
-import { getScenario } from '@/game/data/scenarios';
+import { getScenario, ensureDay } from '@/game/data/scenarios';
 import { getAvailableChoices } from '@/game/engine/ScenarioEngine';
 import { GameEventBus } from '@/game/engine/EventBus';
 import {
@@ -16,7 +16,7 @@ import {
 import { isGameOver, shouldLoseLife, shouldGainLife } from '@/game/systems/LivesSystem';
 import { checkAchievements, type AchievementContext } from '@/game/systems/AchievementSystem';
 import { getCoinsForOutcome, getCoinsForAchievement, getCoinsForFirstCompletion } from '@/game/systems/CoinSystem';
-import { syncDayResults, syncAchievement } from '@/game/store/middleware/supabaseSync';
+import { syncDayResults, syncAchievement, syncProgress } from '@/game/store/middleware/supabaseSync';
 import { trackEvent } from '@/lib/game/analytics';
 import type {
   Scenario,
@@ -26,6 +26,7 @@ import type {
   ChoiceNode,
   EndNode,
   DimensionScores,
+  GameSessionState,
 } from '@/game/engine/types';
 
 // --- Types ---
@@ -82,6 +83,7 @@ export function useGameEngine(scenarioId: string) {
   const currentNode = useGameStore((s) => s.currentNode);
   const session = useGameStore((s) => s.session);
   const gsStartDay = useGameStore((s) => s.startDay);
+  const gsRestoreSession = useGameStore((s) => s.restoreSession);
   const gsAdvanceDialogue = useGameStore((s) => s.advanceDialogue);
   const gsSelectChoice = useGameStore((s) => s.selectChoice);
   const gsSelectMultiChoices = useGameStore((s) => s.selectMultiChoices);
@@ -109,15 +111,52 @@ export function useGameEngine(scenarioId: string) {
   // Guard: prevent double-click on confirmNextDay
   const transitioningRef = useRef(false);
 
-  // Load scenario
+  // Load scenario + attempt to restore saved session
+  const restoredRef = useRef(false);
+
   useEffect(() => {
     const s = getScenario(scenarioId);
-    if (s) {
-      setScenario(s);
+    if (!s) return;
+
+    setScenario(s);
+
+    // Try restoring saved progress from Supabase
+    // (only if player is known — otherwise it's a fresh start)
+    const pid = usePlayerStore.getState().player?.id;
+    if (pid && !restoredRef.current) {
+      restoredRef.current = true;
+      fetch(`/api/game/progress?playerId=${encodeURIComponent(pid)}&scenarioId=${encodeURIComponent(scenarioId)}`)
+        .then((r) => r.json())
+        .then(async (data) => {
+          if (data.progress?.sessionState) {
+            const saved = data.progress.sessionState as GameSessionState;
+            const dayIndex = saved.dayIndex;
+
+            // Ensure the day data is loaded (may be Day 2 or 3)
+            const day = await ensureDay(scenarioId, dayIndex);
+            if (day && day.nodes[saved.currentNodeId]) {
+              // Restore the saved session
+              setCurrentDayIndex(dayIndex);
+              gsRestoreSession(day, saved);
+              setFlowState('playing');
+              return;
+            }
+          }
+          // No saved session or invalid — start fresh
+          setCurrentDayIndex(0);
+          setFlowState('day_intro');
+        })
+        .catch(() => {
+          // Network error — start fresh
+          setCurrentDayIndex(0);
+          setFlowState('day_intro');
+        });
+    } else {
+      // No player yet (first visit) — start from Day 1
       setCurrentDayIndex(0);
       setFlowState('day_intro');
     }
-  }, [scenarioId]);
+  }, [scenarioId, gsRestoreSession]);
 
   // Detect end node → trigger day completion.
   //
@@ -193,6 +232,8 @@ export function useGameEngine(scenarioId: string) {
       // Sync to Supabase (with retry for reliability)
       const dayId = scenario.days[currentDayIndex]?.id ?? `day-${currentDayIndex}`;
       syncDayResults(currentPlayer.id, scenarioId, dayId, score, rating, Date.now() - session.startTime, session.choiceHistory).catch(() => {});
+      // Mark saved progress as completed so it won't be restored on refresh
+      syncProgress(currentPlayer.id, scenarioId, dayId, session, true);
       for (const ach of newAchievements) {
         syncAchievement(currentPlayer.id, ach).catch(() => {});
       }
@@ -277,9 +318,11 @@ export function useGameEngine(scenarioId: string) {
   // --- Actions ---
 
   const startDay = useCallback(
-    (dayIndex: number) => {
+    async (dayIndex: number) => {
       if (!scenario) return;
-      const day = scenario.days[dayIndex];
+
+      // Lazily load the day data (Day 1 is instant, Day 2-3 load on demand)
+      const day = await ensureDay(scenario.id, dayIndex);
       if (!day) return;
 
       setCurrentDayIndex(dayIndex);

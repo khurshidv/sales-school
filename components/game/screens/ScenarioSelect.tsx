@@ -110,11 +110,19 @@ export default function ScenarioSelect({
           onClick={() => onSelectScenario('car-dealership')}
           className="scenario-featured-card group flex-none w-[48%] max-w-[420px] h-[75%] overflow-hidden text-left"
         >
-          {/* Background showroom image */}
+          {/* Background showroom image — full opacity */}
           <img
             src="/assets/scenarios/car-dealership/backgrounds/bg_showroom.jpg"
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+
+          {/* Dark gradient overlay from bottom */}
+          <div
+            className="absolute inset-0 pointer-events-none z-[1]"
+            style={{
+              background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 40%, transparent 70%)',
+            }}
           />
 
           {/* Top row: level pill + open badge */}
@@ -136,21 +144,21 @@ export default function ScenarioSelect({
             </span>
           </div>
 
-          {/* Bottom meta panel */}
+          {/* Bottom meta panel — white text on dark gradient */}
           <div className="absolute bottom-0 left-0 right-0 px-5 pb-4 pt-10 z-10">
             <div className="flex items-end justify-between gap-3">
               <div className="flex flex-col">
-                <h2 className="font-heading font-bold text-on-surface text-xl leading-tight tracking-tight">
+                <h2 className="font-heading font-bold text-white text-xl leading-tight tracking-tight drop-shadow-md">
                   {t.chevrolet[lang]}
                 </h2>
                 <div className="flex items-center gap-2 mt-1">
                   <span
-                    className="material-symbols-outlined text-on-surface-variant/70"
+                    className="material-symbols-outlined text-white/70"
                     style={{ fontSize: 14 }}
                   >
                     schedule
                   </span>
-                  <span className="text-[11px] font-body font-medium text-on-surface-variant/80">
+                  <span className="text-[11px] font-body font-medium text-white/80">
                     {t.duration[lang]}
                   </span>
                 </div>

@@ -388,7 +388,7 @@ export const day2: Day = {
       background: 'bg_test_drive_city',
       characters: [],
       text: {
-        uz: "Hm, yuribdi... K5'dan yumshoqroq ekan. Salon ham ixchamroq, sokinroq tuyulmoqda.",
+        uz: "Hmm, yurishi... K5'dan yumshoqroq ekan. Salon ham ixchamroq, sokinroq tuyulmoqda.",
         ru: 'Хм, едет... мягче, чем K5. И салон ощущается собраннее, тише.',
       },
       nextNodeId: 'd2_test_drive_choice',

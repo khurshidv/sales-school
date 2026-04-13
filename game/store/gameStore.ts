@@ -21,6 +21,7 @@ interface GameStore {
 
   // Actions
   startDay: (scenarioId: string, day: Day, previousState?: { lives: number; flags: Record<string, boolean> }) => void;
+  restoreSession: (day: Day, savedSession: GameSessionState) => void;
   advanceDialogue: () => void;
   selectChoice: (choiceIndex: number, playerState?: PlayerState) => void;
   selectMultiChoices: (indices: number[], playerState?: PlayerState) => void;
@@ -120,6 +121,20 @@ export const useGameStore = create<GameStore>()(
       }
 
       const entered = enterNode(day.rootNodeId, day, initialSession);
+
+      set((state) => {
+        state.session = entered.session;
+        state.currentDay = day;
+        state.currentNode = entered.node;
+      });
+    },
+
+    // Restore a previously saved session (e.g. after page refresh).
+    // Re-enters the saved node to resolve the correct ScenarioNode.
+    restoreSession: (day, savedSession) => {
+      // Clear timer state — it will be stale after refresh
+      const sessionWithoutTimer: GameSessionState = { ...savedSession, timerState: null };
+      const entered = enterNode(savedSession.currentNodeId, day, sessionWithoutTimer);
 
       set((state) => {
         state.session = entered.session;

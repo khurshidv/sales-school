@@ -1,8 +1,10 @@
 'use client';
 
 import { memo } from 'react';
+import Image from 'next/image';
 import { m, useReducedMotion } from 'framer-motion';
 import { CHARACTERS } from '@/game/data/characters/index';
+import { getCharacterBlur } from '@/game/data/scenarios/car-dealership/blur-hashes';
 import type { CharacterPosition } from '@/game/engine/types';
 
 interface CharacterSpriteProps {
@@ -30,14 +32,13 @@ function CharacterSprite({
   if (!character) return null;
 
   const src = character.assetPath(emotion);
+  const blurUrl = getCharacterBlur(src);
+  const { width, height } = character.dimensions;
 
-  // Note: используем plain <img> вместо next/image с `fill`, потому что
-  // ассеты персонажей имеют разные соотношения сторон (некоторые 2:3,
-  // некоторые 3:4). `aspect-[2/3]` на контейнере + `object-contain`
-  // визуально искажали спрайты не-2:3 — они читались как «сжатые по
-  // горизонтали». Plain img + `h-full w-auto` даёт каждому спрайту
-  // отрисовываться в его НАТУРАЛЬНОЙ пропорции, ширина контейнера
-  // подстраивается под intrinsic ratio файла.
+  // Using next/image with explicit width/height (not `fill`) preserves each
+  // sprite's natural aspect ratio. AVIF/WebP format negotiation + responsive
+  // sizing happen automatically. The container still uses h-full so the
+  // visual behaviour is identical to the old plain <img> approach.
   return (
     <m.div
       initial={{ opacity: 0 }}
@@ -46,10 +47,15 @@ function CharacterSprite({
       transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
       className={`absolute bottom-0 h-[98%] sm:h-[96%] md:h-[94%] lg:h-[90%] pointer-events-none select-none z-0 transition-[filter] duration-300 ${POSITION_CLASSES[position]} ${!isActive ? 'grayscale brightness-75' : ''}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt={character.id}
+        width={width}
+        height={height}
+        sizes="(max-width: 640px) 40vw, 30vw"
+        quality={60}
+        placeholder={blurUrl ? 'blur' : 'empty'}
+        blurDataURL={blurUrl}
         className="h-full w-auto object-contain object-bottom block"
         draggable={false}
       />

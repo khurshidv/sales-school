@@ -6,7 +6,8 @@ import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { useGameEngine } from '@/lib/game/hooks/useGameEngine';
 import { useTimer } from '@/lib/game/hooks/useTimer';
 import { useAudio } from '@/lib/game/hooks/useAudio';
-import { useAssetPreloader } from '@/lib/game/hooks/useAssetPreloader';
+import { useGraphPreloader } from '@/lib/game/hooks/useGraphPreloader';
+import { useAutoSave } from '@/lib/game/hooks/useAutoSave';
 import { usePlayerInit } from '@/lib/game/hooks/usePlayerInit';
 import { useLang } from '@/lib/game/utils/lang';
 import { CHARACTERS } from '@/game/data/characters/index';
@@ -77,6 +78,14 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   const timerState = engine.session?.timerState ?? null;
   const timer = useTimer(timerState, engine.timerExpired);
 
+  // Auto-save session to Supabase (debounced on node change + on page leave)
+  useAutoSave({
+    playerId: engine.player?.id,
+    scenarioId,
+    session: engine.session,
+    isPlaying: engine.flowState === 'playing',
+  });
+
   // Stable callbacks so React.memo on PauseMenu/GameOver/FinalResults holds.
   // Pause/resume also freezes the choice timer so the player can't gain
   // extra thinking time by opening the pause menu on a timed choice.
@@ -99,19 +108,41 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     engine.restartDay();
   }, [engine.restartDay]);
 
-  // Warm asset cache: current day on mount, next day as soon as we enter
-  // `playing` state — so the transition is instant.
-  const { preloadDay } = useAssetPreloader();
+  // Graph-aware predictive preloader: loads only critical-path assets
+  // to start (~350KB), then continuously preloads ahead during gameplay.
+  const preloader = useGraphPreloader();
+
+  // Critical-path preload: just the day_intro background + first scene
   useEffect(() => {
-    preloadDay(scenarioId, engine.currentDayIndex).catch(() => {});
-  }, [scenarioId, engine.currentDayIndex, preloadDay]);
+    const day = engine.scenario?.days[engine.currentDayIndex];
+    if (day) {
+      preloader.preloadCritical(day, scenarioId).catch(() => {});
+    }
+  }, [scenarioId, engine.currentDayIndex, engine.scenario, preloader.preloadCritical]);
+
+  // Start continuous background preloading once playing
   useEffect(() => {
-    if (engine.flowState !== 'playing') return;
+    const day = engine.scenario?.days[engine.currentDayIndex];
+    if (!day || !engine.session) return;
+    preloader.startPreloading(day, scenarioId, engine.session.currentNodeId);
+  }, [engine.flowState, engine.currentDayIndex, engine.scenario, engine.session, scenarioId, preloader.startPreloading]);
+
+  // Re-prioritise on every node change
+  useEffect(() => {
+    if (engine.session?.currentNodeId) {
+      preloader.onNodeChange(engine.session.currentNodeId);
+    }
+  }, [engine.session?.currentNodeId, preloader.onNodeChange]);
+
+  // Pre-warm next day's critical assets during day_summary
+  useEffect(() => {
+    if (engine.flowState !== 'day_summary') return;
     const nextDay = engine.currentDayIndex + 1;
     if (engine.scenario && nextDay < engine.scenario.days.length) {
-      preloadDay(scenarioId, nextDay).catch(() => {});
+      const day = engine.scenario.days[nextDay];
+      preloader.preloadCritical(day, scenarioId).catch(() => {});
     }
-  }, [engine.flowState, engine.currentDayIndex, engine.scenario, scenarioId, preloadDay]);
+  }, [engine.flowState, engine.currentDayIndex, engine.scenario, scenarioId, preloader.preloadCritical]);
 
   const dialogueBoxRef = useRef<DialogueBoxHandle>(null);
 

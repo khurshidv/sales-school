@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
+import { normalizeFrom, normalizeTo } from './formatters';
 import type { PageSummary, PageBreakdowns, Lead } from './types';
 
 const PAGE_SLUGS = ['home', 'target'] as const;
@@ -106,10 +107,10 @@ export async function getLeads(
     query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
   }
   if (from) {
-    query = query.gte('created_at', `${from}T00:00:00`);
+    query = query.gte('created_at', normalizeFrom(from));
   }
   if (to) {
-    query = query.lte('created_at', `${to}T23:59:59`);
+    query = query.lte('created_at', normalizeTo(to));
   }
 
   query = query.order(sortBy, { ascending: sortAsc }).range(offset, offset + limit - 1);

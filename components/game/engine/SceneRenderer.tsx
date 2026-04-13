@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { AnimatePresence, m } from 'framer-motion';
 import CharacterSprite from './CharacterSprite';
 import SoundManager from '@/lib/game/audio/SoundManager';
+import { getBackgroundBlur } from '@/game/data/scenarios/car-dealership/blur-hashes';
 import type { CharacterOnScreen } from '@/game/engine/types';
 
 interface SceneRendererProps {
@@ -71,6 +72,8 @@ export default function SceneRenderer({
             sizes="100vw"
             priority
             quality={60}
+            placeholder={getBackgroundBlur(backgroundId) ? 'blur' : 'empty'}
+            blurDataURL={getBackgroundBlur(backgroundId)}
             className="object-cover"
           />
         </m.div>

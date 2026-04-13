@@ -1,5 +1,27 @@
 // Singleton sound manager for game audio
-// Audio files will be placed in /public/assets/audio/
+// Audio files are in /public/assets/sounds/
+//
+// iOS Safari constraints addressed here:
+// 1. AudioContext must be created+resumed inside a user gesture call stack
+// 2. audio.play() must be called inside a user gesture (no async gap)
+// 3. createMediaElementSource() is unreliable on iOS — use AudioBuffer only
+// 4. First AudioBufferSourceNode.start() must happen in gesture context
+
+// All known SFX IDs — preloaded on first user interaction
+const ALL_SFX = [
+  'sfx_choice_select',
+  'sfx_correct',
+  'sfx_wrong',
+  'sfx_combo',
+  'sfx_timer_tick',
+  'sfx_achievement',
+  'sfx_life_lost',
+  'sfx_life_gain',
+  'sfx_fail',
+  'sfx_day_complete',
+  'sfx_grandmaster',
+  'sfx_coin',
+];
 
 class SoundManager {
   private static instance: SoundManager | null = null;
@@ -8,6 +30,7 @@ class SoundManager {
   private muted: boolean = false;
   private bgSource: AudioBufferSourceNode | null = null;
   private bgGain: GainNode | null = null;
+  private unlocked: boolean = false;
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -22,36 +45,64 @@ class SoundManager {
     return SoundManager.instance;
   }
 
-  // Unlock AudioContext on first user tap
-  async unlock(): Promise<void> {
+  /** Whether AudioContext has been unlocked by a user gesture. */
+  isUnlocked(): boolean {
+    return this.unlocked;
+  }
+
+  /**
+   * Unlock AudioContext on first user tap.
+   * MUST be called synchronously from a user gesture handler (click/touchend).
+   *
+   * iOS Safari requires AudioContext creation AND resume() in the same
+   * synchronous call stack as the user gesture. Any async gap (await,
+   * setTimeout, Promise.then) breaks it.
+   */
+  unlock(): void {
+    if (this.unlocked) return;
+
     if (!this.audioContext) {
       this.audioContext = new AudioContext();
     }
+
+    // Resume synchronously — iOS needs this in the gesture call stack
     if (this.audioContext.state === 'suspended') {
-      await this.audioContext.resume();
+      this.audioContext.resume();
     }
-    // Fire-and-forget warm-up of the most frequently played SFX so the
-    // first correct/wrong/choice sound isn't delayed by fetch+decode.
-    this.warmupCommon();
+
+    // Play a silent buffer to fully unlock on iOS.
+    // Some iOS versions require an actual AudioBufferSourceNode.start()
+    // in the gesture stack before they'll allow future play() calls.
+    this.playSilent();
+
+    this.unlocked = true;
+
+    // Preload ALL SFX in background (total ~500KB)
+    this.warmupAll();
   }
 
-  // Preload the small set of SFX that fire on nearly every turn. Runs in
-  // parallel; individual failures are silently ignored (matches preload()).
-  private warmupCommon(): void {
-    const commonSfx = [
-      'sfx_choice_select',
-      'sfx_correct',
-      'sfx_wrong',
-      'sfx_combo',
-      'sfx_timer_tick',
-    ];
-    for (const id of commonSfx) {
-      // Do not await — let them resolve in the background.
+  /** Play a tiny silent buffer — required to unlock iOS audio pipeline. */
+  private playSilent(): void {
+    if (!this.audioContext) return;
+    const buf = this.audioContext.createBuffer(1, 1, this.audioContext.sampleRate);
+    const src = this.audioContext.createBufferSource();
+    src.buffer = buf;
+    src.connect(this.audioContext.destination);
+    src.start(0);
+  }
+
+  // Preload all SFX in parallel. Runs in background, never blocks.
+  private warmupAll(): void {
+    for (const id of ALL_SFX) {
       this.preload(id).catch(() => {});
     }
   }
 
-  // Preload a sound file
+  /**
+   * Preload a sound file into an AudioBuffer.
+   * Works for both SFX and BGM — all audio uses AudioBufferSourceNode
+   * (not <audio> element) for iOS compatibility.
+   */
   async preload(soundId: string): Promise<void> {
     if (this.buffers.has(soundId) || !this.audioContext) return;
     try {
@@ -65,7 +116,7 @@ class SoundManager {
     }
   }
 
-  // Fire-and-forget play
+  // Fire-and-forget play (SFX only)
   play(soundId: string): void {
     if (this.muted || !this.audioContext) return;
     const buffer = this.buffers.get(soundId);
@@ -76,7 +127,11 @@ class SoundManager {
     source.start(0);
   }
 
-  // Play background music (loop)
+  /**
+   * Play background music (loop).
+   * Uses AudioBufferSourceNode (not <audio>) for iOS compatibility.
+   * Buffer must be preloaded first via preload().
+   */
   playBgMusic(soundId: string, volume = 0.3): void {
     if (this.muted || !this.audioContext) return;
 
@@ -109,12 +164,12 @@ class SoundManager {
     const gain = this.bgGain;
 
     if (fadeMs <= 0) {
-      source.stop(0);
+      try { source.stop(0); } catch { /* already stopped */ }
     } else {
       const now = this.audioContext.currentTime;
       gain.gain.setValueAtTime(gain.gain.value, now);
       gain.gain.linearRampToValueAtTime(0, now + fadeMs / 1000);
-      source.stop(this.audioContext.currentTime + fadeMs / 1000);
+      try { source.stop(this.audioContext.currentTime + fadeMs / 1000); } catch { /* already stopped */ }
     }
 
     this.bgSource = null;

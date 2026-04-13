@@ -62,7 +62,7 @@ export const DIMENSION_META: Record<ScoreDimension, DimensionMeta> = {
       ru: 'Мягкое убеждение',
     },
     description: {
-      uz: 'Mijozni itarish emas — uni o\'zi uchun to\'g\'ri qarorga olib kelish. Bosim ostida sotilgan narsa qaytib keladi.',
+      uz: 'Mijozga bosim o\'tkazish emas — uni o\'zi uchun to\'g\'ri qarorga olib kelish. Bosim ostida sotilgan narsa qaytib keladi.',
       ru: 'Не давить, а подводить клиента к своему же решению. Продано под давлением — возвращается обратно.',
     },
   },

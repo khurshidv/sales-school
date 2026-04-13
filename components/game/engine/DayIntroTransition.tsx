@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 interface DayIntroTransitionProps {
@@ -42,13 +43,33 @@ export default function DayIntroTransition({
   onComplete,
   lang = 'uz',
 }: DayIntroTransitionProps) {
+  const completedRef = useRef(false);
+
+  // Auto-advance after animation finishes (6s Ken Burns + 0.5s buffer)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!completedRef.current) {
+        completedRef.current = true;
+        onComplete();
+      }
+    }, 6500);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  function handleComplete() {
+    if (!completedRef.current) {
+      completedRef.current = true;
+      onComplete();
+    }
+  }
+
   return (
     <>
       <style>{kenBurnsKeyframes}</style>
 
       <div
         className="fixed inset-0 z-30 bg-black cursor-pointer"
-        onClick={onComplete}
+        onClick={handleComplete}
       >
         {/* Background with Ken Burns. The scale animation runs on the
             wrapper div; next/image handles format + responsive sizes. */}
@@ -136,7 +157,7 @@ export default function DayIntroTransition({
 
           {/* Reduced motion: show button instead */}
           <button
-            onClick={onComplete}
+            onClick={handleComplete}
             className="hidden motion-reduce:!block px-6 py-2 bg-white/20 border border-white/30 rounded-lg text-white text-sm hover:bg-white/30 transition-colors"
           >
             {t.start[lang]}

@@ -51,21 +51,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     },
   },
 
-  // Step 2 — Ask name (dialogue)
-  {
-    id: 'ask_name',
-    type: 'dialogue',
-    background: 'bg_showroom',
-    rustamEmotion: 'friendly',
-    showRustam: true,
-    speakerName: { uz: 'Rustam', ru: 'Рустам' },
-    text: {
-      uz: "Ajoyib! Endi tanishaylik — ismingiz nima?",
-      ru: 'Отлично! Давайте познакомимся — как вас зовут?',
-    },
-  },
-
-  // Step 3 — Name input
+  // Step 2 — Name input (Rustam asks name + input field appears)
   {
     id: 'name_input',
     type: 'name_input',
@@ -74,8 +60,8 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     showRustam: true,
     speakerName: { uz: 'Rustam', ru: 'Рустам' },
     text: {
-      uz: 'Ismingizni kiriting:',
-      ru: 'Введите ваше имя:',
+      uz: "Ajoyib! Endi tanishaylik — ismingiz nima?",
+      ru: 'Отлично! Давайте познакомимся — как вас зовут?',
     },
     inputPlaceholder: {
       uz: 'Ismingiz',
@@ -83,7 +69,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     },
   },
 
-  // Step 4 — Phone input
+  // Step 3 — Phone input
   {
     id: 'phone_input',
     type: 'phone_input',

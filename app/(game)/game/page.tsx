@@ -55,6 +55,10 @@ function GameHubInner() {
   // but remember the player so same phone restores progress
   const [forceReOnboarding, setForceReOnboarding] = useState(false);
 
+  // Onboarding submission state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!player?.id) {
       setSessionChecked(true);
@@ -112,14 +116,25 @@ function GameHubInner() {
   usePlayerInit(resetDone);
 
   const handleFormSubmit = async (name: string, phone: string, selectedLang: Language) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    setSubmitError(null);
     setLang(selectedLang);
 
-    // Get device fingerprint to link this device to the player
-    const deviceFingerprint = await getDeviceId();
+    try {
+      // Get device fingerprint to link this device to the player
+      const deviceFingerprint = await getDeviceId();
 
-    // Create player in Supabase first (source of truth)
-    const serverId = await syncCreatePlayer(phone, name, deviceFingerprint);
-    if (serverId) {
+      // Create player in Supabase first (source of truth)
+      const serverId = await syncCreatePlayer(phone, name, deviceFingerprint);
+      if (!serverId) {
+        setSubmitError(selectedLang === 'uz'
+          ? 'Serverga ulanib bo\'lmadi. Qaytadan urinib ko\'ring.'
+          : 'Не удалось подключиться к серверу. Попробуйте ещё раз.');
+        setIsSubmitting(false);
+        return;
+      }
+
       // Store phone locally for identification
       setStoredPhone(phone);
 
@@ -151,6 +166,12 @@ function GameHubInner() {
         setInitialized();
         trackEvent(serverId, 'game_started');
       }
+    } catch {
+      setSubmitError(selectedLang === 'uz'
+        ? 'Xatolik yuz berdi. Qaytadan urinib ko\'ring.'
+        : 'Произошла ошибка. Попробуйте ещё раз.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -216,7 +237,7 @@ function GameHubInner() {
     <>
       <RotateDevice />
       {!player || forceReOnboarding ? (
-        <OnboardingSequence onSubmit={handleFormSubmit} />
+        <OnboardingSequence onSubmit={handleFormSubmit} isSubmitting={isSubmitting} submitError={submitError} />
       ) : (
         <ScenarioSelect
           playerName={player.displayName}

@@ -52,10 +52,14 @@ const IOS_HINT_COPY = {
 
 interface OnboardingSequenceProps {
   onSubmit: (name: string, phone: string, lang: Language) => void;
+  isSubmitting?: boolean;
+  submitError?: string | null;
 }
 
 export default function OnboardingSequence({
   onSubmit,
+  isSubmitting = false,
+  submitError = null,
 }: OnboardingSequenceProps) {
   const shouldReduceMotion = useReducedMotion();
   const [step, setStep] = useState(0);
@@ -187,6 +191,8 @@ export default function OnboardingSequence({
             onGoBack={goBack}
             canGoBack={step > 0}
             lang={lang}
+            isSubmitting={isSubmitting}
+            submitError={submitError}
             inputConfig={{
               type: 'tel',
               value: phoneDigits,

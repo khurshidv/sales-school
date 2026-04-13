@@ -22,6 +22,8 @@ interface OnboardingDialogueProps {
   onGoBack?: () => void;
   canGoBack?: boolean;
   lang?: Language;
+  isSubmitting?: boolean;
+  submitError?: string | null;
 }
 
 const BACK_LABEL: Record<Language, string> = {
@@ -42,6 +44,8 @@ export default function OnboardingDialogue({
   onGoBack,
   canGoBack = false,
   lang = 'ru',
+  isSubmitting = false,
+  submitError = null,
 }: OnboardingDialogueProps) {
   const shouldReduceMotion = useReducedMotion();
   const { textRef, isTyping, skipToEnd } = useTypewriter(text, {
@@ -80,14 +84,14 @@ export default function OnboardingDialogue({
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter' && inputConfig?.isValid) {
+    if (e.key === 'Enter' && inputConfig?.isValid && !isSubmitting) {
       onAdvance();
     }
   }
 
   function handleConfirm(e: React.MouseEvent) {
     e.stopPropagation();
-    if (inputConfig?.isValid) onAdvance();
+    if (inputConfig?.isValid && !isSubmitting) onAdvance();
   }
 
   return (
@@ -169,20 +173,31 @@ export default function OnboardingDialogue({
             </div>
             <button
               onClick={handleConfirm}
-              disabled={!inputConfig.isValid}
+              disabled={!inputConfig.isValid || isSubmitting}
               className={`
                 px-3 py-1.5 sm:px-5 sm:py-2 rounded-lg font-semibold text-white text-xs sm:text-sm
                 border transition-all min-w-[44px] min-h-[44px]
                 ${
-                  inputConfig.isValid
+                  inputConfig.isValid && !isSubmitting
                     ? 'bg-blue-500/30 border-blue-400/50 shadow-[0_0_12px_rgba(59,130,246,0.3)] hover:bg-blue-500/50 active:bg-blue-500/40'
                     : 'bg-white/5 border-white/10 opacity-40 cursor-not-allowed'
                 }
               `}
             >
-              →
+              {isSubmitting ? (
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              ) : '→'}
             </button>
           </m.div>
+          {submitError && (
+            <m.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-1.5 text-red-400 text-[0.65rem] sm:text-xs"
+            >
+              {submitError}
+            </m.p>
+          )}
         )}
       </AnimatePresence>
 

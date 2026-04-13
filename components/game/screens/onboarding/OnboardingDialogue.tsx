@@ -146,58 +146,56 @@ export default function OnboardingDialogue({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: shouldReduceMotion ? 0 : 0.25 }}
-            className="mt-2 sm:mt-3 flex gap-2 sm:gap-3 items-center"
+            className="mt-2 sm:mt-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex-1 flex items-center gap-1 bg-white/10 border border-white/20 rounded-lg px-2.5 py-1.5 sm:px-3 sm:py-2">
-              {inputConfig.prefix && (
-                <span className="text-white/60 select-none">
-                  {inputConfig.prefix}
-                </span>
-              )}
-              <input
-                ref={inputRef}
-                type={inputConfig.type === 'tel' ? 'text' : inputConfig.type}
-                inputMode={inputConfig.type === 'tel' ? 'numeric' : 'text'}
-                value={
-                  inputConfig.type === 'tel'
-                    ? formatPhone(inputConfig.value)
-                    : inputConfig.value
-                }
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                placeholder={inputConfig.placeholder}
-                className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40 text-xs sm:text-sm"
-                autoComplete="off"
-              />
+            <div className="flex gap-2 sm:gap-3 items-center">
+              <div className="flex-1 flex items-center gap-1 bg-white/10 border border-white/20 rounded-lg px-2.5 py-1.5 sm:px-3 sm:py-2">
+                {inputConfig.prefix && (
+                  <span className="text-white/60 select-none">
+                    {inputConfig.prefix}
+                  </span>
+                )}
+                <input
+                  ref={inputRef}
+                  type={inputConfig.type === 'tel' ? 'text' : inputConfig.type}
+                  inputMode={inputConfig.type === 'tel' ? 'numeric' : 'text'}
+                  value={
+                    inputConfig.type === 'tel'
+                      ? formatPhone(inputConfig.value)
+                      : inputConfig.value
+                  }
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder={inputConfig.placeholder}
+                  className="bg-transparent flex-1 outline-none text-white placeholder:text-white/40 text-xs sm:text-sm"
+                  autoComplete="off"
+                />
+              </div>
+              <button
+                onClick={handleConfirm}
+                disabled={!inputConfig.isValid || isSubmitting}
+                className={`
+                  px-3 py-1.5 sm:px-5 sm:py-2 rounded-lg font-semibold text-white text-xs sm:text-sm
+                  border transition-all min-w-[44px] min-h-[44px]
+                  ${
+                    inputConfig.isValid && !isSubmitting
+                      ? 'bg-blue-500/30 border-blue-400/50 shadow-[0_0_12px_rgba(59,130,246,0.3)] hover:bg-blue-500/50 active:bg-blue-500/40'
+                      : 'bg-white/5 border-white/10 opacity-40 cursor-not-allowed'
+                  }
+                `}
+              >
+                {isSubmitting ? (
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                ) : '→'}
+              </button>
             </div>
-            <button
-              onClick={handleConfirm}
-              disabled={!inputConfig.isValid || isSubmitting}
-              className={`
-                px-3 py-1.5 sm:px-5 sm:py-2 rounded-lg font-semibold text-white text-xs sm:text-sm
-                border transition-all min-w-[44px] min-h-[44px]
-                ${
-                  inputConfig.isValid && !isSubmitting
-                    ? 'bg-blue-500/30 border-blue-400/50 shadow-[0_0_12px_rgba(59,130,246,0.3)] hover:bg-blue-500/50 active:bg-blue-500/40'
-                    : 'bg-white/5 border-white/10 opacity-40 cursor-not-allowed'
-                }
-              `}
-            >
-              {isSubmitting ? (
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-              ) : '→'}
-            </button>
+            {submitError && (
+              <p className="mt-1.5 text-red-400 text-[0.65rem] sm:text-xs">
+                {submitError}
+              </p>
+            )}
           </m.div>
-          {submitError && (
-            <m.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="mt-1.5 text-red-400 text-[0.65rem] sm:text-xs"
-            >
-              {submitError}
-            </m.p>
-          )}
         )}
       </AnimatePresence>
 

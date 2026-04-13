@@ -35,7 +35,8 @@ export type GameFlowState =
   | 'day_intro'
   | 'playing'
   | 'day_summary'
-  | 'final_results';
+  | 'final_results'
+  | 'school_cta';
 
 export interface DayResults {
   dayIndex: number;
@@ -99,6 +100,7 @@ export function useGameEngine(scenarioId: string) {
   const [dayResults, setDayResults] = useState<DayResults | null>(null);
   const [finalResults, setFinalResults] = useState<FinalResults | null>(null);
   const [dayResultsHistory, setDayResultsHistory] = useState<DayResults[]>([]);
+  const [schoolCtaEnding, setSchoolCtaEnding] = useState<'grandmaster' | 'success' | 'partial' | 'failure' | null>(null);
 
   // Track previous day state for transitions
   const previousDayStateRef = useRef<{ lives: number; flags: Record<string, boolean> } | null>(null);
@@ -370,6 +372,20 @@ export function useGameEngine(scenarioId: string) {
     }
   }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, player]);
 
+  const showSchoolCta = useCallback(() => {
+    // Determine ending type from last day's outcome
+    const lastDay = dayResultsHistory[dayResultsHistory.length - 1];
+    if (!lastDay) return;
+    const outcomeMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
+      hidden_ending: 'grandmaster',
+      success: 'success',
+      partial: 'partial',
+      failure: 'failure',
+    };
+    setSchoolCtaEnding(outcomeMap[lastDay.outcome] ?? 'failure');
+    setFlowState('school_cta');
+  }, [dayResultsHistory]);
+
   const goBack = useCallback(() => {
     if (flowState !== 'playing') return;
     gsGoBack();
@@ -425,6 +441,7 @@ export function useGameEngine(scenarioId: string) {
       currentDayIndex,
       dayResults,
       finalResults,
+      schoolCtaEnding,
       availableChoices,
       eventBus,
 
@@ -439,6 +456,7 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
+      showSchoolCta,
       restartDay,
       startDay,
     }),
@@ -451,6 +469,7 @@ export function useGameEngine(scenarioId: string) {
       currentDayIndex,
       dayResults,
       finalResults,
+      schoolCtaEnding,
       availableChoices,
       beginPlaying,
       advanceDialogue,
@@ -462,6 +481,7 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
+      showSchoolCta,
       restartDay,
       startDay,
     ],

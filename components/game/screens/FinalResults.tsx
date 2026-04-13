@@ -11,6 +11,7 @@ interface FinalResultsProps {
   dayRatings: Rating[];
   strongestDimension: string;
   weakestDimension: string;
+  onNext: () => void;
   onExit: () => void;
   lang?: 'uz' | 'ru';
 }
@@ -30,6 +31,7 @@ const t = {
   totalScore: { uz: 'Umumiy ball', ru: 'Общий счёт' },
   strongest: { uz: 'Kuchli tomon', ru: 'Сильная сторона' },
   growthZone: { uz: "O'sish zonasi", ru: 'Зона роста' },
+  next: { uz: 'Davom etish', ru: 'Далее' },
   toMenu: { uz: 'Menyuga', ru: 'В меню' },
 } as const;
 
@@ -39,6 +41,7 @@ export default function FinalResults({
   dayRatings,
   strongestDimension,
   weakestDimension,
+  onNext,
   onExit,
   lang = 'uz',
 }: FinalResultsProps) {
@@ -128,10 +131,19 @@ export default function FinalResults({
           })}
         </div>
 
-        {/* Exit button */}
+        {/* Next → SchoolCTA */}
+        <button
+          onClick={onNext}
+          className="w-full py-3 rounded-xl font-semibold text-neutral-950 transition-colors mt-6"
+          style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}
+        >
+          {t.next[lang]}
+        </button>
+
+        {/* Skip to menu */}
         <button
           onClick={onExit}
-          className="bg-white/10 hover:bg-white/15 w-full py-3 rounded-xl text-neutral-300 transition-colors mt-6"
+          className="w-full py-2 text-xs text-neutral-500 hover:text-neutral-400 transition-colors mt-2"
         >
           {t.toMenu[lang]}
         </button>

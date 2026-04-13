@@ -43,6 +43,10 @@ const PauseMenu = dynamic(
   () => import('@/components/game/screens/PauseMenu'),
   { ssr: false },
 );
+const SchoolCTA = dynamic(
+  () => import('@/components/game/screens/SchoolCTA'),
+  { ssr: false },
+);
 
 function GamePlayInner() {
   const searchParams = useSearchParams();
@@ -87,6 +91,9 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // ?menu=1 tells /game to skip its "first-time → Day 1" auto-redirect
   // and always show ScenarioSelect (used from PauseMenu / GameOver / FinalResults).
   const handleExit = useCallback(() => router.push('/game?menu=1'), [router]);
+  const handleConsultation = useCallback(() => {
+    window.open('https://t.me/salesup_uz', '_blank', 'noopener');
+  }, []);
   const handleGameOverRestart = useCallback(() => {
     setShowGameOver(false);
     engine.restartDay();
@@ -392,8 +399,25 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           dayRatings={fr.dayRatings}
           strongestDimension={fr.strongestDimension}
           weakestDimension={fr.weakestDimension}
+          onNext={engine.showSchoolCta}
           onExit={handleExit}
           lang={lang}
+        />
+      </>
+    );
+  }
+
+  // School CTA
+  if (engine.flowState === 'school_cta' && engine.schoolCtaEnding) {
+    return (
+      <>
+        <RotateDevice />
+        <SchoolCTA
+          ending={engine.schoolCtaEnding}
+          lang={lang}
+          playerPhone={player?.phone}
+          onConsultation={handleConsultation}
+          onDismiss={handleExit}
         />
       </>
     );

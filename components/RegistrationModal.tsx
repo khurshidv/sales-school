@@ -65,6 +65,8 @@ export default function RegistrationModal() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            window.open('https://t.me/salesup_uz', '_blank', 'noopener');
+            closeModal();
           }}
           className="flex flex-col gap-4"
         >

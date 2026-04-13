@@ -33,7 +33,7 @@ function KpiCard({ label, value, conversion, color }: KpiCardProps) {
       <div style={{ fontSize: 32, fontWeight: 700, color: '#111827' }}>{fmt(value)}</div>
       {conversion && (
         <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
-          Conv: <strong>{conversion}</strong>
+          Конв: <strong>{conversion}</strong>
         </div>
       )}
     </div>
@@ -87,25 +87,25 @@ export default async function OverviewPage() {
 
   const funnelSteps = [
     {
-      label: 'Game Started',
+      label: 'Начали игру',
       value: stats.visitors,
       color: '#6366f1',
       conversion: '100%',
     },
     {
-      label: 'Registered (name + phone)',
+      label: 'Зарегистрированы (имя + тел)',
       value: stats.registered,
       color: '#8b5cf6',
       conversion: pct(stats.registered, stats.visitors),
     },
     {
-      label: 'Started first day',
+      label: 'Начали первый день',
       value: stats.started,
       color: '#ec4899',
       conversion: pct(stats.started, stats.visitors),
     },
     {
-      label: 'Completed a scenario',
+      label: 'Завершили сценарий',
       value: stats.completed,
       color: '#f59e0b',
       conversion: pct(stats.completed, stats.visitors),
@@ -115,29 +115,29 @@ export default async function OverviewPage() {
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Overview
+        Обзор
       </h1>
       <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
-        Funnel & key metrics across all players
+        Воронка и ключевые метрики по всем игрокам
       </p>
 
       {/* KPI Cards */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
-        <KpiCard label="Game Started" value={stats.visitors} color="#6366f1" />
+        <KpiCard label="Начали игру" value={stats.visitors} color="#6366f1" />
         <KpiCard
-          label="Registered"
+          label="Зарегистрированы"
           value={stats.registered}
           color="#8b5cf6"
           conversion={pct(stats.registered, stats.visitors)}
         />
         <KpiCard
-          label="Started Day 1"
+          label="Начали День 1"
           value={stats.started}
           color="#ec4899"
           conversion={pct(stats.started, stats.visitors)}
         />
         <KpiCard
-          label="Completed Scenario"
+          label="Завершили сценарий"
           value={stats.completed}
           color="#f59e0b"
           conversion={pct(stats.completed, stats.visitors)}
@@ -155,7 +155,7 @@ export default async function OverviewPage() {
         }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 24, color: '#111827' }}>
-          Conversion Funnel
+          Воронка конверсии
         </h2>
         {funnelSteps.map((step) => (
           <FunnelBar
@@ -169,7 +169,7 @@ export default async function OverviewPage() {
         ))}
         {stats.visitors === 0 && (
           <p style={{ color: '#9ca3af', textAlign: 'center', marginTop: 16, fontSize: 14 }}>
-            No data yet. Once players start the game, the funnel will populate.
+            Пока нет данных. Когда игроки начнут игру, воронка заполнится.
           </p>
         )}
       </div>

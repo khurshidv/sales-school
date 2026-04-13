@@ -37,10 +37,10 @@ export default async function ParticipantsPage() {
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Participants
+        Участники
       </h1>
       <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
-        {players.length} registered player{players.length !== 1 ? 's' : ''} · showing latest 200
+        {players.length} зарегистрировано · последние 200
       </p>
 
       <div
@@ -53,19 +53,19 @@ export default async function ParticipantsPage() {
       >
         {players.length === 0 ? (
           <p style={{ padding: 40, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
-            No participants yet.
+            Пока нет участников.
           </p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={thStyle}>Name</th>
-                  <th style={thStyle}>Phone</th>
-                  <th style={thStyle}>UTM Source</th>
-                  <th style={thStyle}>UTM Campaign</th>
-                  <th style={thStyle}>Registered</th>
-                  <th style={thStyle}>Last Activity</th>
+                  <th style={thStyle}>Имя</th>
+                  <th style={thStyle}>Телефон</th>
+                  <th style={thStyle}>UTM Источник</th>
+                  <th style={thStyle}>UTM Кампания</th>
+                  <th style={thStyle}>Регистрация</th>
+                  <th style={thStyle}>Последняя активность</th>
                 </tr>
               </thead>
               <tbody>

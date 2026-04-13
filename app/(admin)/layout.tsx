@@ -6,11 +6,11 @@ export const metadata: Metadata = {
 };
 
 const navItems = [
-  { href: '/admin/overview', label: 'Overview' },
+  { href: '/admin/overview', label: 'Обзор' },
   { href: '/admin/pages', label: 'Страницы' },
-  { href: '/admin/participants', label: 'Participants' },
-  { href: '/admin/game-metrics', label: 'Game Metrics' },
-  { href: '/admin/leaderboard', label: 'Leaderboard' },
+  { href: '/admin/participants', label: 'Участники' },
+  { href: '/admin/game-metrics', label: 'Метрики игры' },
+  { href: '/admin/leaderboard', label: 'Лидерборд' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

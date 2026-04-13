@@ -41,10 +41,10 @@ export default async function GameMetricsPage() {
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Game Metrics
+        Метрики игры
       </h1>
       <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
-        Scores, ratings, and player progression
+        Очки, рейтинги и прогресс игроков
       </p>
 
       {/* KPI Row */}
@@ -60,7 +60,7 @@ export default async function GameMetricsPage() {
             minWidth: 160,
           }}
         >
-          <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>Avg Score</div>
+          <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>Ср. очки</div>
           <div style={{ fontSize: 36, fontWeight: 700, color: '#111827' }}>{metrics.avg_score}</div>
         </div>
         <div
@@ -74,7 +74,7 @@ export default async function GameMetricsPage() {
             minWidth: 160,
           }}
         >
-          <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>Total Completions</div>
+          <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>Всего завершений</div>
           <div style={{ fontSize: 36, fontWeight: 700, color: '#111827' }}>
             {metrics.total_completions}
           </div>
@@ -93,7 +93,7 @@ export default async function GameMetricsPage() {
         }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 24, color: '#111827' }}>
-          Rating Distribution
+          Распределение рейтингов
         </h2>
         {metrics.ratings.map((r) => (
           <div key={r.rating} style={{ marginBottom: 14 }}>
@@ -108,7 +108,7 @@ export default async function GameMetricsPage() {
               <span style={{ fontWeight: 700, color: RATING_COLORS[r.rating] ?? '#374151' }}>
                 {r.rating}
               </span>
-              <span style={{ color: '#6b7280' }}>{r.count} players</span>
+              <span style={{ color: '#6b7280' }}>{r.count} игроков</span>
             </div>
             <div style={{ background: '#f3f4f6', borderRadius: 6, height: 24 }}>
               <div
@@ -123,7 +123,7 @@ export default async function GameMetricsPage() {
           </div>
         ))}
         {metrics.total_completions === 0 && (
-          <p style={{ color: '#9ca3af', textAlign: 'center', fontSize: 14 }}>No completions yet.</p>
+          <p style={{ color: '#9ca3af', textAlign: 'center', fontSize: 14 }}>Пока нет завершений.</p>
         )}
       </div>
 
@@ -139,12 +139,12 @@ export default async function GameMetricsPage() {
       >
         <div style={{ padding: '20px 28px 16px' }}>
           <h2 style={{ fontSize: 16, fontWeight: 600, color: '#111827', margin: 0 }}>
-            Day Drop-off
+            Отвал по дням
           </h2>
         </div>
         {metrics.dayDropoff.length === 0 ? (
           <p style={{ padding: '16px 28px 24px', color: '#9ca3af', fontSize: 14 }}>
-            No day data yet.
+            Пока нет данных по дням.
           </p>
         ) : (
           <>
@@ -163,7 +163,7 @@ export default async function GameMetricsPage() {
                   >
                     <span>{d.day_id}</span>
                     <span style={{ color: d.dropoff_rate > 50 ? '#ef4444' : '#6b7280' }}>
-                      {d.dropoff_rate}% drop-off
+                      {d.dropoff_rate}% отвал
                     </span>
                   </div>
                   <div
@@ -201,7 +201,7 @@ export default async function GameMetricsPage() {
                     />
                   </div>
                   <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 3 }}>
-                    {d.started} started · {d.completed} completed
+                    {d.started} начали · {d.completed} завершили
                   </div>
                 </div>
               ))}
@@ -217,7 +217,7 @@ export default async function GameMetricsPage() {
                       marginRight: 4,
                     }}
                   />
-                  Started
+                  Начали
                 </span>
                 <span>
                   <span
@@ -230,7 +230,7 @@ export default async function GameMetricsPage() {
                       marginRight: 4,
                     }}
                   />
-                  Completed
+                  Завершили
                 </span>
               </div>
             </div>
@@ -249,21 +249,21 @@ export default async function GameMetricsPage() {
       >
         <div style={{ padding: '20px 28px 16px' }}>
           <h2 style={{ fontSize: 16, fontWeight: 600, color: '#111827', margin: 0 }}>
-            Scenario Performance
+            Результаты по сценариям
           </h2>
         </div>
         {metrics.scenarios.length === 0 ? (
           <p style={{ padding: '16px 28px 24px', color: '#9ca3af', fontSize: 14 }}>
-            No scenario data yet.
+            Пока нет данных по сценариям.
           </p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                <th style={thStyle}>Scenario</th>
-                <th style={thStyle}>Plays</th>
-                <th style={thStyle}>Avg Score</th>
-                <th style={thStyle}>Avg Time</th>
+                <th style={thStyle}>Сценарий</th>
+                <th style={thStyle}>Прохождений</th>
+                <th style={thStyle}>Ср. очки</th>
+                <th style={thStyle}>Ср. время</th>
               </tr>
             </thead>
             <tbody>

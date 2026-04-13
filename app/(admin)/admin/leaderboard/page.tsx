@@ -46,10 +46,10 @@ export default async function LeaderboardPage() {
   return (
     <div>
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, color: '#111827' }}>
-        Leaderboard
+        Лидерборд
       </h1>
       <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
-        Top {entries.length} players by total score
+        Топ {entries.length} игроков по очкам
       </p>
 
       <div
@@ -62,17 +62,17 @@ export default async function LeaderboardPage() {
       >
         {entries.length === 0 ? (
           <p style={{ padding: 40, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
-            No players yet.
+            Пока нет игроков.
           </p>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                <th style={{ ...thStyle, width: 60 }}>Rank</th>
-                <th style={thStyle}>Player</th>
-                <th style={thStyle}>Level</th>
-                <th style={thStyle}>Scenarios</th>
-                <th style={{ ...thStyle, textAlign: 'right' }}>Total Score</th>
+                <th style={{ ...thStyle, width: 60 }}>Место</th>
+                <th style={thStyle}>Игрок</th>
+                <th style={thStyle}>Уровень</th>
+                <th style={thStyle}>Сценарии</th>
+                <th style={{ ...thStyle, textAlign: 'right' }}>Общий счёт</th>
               </tr>
             </thead>
             <tbody>
@@ -110,7 +110,7 @@ export default async function LeaderboardPage() {
                         fontSize: 13,
                       }}
                     >
-                      Lv {entry.level}
+                      Ур. {entry.level}
                     </span>
                   </td>
                   <td style={tdStyle}>{entry.scenarios_completed}</td>

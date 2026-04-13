@@ -1,7 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { PageSummary, PageBreakdowns } from './types';
 
-const PAGE_SLUGS = ['home', 'target', 'webinar'] as const;
+const PAGE_SLUGS = ['home', 'target'] as const;
 
 export async function getPagesSummary(
   from: Date,

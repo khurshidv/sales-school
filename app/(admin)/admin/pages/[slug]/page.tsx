@@ -24,9 +24,8 @@ function fmtDuration(ms: number) {
 }
 
 const PAGE_TITLES: Record<string, string> = {
-  home: 'Главная',
-  target: 'Таргет',
-  webinar: 'Вебинар',
+  home: 'Вебинар',
+  target: 'Курс',
 };
 
 // ─── KPI Card ───

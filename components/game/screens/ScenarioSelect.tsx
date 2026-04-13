@@ -13,7 +13,7 @@ const t = {
   soon: { uz: 'Tez kunda', ru: 'Скоро' },
   level: { uz: 'Daraja', ru: 'Уровень' },
   chevrolet: { uz: 'Chevrolet avtosaloni', ru: 'Автосалон Chevrolet' },
-  duration: { uz: '5 kun · 7–10 daq', ru: '5 дней · 7–10 мин' },
+  duration: { uz: '3 kun · 7–10 daq', ru: '3 дня · 7–10 мин' },
   unlockHint: {
     uz: "Avtosalonni o'ting → ko'chmas mulkni oching!",
     ru: 'Пройди автосалон → открой недвижимость!',
@@ -104,11 +104,11 @@ export default function ScenarioSelect({
       </div>
 
       {/* Main bento layout: featured (left) + vertical locked stack (right) */}
-      <div className="absolute inset-0 pt-16 pb-12 px-5 flex items-center gap-4">
-        {/* === FEATURED CARD — dominant === */}
+      <div className="absolute inset-0 pt-16 pb-12 px-5 flex items-stretch gap-4">
+        {/* === FEATURED CARD — same height as locked stack === */}
         <button
           onClick={() => onSelectScenario('car-dealership')}
-          className="scenario-featured-card group flex-none w-[58%] max-w-[520px] h-full overflow-hidden text-left"
+          className="scenario-featured-card group flex-none w-[48%] max-w-[420px] overflow-hidden text-left"
         >
           {/* Background showroom image */}
           <img
@@ -168,7 +168,7 @@ export default function ScenarioSelect({
         </button>
 
         {/* === LOCKED STACK — small vertical list === */}
-        <div className="flex-1 h-full flex flex-col justify-center gap-2.5 min-w-0">
+        <div className="flex-1 flex flex-col justify-center gap-2.5 min-w-0">
           {lockedCards.map((card, idx) => (
             <div
               key={card.titleKey}

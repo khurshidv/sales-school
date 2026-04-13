@@ -16,9 +16,8 @@ function fmtDuration(ms: number) {
 }
 
 const PAGE_LABELS: Record<string, { title: string; description: string; color: string }> = {
-  home: { title: 'Главная', description: 'Вебинарная страница /', color: '#6366f1' },
-  target: { title: 'Таргет', description: 'Страница курса /target', color: '#ec4899' },
-  webinar: { title: 'Вебинар', description: 'Страница вебинара /webinar', color: '#f59e0b' },
+  home: { title: 'Вебинар', description: 'Лендинг бесплатного вебинара /', color: '#6366f1' },
+  target: { title: 'Курс', description: 'Лендинг платного курса /target', color: '#ec4899' },
 };
 
 function PageCard({ data }: { data: PageSummary }) {

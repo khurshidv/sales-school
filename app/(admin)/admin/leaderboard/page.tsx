@@ -1,5 +1,7 @@
 import { getLeaderboard } from '@/lib/admin/queries';
 import RefreshButton from '@/components/admin/RefreshButton';
+import TableFilters from '@/components/admin/TableFilters';
+import SortableHeader from '@/components/admin/SortableHeader';
 
 export const revalidate = 60;
 
@@ -43,8 +45,16 @@ function RankBadge({ rank }: { rank: number }) {
   );
 }
 
-export default async function LeaderboardPage() {
-  const entries = await getLeaderboard();
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; sort?: string; dir?: string }>;
+}) {
+  const sp = await searchParams;
+  const search = sp.q || undefined;
+  const sortBy = sp.sort || 'total_score';
+  const sortAsc = sp.dir === 'asc';
+  const entries = await getLeaderboard({ search, sortBy, sortAsc });
 
   return (
     <div>

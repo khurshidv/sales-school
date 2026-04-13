@@ -1,6 +1,8 @@
 import { getPlayers } from '@/lib/admin/queries';
 import { formatDate, maskPhone } from '@/lib/admin/formatters';
 import RefreshButton from '@/components/admin/RefreshButton';
+import TableFilters from '@/components/admin/TableFilters';
+import SortableHeader from '@/components/admin/SortableHeader';
 
 const tdStyle: React.CSSProperties = {
   padding: '12px 16px',
@@ -10,33 +12,35 @@ const tdStyle: React.CSSProperties = {
   verticalAlign: 'middle',
 };
 
-const thStyle: React.CSSProperties = {
-  padding: '10px 16px',
-  textAlign: 'left',
-  fontSize: 12,
-  fontWeight: 600,
-  color: '#6b7280',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  background: '#f9fafb',
-  borderBottom: '1px solid #e5e7eb',
-};
-
 export default async function ParticipantsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; q?: string; sort?: string; dir?: string }>;
+  searchParams: Promise<{ p?: string; q?: string; sort?: string; dir?: string; from?: string; to?: string }>;
 }) {
   const sp = await searchParams;
-  const page = Math.max(1, parseInt(sp.page ?? '1', 10));
+  const page = Math.max(1, parseInt(sp.p ?? '1', 10));
   const limit = 25;
   const offset = (page - 1) * limit;
   const search = sp.q || undefined;
   const sortBy = sp.sort || 'created_at';
   const sortAsc = sp.dir === 'asc';
 
-  const { players, total } = await getPlayers({ limit, offset, search, sortBy, sortAsc });
+  const { players, total } = await getPlayers({ limit, offset, search, sortBy, sortAsc, from: sp.from, to: sp.to });
   const totalPages = Math.ceil(total / limit);
+
+  function buildUrl(overrides: Record<string, string | null>) {
+    const params = new URLSearchParams();
+    if (sp.q && !('q' in overrides)) params.set('q', sp.q);
+    if (sp.sort && !('sort' in overrides)) params.set('sort', sp.sort);
+    if (sp.dir && !('dir' in overrides)) params.set('dir', sp.dir);
+    if (sp.from && !('from' in overrides)) params.set('from', sp.from);
+    if (sp.to && !('to' in overrides)) params.set('to', sp.to);
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v !== null) params.set(k, v);
+    }
+    const qs = params.toString();
+    return `/admin/participants${qs ? `?${qs}` : ''}`;
+  }
 
   return (
     <div>
@@ -46,7 +50,7 @@ export default async function ParticipantsPage({
         </h1>
         <RefreshButton />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
           {total} зарегистрировано
         </p>
@@ -67,39 +71,11 @@ export default async function ParticipantsPage({
         </a>
       </div>
 
-      {/* Search */}
-      <form method="GET" style={{ marginBottom: 20 }}>
-        <input
-          name="q"
-          type="text"
-          placeholder="Поиск по имени или телефону..."
-          defaultValue={search ?? ''}
-          style={{
-            padding: '9px 14px',
-            fontSize: 14,
-            border: '1px solid #d1d5db',
-            borderRadius: 8,
-            width: 300,
-            outline: 'none',
-          }}
-        />
-        <button
-          type="submit"
-          style={{
-            padding: '9px 18px',
-            fontSize: 14,
-            background: '#111827',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 8,
-            marginLeft: 8,
-            cursor: 'pointer',
-            fontWeight: 500,
-          }}
-        >
-          Найти
-        </button>
-      </form>
+      <TableFilters
+        showSearch
+        searchPlaceholder="Поиск по имени или телефону..."
+        showDateRange
+      />
 
       <div
         style={{
@@ -118,12 +94,12 @@ export default async function ParticipantsPage({
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th style={thStyle}>Имя</th>
-                  <th style={thStyle}>Телефон</th>
-                  <th style={thStyle}>UTM Источник</th>
-                  <th style={thStyle}>UTM Кампания</th>
-                  <th style={thStyle}>Регистрация</th>
-                  <th style={thStyle}>Последняя активность</th>
+                  <SortableHeader column="display_name" label="Имя" />
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>Телефон</th>
+                  <SortableHeader column="utm_source" label="UTM Источник" />
+                  <SortableHeader column="utm_campaign" label="UTM Кампания" />
+                  <SortableHeader column="created_at" label="Регистрация" />
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>Последняя активность</th>
                 </tr>
               </thead>
               <tbody>
@@ -176,7 +152,7 @@ export default async function ParticipantsPage({
         <div style={{ display: 'flex', gap: 8, marginTop: 20, alignItems: 'center', justifyContent: 'center' }}>
           {page > 1 && (
             <a
-              href={`/admin/participants?page=${page - 1}${search ? `&q=${search}` : ''}`}
+              href={buildUrl({ p: String(page - 1) })}
               style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid #d1d5db', textDecoration: 'none', color: '#374151', fontSize: 13 }}
             >
               ← Назад
@@ -187,7 +163,7 @@ export default async function ParticipantsPage({
           </span>
           {page < totalPages && (
             <a
-              href={`/admin/participants?page=${page + 1}${search ? `&q=${search}` : ''}`}
+              href={buildUrl({ p: String(page + 1) })}
               style={{ padding: '6px 14px', borderRadius: 8, border: '1px solid #d1d5db', textDecoration: 'none', color: '#374151', fontSize: 13 }}
             >
               Далее →

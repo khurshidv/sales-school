@@ -1,6 +1,7 @@
 import { getFunnelStats } from '@/lib/admin/queries';
 import { fmt, pct } from '@/lib/admin/formatters';
 import RefreshButton from '@/components/admin/RefreshButton';
+import TableFilters from '@/components/admin/TableFilters';
 
 export const revalidate = 60;
 
@@ -76,8 +77,13 @@ function FunnelBar({ label, value, max, color, conversionLabel }: FunnelBarProps
   );
 }
 
-export default async function OverviewPage() {
-  const stats = await getFunnelStats();
+export default async function OverviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
+  const sp = await searchParams;
+  const stats = await getFunnelStats({ from: sp.from, to: sp.to });
   const max = Math.max(stats.visitors, stats.registered, stats.started, stats.completed, 1);
 
   const funnelSteps = [
@@ -115,9 +121,11 @@ export default async function OverviewPage() {
         </h1>
         <RefreshButton />
       </div>
-      <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
+      <p style={{ color: '#6b7280', marginBottom: 16, fontSize: 14 }}>
         Воронка и ключевые метрики по всем игрокам
       </p>
+
+      <TableFilters showDateRange />
 
       {/* KPI Cards */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>

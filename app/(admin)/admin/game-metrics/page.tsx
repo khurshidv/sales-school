@@ -1,5 +1,6 @@
 import { getGameMetrics } from '@/lib/admin/queries';
 import RefreshButton from '@/components/admin/RefreshButton';
+import TableFilters from '@/components/admin/TableFilters';
 
 export const revalidate = 60;
 
@@ -36,8 +37,13 @@ const tdStyle: React.CSSProperties = {
   color: '#374151',
 };
 
-export default async function GameMetricsPage() {
-  const metrics = await getGameMetrics();
+export default async function GameMetricsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
+  const sp = await searchParams;
+  const metrics = await getGameMetrics({ from: sp.from, to: sp.to });
   const maxRating = Math.max(...metrics.ratings.map((r) => r.count), 1);
   const maxStarted = Math.max(...metrics.dayDropoff.map((d) => d.started), 1);
 
@@ -49,9 +55,11 @@ export default async function GameMetricsPage() {
         </h1>
         <RefreshButton />
       </div>
-      <p style={{ color: '#6b7280', marginBottom: 32, fontSize: 14 }}>
+      <p style={{ color: '#6b7280', marginBottom: 16, fontSize: 14 }}>
         Очки, рейтинги и прогресс игроков
       </p>
+
+      <TableFilters showDateRange />
 
       {/* KPI Row */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>

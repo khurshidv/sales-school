@@ -173,7 +173,7 @@ export default function ScenarioSelect({
             <div
               key={card.titleKey}
               aria-disabled="true"
-              className="scenario-locked-card flex items-center gap-3 px-4 py-3 h-[28%] min-h-0"
+              className="scenario-locked-card flex items-center gap-3 px-4 py-3 flex-1"
               style={{
                 opacity: 1 - idx * 0.08,
               }}

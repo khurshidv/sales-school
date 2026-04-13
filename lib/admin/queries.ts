@@ -9,27 +9,47 @@ import type {
   ScenarioStats,
 } from './types';
 
-export async function getFunnelStats(): Promise<FunnelStats> {
+export async function getFunnelStats(
+  options: { from?: string; to?: string } = {},
+): Promise<FunnelStats> {
   const admin = createAdminClient();
+  const { from, to } = options;
+  const hasDateFilter = Boolean(from || to);
 
-  // Use raw SQL via RPC to get COUNT(DISTINCT player_id) for accurate unique counts
-  const { data } = await admin.rpc('get_admin_funnel_stats');
-
-  if (data) {
-    return {
-      visitors: data.visitors ?? 0,
-      registered: data.registered ?? 0,
-      started: data.started ?? 0,
-      completed: data.completed ?? 0,
-    };
+  // Use RPC only when no date filter (RPC doesn't support date params)
+  if (!hasDateFilter) {
+    const { data } = await admin.rpc('get_admin_funnel_stats');
+    if (data) {
+      return {
+        visitors: data.visitors ?? 0,
+        registered: data.registered ?? 0,
+        started: data.started ?? 0,
+        completed: data.completed ?? 0,
+      };
+    }
   }
 
-  // Fallback: deduplicate in JS if RPC not yet deployed
+  // Fallback / date-filtered: deduplicate in JS
+  let visitorsQuery = admin.from('game_events').select('player_id').eq('event_type', 'game_started');
+  let registeredQuery = admin.from('players').select('id', { count: 'exact', head: true });
+  let startedQuery = admin.from('game_events').select('player_id').eq('event_type', 'day_started');
+  let completedQuery = admin.from('completed_scenarios').select('player_id, created_at');
+
+  if (from) {
+    visitorsQuery = visitorsQuery.gte('created_at', `${from}T00:00:00`);
+    registeredQuery = registeredQuery.gte('created_at', `${from}T00:00:00`);
+    startedQuery = startedQuery.gte('created_at', `${from}T00:00:00`);
+    completedQuery = completedQuery.gte('created_at', `${from}T00:00:00`);
+  }
+  if (to) {
+    visitorsQuery = visitorsQuery.lte('created_at', `${to}T23:59:59`);
+    registeredQuery = registeredQuery.lte('created_at', `${to}T23:59:59`);
+    startedQuery = startedQuery.lte('created_at', `${to}T23:59:59`);
+    completedQuery = completedQuery.lte('created_at', `${to}T23:59:59`);
+  }
+
   const [visitorsRes, registeredRes, startedRes, completedRes] = await Promise.all([
-    admin.from('game_events').select('player_id').eq('event_type', 'game_started'),
-    admin.from('players').select('id', { count: 'exact', head: true }),
-    admin.from('game_events').select('player_id').eq('event_type', 'day_started'),
-    admin.from('completed_scenarios').select('player_id'),
+    visitorsQuery, registeredQuery, startedQuery, completedQuery,
   ]);
 
   return {

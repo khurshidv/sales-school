@@ -767,7 +767,7 @@ const translations = {
   "target.footer.legal": { ru: "Правовая информация", uz: "Huquqiy ma'lumot" },
   "target.footer.privacy": { ru: "Политика конфиденциальности", uz: "Maxfiylik siyosati" },
   "target.footer.terms": { ru: "Условия использования", uz: "Foydalanish shartlari" },
-  "target.footer.rights": { ru: "SALES SCHOOL. ВСЕ ПРАВА ЗАЩИЩЕНЫ.", uz: "SALES SCHOOL. BARCHA HUQUQLAR HIMOYALANGAN." },
+  "target.footer.rights": { ru: "SALES UP. ВСЕ ПРАВА ЗАЩИЩЕНЫ.", uz: "SALES UP. BARCHA HUQUQLAR HIMOYALANGAN." },
 
   /* --- Target Nav --- */
   "target.nav.about": { ru: "О нас", uz: "Biz haqimizda" },

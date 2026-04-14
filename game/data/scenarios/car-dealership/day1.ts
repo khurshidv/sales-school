@@ -48,6 +48,20 @@ export const day1: Day = {
         uz: 'Tong, salon hali sokin. Chiroqlar endigina yoqilgan, havoda tozalik hidi ufurib turibdi. Bugun sizning "Chevrolet" salonidagi birinchi ish kuningiz. Ichingizda sezilarli hayajon bor.',
         ru: 'Утро, салон ещё тихий. Свет только включили, в воздухе запах после уборки. Сегодня ваш первый рабочий день в салоне Chevrolet. Внутри заметное волнение.',
       },
+      nextNodeId: 'd1_briefing',
+    },
+
+    d1_briefing: {
+      id: 'd1_briefing',
+      type: 'dialogue',
+      speaker: 'narrator',
+      emotion: null,
+      background: 'bg_showroom_entrance_exterior',
+      characters: [],
+      text: {
+        uz: "Bugun siz haqiqiy mijozlar bilan ishlaysiz. Har bir vaziyatda tanlov qilasiz — va har bir tanlov natijangizga ta'sir qiladi. Tayyor bo'ling!",
+        ru: 'Сегодня вы будете работать с настоящими клиентами. В каждой ситуации вы делаете выбор — и каждый выбор влияет на ваш результат. Приготовьтесь!',
+      },
       nextNodeId: 'd1_meet_rustam',
     },
 

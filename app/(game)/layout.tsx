@@ -3,7 +3,7 @@ import MotionProvider from "@/components/game/MotionProvider";
 import SWRegistration from "@/components/game/SWRegistration";
 
 export const metadata: Metadata = {
-  title: "Sales Up — Игра",
+  title: "Sales Up — Симуляция",
   description: "RPG тренажёр навыков продаж",
   manifest: "/manifest.webmanifest",
   // Enable iOS "Add to Home Screen" → standalone mode. iOS Safari does not

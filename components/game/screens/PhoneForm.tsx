@@ -112,7 +112,7 @@ export default function PhoneForm({ onSubmit }: PhoneFormProps) {
           !isValid ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-500'
         }`}
       >
-        {lang === 'uz' ? "O'ynash" : 'Играть'}
+        {lang === 'uz' ? "Boshlash" : 'Начать'}
       </button>
     </form>
   )

@@ -78,8 +78,8 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     showRustam: true,
     speakerName: { uz: 'Rustam', ru: 'Рустам' },
     text: {
-      uz: "{name}, o'yinni davom ettirish uchun haqiqiy telefon raqamingizni qoldiring.",
-      ru: '{name}, чтобы продолжить игру, оставьте ваш настоящий номер телефона.',
+      uz: "{name}, simulyatsiyani davom ettirish uchun haqiqiy telefon raqamingizni qoldiring.",
+      ru: '{name}, чтобы продолжить симуляцию, оставьте ваш настоящий номер телефона.',
     },
     inputPlaceholder: {
       uz: 'XX XXX-XX-XX',

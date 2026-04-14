@@ -2,6 +2,7 @@
 
 import { DIMENSION_META } from '@/game/data/dimensions';
 import type { DimensionScores, ScoreDimension } from '@/game/engine/types';
+import { titleBadges, mentorVerdicts, type ConclusionEnding } from './conclusionCopy';
 
 type Rating = 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 
@@ -11,6 +12,7 @@ interface FinalResultsProps {
   dayRatings: Rating[];
   strongestDimension: string;
   weakestDimension: string;
+  ending?: ConclusionEnding;
   onNext: () => void;
   onExit: () => void;
   lang?: 'uz' | 'ru';
@@ -31,7 +33,7 @@ const t = {
   totalScore: { uz: 'Umumiy ball', ru: 'Общий счёт' },
   strongest: { uz: 'Kuchli tomon', ru: 'Сильная сторона' },
   growthZone: { uz: "O'sish zonasi", ru: 'Зона роста' },
-  next: { uz: 'Davom etish', ru: 'Далее' },
+  next: { uz: 'Mening sertifikatim', ru: 'Мой сертификат' },
   toMenu: { uz: 'Menyuga', ru: 'В меню' },
 } as const;
 
@@ -41,6 +43,7 @@ export default function FinalResults({
   dayRatings,
   strongestDimension,
   weakestDimension,
+  ending,
   onNext,
   onExit,
   lang = 'uz',
@@ -52,9 +55,35 @@ export default function FinalResults({
     <div className="min-h-screen bg-neutral-950 text-white overflow-y-auto p-6">
       <div className="max-w-lg mx-auto">
         {/* Header */}
-        <h1 className="text-3xl font-bold text-center mb-8">
+        <h1 className="text-3xl font-bold text-center mb-3">
           {t.title[lang]}
         </h1>
+
+        {/* Title badge */}
+        {ending && (
+          <div className="text-center mb-2">
+            <span
+              className="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
+              style={{
+                color: titleBadges[ending].color,
+                border: `1.5px solid ${titleBadges[ending].color}`,
+                background: `${titleBadges[ending].color}15`,
+              }}
+            >
+              {titleBadges[ending].title[lang]}
+            </span>
+          </div>
+        )}
+
+        {/* Mentor verdict */}
+        {weakestDimension && mentorVerdicts[weakestDimension as ScoreDimension] && (
+          <p
+            className="text-center text-xs leading-relaxed mb-6 px-4"
+            style={{ color: '#9ca3af' }}
+          >
+            {mentorVerdicts[weakestDimension as ScoreDimension][lang]}
+          </p>
+        )}
 
         {/* Day ratings row */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">

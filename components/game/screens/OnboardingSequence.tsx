@@ -39,12 +39,12 @@ const IOS_HINT_COPY = {
     uz: [
       "Safari'da pastdagi «Ulashish» tugmasini bosing",
       "«Bosh ekranga qo'shish»ni tanlang",
-      "Bosh ekrandagi yangi ikonkadan o'yinni oching",
+      "Bosh ekrandagi yangi ikonkadan simulyatsiyani oching",
     ],
     ru: [
       'В Safari нажмите кнопку «Поделиться» внизу',
       'Выберите «На экран "Домой"»',
-      'Запустите игру с новой иконки на рабочем столе',
+      'Запустите симуляцию с новой иконки на рабочем столе',
     ],
   },
   close: { uz: 'Tushundim', ru: 'Понятно' },

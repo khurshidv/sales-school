@@ -14,7 +14,7 @@ const strings = {
   exit_confirm: { uz: "Kunning taraqqiyoti yo'qoladi", ru: 'Прогресс дня будет потерян' },
   selected: { uz: 'Tanlangan', ru: 'Выбрано' },
   confirm: { uz: 'Tasdiqlash', ru: 'Подтвердить' },
-  play: { uz: "O'ynash", ru: 'Играть' },
+  play: { uz: "Boshlash", ru: 'Начать' },
   start: { uz: 'Boshlang', ru: 'Начать' },
   loading: { uz: 'Yuklash...', ru: 'Загрузка...' },
   rotate_device: { uz: 'Telefoningizni gorizontal ravishda aylantiring', ru: 'Поверните телефон горизонтально' },

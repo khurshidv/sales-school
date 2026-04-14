@@ -44,6 +44,14 @@ const PauseMenu = dynamic(
   () => import('@/components/game/screens/PauseMenu'),
   { ssr: false },
 );
+const MentorDebrief = dynamic(
+  () => import('@/components/game/screens/MentorDebrief'),
+  { ssr: false },
+);
+const Certificate = dynamic(
+  () => import('@/components/game/screens/Certificate'),
+  { ssr: false },
+);
 const SchoolCTA = dynamic(
   () => import('@/components/game/screens/SchoolCTA'),
   { ssr: false },
@@ -86,6 +94,17 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     isPlaying: engine.flowState === 'playing',
   });
 
+  // Prevent browser back button from navigating away (restarts game from Day 1).
+  // Push a dummy history entry; on popstate, re-push to stay on the page.
+  useEffect(() => {
+    history.pushState(null, '', location.href);
+    const handlePopState = () => {
+      history.pushState(null, '', location.href);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Stable callbacks so React.memo on PauseMenu/GameOver/FinalResults holds.
   // Pause/resume also freezes the choice timer so the player can't gain
   // extra thinking time by opening the pause menu on a timed choice.
@@ -101,8 +120,11 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // and always show ScenarioSelect (used from PauseMenu / GameOver / FinalResults).
   const handleExit = useCallback(() => router.push('/game?menu=1'), [router]);
   const handleConsultation = useCallback(() => {
+    if (engine.player?.id) {
+      trackEvent(engine.player.id, 'conclusion_cta_clicked', { ending: engine.schoolCtaEnding });
+    }
     window.open('https://t.me/salesup_uz', '_blank', 'noopener');
-  }, []);
+  }, [engine.player?.id, engine.schoolCtaEnding]);
   const handleGameOverRestart = useCallback(() => {
     setShowGameOver(false);
     engine.restartDay();
@@ -418,7 +440,30 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     );
   }
 
-  // Final Results
+  // Mentor Debrief — Rustam speaks to the player after Day 3
+  if (engine.flowState === 'mentor_debrief') {
+    const lastDay = engine.dayResults;
+    const outcomeMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
+      hidden_ending: 'grandmaster',
+      success: 'success',
+      partial: 'partial',
+      failure: 'failure',
+    };
+    const ending = lastDay ? outcomeMap[lastDay.outcome] ?? 'failure' : 'failure';
+    return (
+      <>
+        <RotateDevice />
+        <MentorDebrief
+          ending={ending}
+          playerName={player?.displayName ?? ''}
+          lang={lang}
+          onComplete={engine.showFinalResults}
+        />
+      </>
+    );
+  }
+
+  // Final Results (enhanced with badge + verdict)
   if (engine.flowState === 'final_results' && engine.finalResults) {
     const fr = engine.finalResults;
     return (
@@ -430,7 +475,8 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           dayRatings={fr.dayRatings}
           strongestDimension={fr.strongestDimension}
           weakestDimension={fr.weakestDimension}
-          onNext={engine.showSchoolCta}
+          ending={engine.schoolCtaEnding ?? undefined}
+          onNext={engine.showCertificate}
           onExit={handleExit}
           lang={lang}
         />
@@ -438,7 +484,26 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     );
   }
 
-  // School CTA
+  // Certificate
+  if (engine.flowState === 'certificate' && engine.finalResults) {
+    const fr = engine.finalResults;
+    return (
+      <>
+        <RotateDevice />
+        <Certificate
+          playerName={player?.displayName ?? ''}
+          ending={engine.schoolCtaEnding ?? 'failure'}
+          dayRatings={fr.dayRatings}
+          totalScore={fr.totalScore}
+          strongestDimension={fr.strongestDimension}
+          lang={lang}
+          onNext={engine.showSchoolCta}
+        />
+      </>
+    );
+  }
+
+  // School CTA (redesigned with personalized content)
   if (engine.flowState === 'school_cta' && engine.schoolCtaEnding) {
     return (
       <>
@@ -446,7 +511,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
         <SchoolCTA
           ending={engine.schoolCtaEnding}
           lang={lang}
-          playerPhone={player?.phone}
+          weakestDimension={engine.finalResults?.weakestDimension}
           onConsultation={handleConsultation}
           onDismiss={handleExit}
         />

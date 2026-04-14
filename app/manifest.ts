@@ -8,7 +8,7 @@ import type { MetadataRoute } from 'next';
 // not support document.requestFullscreen() for arbitrary elements.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Sales Up — Игра',
+    name: 'Sales Up — Симуляция',
     short_name: 'SalesUp',
     description: 'RPG тренажёр навыков продаж',
     start_url: '/game',

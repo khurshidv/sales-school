@@ -36,7 +36,9 @@ export type GameFlowState =
   | 'day_intro'
   | 'playing'
   | 'day_summary'
+  | 'mentor_debrief'
   | 'final_results'
+  | 'certificate'
   | 'school_cta';
 
 export interface DayResults {
@@ -409,11 +411,34 @@ export function useGameEngine(scenarioId: string) {
         strongestDimension: strongest,
         weakestDimension: weakest,
       });
-      setFlowState('final_results');
+      setFlowState('mentor_debrief');
     } else {
       startDay(currentDayIndex + 1);
     }
   }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, player]);
+
+  const showFinalResults = useCallback(() => {
+    // Determine ending type for the badge
+    const lastDay = dayResultsHistory[dayResultsHistory.length - 1];
+    if (lastDay) {
+      const outcomeMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
+        hidden_ending: 'grandmaster',
+        success: 'success',
+        partial: 'partial',
+        failure: 'failure',
+      };
+      setSchoolCtaEnding(outcomeMap[lastDay.outcome] ?? 'failure');
+    }
+    const pid = usePlayerStore.getState().player?.id;
+    if (pid) trackEvent(pid, 'conclusion_debrief_completed');
+    setFlowState('final_results');
+  }, [dayResultsHistory]);
+
+  const showCertificate = useCallback(() => {
+    const pid = usePlayerStore.getState().player?.id;
+    if (pid) trackEvent(pid, 'conclusion_certificate_viewed');
+    setFlowState('certificate');
+  }, []);
 
   const showSchoolCta = useCallback(() => {
     // Determine ending type from last day's outcome
@@ -425,7 +450,10 @@ export function useGameEngine(scenarioId: string) {
       partial: 'partial',
       failure: 'failure',
     };
-    setSchoolCtaEnding(outcomeMap[lastDay.outcome] ?? 'failure');
+    const endingType = outcomeMap[lastDay.outcome] ?? 'failure';
+    setSchoolCtaEnding(endingType);
+    const pid = usePlayerStore.getState().player?.id;
+    if (pid) trackEvent(pid, 'conclusion_cta_viewed', { ending: endingType });
     setFlowState('school_cta');
   }, [dayResultsHistory]);
 
@@ -499,6 +527,8 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
+      showFinalResults,
+      showCertificate,
       showSchoolCta,
       restartDay,
       startDay,
@@ -524,6 +554,8 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
+      showFinalResults,
+      showCertificate,
       showSchoolCta,
       restartDay,
       startDay,

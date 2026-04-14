@@ -7,7 +7,7 @@ export const day1: Day = {
     uz: 'Birinchi kun',
     ru: 'Первый день',
   },
-  rootNodeId: 'd1_day_intro',
+  rootNodeId: 'd1_instruction',
   // После введения DIMENSION_WEIGHTS в ScoringSystem максимально возможный
   // взвешенный счёт по идеальному пути (hidden ending) заметно выше
   // исходных 40. Цель поднята до 55, чтобы рейтинги S/A/B/C/D
@@ -21,6 +21,20 @@ export const day1: Day = {
     // ============================================================
     // PROLOGUE: Meeting Colleagues
     // ============================================================
+
+    d1_instruction: {
+      id: 'd1_instruction',
+      type: 'dialogue',
+      speaker: 'narrator',
+      emotion: null,
+      background: 'bg_showroom_entrance_exterior',
+      characters: [],
+      text: {
+        uz: "Bu — sotuv simulyatsiyasi. Siz avtosalon sotuvchisi rolida bo'lasiz. Mijozlar keladi, siz qaror qilasiz: nima deyish, qanday munosabatda bo'lish, qachon taklif qilish. Har bir tanlovingiz baholanadi. Maqsad — iloji boricha yaxshi natijaga erishish. Tayyor bo'ling!",
+        ru: 'Это — симуляция продаж. Вы в роли продавца автосалона. К вам приходят клиенты, и вы принимаете решения: что сказать, как себя вести, когда сделать предложение. Каждый ваш выбор оценивается. Цель — показать лучший результат. Приготовьтесь!',
+      },
+      nextNodeId: 'd1_day_intro',
+    },
 
     d1_day_intro: {
       id: 'd1_day_intro',
@@ -47,20 +61,6 @@ export const day1: Day = {
       text: {
         uz: 'Tong, salon hali sokin. Chiroqlar endigina yoqilgan, havoda tozalik hidi ufurib turibdi. Bugun sizning "Chevrolet" salonidagi birinchi ish kuningiz. Ichingizda sezilarli hayajon bor.',
         ru: 'Утро, салон ещё тихий. Свет только включили, в воздухе запах после уборки. Сегодня ваш первый рабочий день в салоне Chevrolet. Внутри заметное волнение.',
-      },
-      nextNodeId: 'd1_briefing',
-    },
-
-    d1_briefing: {
-      id: 'd1_briefing',
-      type: 'dialogue',
-      speaker: 'narrator',
-      emotion: null,
-      background: 'bg_showroom_entrance_exterior',
-      characters: [],
-      text: {
-        uz: "Bugun siz haqiqiy mijozlar bilan ishlaysiz. Har bir vaziyatda tanlov qilasiz — va har bir tanlov natijangizga ta'sir qiladi. Tayyor bo'ling!",
-        ru: 'Сегодня вы будете работать с настоящими клиентами. В каждой ситуации вы делаете выбор — и каждый выбор влияет на ваш результат. Приготовьтесь!',
       },
       nextNodeId: 'd1_meet_rustam',
     },

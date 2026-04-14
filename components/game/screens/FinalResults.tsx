@@ -52,18 +52,16 @@ export default function FinalResults({
   const maxVal = Math.max(...entries.map(([, v]) => v), 1);
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white overflow-y-auto p-6">
+    <div className="min-h-screen bg-neutral-950 text-white overflow-y-auto px-4 py-4">
       <div className="max-w-lg mx-auto">
-        {/* Header */}
-        <h1 className="text-3xl font-bold text-center mb-3">
-          {t.title[lang]}
-        </h1>
-
-        {/* Title badge */}
-        {ending && (
-          <div className="text-center mb-2">
+        {/* Header + badge inline */}
+        <div className="text-center mb-2">
+          <h1 className="text-2xl font-bold">
+            {t.title[lang]}
+          </h1>
+          {ending && (
             <span
-              className="inline-block px-4 py-1.5 rounded-full text-sm font-bold"
+              className="inline-block px-3 py-1 rounded-full text-xs font-bold mt-1.5"
               style={{
                 color: titleBadges[ending].color,
                 border: `1.5px solid ${titleBadges[ending].color}`,
@@ -72,44 +70,52 @@ export default function FinalResults({
             >
               {titleBadges[ending].title[lang]}
             </span>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Mentor verdict */}
         {weakestDimension && mentorVerdicts[weakestDimension as ScoreDimension] && (
           <p
-            className="text-center text-xs leading-relaxed mb-6 px-4"
+            className="text-center text-[11px] leading-snug mb-3 px-2"
             style={{ color: '#9ca3af' }}
           >
             {mentorVerdicts[weakestDimension as ScoreDimension][lang]}
           </p>
         )}
 
-        {/* Day ratings row */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {dayRatings.map((r, i) => (
-            <div key={i} className="text-center">
-              <span className="text-xs text-neutral-400 block">
-                {t.day[lang]} {i + 1}
-              </span>
-              <span
-                className="text-2xl font-bold"
-                style={{ color: RATING_COLORS[r] }}
-              >
-                {r}
-              </span>
-            </div>
-          ))}
+        {/* Score + Day ratings on one row */}
+        <div className="flex items-center justify-center gap-6 mb-4">
+          {/* Day ratings */}
+          <div className="flex gap-3">
+            {dayRatings.map((r, i) => (
+              <div key={i} className="text-center">
+                <span className="text-[10px] text-neutral-500 block leading-none">
+                  {t.day[lang]} {i + 1}
+                </span>
+                <span
+                  className="text-xl font-bold"
+                  style={{ color: RATING_COLORS[r] }}
+                >
+                  {r}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="w-px h-8 bg-white/10" />
+
+          {/* Total score */}
+          <div className="text-center">
+            <span className="text-[10px] text-neutral-500 block leading-none">
+              {t.totalScore[lang]}
+            </span>
+            <span className="text-3xl font-bold">{totalScore}</span>
+          </div>
         </div>
 
-        {/* Total score */}
-        <div className="text-center mb-8">
-          <p className="text-neutral-400 text-sm">{t.totalScore[lang]}</p>
-          <p className="text-5xl font-bold">{totalScore}</p>
-        </div>
-
-        {/* Dimension bars */}
-        <div className="space-y-4 mb-6">
+        {/* Dimension bars — compact, no descriptions */}
+        <div className="space-y-2 mb-4">
           {entries.map(([key, value]) => {
             const isStrongest = key === strongestDimension;
             const isWeakest = key === weakestDimension;
@@ -123,28 +129,28 @@ export default function FinalResults({
 
             return (
               <div key={key}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-white flex items-center gap-1.5">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-xs font-medium text-white flex items-center gap-1">
                     {isStrongest && (
-                      <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
                     )}
                     {isWeakest && !isStrongest && (
-                      <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 inline-block" />
                     )}
                     {meta.label[lang]}
                   </span>
                   {isStrongest && (
-                    <span className="text-xs text-green-400">
+                    <span className="text-[10px] text-green-400">
                       {t.strongest[lang]}
                     </span>
                   )}
                   {isWeakest && !isStrongest && (
-                    <span className="text-xs text-yellow-400">{t.growthZone[lang]}</span>
+                    <span className="text-[10px] text-yellow-400">{t.growthZone[lang]}</span>
                   )}
                 </div>
-                <div className="bg-white/10 rounded-full h-2 mb-1.5">
+                <div className="bg-white/10 rounded-full h-1.5">
                   <div
-                    className="h-2 rounded-full"
+                    className="h-1.5 rounded-full"
                     style={{
                       width: `${pct}%`,
                       backgroundColor: barColor,
@@ -152,18 +158,15 @@ export default function FinalResults({
                     }}
                   />
                 </div>
-                <p className="text-xs text-neutral-400 leading-snug">
-                  {meta.description[lang]}
-                </p>
               </div>
             );
           })}
         </div>
 
-        {/* Next → SchoolCTA */}
+        {/* Next → Certificate */}
         <button
           onClick={onNext}
-          className="w-full py-3 rounded-xl font-semibold text-neutral-950 transition-colors mt-6"
+          className="w-full py-3 rounded-xl font-semibold text-neutral-950 transition-colors"
           style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}
         >
           {t.next[lang]}
@@ -172,7 +175,7 @@ export default function FinalResults({
         {/* Skip to menu */}
         <button
           onClick={onExit}
-          className="w-full py-2 text-xs text-neutral-500 hover:text-neutral-400 transition-colors mt-2"
+          className="w-full py-1.5 text-xs text-neutral-500 hover:text-neutral-400 transition-colors mt-1"
         >
           {t.toMenu[lang]}
         </button>

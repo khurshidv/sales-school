@@ -36,7 +36,6 @@ export type GameFlowState =
   | 'day_intro'
   | 'playing'
   | 'day_summary'
-  | 'mentor_debrief'
   | 'final_results'
   | 'certificate'
   | 'school_cta';
@@ -411,28 +410,19 @@ export function useGameEngine(scenarioId: string) {
         strongestDimension: strongest,
         weakestDimension: weakest,
       });
-      setFlowState('mentor_debrief');
+      // Determine ending type for the badge
+      const lastDay2 = dayResultsHistory[dayResultsHistory.length - 1];
+      if (lastDay2) {
+        const endMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
+          hidden_ending: 'grandmaster', success: 'success', partial: 'partial', failure: 'failure',
+        };
+        setSchoolCtaEnding(endMap[lastDay2.outcome] ?? 'failure');
+      }
+      setFlowState('final_results');
     } else {
       startDay(currentDayIndex + 1);
     }
   }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, player]);
-
-  const showFinalResults = useCallback(() => {
-    // Determine ending type for the badge
-    const lastDay = dayResultsHistory[dayResultsHistory.length - 1];
-    if (lastDay) {
-      const outcomeMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
-        hidden_ending: 'grandmaster',
-        success: 'success',
-        partial: 'partial',
-        failure: 'failure',
-      };
-      setSchoolCtaEnding(outcomeMap[lastDay.outcome] ?? 'failure');
-    }
-    const pid = usePlayerStore.getState().player?.id;
-    if (pid) trackEvent(pid, 'conclusion_debrief_completed');
-    setFlowState('final_results');
-  }, [dayResultsHistory]);
 
   const showCertificate = useCallback(() => {
     const pid = usePlayerStore.getState().player?.id;
@@ -527,7 +517,6 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
-      showFinalResults,
       showCertificate,
       showSchoolCta,
       restartDay,
@@ -554,7 +543,6 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
-      showFinalResults,
       showCertificate,
       showSchoolCta,
       restartDay,

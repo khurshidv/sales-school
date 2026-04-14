@@ -46,7 +46,7 @@ export default function MentorDebrief({
       {/* Rustam character */}
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-48 h-64 md:w-56 md:h-72">
         <Image
-          src="/assets/characters/rustam/friendly.png"
+          src="/assets/scenarios/car-dealership/characters/chr_rustam_friendly.webp"
           alt="Rustam"
           fill
           sizes="(max-width: 768px) 192px, 224px"

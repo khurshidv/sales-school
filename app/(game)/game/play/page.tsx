@@ -44,10 +44,6 @@ const PauseMenu = dynamic(
   () => import('@/components/game/screens/PauseMenu'),
   { ssr: false },
 );
-const MentorDebrief = dynamic(
-  () => import('@/components/game/screens/MentorDebrief'),
-  { ssr: false },
-);
 const Certificate = dynamic(
   () => import('@/components/game/screens/Certificate'),
   { ssr: false },
@@ -435,29 +431,6 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           canReplay={player ? canReplay(player.coins) : false}
           lang={lang}
           flags={dr.flags}
-        />
-      </>
-    );
-  }
-
-  // Mentor Debrief — Rustam speaks to the player after Day 3
-  if (engine.flowState === 'mentor_debrief') {
-    const lastDay = engine.dayResults;
-    const outcomeMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
-      hidden_ending: 'grandmaster',
-      success: 'success',
-      partial: 'partial',
-      failure: 'failure',
-    };
-    const ending = lastDay ? outcomeMap[lastDay.outcome] ?? 'failure' : 'failure';
-    return (
-      <>
-        <RotateDevice />
-        <MentorDebrief
-          ending={ending}
-          playerName={player?.displayName ?? ''}
-          lang={lang}
-          onComplete={engine.showFinalResults}
         />
       </>
     );

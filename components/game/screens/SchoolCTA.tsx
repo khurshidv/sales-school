@@ -9,12 +9,9 @@ import {
   schoolBenefits,
   studentCases,
   schoolStats,
-  programModules,
   dimensionLessonMap,
-  recommendationLabel,
   ctaButtonText,
   dismissOptions,
-  schoolTagline,
   type ConclusionEnding,
 } from './conclusionCopy';
 
@@ -38,212 +35,165 @@ export default function SchoolCTA({
   const weakLabel = weakDim ? DIMENSION_META[weakDim]?.label[lang] : null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 overflow-y-auto"
-      style={{
-        background: 'linear-gradient(160deg, #0a0a0a 0%, #1a1225 50%, #0f172a 100%)',
-      }}
-    >
-      <div className="min-h-full flex flex-col items-center px-4 py-8 gap-5 max-w-lg mx-auto">
-        {/* ── Headline ── */}
-        <m.h1
-          className="text-2xl md:text-3xl font-bold leading-tight text-center"
-          style={{ color: '#f9fafb' }}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {schoolCtaHeadlines[ending][lang]}
-        </m.h1>
-
-        {/* ── Bridge (Rustam's voice) ── */}
-        <m.p
-          className="text-sm text-center leading-relaxed italic"
-          style={{ color: '#9ca3af' }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          &ldquo;{schoolCtaBridge[lang]}&rdquo;
-        </m.p>
-
-        {/* ── School tagline ── */}
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[#0a0a0a]">
+      <div className="min-h-full flex flex-col">
+        {/* ── Top: Headline + Bridge ── */}
         <m.div
-          className="w-full rounded-xl px-5 py-4"
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          className="px-6 pt-5 pb-3 text-center"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <p className="text-sm font-semibold mb-1" style={{ color: '#e5e7eb' }}>
-            {schoolTagline[lang]}
-          </p>
-          <p className="text-xs" style={{ color: '#6b7280' }}>
-            {schoolStats.lessons} {lang === 'uz' ? "intensiv dars" : 'интенсивных уроков'} · {schoolStats.graduates} {lang === 'uz' ? 'bitiruvchi' : 'выпускников'} · {schoolStats.partners} {lang === 'uz' ? 'hamkor' : 'партнёров'}
+          <h1
+            className="text-xl md:text-2xl font-bold leading-snug"
+            style={{ color: '#f5f0e1' }}
+          >
+            {schoolCtaHeadlines[ending][lang]}
+          </h1>
+          <p className="text-[11px] mt-1.5 italic" style={{ color: '#8a7264' }}>
+            &ldquo;{schoolCtaBridge[lang]}&rdquo;
           </p>
         </m.div>
 
-        {/* ── Benefits grid ── */}
+        {/* ── Main content: 2-column landscape layout ── */}
         <m.div
-          className="w-full grid grid-cols-2 gap-2.5"
+          className="flex-1 px-4 pb-3 grid grid-cols-1 landscape:grid-cols-2 gap-3 max-w-5xl mx-auto w-full"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          {schoolBenefits.map((b, i) => (
+          {/* LEFT COLUMN */}
+          <div className="flex flex-col gap-2.5">
+            {/* Benefits — 2x2 grid */}
+            <div className="grid grid-cols-2 gap-2">
+              {schoolBenefits.map((b, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl px-3 py-2.5"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(232,121,10,0.08), rgba(255,154,60,0.04))',
+                    border: '1px solid rgba(232,121,10,0.15)',
+                  }}
+                >
+                  <p className="text-xs font-bold" style={{ color: '#e8790a' }}>
+                    {b.title[lang]}
+                  </p>
+                  <p className="text-[10px] leading-snug mt-0.5" style={{ color: '#a69383' }}>
+                    {b.desc[lang]}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Stats bar */}
             <div
-              key={i}
-              className="rounded-lg px-3 py-3"
+              className="flex items-center justify-around rounded-xl px-3 py-2"
               style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
+                background: 'rgba(232,121,10,0.06)',
+                border: '1px solid rgba(232,121,10,0.1)',
               }}
             >
-              <p className="text-xs font-semibold mb-0.5" style={{ color: '#e5e7eb' }}>
-                {b.title[lang]}
-              </p>
-              <p className="text-[10px] leading-snug" style={{ color: '#6b7280' }}>
-                {b.desc[lang]}
-              </p>
-            </div>
-          ))}
-        </m.div>
-
-        {/* ── Program modules ── */}
-        <m.div
-          className="w-full rounded-xl px-4 py-3"
-          style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.06)',
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.55 }}
-        >
-          <p className="text-xs font-semibold mb-2" style={{ color: '#e5e7eb' }}>
-            {lang === 'uz' ? 'Dastur' : 'Программа'}
-          </p>
-          <div className="space-y-1.5">
-            {programModules.map((mod, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <span className="text-[10px] font-mono shrink-0" style={{ color: '#6b7280' }}>
-                  {mod.range}
-                </span>
-                <span className="text-[11px]" style={{ color: '#9ca3af' }}>
-                  {mod.title[lang]}
-                </span>
+              <div className="text-center">
+                <p className="text-lg font-bold" style={{ color: '#e8790a' }}>{schoolStats.lessons}</p>
+                <p className="text-[9px]" style={{ color: '#8a7264' }}>{lang === 'uz' ? 'dars' : 'уроков'}</p>
               </div>
-            ))}
+              <div className="w-px h-6" style={{ background: 'rgba(232,121,10,0.15)' }} />
+              <div className="text-center">
+                <p className="text-lg font-bold" style={{ color: '#e8790a' }}>{schoolStats.graduates}</p>
+                <p className="text-[9px]" style={{ color: '#8a7264' }}>{lang === 'uz' ? 'bitiruvchi' : 'выпускников'}</p>
+              </div>
+              <div className="w-px h-6" style={{ background: 'rgba(232,121,10,0.15)' }} />
+              <div className="text-center">
+                <p className="text-lg font-bold" style={{ color: '#e8790a' }}>{schoolStats.partners}</p>
+                <p className="text-[9px]" style={{ color: '#8a7264' }}>{lang === 'uz' ? 'hamkor' : 'партнёров'}</p>
+              </div>
+            </div>
+
+            {/* Student cases — horizontal row */}
+            <div className="flex gap-2">
+              {studentCases.map((c, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-xl px-3 py-2"
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                  }}
+                >
+                  <p className="text-[10px] font-semibold" style={{ color: '#f5f0e1' }}>
+                    {c.name[lang]}
+                  </p>
+                  <p className="text-[9px] leading-snug mt-0.5" style={{ color: '#8a7264' }}>
+                    {c.desc[lang]}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN */}
+          <div className="flex flex-col gap-2.5 justify-between">
+            {/* Personalized recommendation */}
+            {lessonRec && weakLabel && (
+              <div
+                className="rounded-xl px-4 py-3"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(232,121,10,0.1), rgba(232,121,10,0.03))',
+                  border: '1px solid rgba(232,121,10,0.2)',
+                }}
+              >
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: '#e8790a' }}>
+                  {lang === 'uz' ? 'Sizga tavsiya' : 'Рекомендация для вас'}
+                </p>
+                <p className="text-sm font-semibold" style={{ color: '#f5f0e1' }}>
+                  {lessonRec.lesson[lang]}
+                </p>
+                <p className="text-[10px] leading-snug mt-1" style={{ color: '#a69383' }}>
+                  {lessonRec.detail[lang]}
+                </p>
+                <p className="text-[9px] mt-1.5" style={{ color: '#8a7264' }}>
+                  {lang === 'uz'
+                    ? `"${weakLabel}" — aynan shu dars bunga bag'ishlangan`
+                    : `«${weakLabel}» — именно этот урок посвящён этому навыку`}
+                </p>
+              </div>
+            )}
+
+            {/* CTA block */}
+            <div className="flex flex-col gap-2 mt-auto">
+              <m.button
+                onClick={onConsultation}
+                className="w-full rounded-xl px-6 py-3.5 text-sm font-bold relative overflow-hidden"
+                style={{
+                  color: '#1b1c1a',
+                  background: 'linear-gradient(135deg, #e8790a, #ff9a3c)',
+                }}
+                animate={{
+                  boxShadow: [
+                    '0 0 20px rgba(232,121,10,0.2)',
+                    '0 0 40px rgba(232,121,10,0.35)',
+                    '0 0 20px rgba(232,121,10,0.2)',
+                  ],
+                }}
+                transition={{
+                  boxShadow: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
+                }}
+              >
+                {ctaButtonText[ending][lang]}
+              </m.button>
+
+              <button
+                onClick={onDismiss}
+                className="text-[10px] py-1 transition-colors"
+                style={{ color: '#564336' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#8a7264'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = '#564336'; }}
+              >
+                {dismissOptions.later[lang]}
+              </button>
+            </div>
           </div>
         </m.div>
-
-        {/* ── Personalized recommendation ── */}
-        {lessonRec && weakLabel && (
-          <m.div
-            className="w-full rounded-xl px-5 py-4"
-            style={{
-              background: 'rgba(251,191,36,0.06)',
-              border: '1px solid rgba(251,191,36,0.15)',
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-          >
-            <p className="text-xs font-semibold mb-2" style={{ color: '#fbbf24' }}>
-              {recommendationLabel[lang]}
-            </p>
-            <p className="text-sm font-medium mb-1" style={{ color: '#e5e7eb' }}>
-              {lessonRec.lesson[lang]}
-            </p>
-            <p className="text-xs leading-relaxed" style={{ color: '#9ca3af' }}>
-              {lessonRec.detail[lang]}
-            </p>
-            <p className="text-[10px] mt-2" style={{ color: '#6b7280' }}>
-              {lang === 'uz'
-                ? `Sizning "${weakLabel}" ko'rsatkichingiz past — aynan shu dars bunga bag'ishlangan.`
-                : `Ваш показатель «${weakLabel}» ниже остальных — именно этот урок посвящён этому навыку.`}
-            </p>
-          </m.div>
-        )}
-
-        {/* ── Student cases ── */}
-        <m.div
-          className="w-full space-y-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.65 }}
-        >
-          <p className="text-xs font-semibold" style={{ color: '#e5e7eb' }}>
-            {lang === 'uz' ? "O'quvchilarimiz natijalari" : 'Результаты наших учеников'}
-          </p>
-          {studentCases.map((c, i) => (
-            <div
-              key={i}
-              className="rounded-lg px-4 py-2.5 flex items-start gap-3"
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
-              }}
-            >
-              <div className="flex-1">
-                <p className="text-xs font-medium" style={{ color: '#e5e7eb' }}>
-                  {c.name[lang]}{' '}
-                  <span className="font-normal" style={{ color: '#4a90d9' }}>
-                    {c.tag}
-                  </span>
-                </p>
-                <p className="text-[10px] leading-snug mt-0.5" style={{ color: '#9ca3af' }}>
-                  {c.desc[lang]}
-                </p>
-              </div>
-            </div>
-          ))}
-        </m.div>
-
-        {/* ── CTA Button ── */}
-        <m.button
-          onClick={onConsultation}
-          className="w-full rounded-xl px-6 py-4 text-sm font-semibold relative overflow-hidden"
-          style={{
-            color: '#0a0a0a',
-            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-          }}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            boxShadow: [
-              '0 0 15px rgba(251,191,36,0.2)',
-              '0 0 30px rgba(251,191,36,0.35)',
-              '0 0 15px rgba(251,191,36,0.2)',
-            ],
-          }}
-          transition={{
-            opacity: { delay: 0.7, duration: 0.4 },
-            scale: { delay: 0.7, duration: 0.4 },
-            boxShadow: { delay: 1.0, duration: 2, repeat: Infinity, ease: 'easeInOut' },
-          }}
-        >
-          {ctaButtonText[ending][lang]}
-        </m.button>
-
-        {/* ── Dismiss options ── */}
-        <div className="flex flex-col items-center gap-1 pb-4">
-          <m.button
-            onClick={onDismiss}
-            className="text-xs py-2 transition-colors"
-            style={{ color: '#6b7280' }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.0 }}
-            whileHover={{ color: '#9ca3af' }}
-          >
-            {dismissOptions.later[lang]}
-          </m.button>
-        </div>
       </div>
     </div>
   );

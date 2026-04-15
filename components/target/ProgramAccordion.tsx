@@ -8,9 +8,14 @@ export default function ProgramAccordion() {
   const { t } = useT();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const modules = [1, 2, 3, 4].map((n) => ({
+  const MODULE_LESSON_COUNTS = [3, 5, 4, 3];
+
+  const modules = [1, 2, 3, 4].map((n, idx) => ({
     range: t(`target.program.module.${n}.range` as TranslationKey),
     title: t(`target.program.module.${n}.title` as TranslationKey),
+    lessons: Array.from({ length: MODULE_LESSON_COUNTS[idx] }, (_, j) =>
+      t(`target.program.module.${n}.lesson.${j + 1}` as TranslationKey)
+    ),
   }));
 
   const outcomes = [1, 2, 3, 4].map((n) =>
@@ -68,6 +73,18 @@ export default function ProgramAccordion() {
                       expand_more
                     </span>
                   </button>
+                  {isOpen && (
+                    <ul className="px-5 pb-5 pt-1 space-y-2 border-t border-outline-variant/10">
+                      {mod.lessons.map((lesson, j) => (
+                        <li key={j} className="flex gap-2 items-start text-sm text-on-surface-variant">
+                          <span className="material-symbols-outlined text-primary-container shrink-0 mt-0.5" style={{ fontSize: "16px" }}>
+                            play_circle
+                          </span>
+                          {lesson}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </FadeUp>
             );

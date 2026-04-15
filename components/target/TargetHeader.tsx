@@ -9,7 +9,6 @@ const NAV_ITEMS: { key: TranslationKey; href: string }[] = [
   { key: "target.nav.about", href: "#about" },
   { key: "target.nav.program", href: "#program" },
   { key: "target.nav.cases", href: "#cases" },
-  { key: "target.nav.mentors", href: "#mentors" },
 ];
 
 export default function TargetHeader() {

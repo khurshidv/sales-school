@@ -1197,8 +1197,8 @@ export const day3: Day = {
       background: 'bg_showroom',
       characters: [],
       text: {
-        uz: "Aynan shuni o'rgatadigan dastur mavjud. 3 oy, shaxsiy murabbiy, haqiqiy amaliyot.",
-        ru: 'Есть программа, которая учит именно этому. 3 месяца, личный ментор, реальная практика.',
+        uz: "Aynan shuni o'rgatadigan dastur mavjud. 1 oy, shaxsiy murabbiy, haqiqiy amaliyot.",
+        ru: 'Есть программа, которая учит именно этому. 1 месяц, личный ментор, реальная практика.',
       },
       nextNodeId: 'd3_s_cta',
     },

@@ -37,7 +37,6 @@ export type GameFlowState =
   | 'playing'
   | 'day_summary'
   | 'final_results'
-  | 'certificate'
   | 'school_cta';
 
 export interface DayResults {
@@ -424,12 +423,6 @@ export function useGameEngine(scenarioId: string) {
     }
   }, [scenario, dayResults, dayResultsHistory, currentDayIndex, startDay, player]);
 
-  const showCertificate = useCallback(() => {
-    const pid = usePlayerStore.getState().player?.id;
-    if (pid) trackEvent(pid, 'conclusion_certificate_viewed');
-    setFlowState('certificate');
-  }, []);
-
   const showSchoolCta = useCallback(() => {
     // Determine ending type from last day's outcome
     const lastDay = dayResultsHistory[dayResultsHistory.length - 1];
@@ -517,7 +510,6 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
-      showCertificate,
       showSchoolCta,
       restartDay,
       startDay,
@@ -543,7 +535,6 @@ export function useGameEngine(scenarioId: string) {
       pauseTimer,
       resumeTimer,
       confirmNextDay,
-      showCertificate,
       showSchoolCta,
       restartDay,
       startDay,

@@ -163,7 +163,7 @@ export default function FinalResults({
           })}
         </div>
 
-        {/* Next → Certificate */}
+        {/* Next → School CTA */}
         <button
           onClick={onNext}
           className="w-full py-3 rounded-xl font-semibold text-neutral-950 transition-colors"

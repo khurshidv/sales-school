@@ -81,10 +81,10 @@ export default function RegistrationModal() {
 
         {/* Heading */}
         <h3 className="font-[family-name:var(--font-heading)] text-2xl md:text-3xl text-on-surface mb-2 pr-10">
-          {t("modal.heading")}
+          {getSourcePage() === 'target' ? t("modal.target.heading") : t("modal.heading")}
         </h3>
         <p className="text-on-surface-variant text-sm mb-8">
-          {t("modal.subtitle")}
+          {getSourcePage() === 'target' ? t("modal.target.subtitle") : t("modal.subtitle")}
         </p>
 
         {/* Form */}
@@ -148,7 +148,7 @@ export default function RegistrationModal() {
                 : 'hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            {t("modal.submit")}
+            {getSourcePage() === 'target' ? t("modal.target.submit") : t("modal.submit")}
           </button>
         </form>
 

@@ -624,8 +624,8 @@ const translations = {
     uz: "Siz 18–30 yoshdasiz va istiqbolli boshlanish qidirmoqdasiz",
   },
   "target.whom.yes_2": {
-    ru: "Хотите зарабатывать от $500–800 сразу после курса",
-    uz: "Kursdan keyin darhol $500–800 dan ishlashni xohlaysiz",
+    ru: "Хотите зарабатывать от $800+ сразу после курса",
+    uz: "Kursdan keyin darhol $800+ ishlashni xohlaysiz",
   },
   "target.whom.yes_3": {
     ru: "Готовы учиться и работать на результат",
@@ -797,6 +797,86 @@ const translations = {
   "modal.privacy": {
     ru: "Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности",
     uz: "Tugmani bosish orqali maxfiylik siyosatiga rozilik bildirasiz",
+  },
+
+  /* ══════════════════════════ MODAL (TARGET PAGE) ══════════════════════════ */
+  "modal.target.heading": {
+    ru: "Получите бонусы в Telegram-канале",
+    uz: "Telegram-kanalda bonuslar oling",
+  },
+  "modal.target.subtitle": {
+    ru: "Бесплатно · 3 бонуса сразу · Telegram-канал",
+    uz: "Bepul · 3 ta bonus darhol · Telegram-kanal",
+  },
+  "modal.target.submit": {
+    ru: "Получить бесплатно",
+    uz: "Bepul olish",
+  },
+
+  /* ══════════════════════════ PROGRAM LESSONS ══════════════════════════ */
+  /* Module 1: 01-03 */
+  "target.program.module.1.lesson.1": {
+    ru: "Что такое продажи и главные заблуждения о профессии",
+    uz: "Sotuv nima va kasb haqidagi asosiy tushunmovchiliklar",
+  },
+  "target.program.module.1.lesson.2": {
+    ru: "5 этапов психологии покупателя: от инстинкта до слов",
+    uz: "Xaridor psixologiyasining 5 bosqichi: instinktdan so'zlargacha",
+  },
+  "target.program.module.1.lesson.3": {
+    ru: "4 типа личности: тест из 20 вопросов и работа с каждым типом",
+    uz: "4 xil shaxs turi: 20 savollik test va har bir tur bilan ishlash",
+  },
+  /* Module 2: 04-08 */
+  "target.program.module.2.lesson.1": {
+    ru: "7 вопросов разведки: формула RUERPC",
+    uz: "7 ta razvedka savoli: RUERPC formulasi",
+  },
+  "target.program.module.2.lesson.2": {
+    ru: "4 ключа, которые нужно знать до презентации предложения",
+    uz: "Taklif taqdimotidan oldin bilish kerak bo'lgan 4 kalit",
+  },
+  "target.program.module.2.lesson.3": {
+    ru: "Формула QQPR: вопрос → вопрос → презентация → рефлексия",
+    uz: "QQPR formulasi: savol → savol → taqdimot → fikrlash",
+  },
+  "target.program.module.2.lesson.4": {
+    ru: "5 типов возражений и правила ответа на каждый",
+    uz: "5 turdagi e'tirozlar va har biriga javob berish qoidalari",
+  },
+  "target.program.module.2.lesson.5": {
+    ru: "Матрица характеров: как подстроиться под любого клиента",
+    uz: "Xarakter matritsasi: har qanday mijozga moslashish",
+  },
+  /* Module 3: 09-12 */
+  "target.program.module.3.lesson.1": {
+    ru: "5 техник закрытия: FOMO, 2 варианта, Допущение, Эксклюзив, Решение проблемы",
+    uz: "5 ta yopish texnikasi: FOMO, 2 variant, Taxmin, Eksklyuziv, Muammo yechimi",
+  },
+  "target.program.module.3.lesson.2": {
+    ru: "Интеграционные ролевые игры: полный цикл продажи",
+    uz: "Integratsion rol o'yinlari: to'liq sotuv tsikli",
+  },
+  "target.program.module.3.lesson.3": {
+    ru: "Воронка продаж и система 4 касаний",
+    uz: "Sotuv hunisi va 4 ta teginish tizimi",
+  },
+  "target.program.module.3.lesson.4": {
+    ru: "Визуальная презентация: 1 слайд = 1 мысль",
+    uz: "Vizual taqdimot: 1 slayd = 1 fikr",
+  },
+  /* Module 4: 13-15 */
+  "target.program.module.4.lesson.1": {
+    ru: "Техника Black Swan для повторных касаний и follow-up",
+    uz: "Takroriy teginishlar va follow-up uchun Black Swan texnikasi",
+  },
+  "target.program.module.4.lesson.2": {
+    ru: "Протокол обработки отказов: как превратить «нет» в «да»",
+    uz: "Rad etishlarni qayta ishlash protokoli: 'yo'q'ni 'ha'ga aylantirish",
+  },
+  "target.program.module.4.lesson.3": {
+    ru: "KPI, зарплата и карьерные пути: Junior → Senior → Manager → Свой бизнес. Финальный экзамен + сертификат",
+    uz: "KPI, maosh va martaba yo'llari: Junior → Senior → Manager → O'z biznesi. Yakuniy imtihon + sertifikat",
   },
 } as const;
 

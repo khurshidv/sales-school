@@ -44,12 +44,8 @@ const PauseMenu = dynamic(
   () => import('@/components/game/screens/PauseMenu'),
   { ssr: false },
 );
-const Certificate = dynamic(
-  () => import('@/components/game/screens/Certificate'),
-  { ssr: false },
-);
-const SchoolCTA = dynamic(
-  () => import('@/components/game/screens/SchoolCTA'),
+const SchoolPitch = dynamic(
+  () => import('@/components/game/screens/SchoolPitch'),
   { ssr: false },
 );
 
@@ -115,12 +111,6 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // ?menu=1 tells /game to skip its "first-time → Day 1" auto-redirect
   // and always show ScenarioSelect (used from PauseMenu / GameOver / FinalResults).
   const handleExit = useCallback(() => router.push('/game?menu=1'), [router]);
-  const handleConsultation = useCallback(() => {
-    if (engine.player?.id) {
-      trackEvent(engine.player.id, 'conclusion_cta_clicked', { ending: engine.schoolCtaEnding });
-    }
-    window.open('https://t.me/salesup_uz', '_blank', 'noopener');
-  }, [engine.player?.id, engine.schoolCtaEnding]);
   const handleGameOverRestart = useCallback(() => {
     setShowGameOver(false);
     engine.restartDay();
@@ -449,7 +439,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
           strongestDimension={fr.strongestDimension}
           weakestDimension={fr.weakestDimension}
           ending={engine.schoolCtaEnding ?? undefined}
-          onNext={engine.showCertificate}
+          onNext={engine.showSchoolCta}
           onExit={handleExit}
           lang={lang}
         />
@@ -457,39 +447,12 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     );
   }
 
-  // Certificate
-  if (engine.flowState === 'certificate' && engine.finalResults) {
-    const fr = engine.finalResults;
-    return (
-      <>
-        <RotateDevice />
-        <Certificate
-          playerName={player?.displayName ?? ''}
-          ending={engine.schoolCtaEnding ?? 'failure'}
-          dayRatings={fr.dayRatings}
-          totalScore={fr.totalScore}
-          strongestDimension={fr.strongestDimension}
-          lang={lang}
-          onNext={engine.showSchoolCta}
-        />
-      </>
-    );
-  }
-
-  // School CTA (redesigned with personalized content)
-  if (engine.flowState === 'school_cta' && engine.schoolCtaEnding) {
-    return (
-      <>
-        <RotateDevice />
-        <SchoolCTA
-          ending={engine.schoolCtaEnding}
-          lang={lang}
-          weakestDimension={engine.finalResults?.weakestDimension}
-          onConsultation={handleConsultation}
-          onDismiss={handleExit}
-        />
-      </>
-    );
+  // SchoolPitch — post-simulation sales funnel (reuses /target blocks,
+  // portrait orientation, direct Telegram CTA). Renders in its own
+  // light-theme container; no RotateDevice (the screen enforces
+  // portrait, not landscape).
+  if (engine.flowState === 'school_cta') {
+    return <SchoolPitch lang={lang} onDismiss={handleExit} />;
   }
 
   // Main gameplay

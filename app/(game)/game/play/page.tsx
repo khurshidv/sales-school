@@ -79,7 +79,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     playerId: engine.player?.id,
     scenarioId,
     session: engine.session,
-    isPlaying: engine.flowState === 'playing',
+    isPlaying: engine.flowState === 'playing' || engine.flowState === 'day_summary' || engine.flowState === 'day_intro',
   });
 
   // Prevent browser back button from navigating away (restarts game from Day 1).

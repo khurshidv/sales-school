@@ -94,6 +94,7 @@ export function useGameEngine(scenarioId: string) {
   const gsCanGoBack = useGameStore((s) => s.canGoBack);
 
   const player = usePlayerStore((s) => s.player);
+  const isPlayerInitialized = usePlayerStore((s) => s.isInitialized);
 
   const [flowState, setFlowState] = useState<GameFlowState>('idle');
   const [scenario, setScenario] = useState<Scenario | null>(null);
@@ -114,6 +115,11 @@ export function useGameEngine(scenarioId: string) {
   const restoredRef = useRef(false);
 
   useEffect(() => {
+    // Wait for player initialization before attempting restore.
+    // Without this, player?.id is undefined on first render and
+    // the restoration fetch is skipped, restarting from Day 1.
+    if (!isPlayerInitialized) return;
+
     const s = getScenario(scenarioId);
     if (!s) return;
 
@@ -121,7 +127,7 @@ export function useGameEngine(scenarioId: string) {
 
     // Try restoring saved progress from Supabase
     // (only if player is known — otherwise it's a fresh start)
-    const pid = usePlayerStore.getState().player?.id;
+    const pid = player?.id;
     if (pid && !restoredRef.current) {
       restoredRef.current = true;
       fetch(`/api/game/progress?playerId=${encodeURIComponent(pid)}&scenarioId=${encodeURIComponent(scenarioId)}`)
@@ -155,7 +161,7 @@ export function useGameEngine(scenarioId: string) {
       setCurrentDayIndex(0);
       setFlowState('day_intro');
     }
-  }, [scenarioId, gsRestoreSession]);
+  }, [scenarioId, gsRestoreSession, isPlayerInitialized, player?.id]);
 
   // Detect end node → trigger day completion.
   //

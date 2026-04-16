@@ -667,44 +667,6 @@ const translations = {
     uz: "Biz haqimizda yozishadi",
   },
 
-  /* --- Target Founder --- */
-  "target.founder.label": { ru: "Основатель", uz: "Asoschisi" },
-  "target.founder.name": { ru: "Алексей Романов", uz: "Aleksey Romanov" },
-  "target.founder.bio": {
-    ru: "Эксперт в построении отделов продаж с 15-летним стажем. Лично обучил более 1000 сейлз-менеджеров для топовых компаний СНГ и Европы.",
-    uz: "15 yillik tajriba bilan savdo bo'limlarini qurish bo'yicha ekspert. MDH va Yevropa top-kompaniyalari uchun 1000 dan ortiq savdo menejerlarini shaxsan o'qitgan.",
-  },
-  "target.founder.quote": {
-    ru: "Моя цель — доказать, что каждый может стать высокооплачиваемым специалистом, если дать ему правильные инструменты и среду.",
-    uz: "Mening maqsadim — to'g'ri asboblar va muhit berilsa, har kim yuqori maoshli mutaxassis bo'lishi mumkinligini isbotlash.",
-  },
-  "target.founder.stat1": { ru: "$100M+", uz: "$100M+" },
-  "target.founder.stat1_label": { ru: "Общий оборот сделок", uz: "Jami bitimlar aylanmasi" },
-  "target.founder.stat2": { ru: "50+", uz: "50+" },
-  "target.founder.stat2_label": { ru: "Построенных отделов", uz: "Qurilgan bo'limlar" },
-
-  /* --- Target Mentors --- */
-  "target.mentors.heading": { ru: "Ваши наставники", uz: "Sizning mentorlaringiz" },
-  "target.mentors.guarantee": { ru: "Гарантия возврата", uz: "Qaytarish kafolati" },
-  "target.mentor.1.name": { ru: "Сергей Волков", uz: "Sergey Volkov" },
-  "target.mentor.1.role": { ru: "B2B Эксперт", uz: "B2B Ekspert" },
-  "target.mentor.1.desc": {
-    ru: "Head of Sales в крупном логистическом холдинге. Опыт 10 лет.",
-    uz: "Yirik logistika xoldingida Sotuv boshlig'i. 10 yillik tajriba.",
-  },
-  "target.mentor.2.name": { ru: "Мария Левина", uz: "Mariya Levina" },
-  "target.mentor.2.role": { ru: "IT & SaaS", uz: "IT & SaaS" },
-  "target.mentor.2.desc": {
-    ru: "Специалист по выходу на западные рынки. Сделки от $500k.",
-    uz: "G'arbiy bozorlarga chiqish bo'yicha mutaxassis. $500k dan bitimlar.",
-  },
-  "target.mentor.3.name": { ru: "Дмитрий Ким", uz: "Dmitriy Kim" },
-  "target.mentor.3.role": { ru: "Real Estate", uz: "Real Estate" },
-  "target.mentor.3.desc": {
-    ru: "Топ-брокер элитной недвижимости Дубая. Учит продавать дорого.",
-    uz: "Dubayning elita ko'chmas mulk top-brokeri. Qimmatga sotishni o'rgatadi.",
-  },
-
   /* --- Target FAQ --- */
   "target.faq.heading": { ru: "Частые вопросы", uz: "Ko'p beriladigan savollar" },
   "target.faq.1.q": { ru: "Сколько стоит обучение?", uz: "O'qish qancha turadi?" },

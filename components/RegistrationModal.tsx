@@ -13,6 +13,7 @@ function getSourcePage(): string {
   if (typeof window === 'undefined') return 'home';
   const path = window.location.pathname;
   if (path.startsWith('/target')) return 'target';
+  if (path.startsWith('/game')) return 'game';
   return 'home';
 }
 
@@ -81,10 +82,10 @@ export default function RegistrationModal() {
 
         {/* Heading */}
         <h3 className="font-[family-name:var(--font-heading)] text-2xl md:text-3xl text-on-surface mb-2 pr-10">
-          {getSourcePage() === 'target' ? t("modal.target.heading") : t("modal.heading")}
+          {getSourcePage() !== 'home' ? t("modal.target.heading") : t("modal.heading")}
         </h3>
         <p className="text-on-surface-variant text-sm mb-8">
-          {getSourcePage() === 'target' ? t("modal.target.subtitle") : t("modal.subtitle")}
+          {getSourcePage() !== 'home' ? t("modal.target.subtitle") : t("modal.subtitle")}
         </p>
 
         {/* Form */}
@@ -148,7 +149,7 @@ export default function RegistrationModal() {
                 : 'hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            {getSourcePage() === 'target' ? t("modal.target.submit") : t("modal.submit")}
+            {getSourcePage() !== 'home' ? t("modal.target.submit") : t("modal.submit")}
           </button>
         </form>
 

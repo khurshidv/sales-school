@@ -4,20 +4,19 @@ import CasesSection from '@/components/target/CasesSection';
 import ProductBenefits from '@/components/target/ProductBenefits';
 import ProgramAccordion from '@/components/target/ProgramAccordion';
 import StatsSection from '@/components/target/StatsSection';
-import FounderSection from '@/components/target/FounderSection';
-import MentorsSection from '@/components/target/MentorsSection';
-import { pitchCopy, TELEGRAM_URL } from './conclusionCopy';
+import { ModalProvider } from '@/lib/modal-context';
+import { useModal } from '@/lib/modal-context';
+import RegistrationModal from '@/components/RegistrationModal';
+import { pitchCopy } from './conclusionCopy';
 
 interface SchoolPitchProps {
   lang: 'uz' | 'ru';
   onDismiss: () => void;
 }
 
-function goToTelegram() {
-  window.open(TELEGRAM_URL, '_blank', 'noopener,noreferrer');
-}
+function SchoolPitchInner({ lang, onDismiss }: SchoolPitchProps) {
+  const { openModal } = useModal();
 
-export default function SchoolPitch({ lang, onDismiss }: SchoolPitchProps) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-surface text-on-surface">
       {/* Landscape overlay — ask user to rotate to portrait.
@@ -54,7 +53,7 @@ export default function SchoolPitch({ lang, onDismiss }: SchoolPitchProps) {
           </p>
           <button
             type="button"
-            onClick={goToTelegram}
+            onClick={openModal}
             className="group inline-flex items-center gap-3 rounded-full cta-btn text-white cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.03] px-8 py-5 text-base md:px-10 md:text-lg animate-pulse-glow mt-10"
           >
             <span className="font-bold tracking-wide">{pitchCopy.heroCta[lang]}</span>
@@ -70,8 +69,6 @@ export default function SchoolPitch({ lang, onDismiss }: SchoolPitchProps) {
       <ProductBenefits />
       <ProgramAccordion />
       <StatsSection />
-      <FounderSection />
-      <MentorsSection />
 
       {/* Final CTA — game-contextual, Telegram direct */}
       <section className="py-20 md:py-24 relative overflow-hidden">
@@ -91,7 +88,7 @@ export default function SchoolPitch({ lang, onDismiss }: SchoolPitchProps) {
           </p>
           <button
             type="button"
-            onClick={goToTelegram}
+            onClick={openModal}
             className="group inline-flex items-center gap-3 rounded-full cta-btn text-white cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.03] px-8 py-5 text-base md:px-10 md:text-lg animate-pulse-glow"
           >
             <span className="font-bold tracking-wide">{pitchCopy.finalCta[lang]}</span>
@@ -111,5 +108,14 @@ export default function SchoolPitch({ lang, onDismiss }: SchoolPitchProps) {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function SchoolPitch(props: SchoolPitchProps) {
+  return (
+    <ModalProvider>
+      <SchoolPitchInner {...props} />
+      <RegistrationModal />
+    </ModalProvider>
   );
 }

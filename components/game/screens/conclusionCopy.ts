@@ -119,7 +119,7 @@ export const mentorVerdicts: Record<ScoreDimension, LT> = {
 
 // ── SchoolPitch (game-contextual copy) ──────────────────────
 // Adapts /target page blocks for the post-simulation pitch.
-// Strong claims (benefits, cases, program, stats, founder, mentors)
+// Strong claims (benefits, cases, program, stats)
 // are rendered 1:1 via the existing /target components.
 // Only the hero banner + final CTA copy are game-contextual.
 

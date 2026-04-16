@@ -137,8 +137,8 @@ export const pitchCopy = {
     ru: 'Симуляция показала ваш потенциал. SalesUp даст систему — и реальный доход.',
   } as LT,
   heroCta: {
-    uz: 'Telegram orqali boshlash',
-    ru: 'Начать через Telegram',
+    uz: 'Bepul konsultatsiya olish',
+    ru: 'Получить бесплатную консультацию',
   } as LT,
   finalHeading: {
     uz: "O'yinni tugatdingiz. Endi haqiqiy natija uchun bir qadam qoldi.",
@@ -149,8 +149,8 @@ export const pitchCopy = {
     ru: 'Свяжитесь с нами в Telegram — забронируем место в потоке и ответим на вопросы.',
   } as LT,
   finalCta: {
-    uz: 'Telegramda yozish',
-    ru: 'Написать в Telegram',
+    uz: 'Bepul konsultatsiya olish',
+    ru: 'Получить бесплатную консультацию',
   } as LT,
   dismiss: {
     uz: 'Keyinroq',

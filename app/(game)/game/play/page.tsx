@@ -32,10 +32,6 @@ const DaySummary = dynamic(
   () => import('@/components/game/screens/DaySummary'),
   { ssr: false },
 );
-const FinalResults = dynamic(
-  () => import('@/components/game/screens/FinalResults'),
-  { ssr: false },
-);
 const GameOver = dynamic(
   () => import('@/components/game/screens/GameOver'),
   { ssr: false },
@@ -426,33 +422,12 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     );
   }
 
-  // Final Results (enhanced with badge + verdict)
-  if (engine.flowState === 'final_results' && engine.finalResults) {
-    const fr = engine.finalResults;
-    return (
-      <>
-        <RotateDevice />
-        <FinalResults
-          totalScore={fr.totalScore}
-          dimensions={fr.dimensions}
-          dayRatings={fr.dayRatings}
-          strongestDimension={fr.strongestDimension}
-          weakestDimension={fr.weakestDimension}
-          ending={engine.schoolCtaEnding ?? undefined}
-          onNext={engine.showSchoolCta}
-          onExit={handleExit}
-          lang={lang}
-        />
-      </>
-    );
-  }
-
   // SchoolPitch — post-simulation sales funnel (reuses /target blocks,
   // portrait orientation, direct Telegram CTA). Renders in its own
   // light-theme container; no RotateDevice (the screen enforces
   // portrait, not landscape).
   if (engine.flowState === 'school_cta') {
-    return <SchoolPitch lang={lang} onDismiss={handleExit} />;
+    return <SchoolPitch onDismiss={handleExit} />;
   }
 
   // Main gameplay

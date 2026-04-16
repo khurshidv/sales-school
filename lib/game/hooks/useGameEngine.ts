@@ -36,7 +36,6 @@ export type GameFlowState =
   | 'day_intro'
   | 'playing'
   | 'day_summary'
-  | 'final_results'
   | 'school_cta';
 
 export interface DayResults {
@@ -415,9 +414,12 @@ export function useGameEngine(scenarioId: string) {
         const endMap: Record<string, 'grandmaster' | 'success' | 'partial' | 'failure'> = {
           hidden_ending: 'grandmaster', success: 'success', partial: 'partial', failure: 'failure',
         };
-        setSchoolCtaEnding(endMap[lastDay2.outcome] ?? 'failure');
+        const ending = endMap[lastDay2.outcome] ?? 'failure';
+        setSchoolCtaEnding(ending);
+        const pid2 = usePlayerStore.getState().player?.id;
+        if (pid2) trackEvent(pid2, 'conclusion_cta_viewed', { ending });
       }
-      setFlowState('final_results');
+      setFlowState('school_cta');
     } else {
       startDay(currentDayIndex + 1);
     }

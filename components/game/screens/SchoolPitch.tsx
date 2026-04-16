@@ -7,15 +7,16 @@ import StatsSection from '@/components/target/StatsSection';
 import { ModalProvider } from '@/lib/modal-context';
 import { useModal } from '@/lib/modal-context';
 import RegistrationModal from '@/components/RegistrationModal';
+import { useLang } from '@/lib/game/utils/lang';
 import { pitchCopy } from './conclusionCopy';
 
 interface SchoolPitchProps {
-  lang: 'uz' | 'ru';
   onDismiss: () => void;
 }
 
-function SchoolPitchInner({ lang, onDismiss }: SchoolPitchProps) {
+function SchoolPitchInner({ onDismiss }: SchoolPitchProps) {
   const { openModal } = useModal();
+  const { lang, setLang } = useLang();
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-surface text-on-surface">
@@ -36,6 +37,15 @@ function SchoolPitchInner({ lang, onDismiss }: SchoolPitchProps) {
           }
         `}</style>
       </div>
+
+      {/* Language toggle */}
+      <button
+        type="button"
+        onClick={() => setLang(lang === 'uz' ? 'ru' : 'uz')}
+        className="fixed top-4 right-4 z-[55] bg-surface-container/80 backdrop-blur-sm border border-outline-variant/20 rounded-full px-3 py-1.5 text-xs font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors"
+      >
+        {lang === 'uz' ? 'RU' : 'UZ'}
+      </button>
 
       {/* Hero — game-contextual intro */}
       <section className="relative pt-16 pb-12 px-6 md:px-8 mesh-hero overflow-hidden">

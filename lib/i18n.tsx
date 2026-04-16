@@ -328,12 +328,12 @@ const translations = {
     uz: "Daromadingizni bilib oling",
   },
   "target.hero.income_label": {
-    ru: "Рост дохода",
-    uz: "Daromad o'sishi",
+    ru: "Гарантия трудоустройства",
+    uz: "Ishga joylashish kafolati",
   },
   "target.hero.income_value": {
-    ru: "+250% за год",
-    uz: "+250% yiliga",
+    ru: "100%",
+    uz: "100%",
   },
 
   /* --- Target Contrast Bar --- */

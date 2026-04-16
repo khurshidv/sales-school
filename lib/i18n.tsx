@@ -312,12 +312,12 @@ const translations = {
 
   /* --- Target Hero --- */
   "target.hero.badge": {
-    ru: "99% Трудоустройство",
-    uz: "99% Ishga joylashish",
+    ru: "Для тех кто ищет работу!",
+    uz: "Ish qidirib yurganlar diqqatiga!",
   },
   "target.hero.heading": {
-    ru: "Нет опыта? Не проблема. Мы доведём тебя до первой зарплаты от $800 в продажах",
-    uz: "Tajriba yo'qmi? Muammo emas. Biz sizga sotuvlar sohasida $800 dollardan boshlanadigan ilk oylikka chiqishga yordam beramiz",
+    ru: "Нет опыта? Не проблема. Мы поможем вам найти работу в сфере продаж с зарплатой от $500-$800+",
+    uz: "Tajriba yo'qmi? Muammo emas. Biz sizga sotuv sohasida oyligi $500-$800+ dan boshlanadigan ish topishga yordam beramiz",
   },
   "target.hero.subheading": {
     ru: "Обучение + практика + реальное трудоустройство",

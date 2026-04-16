@@ -74,10 +74,13 @@ export default function TargetHero() {
                 </div>
                 <div>
                   <p className="text-xs text-on-surface-variant uppercase tracking-tighter">
-                    O'rtacha oylik
+                    Sohada o'rtacha oylik
                   </p>
                   <p className="text-xl font-bold text-on-surface">
                     300–400$
+                  </p>
+                  <p className="text-sm font-semibold text-primary">
+                    Biz bilan esa kamida $500+
                   </p>
                 </div>
               </div>

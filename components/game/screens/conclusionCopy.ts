@@ -129,8 +129,8 @@ export const pitchCopy = {
     ru: 'Симуляция завершена',
   } as LT,
   heroHeading: {
-    uz: 'Siz qila olasiz. Endi — buni kasbga aylantirish vaqti.',
-    ru: 'Вы справились. Теперь — время сделать это профессией.',
+    uz: "Tajriba yo'qmi? Muammo emas. Biz sizga sotuv sohasida oyligi $500-$800+ dan boshlanadigan ish topishga yordam beramiz",
+    ru: 'Нет опыта? Не проблема. Мы поможем вам найти работу в сфере продаж с зарплатой от $500-$800+',
   } as LT,
   heroSub: {
     uz: 'Simulyatsiya salohiyatingizni ko\'rsatdi. SalesUp sizga tizim beradi — va real daromad.',

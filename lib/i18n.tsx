@@ -444,14 +444,6 @@ const translations = {
     ru: "Каждый месяц без навыка продаж = минус $500–$1000 к вашему доходу. Пока вы откладываете — другие уже зарабатывают и растут в 2–3 раза быстрее.",
     uz: "Sotuv ko'nikmasiz har oy = daromadingizga minus $500–$1000. Siz kechiktirganingizda — boshqalar allaqachon 2–3 baravar tezroq ishlaydi va o'sadi.",
   },
-  "target.loss.badge": {
-    ru: "Ethereal Group since 2015",
-    uz: "Ethereal Group 2015 yildan",
-  },
-  "target.loss.badge_desc": {
-    ru: "Проверенная методология обучения, адаптированная под современные реалии рынка.",
-    uz: "Bozorning zamonaviy sharoitiga moslashtirilgan tasdiqlangan o'qitish metodologiyasi.",
-  },
   "target.loss.cta": {
     ru: "Рассчитать мой доход",
     uz: "Daromadimni hisoblash",
@@ -484,7 +476,7 @@ const translations = {
   /* --- Target Cases --- */
   "target.cases.heading": {
     ru: "Как наши ученики вышли на доход $800+",
-    uz: "O'quvchilarimiz qanday $800+ daromadga chiqishdi",
+    uz: "$800+ daromad qiladigan o'quvchilarimiz",
   },
   "target.cases.placeholder": {
     ru: "Видео кейсы скоро будут добавлены",
@@ -529,12 +521,12 @@ const translations = {
   },
   "target.product.desc": {
     ru: "Мы не учим «впаривать». Мы учим выстраивать долгосрочные отношения с клиентами и зарабатывать на этом легально и много.",
-    uz: "Biz zo'rlab sotishni o'rgatmaymiz. Biz mijozlar bilan uzoq muddatli munosabatlar qurishni va bundan qonuniy ravishda ko'p ishlashni o'rgatamiz.",
+    uz: "Biz majburlab sotishni o'rgatmaymiz. Biz mijozlar bilan uzoq muddatli munosabatlar qurishni va bundan qonuniy ravishda ko'p ishlashni o'rgatamiz.",
   },
   "target.product.1.title": { ru: "Быстрый старт", uz: "Tez boshlash" },
   "target.product.1.desc": {
     ru: "Всего 4 недели от первого урока до первого оффера.",
-    uz: "Birinchi darsdan birinchi taqlifgacha atigi 4 hafta.",
+    uz: "Birinchi darsdan birinchi ish taklifigacha atigi 4 hafta.",
   },
   "target.product.2.title": { ru: "Комьюнити", uz: "Jamoa" },
   "target.product.2.desc": {
@@ -543,8 +535,8 @@ const translations = {
   },
   "target.product.3.title": { ru: "Трудоустройство", uz: "Ishga joylashish" },
   "target.product.3.desc": {
-    ru: "Лучших учеников забираем в Ethereal Group и партнерские сети.",
-    uz: "Eng yaxshi o'quvchilarni Ethereal Group va hamkor tarmoqlarga olamiz.",
+    ru: "Лучших учеников трудоустраиваем в компании-партнёры.",
+    uz: "Yaxshi o'quvchilarimizni hamkor kompaniyalarga ishga joylashtirib qo'yamiz.",
   },
   "target.product.4.title": { ru: "100% Практика", uz: "100% Amaliyot" },
   "target.product.4.desc": {

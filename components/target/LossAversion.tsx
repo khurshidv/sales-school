@@ -71,17 +71,6 @@ export default function LossAversion() {
           </FadeUp>
 
           <FadeUp delay={200}>
-            <div className="p-5 bg-surface-container-high border-l-4 border-secondary rounded-r-xl">
-              <p className="text-secondary font-bold text-sm uppercase mb-1">
-                {t("target.loss.badge")}
-              </p>
-              <p className="text-xs text-on-surface-variant">
-                {t("target.loss.badge_desc")}
-              </p>
-            </div>
-          </FadeUp>
-
-          <FadeUp delay={300}>
             <CTAButton text={t("target.loss.cta")} size="large" trackSlug="target" trackSection="loss_aversion" />
           </FadeUp>
         </div>

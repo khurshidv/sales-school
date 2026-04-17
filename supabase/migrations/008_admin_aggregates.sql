@@ -184,8 +184,8 @@ as $$
         end
       from public.completed_scenarios
       where scenario_id = p_scenario_id
-        and (p_from is null or created_at >= p_from)
-        and (p_to is null or created_at <= p_to)
+        and (p_from is null or completed_at >= p_from)
+        and (p_to is null or completed_at <= p_to)
     )
   );
 $$;

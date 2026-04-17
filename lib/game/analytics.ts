@@ -25,6 +25,12 @@ let queue: QueuedEvent[] = [];
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
 let listenersAttached = false;
 
+// Expose synchronous flush for tests (noop in production; ref-equals flush).
+if (typeof globalThis !== 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (globalThis as any).__flushAnalyticsQueue = () => flush();
+}
+
 const FLUSH_DEBOUNCE_MS = 2000;
 
 function attachFlushListeners(): void {
@@ -99,4 +105,130 @@ export function trackEvent(
   } catch (e) {
     console.warn('[analytics] failed to track:', eventType, e);
   }
+}
+
+import { GameEventType } from './eventTypes';
+
+// -----------------------------------------------------------------------------
+// Typed helpers — dashboard 2.0
+// Each helper wraps trackEvent() with a fixed event_type and shaped event_data.
+// Keeps call sites clean and prevents typos in event_type strings.
+// -----------------------------------------------------------------------------
+
+export function trackNodeEntered(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  nodeId: string,
+): void {
+  trackEvent(playerId, GameEventType.NODE_ENTERED, { node_id: nodeId }, scenarioId, dayId);
+}
+
+export function trackNodeExited(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  nodeId: string,
+  timeSpentMs: number,
+): void {
+  trackEvent(
+    playerId,
+    GameEventType.NODE_EXITED,
+    { node_id: nodeId, time_spent_ms: timeSpentMs },
+    scenarioId,
+    dayId,
+  );
+}
+
+export function trackBackNavigation(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  fromNodeId: string,
+  toNodeId: string,
+): void {
+  trackEvent(
+    playerId,
+    GameEventType.BACK_NAVIGATION,
+    { from_node_id: fromNodeId, to_node_id: toNodeId },
+    scenarioId,
+    dayId,
+  );
+}
+
+export function trackDialogueReread(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  nodeId: string,
+  rereadCount: number,
+): void {
+  trackEvent(
+    playerId,
+    GameEventType.DIALOGUE_REREAD,
+    { node_id: nodeId, reread_count: rereadCount },
+    scenarioId,
+    dayId,
+  );
+}
+
+export function trackHeartbeat(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  sessionId: string,
+  nodeId: string | null,
+): void {
+  trackEvent(
+    playerId,
+    GameEventType.HEARTBEAT,
+    { session_id: sessionId, node_id: nodeId },
+    scenarioId,
+    dayId,
+  );
+}
+
+export function trackIdleDetected(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  sessionId: string,
+  idleMs: number,
+): void {
+  trackEvent(
+    playerId,
+    GameEventType.IDLE_DETECTED,
+    { session_id: sessionId, idle_ms: idleMs },
+    scenarioId,
+    dayId,
+  );
+}
+
+export function trackChoiceMadeWithTiming(
+  playerId: string,
+  scenarioId: string,
+  dayId: string,
+  nodeId: string,
+  choiceIndex: number,
+  choiceId: string,
+  thinkingTimeMs: number,
+): void {
+  trackEvent(
+    playerId,
+    GameEventType.CHOICE_MADE,
+    {
+      node_id: nodeId,
+      choice_index: choiceIndex,
+      choice_id: choiceId,
+      thinking_time_ms: thinkingTimeMs,
+    },
+    scenarioId,
+    dayId,
+  );
+}
+
+// Test-only: flush queue synchronously. Not called in production paths.
+export function flushAnalyticsForTest(): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (globalThis as any).__flushAnalyticsQueue?.();
 }

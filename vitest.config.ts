@@ -6,13 +6,9 @@ export default defineConfig({
     include: ['game/**/*.test.ts', 'lib/**/*.test.ts'],
     environment: 'jsdom',
     coverage: {
-      include: ['game/engine/**', 'game/systems/**', 'lib/game/**'],
+      include: ['game/engine/**', 'game/systems/**'],
       exclude: ['**/__tests__/**', '**/*.test.ts'],
-      thresholds: {
-        branches: { global: { min: 0 }, 'game/engine/**': 100, 'game/systems/**': 100 },
-        functions: { global: { min: 0 }, 'game/engine/**': 100, 'game/systems/**': 100 },
-        lines: { global: { min: 0 }, 'game/engine/**': 100, 'game/systems/**': 100 },
-      },
+      thresholds: { branches: 100, functions: 100, lines: 100 },
     },
   },
   resolve: {

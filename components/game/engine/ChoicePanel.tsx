@@ -2,6 +2,7 @@
 
 import { memo, useState, useEffect, type RefObject } from 'react';
 import { m, useReducedMotion } from 'framer-motion';
+import { useChoiceTimer } from '@/lib/game/hooks/useChoiceTimer';
 
 interface Choice {
   id: string;
@@ -10,9 +11,10 @@ interface Choice {
 
 interface ChoicePanelProps {
   choices: Choice[];
-  onSelect: (index: number) => void;
+  nodeId: string;
+  onSelect: (index: number, thinkingTimeMs: number) => void;
   multiSelect?: { count: number };
-  onMultiSelect?: (indices: number[]) => void;
+  onMultiSelect?: (indices: number[], thinkingTimeMs: number) => void;
   timerRemaining: number | null;
   timeLimit: number | undefined;
   /**
@@ -26,6 +28,7 @@ interface ChoicePanelProps {
 
 function ChoicePanel({
   choices,
+  nodeId,
   onSelect,
   multiSelect,
   onMultiSelect,
@@ -36,6 +39,7 @@ function ChoicePanel({
 }: ChoicePanelProps) {
   const shouldReduceMotion = useReducedMotion();
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const timer = useChoiceTimer(nodeId);
 
   // Reset selection when choices change (new choice node)
   const choiceIds = choices.map((c) => c.id).join(',');
@@ -55,7 +59,7 @@ function ChoicePanel({
 
   const handleConfirm = () => {
     if (multiSelect && onMultiSelect && selectedIndices.length === multiSelect.count) {
-      onMultiSelect(selectedIndices);
+      onMultiSelect(selectedIndices, timer.elapsedMs());
     }
   };
 
@@ -117,7 +121,7 @@ function ChoicePanel({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: shouldReduceMotion ? 0 : index * 0.05, duration: shouldReduceMotion ? 0 : 0.2 }}
               onClick={() =>
-                multiSelect ? handleToggle(index) : onSelect(index)
+                multiSelect ? handleToggle(index) : onSelect(index, timer.elapsedMs())
               }
               className={`
                 w-full text-left rounded-lg p-2 sm:p-4 text-white text-xs sm:text-base font-medium

@@ -13,6 +13,12 @@ import {
   pauseTimer as pauseTimerFn,
   resumeTimer as resumeTimerFn,
 } from '@/game/systems/TimerSystem';
+import {
+  trackNodeEntered,
+  trackNodeExited,
+  trackBackNavigation,
+  trackChoiceMadeWithTiming,
+} from '@/lib/game/analytics';
 
 interface GameStore {
   session: GameSessionState | null;
@@ -20,16 +26,31 @@ interface GameStore {
   currentNode: ScenarioNode | null;
 
   // Actions
-  startDay: (scenarioId: string, day: Day, previousState?: { lives: number; flags: Record<string, boolean> }) => void;
+  startDay: (
+    scenarioId: string,
+    day: Day,
+    previousState?: { lives: number; flags: Record<string, boolean> },
+    analyticsCtx?: { playerId: string | null },
+  ) => void;
   restoreSession: (day: Day, savedSession: GameSessionState) => void;
-  advanceDialogue: () => void;
-  selectChoice: (choiceIndex: number, playerState?: PlayerState) => void;
-  selectMultiChoices: (indices: number[], playerState?: PlayerState) => void;
+  advanceDialogue: (analyticsCtx?: { playerId: string | null; scenarioId: string; dayId: string }) => void;
+  selectChoice: (
+    choiceIndex: number,
+    thinkingTimeMs: number,
+    playerState?: PlayerState,
+    analyticsCtx?: { playerId: string | null; scenarioId: string; dayId: string },
+  ) => void;
+  selectMultiChoices: (
+    indices: number[],
+    thinkingTimeMs: number,
+    playerState?: PlayerState,
+    analyticsCtx?: { playerId: string | null; scenarioId: string; dayId: string },
+  ) => void;
   timerExpired: () => void;
   pauseTimer: () => void;
   resumeTimer: () => void;
   resetDay: (day: Day) => void;
-  goBack: () => void;
+  goBack: (analyticsCtx?: { playerId: string | null; scenarioId: string; dayId: string }) => void;
   canGoBack: () => boolean;
 }
 
@@ -92,7 +113,34 @@ function enterNode(
     currentSession = { ...currentSession, timerState: null };
   }
 
+  // Record when we entered this node (for node_exited analytics timing).
+  currentSession = { ...currentSession, currentNodeEnteredAt: now };
+
   return { node, session: currentSession };
+}
+
+/**
+ * Fires node_exited for the node we're leaving (if we have timing), then
+ * node_entered for the node we landed on. Called after every store-level
+ * transition — keeps analytics out of the pure engine code.
+ *
+ * Requires playerId on the analyticsCtx; if missing we silently skip
+ * (e.g. during SSR or before player is hydrated).
+ */
+function emitNodeTransitionAnalytics(args: {
+  playerId: string | null;
+  scenarioId: string;
+  dayId: string;
+  previousNodeId: string | null;
+  previousNodeEnteredAt: number | null;
+  newNodeId: string;
+}): void {
+  const { playerId, scenarioId, dayId, previousNodeId, previousNodeEnteredAt, newNodeId } = args;
+  if (!playerId) return;
+  if (previousNodeId && previousNodeEnteredAt != null) {
+    trackNodeExited(playerId, scenarioId, dayId, previousNodeId, Date.now() - previousNodeEnteredAt);
+  }
+  trackNodeEntered(playerId, scenarioId, dayId, newNodeId);
 }
 
 export const useGameStore = create<GameStore>()(
@@ -101,7 +149,7 @@ export const useGameStore = create<GameStore>()(
     currentDay: null,
     currentNode: null,
 
-    startDay: (scenarioId, day, previousState) => {
+    startDay: (scenarioId, day, previousState, analyticsCtx) => {
       const session = createInitialGameSession(scenarioId, day.dayNumber - 1, day.rootNodeId);
 
       let initialSession = session;
@@ -127,6 +175,17 @@ export const useGameStore = create<GameStore>()(
         state.currentDay = day;
         state.currentNode = entered.node;
       });
+
+      if (analyticsCtx?.playerId) {
+        emitNodeTransitionAnalytics({
+          playerId: analyticsCtx.playerId,
+          scenarioId,
+          dayId: day.id,
+          previousNodeId: null,
+          previousNodeEnteredAt: null,
+          newNodeId: entered.node.id,
+        });
+      }
     },
 
     // Restore a previously saved session (e.g. after page refresh).
@@ -143,7 +202,7 @@ export const useGameStore = create<GameStore>()(
       });
     },
 
-    advanceDialogue: () => {
+    advanceDialogue: (analyticsCtx) => {
       const { session, currentDay, currentNode } = get();
       if (!session || !currentDay || !currentNode) return;
 
@@ -171,9 +230,20 @@ export const useGameStore = create<GameStore>()(
         state.session = entered.session;
         state.currentNode = entered.node;
       });
+
+      if (analyticsCtx?.playerId) {
+        emitNodeTransitionAnalytics({
+          playerId: analyticsCtx.playerId,
+          scenarioId: analyticsCtx.scenarioId,
+          dayId: analyticsCtx.dayId,
+          previousNodeId: currentNode.id,
+          previousNodeEnteredAt: session.currentNodeEnteredAt,
+          newNodeId: entered.node.id,
+        });
+      }
     },
 
-    selectChoice: (choiceIndex, playerState) => {
+    selectChoice: (choiceIndex, thinkingTimeMs, playerState, analyticsCtx) => {
       const { session, currentDay, currentNode } = get();
       if (!session || !currentDay || !currentNode) return;
       if (currentNode.type !== 'choice') return;
@@ -190,9 +260,31 @@ export const useGameStore = create<GameStore>()(
         state.session = entered.session;
         state.currentNode = entered.node;
       });
+
+      if (analyticsCtx?.playerId) {
+        const choiceNode = currentNode as ChoiceNode;
+        const choice = choiceNode.choices[choiceIndex];
+        trackChoiceMadeWithTiming(
+          analyticsCtx.playerId,
+          analyticsCtx.scenarioId,
+          analyticsCtx.dayId,
+          currentNode.id,
+          choiceIndex,
+          choice.id,
+          thinkingTimeMs,
+        );
+        emitNodeTransitionAnalytics({
+          playerId: analyticsCtx.playerId,
+          scenarioId: analyticsCtx.scenarioId,
+          dayId: analyticsCtx.dayId,
+          previousNodeId: currentNode.id,
+          previousNodeEnteredAt: session.currentNodeEnteredAt,
+          newNodeId: entered.node.id,
+        });
+      }
     },
 
-    selectMultiChoices: (indices, playerState) => {
+    selectMultiChoices: (indices, thinkingTimeMs, playerState, analyticsCtx) => {
       const { session, currentDay, currentNode } = get();
       if (!session || !currentDay || !currentNode) return;
       if (currentNode.type !== 'choice') return;
@@ -206,6 +298,30 @@ export const useGameStore = create<GameStore>()(
         state.session = entered.session;
         state.currentNode = entered.node;
       });
+
+      if (analyticsCtx?.playerId) {
+        const choiceNode = currentNode as ChoiceNode;
+        for (const idx of indices) {
+          const choice = choiceNode.choices[idx];
+          trackChoiceMadeWithTiming(
+            analyticsCtx.playerId,
+            analyticsCtx.scenarioId,
+            analyticsCtx.dayId,
+            currentNode.id,
+            idx,
+            choice.id,
+            thinkingTimeMs,
+          );
+        }
+        emitNodeTransitionAnalytics({
+          playerId: analyticsCtx.playerId,
+          scenarioId: analyticsCtx.scenarioId,
+          dayId: analyticsCtx.dayId,
+          previousNodeId: currentNode.id,
+          previousNodeEnteredAt: session.currentNodeEnteredAt,
+          newNodeId: entered.node.id,
+        });
+      }
     },
 
     timerExpired: () => {
@@ -255,8 +371,8 @@ export const useGameStore = create<GameStore>()(
       });
     },
 
-    goBack: () => {
-      const { session, currentDay } = get();
+    goBack: (analyticsCtx) => {
+      const { session, currentDay, currentNode } = get();
       if (!session || !currentDay || session.nodeHistory.length === 0) return;
 
       const history = [...session.nodeHistory];
@@ -265,6 +381,16 @@ export const useGameStore = create<GameStore>()(
 
       // Only allow going back to dialogue/day_intro nodes
       if (node.type !== 'dialogue' && node.type !== 'day_intro') return;
+
+      if (analyticsCtx?.playerId && currentNode) {
+        trackBackNavigation(
+          analyticsCtx.playerId,
+          analyticsCtx.scenarioId,
+          analyticsCtx.dayId,
+          currentNode.id,
+          previous.nodeId,
+        );
+      }
 
       set((state) => {
         state.session = {

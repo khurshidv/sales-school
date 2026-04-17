@@ -480,6 +480,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
                 id: c.id,
                 text: c.text[lang],
               }))}
+              nodeId={node.id}
               onSelect={engine.selectChoice}
               multiSelect={(node as ChoiceNode).multiSelect}
               onMultiSelect={engine.selectMultiChoices}

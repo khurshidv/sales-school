@@ -99,6 +99,7 @@ export function useGameEngine(scenarioId: string) {
   const [flowState, setFlowState] = useState<GameFlowState>('idle');
   const [scenario, setScenario] = useState<Scenario | null>(null);
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
+  const currentDay = useGameStore((s) => s.currentDay);
   const [dayResults, setDayResults] = useState<DayResults | null>(null);
   const [finalResults, setFinalResults] = useState<FinalResults | null>(null);
   const [dayResultsHistory, setDayResultsHistory] = useState<DayResults[]>([]);
@@ -320,6 +321,13 @@ export function useGameEngine(scenarioId: string) {
     setFlowState('day_summary');
   }, [currentNode, flowState, scenario, currentDayIndex, scenarioId, session]);
 
+  // --- Analytics context ---
+
+  const analyticsCtx = useMemo(
+    () => ({ playerId: player?.id ?? null, scenarioId, dayId: currentDay?.id ?? '' }),
+    [player?.id, scenarioId, currentDay?.id],
+  );
+
   // --- Actions ---
 
   const startDay = useCallback(
@@ -336,10 +344,10 @@ export function useGameEngine(scenarioId: string) {
       transitioningRef.current = false;
 
       const prevState = dayIndex > 0 ? previousDayStateRef.current : undefined;
-      gsStartDay(scenarioId, day, prevState ?? undefined);
+      gsStartDay(scenarioId, day, prevState ?? undefined, { playerId: player?.id ?? null });
       setFlowState('day_intro');
     },
-    [scenario, scenarioId, gsStartDay],
+    [scenario, scenarioId, gsStartDay, player?.id],
   );
 
   const beginPlaying = useCallback(() => {
@@ -350,26 +358,26 @@ export function useGameEngine(scenarioId: string) {
     if (flowState !== 'playing') return;
     if (!currentNode) return;
     if (currentNode.type === 'dialogue' || currentNode.type === 'day_intro') {
-      gsAdvanceDialogue();
+      gsAdvanceDialogue(analyticsCtx);
     }
-  }, [flowState, currentNode, gsAdvanceDialogue]);
+  }, [flowState, currentNode, gsAdvanceDialogue, analyticsCtx]);
 
   const selectChoice = useCallback(
-    (index: number) => {
+    (index: number, thinkingTimeMs: number) => {
       if (flowState !== 'playing') return;
       eventBus.emit({ type: 'sound_requested', soundId: 'sfx_choice_select' });
-      gsSelectChoice(index, player ?? undefined);
+      gsSelectChoice(index, thinkingTimeMs, player ?? undefined, analyticsCtx);
     },
-    [flowState, gsSelectChoice, player],
+    [flowState, gsSelectChoice, player, analyticsCtx],
   );
 
   const selectMultiChoices = useCallback(
-    (indices: number[]) => {
+    (indices: number[], thinkingTimeMs: number) => {
       if (flowState !== 'playing') return;
       eventBus.emit({ type: 'sound_requested', soundId: 'sfx_choice_select' });
-      gsSelectMultiChoices(indices, player ?? undefined);
+      gsSelectMultiChoices(indices, thinkingTimeMs, player ?? undefined, analyticsCtx);
     },
-    [flowState, gsSelectMultiChoices, player],
+    [flowState, gsSelectMultiChoices, player, analyticsCtx],
   );
 
   const timerExpired = useCallback(() => {
@@ -450,8 +458,8 @@ export function useGameEngine(scenarioId: string) {
 
   const goBack = useCallback(() => {
     if (flowState !== 'playing') return;
-    gsGoBack();
-  }, [flowState, gsGoBack]);
+    gsGoBack(analyticsCtx);
+  }, [flowState, gsGoBack, analyticsCtx]);
 
   // canGoBack is derived: it depends on session state which re-renders the
   // hook, and gsCanGoBack is a stable ref that inspects the latest state.

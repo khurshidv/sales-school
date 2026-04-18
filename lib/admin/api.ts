@@ -1,6 +1,16 @@
 // Client-safe helpers. DO NOT import from queries-v2 or page-queries here —
 // those are server-only.
 
+import type {
+  DailyTrendRow,
+  UtmFunnelRow,
+  OfferFunnel,
+  Period,
+  BranchFlowRow,
+  NodeStat,
+  DropoffRow,
+} from './types-v2';
+
 export class AdminApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -22,8 +32,6 @@ export async function adminGet<T>(path: string, params?: Record<string, string |
   return res.json() as Promise<T>;
 }
 
-import type { DailyTrendRow, UtmFunnelRow, OfferFunnel, Period } from './types-v2';
-
 export interface OverviewPayload {
   trends: DailyTrendRow[];
   utm: UtmFunnelRow[];
@@ -32,4 +40,16 @@ export interface OverviewPayload {
 
 export function fetchOverview(period: Period): Promise<OverviewPayload> {
   return adminGet<OverviewPayload>('/api/admin/overview', { period });
+}
+
+export interface BranchPayload {
+  flows: BranchFlowRow[];
+  stats: NodeStat[];
+  dropoffs: DropoffRow[];
+}
+
+export function fetchBranch(params: {
+  scenarioId: string; dayId: string; period: Period;
+}): Promise<BranchPayload> {
+  return adminGet<BranchPayload>('/api/admin/branch', params);
 }

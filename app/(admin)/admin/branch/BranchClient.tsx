@@ -11,7 +11,7 @@ import SankeyChart from '@/components/admin/charts/SankeyChart';
 import BranchTree from '@/components/admin/charts/BranchTree';
 import ScenarioMap from '@/components/admin/charts/ScenarioMap';
 import { GitBranch, Network, TreePine } from 'lucide-react';
-import { getBranchFlow, getNodeStats, getDropoffZones, periodToRange } from '@/lib/admin/queries-v2';
+import { fetchBranch } from '@/lib/admin/api';
 import { buildSankeyData } from '@/lib/admin/branch/buildSankeyData';
 import { buildTreeData } from '@/lib/admin/branch/buildTreeData';
 import { buildGraphData } from '@/lib/admin/branch/buildGraphData';
@@ -34,14 +34,13 @@ export default function BranchClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const range = periodToRange(period);
-    Promise.all([
-      getBranchFlow({ scenarioId, dayId, ...range }),
-      getNodeStats({ scenarioId, dayId, ...range }),
-      getDropoffZones({ scenarioId, ...range }),
-    ]).then(([f, s, d]) => {
+    fetchBranch({ scenarioId, dayId, period }).then((res) => {
       if (cancelled) return;
-      setFlows(f); setStats(s); setDropoffs(d); setLoading(false);
+      setFlows(res.flows); setStats(res.stats); setDropoffs(res.dropoffs); setLoading(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[branch] fetch failed', err);
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [scenarioId, dayId, period]);

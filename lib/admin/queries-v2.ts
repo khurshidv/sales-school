@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
-import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, Period, DateRange, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow } from './types-v2';
+import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, Period, DateRange, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow, PlayerJourneyEvent } from './types-v2';
 
 interface ScenarioRange {
   scenarioId: string;
@@ -187,7 +187,7 @@ export async function getOfferBreakdownByUtm(args: DateRangeOnly): Promise<Offer
 }
 
 import type {
-  PlayerJourneyEvent, PlayerSummary, CompletedDay, EnrichedPlayer,
+  PlayerSummary, CompletedDay, EnrichedPlayer,
 } from './types-v2';
 
 // -- Player Journey --------------------------------------------------------
@@ -361,4 +361,69 @@ export async function getLeaderboardEnriched(limit = 50): Promise<LeaderboardIte
     best_rating: bestRating(ratingsByPlayer[r.player_id] ?? []),
     updated_at: r.updated_at,
   }));
+}
+
+// -- Realtime --------------------------------------------------------------
+
+export interface RealtimeKpis {
+  active: number;
+  today: number;
+  completed_today: number;
+}
+
+const ZERO_KPIS: RealtimeKpis = { active: 0, today: 0, completed_today: 0 };
+
+export async function getRealtimeKpis(): Promise<RealtimeKpis> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_realtime_kpis');
+  if (error || !data) {
+    if (error) console.warn('[queries-v2] get_realtime_kpis', error.message);
+    return ZERO_KPIS;
+  }
+  const d = data as RealtimeKpis;
+  return {
+    active: Number(d.active) || 0,
+    today: Number(d.today) || 0,
+    completed_today: Number(d.completed_today) || 0,
+  };
+}
+
+export interface RecentGameEvent extends PlayerJourneyEvent {
+  player_id: string;
+  display_name: string | null;
+}
+
+export async function getRecentGameEvents(minutes = 60): Promise<RecentGameEvent[]> {
+  const admin = createAdminClient();
+  const since = new Date(Date.now() - minutes * 60_000).toISOString();
+  const { data, error } = await admin
+    .from('game_events')
+    .select('event_type, event_data, scenario_id, day_id, player_id, created_at, players(display_name)')
+    .gte('created_at', since)
+    .order('created_at', { ascending: false })
+    .limit(500);
+  if (error || !data) {
+    if (error) console.warn('[queries-v2] getRecentGameEvents', error.message);
+    return [];
+  }
+  return data.map((r: {
+    event_type: string;
+    event_data: Record<string, unknown> | null;
+    scenario_id: string | null;
+    day_id: string | null;
+    player_id: string;
+    created_at: string;
+    players: { display_name: string } | { display_name: string }[] | null;
+  }) => {
+    const playerObj = Array.isArray(r.players) ? r.players[0] : r.players;
+    return {
+      event_type: r.event_type,
+      event_data: r.event_data ?? {},
+      scenario_id: r.scenario_id,
+      day_id: r.day_id,
+      player_id: r.player_id,
+      created_at: r.created_at,
+      display_name: playerObj?.display_name ?? null,
+    };
+  });
 }

@@ -17,6 +17,7 @@ import {
   getOfferBreakdownByRating,
   getOfferBreakdownByUtm,
   getPlayerJourneyData,
+  getRealtimeKpis,
 } from '@/lib/admin/queries-v2';
 
 describe('queries-v2', () => {
@@ -150,5 +151,20 @@ describe('queries-v2', () => {
   it('getPlayerJourneyData returns [] on error', async () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: 'boom' } });
     expect(await getPlayerJourneyData('p1')).toEqual([]);
+  });
+
+  // -- Phase 5 realtime queries --------------------------------------------
+
+  it('getRealtimeKpis returns shape with active/today/completed counts', async () => {
+    mockRpc.mockResolvedValueOnce({ data: { active: 5, today: 50, completed_today: 12 }, error: null });
+    const k = await getRealtimeKpis();
+    expect(mockRpc).toHaveBeenCalledWith('get_realtime_kpis');
+    expect(k).toEqual({ active: 5, today: 50, completed_today: 12 });
+  });
+
+  it('getRealtimeKpis returns zeros on error', async () => {
+    mockRpc.mockResolvedValueOnce({ data: null, error: { message: 'boom' } });
+    const k = await getRealtimeKpis();
+    expect(k).toEqual({ active: 0, today: 0, completed_today: 0 });
   });
 });

@@ -6,7 +6,7 @@ import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import LiveFeed from '@/components/admin/LiveFeed';
 import ActivityAreaChart from '@/components/admin/charts/ActivityAreaChart';
-import { getRealtimeKpis, getRecentGameEvents, type RealtimeKpis, type RecentGameEvent } from '@/lib/admin/queries-v2';
+import { fetchRealtimeKpis, fetchRecentEvents, type RealtimeKpis, type RecentGameEvent } from '@/lib/admin/api';
 import { useRealtimeGameEvents } from '@/lib/admin/hooks/useRealtimeGameEvents';
 import { detectAutoInsights } from '@/lib/admin/realtime/detectAutoInsights';
 import { buildActivitySeries } from '@/lib/admin/realtime/buildActivitySeries';
@@ -21,10 +21,17 @@ export default function RealtimeClient() {
 
   useEffect(() => {
     let cancelled = false;
-    const fetchAll = async () => {
-      const [k, ev] = await Promise.all([getRealtimeKpis(), getRecentGameEvents(60)]);
-      if (cancelled) return;
-      setKpis(k); setSnapshot(ev); setLoading(false);
+    const fetchAll = () => {
+      Promise.all([fetchRealtimeKpis(), fetchRecentEvents(60)])
+        .then(([k, ev]) => {
+          if (cancelled) return;
+          setKpis(k); setSnapshot(ev.events); setLoading(false);
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          console.error('[RealtimeClient] fetch failed', err);
+          setLoading(false);
+        });
     };
     fetchAll();
     const interval = setInterval(fetchAll, REFRESH_MS);

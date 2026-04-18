@@ -29,6 +29,24 @@ export interface LeaderboardItem {
   updated_at: string;
 }
 
+// NOTE: RealtimeKpis and RecentGameEvent are defined in server-only queries-v2.ts.
+// Mirrored here so the client bundle never reaches into server code.
+export interface RealtimeKpis {
+  active: number;
+  today: number;
+  completed_today: number;
+}
+
+export interface RecentGameEvent {
+  event_type: string;
+  event_data: Record<string, unknown>;
+  scenario_id: string | null;
+  day_id: string | null;
+  created_at: string;
+  player_id: string;
+  display_name: string | null;
+}
+
 export class AdminApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -138,4 +156,17 @@ export interface PlayerPayload {
 
 export function fetchPlayer(playerId: string): Promise<PlayerPayload> {
   return adminGet<PlayerPayload>(`/api/admin/player/${encodeURIComponent(playerId)}`);
+}
+
+export function fetchRealtimeKpis(): Promise<RealtimeKpis> {
+  return adminGet<RealtimeKpis>('/api/admin/realtime/kpis');
+}
+
+export interface RecentEventsPayload {
+  events: RecentGameEvent[];
+}
+
+// `minutes` = time window (not row count). Server clamps 1..1440. Default 60.
+export function fetchRecentEvents(minutes = 60): Promise<RecentEventsPayload> {
+  return adminGet<RecentEventsPayload>('/api/admin/realtime/events', { minutes });
 }

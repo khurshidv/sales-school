@@ -12,6 +12,9 @@ import type {
   DropoffRow,
   EngagementBlob,
   EnrichedPlayer,
+  PlayerSummary,
+  PlayerJourneyEvent,
+  CompletedDay,
 } from './types-v2';
 
 // NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
@@ -125,4 +128,14 @@ export interface LeaderboardPayload {
 
 export function fetchLeaderboard(limit = 100): Promise<LeaderboardPayload> {
   return adminGet<LeaderboardPayload>('/api/admin/leaderboard', { limit });
+}
+
+export interface PlayerPayload {
+  summary: PlayerSummary | null;
+  journey: PlayerJourneyEvent[];
+  completedDays: CompletedDay[];
+}
+
+export function fetchPlayer(playerId: string): Promise<PlayerPayload> {
+  return adminGet<PlayerPayload>(`/api/admin/player/${encodeURIComponent(playerId)}`);
 }

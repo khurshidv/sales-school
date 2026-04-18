@@ -8,7 +8,7 @@ import PerDayBars from '@/components/admin/charts/PerDayBars';
 import InsightCard from '@/components/admin/InsightCard';
 import PlayerNotes from '@/components/admin/PlayerNotes';
 import DayReplayModal from '@/components/admin/DayReplayModal';
-import { getPlayerSummary, getPlayerJourneyData, getCompletedDaysForPlayer } from '@/lib/admin/queries-v2';
+import { fetchPlayer } from '@/lib/admin/api';
 import { parseJourney } from '@/lib/admin/player/parseJourney';
 import { deriveStrengthsWeaknesses } from '@/lib/admin/player/deriveStrengthsWeaknesses';
 import type { PlayerSummary, PlayerJourneyEvent, CompletedDay } from '@/lib/admin/types-v2';
@@ -94,15 +94,17 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true); setNotFound(false);
-    Promise.all([
-      getPlayerSummary(playerId),
-      getPlayerJourneyData(playerId),
-      getCompletedDaysForPlayer(playerId),
-    ]).then(([p, e, c]) => {
-      if (cancelled) return;
-      if (!p) setNotFound(true);
-      setPlayer(p); setEvents(e); setCompleted(c); setLoading(false);
-    });
+    fetchPlayer(playerId)
+      .then((res) => {
+        if (cancelled) return;
+        if (!res.summary) setNotFound(true);
+        setPlayer(res.summary); setEvents(res.journey); setCompleted(res.completedDays); setLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('[PlayerClient] fetchPlayer failed', err);
+        setLoading(false);
+      });
     return () => { cancelled = true; };
   }, [playerId]);
 

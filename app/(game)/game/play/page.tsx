@@ -445,7 +445,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // light-theme container; no RotateDevice (the screen enforces
   // portrait, not landscape).
   if (engine.flowState === 'school_cta') {
-    return <SchoolPitch onDismiss={handleExit} />;
+    return <SchoolPitch onDismiss={handleExit} playerId={engine.player?.id ?? null} />;
   }
 
   // Main gameplay

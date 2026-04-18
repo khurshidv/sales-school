@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
-import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, Period, DateRange, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow, PlayerJourneyEvent } from './types-v2';
+import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow, PlayerJourneyEvent } from './types-v2';
 
 interface ScenarioRange {
   scenarioId: string;
@@ -87,12 +87,7 @@ export async function getEngagementIndexRaw(args: ScenarioRange): Promise<Engage
   return blob ?? { completion_rate: 0, avg_thinking_time_ms: null, replay_rate: 0 };
 }
 
-export function periodToRange(period: Period, now: Date = new Date()): DateRange {
-  if (period === 'all') return { from: null, to: null };
-  const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
-  const from = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-  return { from: from.toISOString(), to: null };
-}
+export { periodToRange } from './period';
 
 // ---- Marketing (Phase 3) ----
 

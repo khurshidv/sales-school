@@ -5,6 +5,7 @@ import type {
   DailyTrendRow,
   UtmFunnelRow,
   OfferFunnel,
+  OfferBreakdownRow,
   Period,
   BranchFlowRow,
   NodeStat,
@@ -76,4 +77,14 @@ export interface FunnelPayload { utm: UtmFunnelRow[] }
 
 export function fetchFunnel(period: Period): Promise<FunnelPayload> {
   return adminGet<FunnelPayload>('/api/admin/funnel', { period });
+}
+
+export interface OfferPayload {
+  funnel: OfferFunnel;
+  byRating: OfferBreakdownRow[];
+  byUtm: OfferBreakdownRow[];
+}
+
+export function fetchOffer(period: Period): Promise<OfferPayload> {
+  return adminGet<OfferPayload>('/api/admin/offer', { period });
 }

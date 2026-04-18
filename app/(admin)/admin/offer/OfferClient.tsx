@@ -6,7 +6,7 @@ import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
-import { getOfferFunnelData, getOfferBreakdownByRating, getOfferBreakdownByUtm, periodToRange } from '@/lib/admin/queries-v2';
+import { fetchOffer } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import type { OfferFunnel, OfferBreakdownRow, Period } from '@/lib/admin/types-v2';
 
@@ -20,14 +20,13 @@ export default function OfferClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const range = periodToRange(period);
-    Promise.all([
-      getOfferFunnelData(range),
-      getOfferBreakdownByRating(range),
-      getOfferBreakdownByUtm(range),
-    ]).then(([f, r, u]) => {
+    fetchOffer(period).then((res) => {
       if (cancelled) return;
-      setFunnel(f); setByRating(r); setByUtm(u); setLoading(false);
+      setFunnel(res.funnel); setByRating(res.byRating); setByUtm(res.byUtm); setLoading(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[offer] fetch failed', err);
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [period]);

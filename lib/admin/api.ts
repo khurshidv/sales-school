@@ -71,3 +71,9 @@ export function fetchEngagement(params: {
 }): Promise<EngagementPayload> {
   return adminGet<EngagementPayload>('/api/admin/engagement', params);
 }
+
+export interface FunnelPayload { utm: UtmFunnelRow[] }
+
+export function fetchFunnel(period: Period): Promise<FunnelPayload> {
+  return adminGet<FunnelPayload>('/api/admin/funnel', { period });
+}

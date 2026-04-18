@@ -5,7 +5,7 @@ import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DonutChart from '@/components/admin/charts/DonutChart';
-import { getUtmFunnel, periodToRange } from '@/lib/admin/queries-v2';
+import { fetchFunnel } from '@/lib/admin/api';
 import { computeUtmRollup } from '@/lib/admin/marketing/computeUtmRollup';
 import type { UtmFunnelRow, Period } from '@/lib/admin/types-v2';
 
@@ -17,9 +17,13 @@ export default function FunnelClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    getUtmFunnel(periodToRange(period)).then((r) => {
+    fetchFunnel(period).then((res) => {
       if (cancelled) return;
-      setRows(r); setLoading(false);
+      setRows(res.utm); setLoading(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[funnel] fetch failed', err);
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [period]);

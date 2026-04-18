@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
-import { getLeads, getLeadCounts } from '@/lib/admin/page-queries';
+import { fetchLeads, fetchLeadCounts } from '@/lib/admin/api';
 import type { Lead } from '@/lib/admin/types';
 
 const SOURCE_TABS: Array<{ slug: string | null; label: string }> = [
@@ -33,18 +33,23 @@ export default function LeadsClient() {
     let cancelled = false;
     setLoading(true);
     Promise.all([
-      getLeads({
+      fetchLeads({
         slug: sourceFilter ?? undefined,
         search: search || undefined,
         limit: 100,
         sortBy: 'created_at',
         sortAsc: false,
       }),
-      getLeadCounts(),
-    ]).then(([res, c]) => {
-      if (cancelled) return;
-      setLeads(res.leads); setTotal(res.total); setCounts(c); setLoading(false);
-    });
+      fetchLeadCounts(),
+    ])
+      .then(([res, c]) => {
+        if (cancelled) return;
+        setLeads(res.leads); setTotal(res.total); setCounts(c); setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLeads([]); setTotal(0); setCounts({}); setLoading(false);
+      });
     return () => { cancelled = true; };
   }, [search, sourceFilter]);
 

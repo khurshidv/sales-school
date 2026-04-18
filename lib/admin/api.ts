@@ -16,7 +16,7 @@ import type {
   PlayerJourneyEvent,
   CompletedDay,
 } from './types-v2';
-import type { PageSummary, PageBreakdowns } from './types';
+import type { PageSummary, PageBreakdowns, Lead } from './types';
 
 // NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
 // shape here so the client bundle never reaches into server code.
@@ -192,4 +192,39 @@ export function fetchPageAnalytics(
   params?: { from?: string; to?: string },
 ): Promise<PageAnalyticsPayload> {
   return adminGet<PageAnalyticsPayload>(`/api/admin/pages/${encodeURIComponent(slug)}`, params);
+}
+
+// ─── Leads ───
+
+export interface LeadsPayload {
+  leads: Lead[];
+  total: number;
+}
+
+export interface LeadsOptions {
+  slug?: string;
+  limit?: number;
+  offset?: number;
+  search?: string;
+  sortBy?: string;
+  sortAsc?: boolean;
+  from?: string;
+  to?: string;
+}
+
+export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
+  return adminGet<LeadsPayload>('/api/admin/leads', {
+    slug: options.slug,
+    limit: options.limit,
+    offset: options.offset,
+    search: options.search,
+    sortBy: options.sortBy,
+    sortAsc: options.sortAsc != null ? String(options.sortAsc) : undefined,
+    from: options.from,
+    to: options.to,
+  });
+}
+
+export function fetchLeadCounts(): Promise<Record<string, number>> {
+  return adminGet<Record<string, number>>('/api/admin/leads/counts');
 }

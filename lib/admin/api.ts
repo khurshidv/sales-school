@@ -9,6 +9,7 @@ import type {
   BranchFlowRow,
   NodeStat,
   DropoffRow,
+  EngagementBlob,
 } from './types-v2';
 
 export class AdminApiError extends Error {
@@ -58,4 +59,15 @@ export interface DropoffPayload { dropoffs: DropoffRow[] }
 
 export function fetchDropoff(params: { scenarioId: string; period: Period }): Promise<DropoffPayload> {
   return adminGet<DropoffPayload>('/api/admin/dropoff', params);
+}
+
+export interface EngagementPayload {
+  engagement: EngagementBlob;
+  stats: NodeStat[];
+}
+
+export function fetchEngagement(params: {
+  scenarioId: string; dayId: string; period: Period;
+}): Promise<EngagementPayload> {
+  return adminGet<EngagementPayload>('/api/admin/engagement', params);
 }

@@ -8,7 +8,7 @@ import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
-import { getEngagementIndexRaw, getNodeStats, periodToRange } from '@/lib/admin/queries-v2';
+import { fetchEngagement } from '@/lib/admin/api';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import type { EngagementBlob, NodeStat, Period } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
@@ -25,13 +25,13 @@ export default function EngagementClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const range = periodToRange(period);
-    Promise.all([
-      getEngagementIndexRaw({ scenarioId, ...range }),
-      getNodeStats({ scenarioId, dayId, ...range }),
-    ]).then(([b, s]) => {
+    fetchEngagement({ scenarioId, dayId, period }).then((res) => {
       if (cancelled) return;
-      setBlob(b); setStats(s); setLoading(false);
+      setBlob(res.engagement); setStats(res.stats); setLoading(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[engagement] fetch failed', err);
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [scenarioId, dayId, period]);

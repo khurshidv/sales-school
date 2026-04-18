@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
+import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
 import MedalBadge from '@/components/admin/charts/MedalBadge';
 import { getLeaderboardEnriched, type LeaderboardItem } from '@/lib/admin/queries-v2';
@@ -32,6 +33,7 @@ export default function LeaderboardClient() {
       <PageHeader
         title="Leaderboard"
         subtitle="Топ игроков по очкам — обновляется в реальном времени."
+        actions={<ExportCsvButton type="leaderboard" />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>

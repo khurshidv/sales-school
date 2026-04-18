@@ -80,7 +80,7 @@ export default function PlayerProfile({
             <MessageCircle size={14} /> Telegram
           </a>
           {onReplay && (
-            <button onClick={onReplay} className="admin-btn" style={{ opacity: 0.5, cursor: 'not-allowed' }} disabled>
+            <button onClick={onReplay} className="admin-btn">
               <PlayCircle size={14} /> Replay
             </button>
           )}

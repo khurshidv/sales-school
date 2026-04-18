@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
+import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
 import { getPlayersEnriched } from '@/lib/admin/queries-v2';
 import type { EnrichedPlayer } from '@/lib/admin/types-v2';
@@ -49,6 +50,7 @@ export default function ParticipantsClient() {
       <PageHeader
         title="Participants"
         subtitle="Все игроки с фильтрами и быстрым переходом к индивидуальному пути."
+        actions={<ExportCsvButton type="participants" />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>

@@ -6,6 +6,8 @@ import PlayerProfile from '@/components/admin/PlayerProfile';
 import Timeline, { type TimelineItem, type TimelineTone } from '@/components/admin/Timeline';
 import PerDayBars from '@/components/admin/charts/PerDayBars';
 import InsightCard from '@/components/admin/InsightCard';
+import PlayerNotes from '@/components/admin/PlayerNotes';
+import DayReplayModal from '@/components/admin/DayReplayModal';
 import { getPlayerSummary, getPlayerJourneyData, getCompletedDaysForPlayer } from '@/lib/admin/queries-v2';
 import { parseJourney } from '@/lib/admin/player/parseJourney';
 import { deriveStrengthsWeaknesses } from '@/lib/admin/player/deriveStrengthsWeaknesses';
@@ -87,6 +89,7 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
   const [completed, setCompleted] = useState<CompletedDay[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [replayDayId, setReplayDayId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -151,6 +154,7 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
         bestRating={bestRating}
         daysCompleted={completed.length}
         totalSessions={journey.totalSessions}
+        onReplay={journey.days.length > 0 ? () => setReplayDayId(journey.days[journey.days.length - 1].day_id) : undefined}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 12 }}>
@@ -194,8 +198,24 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
               body={insight.recommendationReason}
             />
           )}
+
+          <div className="admin-card" style={{ padding: 16 }}>
+            <PlayerNotes playerId={playerId} initial={player.admin_notes ?? ''} />
+          </div>
         </div>
       </div>
+
+      {replayDayId && (() => {
+        const dayObj = journey.days.find((d) => d.day_id === replayDayId);
+        if (!dayObj) return null;
+        return (
+          <DayReplayModal
+            events={dayObj.events}
+            dayLabel={dayObj.day_id.replace('day', 'День ')}
+            onClose={() => setReplayDayId(null)}
+          />
+        );
+      })()}
     </div>
   );
 }

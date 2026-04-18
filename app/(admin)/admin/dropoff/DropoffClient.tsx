@@ -7,7 +7,7 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import DropoffBars from '@/components/admin/charts/DropoffBars';
-import { getDropoffZones, periodToRange } from '@/lib/admin/queries-v2';
+import { fetchDropoff } from '@/lib/admin/api';
 import type { DropoffRow, Period } from '@/lib/admin/types-v2';
 import { SCENARIOS } from '@/lib/admin/types-v2';
 
@@ -20,10 +20,13 @@ export default function DropoffClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const range = periodToRange(period);
-    getDropoffZones({ scenarioId, ...range }).then((r) => {
+    fetchDropoff({ scenarioId, period }).then((res) => {
       if (cancelled) return;
-      setRows(r); setLoading(false);
+      setRows(res.dropoffs); setLoading(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[dropoff] fetch failed', err);
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [scenarioId, period]);

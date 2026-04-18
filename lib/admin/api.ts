@@ -53,3 +53,9 @@ export function fetchBranch(params: {
 }): Promise<BranchPayload> {
   return adminGet<BranchPayload>('/api/admin/branch', params);
 }
+
+export interface DropoffPayload { dropoffs: DropoffRow[] }
+
+export function fetchDropoff(params: { scenarioId: string; period: Period }): Promise<DropoffPayload> {
+  return adminGet<DropoffPayload>('/api/admin/dropoff', params);
+}

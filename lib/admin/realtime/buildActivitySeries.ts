@@ -1,4 +1,4 @@
-import type { RecentGameEvent } from '@/lib/admin/queries-v2';
+import type { RecentGameEvent } from '@/lib/admin/api';
 
 export interface ActivityBucket {
   bucket: string;

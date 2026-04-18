@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildActivitySeries } from '@/lib/admin/realtime/buildActivitySeries';
-import type { RecentGameEvent } from '@/lib/admin/queries-v2';
+import type { RecentGameEvent } from '@/lib/admin/api';
 
 const ev = (player_id: string, minutes_ago: number): RecentGameEvent => ({
   event_type: 'choice_made',

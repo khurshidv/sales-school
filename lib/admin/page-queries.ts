@@ -1,3 +1,4 @@
+import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { normalizeFrom, normalizeTo } from './formatters';
 import type { PageSummary, PageBreakdowns, Lead } from './types';

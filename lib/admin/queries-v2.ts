@@ -1,3 +1,4 @@
+import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow, PlayerJourneyEvent } from './types-v2';
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import type { RecentGameEvent } from '@/lib/admin/queries-v2';
+import type { RecentGameEvent } from '@/lib/admin/api';
 
 export interface UseRealtimeGameEventsArgs {
   enabled?: boolean;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { detectAutoInsights } from '@/lib/admin/realtime/detectAutoInsights';
-import type { RecentGameEvent } from '@/lib/admin/queries-v2';
+import type { RecentGameEvent } from '@/lib/admin/api';
 
 const ev = (
   event_type: string,

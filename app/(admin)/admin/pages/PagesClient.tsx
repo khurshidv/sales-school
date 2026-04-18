@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
-import { getPagesSummary } from '@/lib/admin/page-queries';
-import { periodToRange } from '@/lib/admin/queries-v2';
+import { fetchPages } from '@/lib/admin/api';
+import { periodToRange } from '@/lib/admin/period';
 import type { PageSummary } from '@/lib/admin/types';
 import type { Period } from '@/lib/admin/types-v2';
 
@@ -71,12 +71,17 @@ export default function PagesClient() {
     let cancelled = false;
     setLoading(true);
     const range = periodToRange(period);
-    const from = range.from ? new Date(range.from) : new Date(Date.now() - 30 * 86400_000);
-    const to = range.to ? new Date(range.to) : new Date();
-    getPagesSummary(from, to).then((p) => {
-      if (cancelled) return;
-      setPages(p); setLoading(false);
-    });
+    fetchPages({ from: range.from ?? undefined, to: range.to ?? undefined })
+      .then((res) => {
+        if (cancelled) return;
+        setPages(res.pages);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setPages([]);
+        setLoading(false);
+      });
     return () => { cancelled = true; };
   }, [period]);
 

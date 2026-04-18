@@ -16,6 +16,7 @@ import type {
   PlayerJourneyEvent,
   CompletedDay,
 } from './types-v2';
+import type { PageSummary, PageBreakdowns } from './types';
 
 // NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
 // shape here so the client bundle never reaches into server code.
@@ -169,4 +170,26 @@ export interface RecentEventsPayload {
 // `minutes` = time window (not row count). Server clamps 1..1440. Default 60.
 export function fetchRecentEvents(minutes = 60): Promise<RecentEventsPayload> {
   return adminGet<RecentEventsPayload>('/api/admin/realtime/events', { minutes });
+}
+
+// ─── Pages Analytics ───
+
+export interface PagesListPayload {
+  pages: PageSummary[];
+}
+
+export interface PageAnalyticsPayload {
+  summary: PageSummary;
+  breakdowns: PageBreakdowns;
+}
+
+export function fetchPages(params?: { from?: string; to?: string }): Promise<PagesListPayload> {
+  return adminGet<PagesListPayload>('/api/admin/pages', params);
+}
+
+export function fetchPageAnalytics(
+  slug: string,
+  params?: { from?: string; to?: string },
+): Promise<PageAnalyticsPayload> {
+  return adminGet<PageAnalyticsPayload>(`/api/admin/pages/${encodeURIComponent(slug)}`, params);
 }

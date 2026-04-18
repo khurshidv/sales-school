@@ -1,0 +1,23 @@
+// Client-safe helpers. DO NOT import from queries-v2 or page-queries here —
+// those are server-only.
+
+export class AdminApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+  }
+}
+
+export async function adminGet<T>(path: string, params?: Record<string, string | number | null | undefined>): Promise<T> {
+  const qs = params
+    ? '?' + Object.entries(params)
+        .filter(([, v]) => v != null && v !== '')
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(String(v))}`)
+        .join('&')
+    : '';
+  const res = await fetch(`${path}${qs}`, { cache: 'no-store' });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new AdminApiError(res.status, body.error ?? res.statusText);
+  }
+  return res.json() as Promise<T>;
+}

@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
-import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, Period, DateRange } from './types-v2';
+import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, Period, DateRange, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow } from './types-v2';
 
 interface ScenarioRange {
   scenarioId: string;
@@ -92,4 +92,96 @@ export function periodToRange(period: Period, now: Date = new Date()): DateRange
   const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
   const from = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
   return { from: from.toISOString(), to: null };
+}
+
+// ---- Marketing (Phase 3) ----
+
+interface DateRangeOnly {
+  from: string | null;
+  to: string | null;
+}
+
+export async function getUtmFunnel(args: DateRangeOnly): Promise<UtmFunnelRow[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_utm_funnel', { p_from: args.from, p_to: args.to });
+  if (error) {
+    console.warn('[queries-v2] get_utm_funnel', error.message);
+    return [];
+  }
+  return (data ?? []).map((r: {
+    utm_source: string; visitors: string | number; registered: string | number;
+    started: string | number; completed: string | number;
+  }) => ({
+    utm_source: r.utm_source,
+    visitors: Number(r.visitors),
+    registered: Number(r.registered),
+    started: Number(r.started),
+    completed: Number(r.completed),
+  }));
+}
+
+export async function getDailyTrends(args: DateRangeOnly): Promise<DailyTrendRow[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_daily_trends', { p_from: args.from, p_to: args.to });
+  if (error) {
+    console.warn('[queries-v2] get_daily_trends', error.message);
+    return [];
+  }
+  return (data ?? []).map((r: {
+    bucket_date: string; registered: string | number;
+    game_started: string | number; game_completed: string | number;
+  }) => ({
+    bucket_date: r.bucket_date,
+    registered: Number(r.registered),
+    game_started: Number(r.game_started),
+    game_completed: Number(r.game_completed),
+  }));
+}
+
+const ZERO_OFFER_FUNNEL: OfferFunnel = {
+  game_completed: 0, offer_view: 0, offer_cta_click: 0, offer_conversion: 0,
+};
+
+export async function getOfferFunnelData(args: DateRangeOnly): Promise<OfferFunnel> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_offer_funnel', { p_from: args.from, p_to: args.to });
+  if (error) {
+    console.warn('[queries-v2] get_offer_funnel', error.message);
+    return ZERO_OFFER_FUNNEL;
+  }
+  if (!data) return ZERO_OFFER_FUNNEL;
+  return {
+    game_completed: Number((data as OfferFunnel).game_completed) || 0,
+    offer_view: Number((data as OfferFunnel).offer_view) || 0,
+    offer_cta_click: Number((data as OfferFunnel).offer_cta_click) || 0,
+    offer_conversion: Number((data as OfferFunnel).offer_conversion) || 0,
+  };
+}
+
+export async function getOfferBreakdownByRating(args: DateRangeOnly): Promise<OfferBreakdownRow[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_offer_breakdown_by_rating', { p_from: args.from, p_to: args.to });
+  if (error) {
+    console.warn('[queries-v2] get_offer_breakdown_by_rating', error.message);
+    return [];
+  }
+  return (data ?? []).map((r: { rating: string; views: string | number; clicks: string | number }) => ({
+    segment: r.rating,
+    views: Number(r.views),
+    clicks: Number(r.clicks),
+  }));
+}
+
+export async function getOfferBreakdownByUtm(args: DateRangeOnly): Promise<OfferBreakdownRow[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_offer_breakdown_by_utm', { p_from: args.from, p_to: args.to });
+  if (error) {
+    console.warn('[queries-v2] get_offer_breakdown_by_utm', error.message);
+    return [];
+  }
+  return (data ?? []).map((r: { utm_source: string; views: string | number; clicks: string | number }) => ({
+    segment: r.utm_source,
+    views: Number(r.views),
+    clicks: Number(r.clicks),
+  }));
 }

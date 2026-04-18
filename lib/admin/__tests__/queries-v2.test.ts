@@ -11,6 +11,11 @@ import {
   getDropoffZones,
   getEngagementIndexRaw,
   periodToRange,
+  getUtmFunnel,
+  getDailyTrends,
+  getOfferFunnelData,
+  getOfferBreakdownByRating,
+  getOfferBreakdownByUtm,
 } from '@/lib/admin/queries-v2';
 
 describe('queries-v2', () => {
@@ -60,5 +65,68 @@ describe('queries-v2', () => {
 
   it('periodToRange("all") returns nulls', () => {
     expect(periodToRange('all', new Date())).toEqual({ from: null, to: null });
+  });
+
+  // -- Phase 3 marketing queries -------------------------------------------
+
+  it('getUtmFunnel coerces all bigint columns to number', async () => {
+    mockRpc.mockResolvedValue({
+      data: [
+        { utm_source: 'instagram', visitors: '50', registered: '50', started: '40', completed: '20' },
+      ],
+      error: null,
+    });
+    const rows = await getUtmFunnel({ from: null, to: null });
+    expect(mockRpc).toHaveBeenCalledWith('get_utm_funnel', { p_from: null, p_to: null });
+    expect(rows[0]).toEqual({
+      utm_source: 'instagram', visitors: 50, registered: 50, started: 40, completed: 20,
+    });
+  });
+
+  it('getDailyTrends preserves date strings and coerces counts', async () => {
+    mockRpc.mockResolvedValue({
+      data: [{ bucket_date: '2026-04-10', registered: '5', game_started: '3', game_completed: '2' }],
+      error: null,
+    });
+    const rows = await getDailyTrends({ from: null, to: null });
+    expect(rows[0]).toEqual({
+      bucket_date: '2026-04-10', registered: 5, game_started: 3, game_completed: 2,
+    });
+  });
+
+  it('getOfferFunnelData coerces all 4 step counts and defaults zeros', async () => {
+    mockRpc.mockResolvedValue({
+      data: { game_completed: 10, offer_view: 8, offer_cta_click: 3, offer_conversion: 0 },
+      error: null,
+    });
+    const f = await getOfferFunnelData({ from: null, to: null });
+    expect(f).toEqual({ game_completed: 10, offer_view: 8, offer_cta_click: 3, offer_conversion: 0 });
+  });
+
+  it('getOfferFunnelData returns zeros when data is null', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: null });
+    const f = await getOfferFunnelData({ from: null, to: null });
+    expect(f).toEqual({ game_completed: 0, offer_view: 0, offer_cta_click: 0, offer_conversion: 0 });
+  });
+
+  it('getOfferBreakdownByRating renames rating → segment', async () => {
+    mockRpc.mockResolvedValue({
+      data: [{ rating: 'S', views: '4', clicks: '2' }, { rating: 'A', views: '6', clicks: '1' }],
+      error: null,
+    });
+    const rows = await getOfferBreakdownByRating({ from: null, to: null });
+    expect(rows).toEqual([
+      { segment: 'S', views: 4, clicks: 2 },
+      { segment: 'A', views: 6, clicks: 1 },
+    ]);
+  });
+
+  it('getOfferBreakdownByUtm renames utm_source → segment', async () => {
+    mockRpc.mockResolvedValue({
+      data: [{ utm_source: 'instagram', views: '8', clicks: '3' }],
+      error: null,
+    });
+    const rows = await getOfferBreakdownByUtm({ from: null, to: null });
+    expect(rows).toEqual([{ segment: 'instagram', views: 8, clicks: 3 }]);
   });
 });

@@ -74,3 +74,40 @@ export const DAYS = [
   { id: 'day2', label: 'День 2' },
   { id: 'day3', label: 'День 3' },
 ] as const;
+
+// ---- Marketing (Phase 3) ----
+
+export interface UtmFunnelRow {
+  utm_source: string;
+  visitors: number;
+  registered: number;
+  started: number;
+  completed: number;
+}
+
+export interface DailyTrendRow {
+  bucket_date: string;        // ISO date YYYY-MM-DD
+  registered: number;
+  game_started: number;
+  game_completed: number;
+}
+
+export interface OfferFunnel {
+  game_completed: number;
+  offer_view: number;
+  offer_cta_click: number;
+  offer_conversion: number;
+}
+
+export interface OfferBreakdownRow {
+  segment: string;            // rating or utm_source value
+  views: number;
+  clicks: number;
+}
+
+export interface FunnelStep {
+  label: string;
+  value: number;
+  pctOfPrev: number;          // 0..100, NaN-safe (0 when prev is 0)
+  pctOfTop: number;
+}

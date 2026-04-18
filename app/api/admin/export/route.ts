@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/admin/authGuard';
 
 function toCsv(headers: string[], rows: Record<string, unknown>[]): string {
   const escape = (val: unknown) => {
@@ -16,14 +17,8 @@ function toCsv(headers: string[], rows: Record<string, unknown>[]): string {
 }
 
 export async function GET(req: NextRequest) {
-  // Auth check
-  const password = process.env.ADMIN_PASSWORD;
-  if (password) {
-    const session = req.cookies.get('admin_session')?.value;
-    if (session !== password) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-  }
+  const guard = requireAdmin(req);
+  if (guard) return guard;
 
   const type = req.nextUrl.searchParams.get('type');
   const admin = createAdminClient();

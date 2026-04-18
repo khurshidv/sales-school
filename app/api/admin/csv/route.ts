@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getPlayersEnriched, getLeaderboardEnriched } from '@/lib/admin/queries-v2';
+import { requireAdmin } from '@/lib/admin/authGuard';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,7 +64,10 @@ async function buildLeaderboardCsv(): Promise<string> {
   );
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  const guard = requireAdmin(req);
+  if (guard) return guard;
+
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type');
 

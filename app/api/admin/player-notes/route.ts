@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { requireAdmin } from '@/lib/admin/authGuard';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,10 @@ interface PatchBody {
 
 const MAX_NOTES_LENGTH = 10_000;
 
-export async function PATCH(req: Request) {
+export async function PATCH(req: NextRequest) {
+  const guard = requireAdmin(req);
+  if (guard) return guard;
+
   let body: PatchBody;
   try {
     body = await req.json();

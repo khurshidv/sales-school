@@ -21,3 +21,15 @@ export async function adminGet<T>(path: string, params?: Record<string, string |
   }
   return res.json() as Promise<T>;
 }
+
+import type { DailyTrendRow, UtmFunnelRow, OfferFunnel, Period } from './types-v2';
+
+export interface OverviewPayload {
+  trends: DailyTrendRow[];
+  utm: UtmFunnelRow[];
+  offer: OfferFunnel;
+}
+
+export function fetchOverview(period: Period): Promise<OverviewPayload> {
+  return adminGet<OverviewPayload>('/api/admin/overview', { period });
+}

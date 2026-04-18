@@ -7,7 +7,7 @@ import InsightCard from '@/components/admin/InsightCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
 import TrendLineChart from '@/components/admin/charts/TrendLineChart';
-import { getDailyTrends, getUtmFunnel, getOfferFunnelData, periodToRange } from '@/lib/admin/queries-v2';
+import { fetchOverview } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import type { DailyTrendRow, OfferFunnel, UtmFunnelRow, Period } from '@/lib/admin/types-v2';
 
@@ -21,14 +21,16 @@ export default function OverviewClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const range = periodToRange(period);
-    Promise.all([
-      getDailyTrends(range),
-      getUtmFunnel(range),
-      getOfferFunnelData(range),
-    ]).then(([t, u, o]) => {
+    fetchOverview(period).then((res) => {
       if (cancelled) return;
-      setTrends(t); setUtm(u); setOffer(o); setLoading(false);
+      setTrends(res.trends);
+      setUtm(res.utm);
+      setOffer(res.offer);
+      setLoading(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[overview] fetch failed', err);
+      setLoading(false);
     });
     return () => { cancelled = true; };
   }, [period]);

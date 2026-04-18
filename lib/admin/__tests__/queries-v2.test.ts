@@ -16,6 +16,7 @@ import {
   getOfferFunnelData,
   getOfferBreakdownByRating,
   getOfferBreakdownByUtm,
+  getPlayerJourneyData,
 } from '@/lib/admin/queries-v2';
 
 describe('queries-v2', () => {
@@ -128,5 +129,26 @@ describe('queries-v2', () => {
     });
     const rows = await getOfferBreakdownByUtm({ from: null, to: null });
     expect(rows).toEqual([{ segment: 'instagram', views: 8, clicks: 3 }]);
+  });
+
+  // -- Phase 4 player queries ------------------------------------------------
+
+  it('getPlayerJourneyData forwards player_id and returns events', async () => {
+    mockRpc.mockResolvedValue({
+      data: [
+        { event_type: 'game_started', event_data: {}, scenario_id: 's', day_id: null, created_at: '2026-04-10T10:00:00Z' },
+      ],
+      error: null,
+    });
+    const events = await getPlayerJourneyData('p1');
+    expect(mockRpc).toHaveBeenCalledWith('get_player_journey', { p_player_id: 'p1' });
+    expect(events).toEqual([
+      { event_type: 'game_started', event_data: {}, scenario_id: 's', day_id: null, created_at: '2026-04-10T10:00:00Z' },
+    ]);
+  });
+
+  it('getPlayerJourneyData returns [] on error', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'boom' } });
+    expect(await getPlayerJourneyData('p1')).toEqual([]);
   });
 });

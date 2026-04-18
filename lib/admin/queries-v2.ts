@@ -185,3 +185,180 @@ export async function getOfferBreakdownByUtm(args: DateRangeOnly): Promise<Offer
     clicks: Number(r.clicks),
   }));
 }
+
+import type {
+  PlayerJourneyEvent, PlayerSummary, CompletedDay, EnrichedPlayer,
+} from './types-v2';
+
+// -- Player Journey --------------------------------------------------------
+
+export async function getPlayerJourneyData(playerId: string): Promise<PlayerJourneyEvent[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_player_journey', { p_player_id: playerId });
+  if (error) {
+    console.warn('[queries-v2] get_player_journey', error.message);
+    return [];
+  }
+  return (data ?? []).map((r: {
+    event_type: string;
+    event_data: Record<string, unknown> | null;
+    scenario_id: string | null;
+    day_id: string | null;
+    created_at: string;
+  }) => ({
+    event_type: r.event_type,
+    event_data: r.event_data ?? {},
+    scenario_id: r.scenario_id,
+    day_id: r.day_id,
+    created_at: r.created_at,
+  }));
+}
+
+// -- Player Summary --------------------------------------------------------
+
+export async function getPlayerSummary(playerId: string): Promise<PlayerSummary | null> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from('players')
+    .select('id, phone, display_name, avatar_id, level, total_xp, total_score, coins, utm_source, utm_medium, utm_campaign, referrer, device_fingerprint, last_seen_at, created_at')
+    .eq('id', playerId)
+    .maybeSingle();
+  if (error || !data) {
+    if (error) console.warn('[queries-v2] getPlayerSummary', error.message);
+    return null;
+  }
+  return data as PlayerSummary;
+}
+
+export async function getCompletedDaysForPlayer(playerId: string): Promise<CompletedDay[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from('completed_scenarios')
+    .select('scenario_id, day_id, score, rating, time_taken, completed_at')
+    .eq('player_id', playerId)
+    .order('completed_at', { ascending: true });
+  if (error || !data) {
+    if (error) console.warn('[queries-v2] getCompletedDaysForPlayer', error.message);
+    return [];
+  }
+  return data as CompletedDay[];
+}
+
+// -- Enriched Players (for Participants table) ----------------------------
+
+const RATING_ORDER: Record<string, number> = { S: 1, A: 2, B: 3, C: 4, F: 5 };
+function bestRating(ratings: string[]): string | null {
+  if (ratings.length === 0) return null;
+  return [...ratings].sort((a, b) => (RATING_ORDER[a] ?? 99) - (RATING_ORDER[b] ?? 99))[0];
+}
+
+export interface GetPlayersEnrichedArgs {
+  search?: string;
+  ratingFilter?: string | null;
+  limit?: number;
+  offset?: number;
+  from?: string | null;
+  to?: string | null;
+}
+
+export async function getPlayersEnriched(
+  args: GetPlayersEnrichedArgs = {},
+): Promise<{ players: EnrichedPlayer[]; total: number }> {
+  const admin = createAdminClient();
+  const { search, limit = 50, offset = 0, from, to } = args;
+
+  let q = admin
+    .from('players')
+    .select(
+      'id, phone, display_name, avatar_id, level, total_xp, total_score, coins, utm_source, utm_medium, utm_campaign, referrer, device_fingerprint, last_seen_at, created_at',
+      { count: 'exact' },
+    );
+  if (search) q = q.or(`display_name.ilike.%${search}%,phone.ilike.%${search}%`);
+  if (from) q = q.gte('created_at', from);
+  if (to) q = q.lte('created_at', to);
+  q = q.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
+
+  const { data: rows, count, error } = await q;
+  if (error || !rows) {
+    if (error) console.warn('[queries-v2] getPlayersEnriched', error.message);
+    return { players: [], total: 0 };
+  }
+
+  const playerIds = rows.map((r) => r.id);
+  if (playerIds.length === 0) return { players: [], total: count ?? 0 };
+
+  const { data: completions } = await admin
+    .from('completed_scenarios')
+    .select('player_id, day_id, rating, completed_at')
+    .in('player_id', playerIds);
+
+  const byPlayer: Record<string, { ratings: string[]; days: Set<string>; lastAt: string | null }> = {};
+  for (const id of playerIds) byPlayer[id] = { ratings: [], days: new Set(), lastAt: null };
+  for (const c of completions ?? []) {
+    const acc = byPlayer[c.player_id];
+    if (!acc) continue;
+    acc.ratings.push(c.rating);
+    acc.days.add(c.day_id);
+    if (!acc.lastAt || c.completed_at > acc.lastAt) acc.lastAt = c.completed_at;
+  }
+
+  let players: EnrichedPlayer[] = rows.map((r) => {
+    const acc = byPlayer[r.id];
+    return {
+      ...(r as PlayerSummary),
+      best_rating: bestRating(acc.ratings),
+      days_completed: acc.days.size,
+      last_activity: acc.lastAt ?? r.last_seen_at,
+    };
+  });
+
+  if (args.ratingFilter) {
+    players = players.filter((p) => p.best_rating === args.ratingFilter);
+  }
+
+  return { players, total: count ?? 0 };
+}
+
+// -- Enriched Leaderboard --------------------------------------------------
+
+export interface LeaderboardItem {
+  player_id: string;
+  display_name: string;
+  total_score: number;
+  scenarios_completed: number;
+  level: number;
+  best_rating: string | null;
+  updated_at: string;
+}
+
+export async function getLeaderboardEnriched(limit = 50): Promise<LeaderboardItem[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from('leaderboard')
+    .select('player_id, display_name, total_score, scenarios_completed, level, updated_at')
+    .order('total_score', { ascending: false })
+    .limit(limit);
+  if (error || !data) {
+    if (error) console.warn('[queries-v2] getLeaderboardEnriched', error.message);
+    return [];
+  }
+  const playerIds = data.map((r) => r.player_id);
+  if (playerIds.length === 0) return [];
+  const { data: completions } = await admin
+    .from('completed_scenarios')
+    .select('player_id, rating')
+    .in('player_id', playerIds);
+  const ratingsByPlayer: Record<string, string[]> = {};
+  for (const c of completions ?? []) {
+    (ratingsByPlayer[c.player_id] ??= []).push(c.rating);
+  }
+  return data.map((r) => ({
+    player_id: r.player_id,
+    display_name: r.display_name,
+    total_score: r.total_score,
+    scenarios_completed: r.scenarios_completed,
+    level: r.level,
+    best_rating: bestRating(ratingsByPlayer[r.player_id] ?? []),
+    updated_at: r.updated_at,
+  }));
+}

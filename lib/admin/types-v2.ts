@@ -111,3 +111,73 @@ export interface FunnelStep {
   pctOfPrev: number;          // 0..100, NaN-safe (0 when prev is 0)
   pctOfTop: number;
 }
+
+// ---- Player Pages (Phase 4) ----
+
+export interface PlayerJourneyEvent {
+  event_type: string;
+  event_data: Record<string, unknown>;
+  scenario_id: string | null;
+  day_id: string | null;
+  created_at: string;
+}
+
+export interface PlayerSummary {
+  id: string;
+  phone: string;
+  display_name: string;
+  avatar_id: string | null;
+  level: number;
+  total_xp: number;
+  total_score: number;
+  coins: number;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  referrer: string | null;
+  device_fingerprint: string | null;
+  last_seen_at: string;
+  created_at: string;
+}
+
+export interface CompletedDay {
+  scenario_id: string;
+  day_id: string;
+  score: number;
+  rating: string;
+  time_taken: number;
+  completed_at: string;
+}
+
+export interface ParsedJourneyDay {
+  day_id: string;
+  scenario_id: string | null;
+  events: PlayerJourneyEvent[];
+  started_at: string | null;
+  completed_at: string | null;
+  outcome: 'completed' | 'failed' | 'in_progress' | 'dropped';
+  choices_made: number;
+  back_navigations: number;
+  total_thinking_time_ms: number;
+}
+
+export interface ParsedJourney {
+  days: ParsedJourneyDay[];
+  totalEvents: number;
+  totalSessions: number;
+  firstSeenAt: string | null;
+  lastSeenAt: string | null;
+}
+
+export interface PlayerStrengthsWeaknesses {
+  strengths: string[];
+  weaknesses: string[];
+  recommendation: 'hire' | 'train' | 'pass';
+  recommendationReason: string;
+}
+
+export interface EnrichedPlayer extends PlayerSummary {
+  best_rating: string | null;
+  days_completed: number;
+  last_activity: string | null;
+}

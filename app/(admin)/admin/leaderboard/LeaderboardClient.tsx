@@ -7,7 +7,7 @@ import KpiCard from '@/components/admin/KpiCard';
 import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
 import MedalBadge from '@/components/admin/charts/MedalBadge';
-import { getLeaderboardEnriched, type LeaderboardItem } from '@/lib/admin/queries-v2';
+import { fetchLeaderboard, type LeaderboardItem } from '@/lib/admin/api';
 
 export default function LeaderboardClient() {
   const [rows, setRows] = useState<LeaderboardItem[]>([]);
@@ -16,10 +16,16 @@ export default function LeaderboardClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    getLeaderboardEnriched(50).then((r) => {
-      if (cancelled) return;
-      setRows(r); setLoading(false);
-    });
+    fetchLeaderboard(50)
+      .then((res) => {
+        if (cancelled) return;
+        setRows(res.items); setLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('[LeaderboardClient] fetchLeaderboard failed', err);
+        setLoading(false);
+      });
     return () => { cancelled = true; };
   }, []);
 

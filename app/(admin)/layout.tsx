@@ -3,16 +3,19 @@ import Sidebar from '@/components/admin/Sidebar';
 import './admin.css';
 
 export const metadata: Metadata = {
-  title: 'Admin — Sales Up',
+  title: 'Admin — Sales School',
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="admin-root">
       <Sidebar />
-      <main className="admin-main">
-        {children}
-      </main>
+      <div className="admin-main">
+        {/* TopBar is rendered per-page via <TopBar /> so each page can set its
+            title, subtitle, and actions; kept out of the layout to avoid
+            prop drilling. */}
+        <div className="admin-content">{children}</div>
+      </div>
     </div>
   );
 }

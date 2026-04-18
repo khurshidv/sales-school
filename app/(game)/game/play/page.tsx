@@ -2,13 +2,15 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
+import { Suspense, useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useGameEngine } from '@/lib/game/hooks/useGameEngine';
 import { useTimer } from '@/lib/game/hooks/useTimer';
 import { useAudio } from '@/lib/game/hooks/useAudio';
 import { useGraphPreloader } from '@/lib/game/hooks/useGraphPreloader';
 import { useAutoSave } from '@/lib/game/hooks/useAutoSave';
+import { useHeartbeat } from '@/lib/game/hooks/useHeartbeat';
 import { usePlayerInit } from '@/lib/game/hooks/usePlayerInit';
+import { getOrCreateGameSessionId } from '@/lib/game/sessionId';
 import { useLang } from '@/lib/game/utils/lang';
 import { CHARACTERS } from '@/game/data/characters/index';
 import { canReplay } from '@/game/systems/CoinSystem';
@@ -80,6 +82,22 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
     scenarioId,
     session: engine.session,
     isPlaying: engine.flowState === 'playing' || engine.flowState === 'day_summary' || engine.flowState === 'day_intro',
+  });
+
+  // Stable per-tab session identifier for heartbeat / live-player dashboard
+  const sessionId = useMemo(() => getOrCreateGameSessionId(), []);
+
+  // Heartbeat: emits a ping every 30 s so the dashboard can show live players
+  // and compute accurate session durations. Only active while gameplay data
+  // is fully resolved (player + scenario + current day all present).
+  const currentDayForHeartbeat = engine.scenario?.days[engine.currentDayIndex];
+  useHeartbeat({
+    enabled: Boolean(engine.player?.id && scenarioId && currentDayForHeartbeat?.id),
+    playerId: engine.player?.id ?? '',
+    scenarioId,
+    dayId: currentDayForHeartbeat?.id ?? '',
+    sessionId,
+    currentNodeId: engine.currentNode?.id ?? null,
   });
 
   // Prevent browser back button from navigating away (restarts game from Day 1).
@@ -427,7 +445,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
   // light-theme container; no RotateDevice (the screen enforces
   // portrait, not landscape).
   if (engine.flowState === 'school_cta') {
-    return <SchoolPitch onDismiss={handleExit} />;
+    return <SchoolPitch onDismiss={handleExit} playerId={engine.player?.id ?? null} />;
   }
 
   // Main gameplay
@@ -480,6 +498,7 @@ function GameScreen({ scenarioId, lang }: { scenarioId: string; lang: 'uz' | 'ru
                 id: c.id,
                 text: c.text[lang],
               }))}
+              nodeId={node.id}
               onSelect={engine.selectChoice}
               multiSelect={(node as ChoiceNode).multiSelect}
               onMultiSelect={engine.selectMultiChoices}

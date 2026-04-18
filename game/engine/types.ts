@@ -205,6 +205,7 @@ export interface GameSessionState {
   scenarioId: string;
   dayIndex: number;
   currentNodeId: string;
+  currentNodeEnteredAt: number | null;
   score: {
     total: number;
     dimensions: DimensionScores;
@@ -299,6 +300,7 @@ export function createInitialGameSession(
     nodeHistory: [],
     comboCount: 0,
     timerState: null,
+    currentNodeEnteredAt: null,
     isReplay: false,
     isGameOverRestart: false,
     startTime: Date.now(),

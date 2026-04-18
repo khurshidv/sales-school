@@ -193,6 +193,7 @@ describe('types — compile-time validation', () => {
       nodeHistory: [],
       comboCount: 0,
       timerState: null,
+      currentNodeEnteredAt: null,
       isReplay: false,
       isGameOverRestart: false,
       startTime: Date.now(),

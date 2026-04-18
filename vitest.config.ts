@@ -3,7 +3,8 @@ import path from 'path';
 
 export default defineConfig({
   test: {
-    include: ['game/**/*.test.ts'],
+    include: ['game/**/*.test.ts', 'lib/**/*.test.ts'],
+    environment: 'jsdom',
     coverage: {
       include: ['game/engine/**', 'game/systems/**'],
       exclude: ['**/__tests__/**', '**/*.test.ts'],

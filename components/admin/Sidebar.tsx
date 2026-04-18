@@ -3,14 +3,55 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  Radio, LayoutDashboard, GitBranch, Sparkles, AlertTriangle,
+  TrendingUp, Globe, Target, Users, User, Trophy, Menu,
+} from 'lucide-react';
 
-const navItems = [
-  { href: '/admin/overview', label: 'Обзор', icon: 'dashboard' },
-  { href: '/admin/pages', label: 'Страницы', icon: 'web' },
-  { href: '/admin/leads', label: 'Заявки', icon: 'contact_mail' },
-  { href: '/admin/participants', label: 'Участники', icon: 'group' },
-  { href: '/admin/game-metrics', label: 'Метрики игры', icon: 'sports_esports' },
-  { href: '/admin/leaderboard', label: 'Лидерборд', icon: 'leaderboard' },
+interface NavItem {
+  href: string;
+  label: string;
+  Icon: typeof Radio;
+  live?: boolean;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const GROUPS: NavGroup[] = [
+  {
+    label: 'Мониторинг',
+    items: [
+      { href: '/admin/realtime', label: 'Real-time', Icon: Radio, live: true },
+      { href: '/admin/overview', label: 'Overview', Icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Игра',
+    items: [
+      { href: '/admin/branch', label: 'Branch Analytics', Icon: GitBranch },
+      { href: '/admin/engagement', label: 'Engagement', Icon: Sparkles },
+      { href: '/admin/dropoff', label: 'Drop-off Zones', Icon: AlertTriangle },
+    ],
+  },
+  {
+    label: 'Маркетинг',
+    items: [
+      { href: '/admin/funnel', label: 'Funnel & UTM', Icon: TrendingUp },
+      { href: '/admin/pages', label: 'Pages', Icon: Globe },
+      { href: '/admin/offer', label: 'Offer Conversion', Icon: Target },
+    ],
+  },
+  {
+    label: 'Игроки',
+    items: [
+      { href: '/admin/participants', label: 'Participants', Icon: Users },
+      { href: '/admin/player', label: 'Player Journey', Icon: User },
+      { href: '/admin/leaderboard', label: 'Leaderboard', Icon: Trophy },
+    ],
+  },
 ];
 
 export default function Sidebar() {
@@ -19,40 +60,51 @@ export default function Sidebar() {
 
   return (
     <>
-      <button className="admin-burger" onClick={() => setOpen(!open)} aria-label="Меню">
-        <span className="material-symbols-outlined">menu</span>
+      <button
+        className="admin-burger"
+        onClick={() => setOpen(!open)}
+        aria-label="Меню"
+      >
+        <Menu size={20} />
       </button>
-      <div className={`admin-overlay${open ? ' open' : ''}`} onClick={() => setOpen(false)} />
+      <div
+        className={`admin-overlay${open ? ' open' : ''}`}
+        onClick={() => setOpen(false)}
+      />
       <aside className={`admin-sidebar${open ? ' open' : ''}`}>
-        <div className="admin-sidebar-header">
-          <div style={{ fontSize: 11, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
-            Sales Up
-          </div>
-          <div style={{ fontSize: 16, fontWeight: 700 }}>Admin Panel</div>
+        <div className="admin-sidebar-brand">
+          <div className="admin-sidebar-brand-mark" aria-hidden />
+          <div className="admin-sidebar-brand-text">Sales School</div>
         </div>
-        <nav style={{ padding: '12px 0', flex: 1 }}>
-          {navItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`admin-nav-link${isActive ? ' admin-nav-link--active' : ''}`}
-                onClick={() => setOpen(false)}
-              >
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: 18, marginRight: 10, verticalAlign: 'middle', opacity: isActive ? 1 : 0.6 }}
-                >
-                  {item.icon}
-                </span>
-                {item.label}
-              </Link>
-            );
-          })}
+
+        <nav style={{ flex: 1, overflowY: 'auto' }}>
+          {GROUPS.map((group) => (
+            <div key={group.label}>
+              <div className="admin-sidebar-group-label">{group.label}</div>
+              {group.items.map((item) => {
+                const active =
+                  pathname === item.href || pathname.startsWith(item.href + '/');
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`admin-nav-link${active ? ' admin-nav-link--active' : ''}`}
+                    onClick={() => setOpen(false)}
+                  >
+                    <item.Icon size={16} strokeWidth={2} />
+                    <span>{item.label}</span>
+                    {item.live && active && (
+                      <span className="admin-nav-live-dot" aria-label="live" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
-        <div style={{ padding: '16px 20px', borderTop: '1px solid #2a2d35', fontSize: 12, color: '#4b5563' }}>
-          Sales Up © 2026
+
+        <div className="admin-sidebar-footer">
+          Sales School · © 2026
         </div>
       </aside>
     </>

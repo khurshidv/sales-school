@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import CasesSection from '@/components/target/CasesSection';
 import ProductBenefits from '@/components/target/ProductBenefits';
 import ProgramAccordion from '@/components/target/ProgramAccordion';
@@ -8,15 +9,31 @@ import { ModalProvider } from '@/lib/modal-context';
 import { useModal } from '@/lib/modal-context';
 import RegistrationModal from '@/components/RegistrationModal';
 import { useLang } from '@/lib/game/utils/lang';
+import { trackOfferView, trackOfferCtaClick } from '@/lib/game/offerEvents';
 import { pitchCopy } from './conclusionCopy';
 
 interface SchoolPitchProps {
   onDismiss: () => void;
+  playerId?: string | null;
 }
 
-function SchoolPitchInner({ onDismiss }: SchoolPitchProps) {
+function SchoolPitchInner({ onDismiss, playerId }: SchoolPitchProps) {
   const { openModal } = useModal();
   const { lang, setLang } = useLang();
+
+  useEffect(() => {
+    trackOfferView({ playerId: playerId ?? null });
+  }, [playerId]);
+
+  const handleHeroCta = () => {
+    trackOfferCtaClick({ playerId: playerId ?? null, ctaId: 'primary' });
+    openModal();
+  };
+
+  const handleFinalCta = () => {
+    trackOfferCtaClick({ playerId: playerId ?? null, ctaId: 'secondary' });
+    openModal();
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-surface text-on-surface">
@@ -63,7 +80,7 @@ function SchoolPitchInner({ onDismiss }: SchoolPitchProps) {
           </p>
           <button
             type="button"
-            onClick={openModal}
+            onClick={handleHeroCta}
             className="group inline-flex items-center gap-3 rounded-full cta-btn text-white cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.03] px-8 py-5 text-base md:px-10 md:text-lg animate-pulse-glow mt-10"
           >
             <span className="font-bold tracking-wide">{pitchCopy.heroCta[lang]}</span>
@@ -98,7 +115,7 @@ function SchoolPitchInner({ onDismiss }: SchoolPitchProps) {
           </p>
           <button
             type="button"
-            onClick={openModal}
+            onClick={handleFinalCta}
             className="group inline-flex items-center gap-3 rounded-full cta-btn text-white cursor-pointer transition-all duration-200 active:scale-[0.98] hover:scale-[1.03] px-8 py-5 text-base md:px-10 md:text-lg animate-pulse-glow"
           >
             <span className="font-bold tracking-wide">{pitchCopy.finalCta[lang]}</span>
@@ -129,3 +146,4 @@ export default function SchoolPitch(props: SchoolPitchProps) {
     </ModalProvider>
   );
 }
+

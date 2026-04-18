@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
-export default function AdminRoot() {
-  redirect('/admin/overview');
+export default function AdminIndex() {
+  redirect('/admin/realtime');
 }

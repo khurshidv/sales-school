@@ -192,7 +192,7 @@ describe('gameStore', () => {
     expect(useGameStore.getState().currentNode!.id).toBe('choice1');
 
     // Select choice 0 (adds 10 empathy)
-    useGameStore.getState().selectChoice(0);
+    useGameStore.getState().selectChoice(0, 0);
 
     const { session, currentNode } = useGameStore.getState();
     expect(session!.score.total).toBe(10);
@@ -208,7 +208,7 @@ describe('gameStore', () => {
     useGameStore.getState().advanceDialogue();
     useGameStore.getState().advanceDialogue();
 
-    useGameStore.getState().selectChoice(0);
+    useGameStore.getState().selectChoice(0, 0);
 
     const { session } = useGameStore.getState();
     expect(session!.choiceHistory).toHaveLength(1);
@@ -230,7 +230,7 @@ describe('gameStore', () => {
       },
     });
 
-    useGameStore.getState().selectMultiChoices([0, 1]);
+    useGameStore.getState().selectMultiChoices([0, 1], 0);
 
     const { session } = useGameStore.getState();
     expect(session!.score.dimensions.rapport).toBe(5);
@@ -261,7 +261,7 @@ describe('gameStore', () => {
     // Navigate and make a choice to add score and modify state
     useGameStore.getState().advanceDialogue();
     useGameStore.getState().advanceDialogue();
-    useGameStore.getState().selectChoice(0);
+    useGameStore.getState().selectChoice(0, 0);
 
     // Verify score was added
     expect(useGameStore.getState().session!.score.total).toBe(10);
@@ -313,7 +313,7 @@ describe('gameStore', () => {
       useGameStore.getState().advanceDialogue(); // dialogue1 -> choice1
       expect(useGameStore.getState().session!.timerState).not.toBeNull();
 
-      useGameStore.getState().selectChoice(0); // -> after_choice (dialogue)
+      useGameStore.getState().selectChoice(0, 0); // -> after_choice (dialogue)
       expect(useGameStore.getState().currentNode!.id).toBe('after_choice');
       expect(useGameStore.getState().session!.timerState).toBeNull();
     });
@@ -382,7 +382,7 @@ describe('gameStore', () => {
       useGameStore.getState().startDay('car-dealership', day);
       useGameStore.getState().advanceDialogue(); // -> dialogue1
       useGameStore.getState().advanceDialogue(); // -> choice1 (timer starts)
-      useGameStore.getState().selectChoice(0);   // -> after_choice (timer cleared)
+      useGameStore.getState().selectChoice(0, 0);   // -> after_choice (timer cleared)
 
       expect(useGameStore.getState().currentNode!.id).toBe('after_choice');
 
@@ -398,7 +398,7 @@ describe('gameStore', () => {
       useGameStore.getState().startDay('car-dealership', day);
       useGameStore.getState().advanceDialogue();
       useGameStore.getState().advanceDialogue(); // on choice1, timer running
-      useGameStore.getState().selectChoice(0);   // -> after_choice
+      useGameStore.getState().selectChoice(0, 0);   // -> after_choice
       useGameStore.getState().goBack();          // -> dialogue1 (timer cleared)
 
       expect(useGameStore.getState().session!.timerState).toBeNull();

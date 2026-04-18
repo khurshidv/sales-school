@@ -1,0 +1,173 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import PageHeader from '@/components/admin/PageHeader';
+import KpiCard from '@/components/admin/KpiCard';
+import InsightCard from '@/components/admin/InsightCard';
+import PeriodFilter from '@/components/admin/PeriodFilter';
+import FunnelBars from '@/components/admin/charts/FunnelBars';
+import { getOfferFunnelData, getOfferBreakdownByRating, getOfferBreakdownByUtm, periodToRange } from '@/lib/admin/queries-v2';
+import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
+import type { OfferFunnel, OfferBreakdownRow, Period } from '@/lib/admin/types-v2';
+
+export default function OfferClient() {
+  const [period, setPeriod] = useState<Period>('30d');
+  const [funnel, setFunnel] = useState<OfferFunnel | null>(null);
+  const [byRating, setByRating] = useState<OfferBreakdownRow[]>([]);
+  const [byUtm, setByUtm] = useState<OfferBreakdownRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    const range = periodToRange(period);
+    Promise.all([
+      getOfferFunnelData(range),
+      getOfferBreakdownByRating(range),
+      getOfferBreakdownByUtm(range),
+    ]).then(([f, r, u]) => {
+      if (cancelled) return;
+      setFunnel(f); setByRating(r); setByUtm(u); setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [period]);
+
+  const steps = useMemo(() => computeFunnelDeltas([
+    { label: 'Завершили игру', value: funnel?.game_completed ?? 0 },
+    { label: 'Увидели оффер',  value: funnel?.offer_view ?? 0 },
+    { label: 'Кликнули CTA',   value: funnel?.offer_cta_click ?? 0 },
+    { label: 'Конверсия',      value: funnel?.offer_conversion ?? 0 },
+  ]), [funnel]);
+
+  const ctr = funnel && funnel.offer_view > 0
+    ? (funnel.offer_cta_click / funnel.offer_view) * 100
+    : 0;
+
+  const bestRating = useMemo(() => {
+    return [...byRating].sort((a, b) => {
+      const ra = a.views > 0 ? a.clicks / a.views : 0;
+      const rb = b.views > 0 ? b.clicks / b.views : 0;
+      return rb - ra;
+    })[0];
+  }, [byRating]);
+
+  return (
+    <div>
+      <PageHeader
+        title="Offer Conversion"
+        subtitle="Финальная оффер-страница — кто видит, кто кликает, кто конвертируется."
+        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+      />
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+        <KpiCard label="Просмотров оффера" value={funnel?.offer_view ?? 0} accent="violet" />
+        <KpiCard label="Кликов CTA" value={funnel?.offer_cta_click ?? 0} accent="pink" />
+        <KpiCard
+          label="CTR"
+          value={`${ctr.toFixed(1)}%`}
+          accent="green"
+          hint="кликов / просмотров"
+        />
+        <KpiCard
+          label="Лучший rating"
+          value={bestRating?.segment ?? '—'}
+          hint={bestRating && bestRating.views > 0 ? `${((bestRating.clicks / bestRating.views) * 100).toFixed(0)}% CTR` : undefined}
+          accent="orange"
+        />
+      </div>
+
+      {ctr < 5 && funnel && funnel.offer_view > 10 && (
+        <div style={{ marginBottom: 16 }}>
+          <InsightCard
+            tone="danger"
+            title="Низкий CTR"
+            body="CTR ниже 5% при значительном трафике. Стоит пересмотреть текст CTA или оффер целиком."
+          />
+        </div>
+      )}
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+          Воронка оффера
+        </div>
+        {loading ? (
+          <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+        ) : (
+          <FunnelBars steps={steps} />
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <div className="admin-card" style={{ padding: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+            CTR по рейтингу игрока
+          </div>
+          {loading ? (
+            <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+          ) : byRating.length === 0 ? (
+            <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Нет данных</div>
+          ) : (
+            <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--admin-border)' }}>
+                  <th style={{ textAlign: 'left', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>Rating</th>
+                  <th style={{ textAlign: 'right', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>Views</th>
+                  <th style={{ textAlign: 'right', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>Clicks</th>
+                  <th style={{ textAlign: 'right', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>CTR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {byRating.map((r) => {
+                  const rate = r.views > 0 ? (r.clicks / r.views) * 100 : 0;
+                  return (
+                    <tr key={r.segment} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '6px 4px', fontWeight: 600 }}>{r.segment}</td>
+                      <td style={{ padding: '6px 4px', textAlign: 'right' }}>{r.views}</td>
+                      <td style={{ padding: '6px 4px', textAlign: 'right' }}>{r.clicks}</td>
+                      <td style={{ padding: '6px 4px', textAlign: 'right', fontWeight: 700 }}>{rate.toFixed(1)}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="admin-card" style={{ padding: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+            CTR по UTM-источнику
+          </div>
+          {loading ? (
+            <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+          ) : byUtm.length === 0 ? (
+            <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Нет данных</div>
+          ) : (
+            <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--admin-border)' }}>
+                  <th style={{ textAlign: 'left', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>Источник</th>
+                  <th style={{ textAlign: 'right', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>Views</th>
+                  <th style={{ textAlign: 'right', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>Clicks</th>
+                  <th style={{ textAlign: 'right', padding: '6px 4px', color: 'var(--admin-text-muted)' }}>CTR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {byUtm.map((r) => {
+                  const rate = r.views > 0 ? (r.clicks / r.views) * 100 : 0;
+                  return (
+                    <tr key={r.segment} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '6px 4px', fontWeight: 600 }}>{r.segment}</td>
+                      <td style={{ padding: '6px 4px', textAlign: 'right' }}>{r.views}</td>
+                      <td style={{ padding: '6px 4px', textAlign: 'right' }}>{r.clicks}</td>
+                      <td style={{ padding: '6px 4px', textAlign: 'right', fontWeight: 700 }}>{rate.toFixed(1)}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -11,7 +11,20 @@ import type {
   NodeStat,
   DropoffRow,
   EngagementBlob,
+  EnrichedPlayer,
 } from './types-v2';
+
+// NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
+// shape here so the client bundle never reaches into server code.
+export interface LeaderboardItem {
+  player_id: string;
+  display_name: string;
+  total_score: number;
+  scenarios_completed: number;
+  level: number;
+  best_rating: string | null;
+  updated_at: string;
+}
 
 export class AdminApiError extends Error {
   constructor(public status: number, message: string) {
@@ -87,4 +100,29 @@ export interface OfferPayload {
 
 export function fetchOffer(period: Period): Promise<OfferPayload> {
   return adminGet<OfferPayload>('/api/admin/offer', { period });
+}
+
+export interface ParticipantsPayload {
+  players: EnrichedPlayer[];
+  total: number;
+}
+
+export function fetchParticipants(params: {
+  search?: string;
+  ratingFilter?: string | null;
+  limit?: number;
+}): Promise<ParticipantsPayload> {
+  return adminGet<ParticipantsPayload>('/api/admin/participants', {
+    search: params.search,
+    ratingFilter: params.ratingFilter,
+    limit: params.limit,
+  });
+}
+
+export interface LeaderboardPayload {
+  items: LeaderboardItem[];
+}
+
+export function fetchLeaderboard(limit = 100): Promise<LeaderboardPayload> {
+  return adminGet<LeaderboardPayload>('/api/admin/leaderboard', { limit });
 }

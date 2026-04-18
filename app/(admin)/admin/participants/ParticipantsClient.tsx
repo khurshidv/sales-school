@@ -6,7 +6,7 @@ import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
-import { getPlayersEnriched } from '@/lib/admin/queries-v2';
+import { fetchParticipants } from '@/lib/admin/api';
 import type { EnrichedPlayer } from '@/lib/admin/types-v2';
 
 const RATINGS = ['S', 'A', 'B', 'C', 'F'] as const;
@@ -38,10 +38,16 @@ export default function ParticipantsClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    getPlayersEnriched({ search: search || undefined, ratingFilter, limit: 100 }).then((res) => {
-      if (cancelled) return;
-      setPlayers(res.players); setTotal(res.total); setLoading(false);
-    });
+    fetchParticipants({ search: search || undefined, ratingFilter, limit: 100 })
+      .then((res) => {
+        if (cancelled) return;
+        setPlayers(res.players); setTotal(res.total); setLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('[ParticipantsClient] fetchParticipants failed', err);
+        setLoading(false);
+      });
     return () => { cancelled = true; };
   }, [search, ratingFilter]);
 

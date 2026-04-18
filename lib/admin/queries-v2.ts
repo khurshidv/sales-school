@@ -220,7 +220,7 @@ export async function getPlayerSummary(playerId: string): Promise<PlayerSummary 
   const admin = createAdminClient();
   const { data, error } = await admin
     .from('players')
-    .select('id, phone, display_name, avatar_id, level, total_xp, total_score, coins, utm_source, utm_medium, utm_campaign, referrer, device_fingerprint, last_seen_at, created_at')
+    .select('id, phone, display_name, avatar_id, level, total_xp, total_score, coins, utm_source, utm_medium, utm_campaign, referrer, device_fingerprint, last_seen_at, created_at, admin_notes')
     .eq('id', playerId)
     .maybeSingle();
   if (error || !data) {

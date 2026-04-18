@@ -138,6 +138,7 @@ export interface PlayerSummary {
   device_fingerprint: string | null;
   last_seen_at: string;
   created_at: string;
+  admin_notes: string;
 }
 
 export interface CompletedDay {

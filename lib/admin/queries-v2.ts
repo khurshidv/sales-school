@@ -257,9 +257,14 @@ export interface GetPlayersEnrichedArgs {
   to?: string | null;
 }
 
+export interface ParticipantStats {
+  total_sa: number;
+  total_any_day: number;
+}
+
 export async function getPlayersEnriched(
   args: GetPlayersEnrichedArgs = {},
-): Promise<{ players: EnrichedPlayer[]; total: number }> {
+): Promise<{ players: EnrichedPlayer[]; total: number; stats: ParticipantStats }> {
   const admin = createAdminClient();
   const { search, limit = 50, offset = 0, from, to } = args;
 
@@ -274,14 +279,21 @@ export async function getPlayersEnriched(
   if (to) q = q.lte('created_at', to);
   q = q.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
-  const { data: rows, count, error } = await q;
+  const [{ data: rows, count, error }, { data: statsRaw }] = await Promise.all([
+    q,
+    admin.rpc('get_participant_stats'),
+  ]);
   if (error || !rows) {
     if (error) console.warn('[queries-v2] getPlayersEnriched', error.message);
-    return { players: [], total: 0 };
+    return { players: [], total: 0, stats: { total_sa: 0, total_any_day: 0 } };
   }
+  const stats: ParticipantStats = {
+    total_sa: Number((statsRaw as ParticipantStats | null)?.total_sa) || 0,
+    total_any_day: Number((statsRaw as ParticipantStats | null)?.total_any_day) || 0,
+  };
 
   const playerIds = rows.map((r) => r.id);
-  if (playerIds.length === 0) return { players: [], total: count ?? 0 };
+  if (playerIds.length === 0) return { players: [], total: count ?? 0, stats };
 
   const { data: completions } = await admin
     .from('completed_scenarios')
@@ -312,7 +324,7 @@ export async function getPlayersEnriched(
     players = players.filter((p) => p.best_rating === args.ratingFilter);
   }
 
-  return { players, total: count ?? 0 };
+  return { players, total: count ?? 0, stats };
 }
 
 // -- Enriched Leaderboard --------------------------------------------------

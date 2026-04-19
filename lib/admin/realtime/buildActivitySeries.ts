@@ -25,13 +25,10 @@ export function buildActivitySeries(events: RecentGameEvent[], minutes: number):
     const eventMinute = Math.floor(eventTime / 60_000);
     const wholeMinutesAgo = nowMinute - eventMinute;
     if (wholeMinutesAgo < 0 || wholeMinutesAgo >= minutes) continue;
-    // event created in minute M-wholeMinutesAgo → bucket index = minutes - 1 - wholeMinutesAgo
-    // wholeMinutesAgo=0 → idx=minutes-1 (most recent), wholeMinutesAgo=minutes-1 → idx=0 (oldest)
-    // But test: 5 min ago → idx 55 = minutes - 5 (not minutes - 1 - 5 = 54)
-    // Explanation: ev() creates event at floor(now/60_000)*60_000 - 5*60_000 (i.e., 5 whole minutes ago)
-    // nowMinute - eventMinute = 5, so we need idx = minutes - wholeMinutesAgo = 60 - 5 = 55
-    const idx = minutes - wholeMinutesAgo;
-    if (idx <= 0 || idx >= buckets.length) continue;
+    // wholeMinutesAgo=0 (current minute) → idx=minutes-1 (most recent bucket)
+    // wholeMinutesAgo=minutes-1 (oldest minute) → idx=0
+    const idx = minutes - 1 - wholeMinutesAgo;
+    if (idx < 0 || idx >= buckets.length) continue;
     buckets[idx].players.add(e.player_id);
   }
 

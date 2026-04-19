@@ -31,6 +31,8 @@ function formatRelative(iso: string | null): string {
 export default function ParticipantsClient() {
   const [players, setPlayers] = useState<EnrichedPlayer[]>([]);
   const [total, setTotal] = useState(0);
+  const [totalSa, setTotalSa] = useState(0);
+  const [totalAnyDay, setTotalAnyDay] = useState(0);
   const [search, setSearch] = useState('');
   const [ratingFilter, setRatingFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,11 @@ export default function ParticipantsClient() {
     fetchParticipants({ search: search || undefined, ratingFilter, limit: 100 })
       .then((res) => {
         if (cancelled) return;
-        setPlayers(res.players); setTotal(res.total); setLoading(false);
+        setPlayers(res.players);
+        setTotal(res.total);
+        setTotalSa(res.stats?.total_sa ?? 0);
+        setTotalAnyDay(res.stats?.total_any_day ?? 0);
+        setLoading(false);
       })
       .catch((err) => {
         if (cancelled) return;
@@ -63,10 +69,16 @@ export default function ParticipantsClient() {
         <KpiCard label="Всего игроков" value={total.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard
           label="С оценкой S/A"
-          value={players.filter((p) => p.best_rating === 'S' || p.best_rating === 'A').length}
+          value={totalSa.toLocaleString('ru-RU')}
           accent="green"
+          hint="все игроки в БД"
         />
-        <KpiCard label="Завершили день 1" value={players.filter((p) => p.days_completed >= 1).length} accent="pink" />
+        <KpiCard
+          label="Завершили ≥1 дня"
+          value={totalAnyDay.toLocaleString('ru-RU')}
+          accent="pink"
+          hint="все игроки в БД"
+        />
         <KpiCard label="На странице" value={players.length} accent="orange" />
       </div>
 

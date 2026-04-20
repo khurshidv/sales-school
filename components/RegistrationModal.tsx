@@ -97,17 +97,42 @@ export default function RegistrationModal() {
             try {
               const utm = getUTMParams();
               const supabase = createClient();
-              await supabase.from('leads').insert({
+              const sourcePage = getSourcePage();
+              const deviceType = detectDeviceType();
+              const browser = detectBrowser();
+
+              const supabaseInsert = supabase.from('leads').insert({
                 name: name.trim(),
                 phone: fullPhone,
-                source_page: getSourcePage(),
+                source_page: sourcePage,
                 utm_source: utm.utm_source,
                 utm_medium: utm.utm_medium,
                 utm_campaign: utm.utm_campaign,
-                device_type: detectDeviceType(),
-                browser: detectBrowser(),
+                device_type: deviceType,
+                browser,
                 referrer: utm.referrer,
               });
+
+              const bitrixPost = fetch('/api/bitrix/lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name: name.trim(),
+                  phone: fullPhone,
+                  sourcePage,
+                  utmSource: utm.utm_source,
+                  utmMedium: utm.utm_medium,
+                  utmCampaign: utm.utm_campaign,
+                  utmContent: utm.utm_content,
+                  utmTerm: utm.utm_term,
+                  referrer: utm.referrer,
+                  deviceType,
+                  browser,
+                  landingUrl: typeof window !== 'undefined' ? window.location.href : null,
+                }),
+              }).catch(() => null);
+
+              await Promise.allSettled([supabaseInsert, bitrixPost]);
             } catch {
               // fire-and-forget, don't block Telegram redirect
             }

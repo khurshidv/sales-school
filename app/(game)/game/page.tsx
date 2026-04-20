@@ -138,6 +138,21 @@ function GameHubInner() {
       // Store phone locally for identification
       setStoredPhone(phone);
 
+      // Fire-and-forget: create/keep a Bitrix deal at "Игра: прошёл онбординг" stage.
+      // If the same phone replays, the route returns the existing deal without duplicating.
+      fetch('/api/bitrix/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          sourcePage: 'game',
+          gameStage: 'onboarding',
+          landingUrl: typeof window !== 'undefined' ? window.location.href : null,
+          referrer: typeof document !== 'undefined' ? document.referrer || null : null,
+        }),
+      }).catch(() => null);
+
       // Fetch full player from server to hydrate store
       try {
         const res = await fetch(`/api/game/players?phone=${encodeURIComponent(phone)}`);

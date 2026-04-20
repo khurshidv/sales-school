@@ -8,8 +8,23 @@ import { bitrixCall } from '@/lib/bitrix/client';
 // standard SOURCE_ID / UTM_* fields so list-view filtering works.
 
 type SourcePage = 'home' | 'target' | 'game';
+type GameStage = 'onboarding' | 'consultation';
 
 const SALES_UP_CATEGORY_ID = Number(process.env.BITRIX_SALES_UP_CATEGORY_ID ?? 334);
+const C = (id: string) => `C${SALES_UP_CATEGORY_ID}:${id}`;
+
+const STAGE_NEW = C('NEW');
+const STAGE_GAME_ONB = C('UC_GAME_ONB');
+const STAGE_GAME_CONS = C('UC_GAME_CONS');
+
+// Terminal stages a deal is considered "closed" on — we never move out of these.
+const TERMINAL_STAGES = new Set([C('WON'), C('LOSE'), C('APOLOGY')]);
+
+// "Early" stages are the automated entry points the route owns.
+// A new form submission is allowed to move a deal between these, but must NEVER
+// pull a deal back here once a sales manager has progressed it (Дозвонились,
+// Заинтересован, Дожим, etc.) — that would wipe out their work.
+const EARLY_STAGES = new Set([C('NEW'), C('UC_GAME_ONB'), C('UC_GAME_CONS')]);
 
 const SOURCE_ID_BY_PAGE: Record<SourcePage, string> = {
   target: 'SALESUP_TARGET',
@@ -33,6 +48,7 @@ type Body = {
   name: string;
   phone: string;
   sourcePage: SourcePage;
+  gameStage?: GameStage | null;
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
@@ -46,6 +62,16 @@ type Body = {
 
 function isSourcePage(v: unknown): v is SourcePage {
   return v === 'home' || v === 'target' || v === 'game';
+}
+
+function isGameStage(v: unknown): v is GameStage {
+  return v === 'onboarding' || v === 'consultation';
+}
+
+function stageFor(sourcePage: SourcePage, gameStage: GameStage | null): string {
+  if (sourcePage === 'game' && gameStage === 'onboarding') return STAGE_GAME_ONB;
+  if (sourcePage === 'game' && gameStage === 'consultation') return STAGE_GAME_CONS;
+  return STAGE_NEW;
 }
 
 async function findContactIdByPhone(phone: string): Promise<number | null> {
@@ -71,6 +97,22 @@ async function createContact(name: string, phone: string): Promise<number> {
   return Number(id);
 }
 
+type DealSummary = { ID: string; STAGE_ID: string; DATE_CREATE: string };
+
+// Finds the most recent non-terminal deal in Sales Up for a given contact.
+// Used to move an onboarding-stage game deal forward to consultation
+// instead of creating a duplicate.
+async function findOpenDealForContact(contactId: number): Promise<DealSummary | null> {
+  const result = await bitrixCall<DealSummary[]>('crm.deal.list', {
+    filter: { CONTACT_ID: contactId, CATEGORY_ID: SALES_UP_CATEGORY_ID },
+    select: ['ID', 'STAGE_ID', 'DATE_CREATE'],
+    order: { DATE_CREATE: 'DESC' },
+  });
+  if (!Array.isArray(result)) return null;
+  const open = result.find((d) => !TERMINAL_STAGES.has(d.STAGE_ID));
+  return open ?? null;
+}
+
 export async function POST(request: Request) {
   let body: Body;
   try {
@@ -82,6 +124,7 @@ export async function POST(request: Request) {
   const name = (body.name ?? '').trim();
   const phone = (body.phone ?? '').trim();
   const sourcePage = body.sourcePage;
+  const gameStage: GameStage | null = isGameStage(body.gameStage) ? body.gameStage : null;
 
   if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 });
   if (!phone.startsWith('+') || phone.replace(/\D/g, '').length < 8) {
@@ -92,15 +135,16 @@ export async function POST(request: Request) {
   }
 
   try {
-    const existingId = await findContactIdByPhone(phone);
-    const contactId = existingId ?? (await createContact(name, phone));
+    const existingContactId = await findContactIdByPhone(phone);
+    const contactId = existingContactId ?? (await createContact(name, phone));
 
     const sourceLabel = SOURCE_LABEL[sourcePage];
+    const targetStage = stageFor(sourcePage, gameStage);
     const title = `${name} | ${SOURCE_PATH[sourcePage]} | Sales Up`;
 
     const descriptionLines = [
-      `Лендинг: ${body.landingUrl || `/${sourcePage === 'home' ? '' : sourcePage}`}`,
-      `Источник: ${sourceLabel}`,
+      `Лендинг: ${body.landingUrl || SOURCE_PATH[sourcePage]}`,
+      `Источник: ${sourceLabel}${gameStage ? ` (${gameStage === 'onboarding' ? 'онбординг' : 'консультация'})` : ''}`,
       body.utmSource ? `utm_source: ${body.utmSource}` : null,
       body.utmMedium ? `utm_medium: ${body.utmMedium}` : null,
       body.utmCampaign ? `utm_campaign: ${body.utmCampaign}` : null,
@@ -110,14 +154,84 @@ export async function POST(request: Request) {
       body.deviceType ? `Device: ${body.deviceType}` : null,
       body.browser ? `Browser: ${body.browser}` : null,
     ].filter(Boolean);
+    const description = descriptionLines.join('\n');
 
+    // If we already have a contact, look for an open deal to move forward.
+    // Onboarding: keep existing deal as-is (don't duplicate if user replays).
+    // Consultation: move existing deal to consultation stage (don't duplicate).
+    // Other sources (home/target): also avoid duplicates — update existing deal.
+    if (existingContactId) {
+      const openDeal = await findOpenDealForContact(existingContactId);
+
+      if (openDeal) {
+        const dealIsEarly = EARLY_STAGES.has(openDeal.STAGE_ID);
+
+        // Onboarding replay: never disturb an existing deal.
+        if (gameStage === 'onboarding') {
+          return NextResponse.json({
+            ok: true,
+            contactId,
+            dealId: Number(openDeal.ID),
+            moved: false,
+            reason: 'existing_deal_kept',
+          });
+        }
+
+        // Manager already picked up the deal (Дозвонились / Заинтересован / …)
+        // → don't touch the stage. Still enrich the card with the latest source
+        // info so the manager sees that the user came back via a form.
+        if (!dealIsEarly) {
+          await bitrixCall<boolean>('crm.deal.update', {
+            id: Number(openDeal.ID),
+            fields: { SOURCE_DESCRIPTION: description },
+            params: { REGISTER_SONET_EVENT: 'N' },
+          });
+          return NextResponse.json({
+            ok: true,
+            contactId,
+            dealId: Number(openDeal.ID),
+            moved: false,
+            reason: 'deal_in_manager_stage',
+            stage: openDeal.STAGE_ID,
+          });
+        }
+
+        // Early stage → safe to move the deal to the new target stage.
+        await bitrixCall<boolean>('crm.deal.update', {
+          id: Number(openDeal.ID),
+          fields: {
+            STAGE_ID: targetStage,
+            TITLE: title,
+            SOURCE_ID: SOURCE_ID_BY_PAGE[sourcePage],
+            SOURCE_DESCRIPTION: description,
+            UTM_SOURCE: body.utmSource ?? undefined,
+            UTM_MEDIUM: body.utmMedium ?? undefined,
+            UTM_CAMPAIGN: body.utmCampaign ?? undefined,
+            UTM_CONTENT: body.utmContent ?? undefined,
+            UTM_TERM: body.utmTerm ?? undefined,
+          },
+          params: { REGISTER_SONET_EVENT: 'N' },
+        });
+
+        return NextResponse.json({
+          ok: true,
+          contactId,
+          dealId: Number(openDeal.ID),
+          moved: true,
+          fromStage: openDeal.STAGE_ID,
+          toStage: targetStage,
+        });
+      }
+    }
+
+    // No open deal → create a new one at the target stage.
     const dealId = await bitrixCall<number>('crm.deal.add', {
       fields: {
         TITLE: title,
         CATEGORY_ID: SALES_UP_CATEGORY_ID,
-        STAGE_ID: `C${SALES_UP_CATEGORY_ID}:NEW`,
+        STAGE_ID: targetStage,
         SOURCE_ID: SOURCE_ID_BY_PAGE[sourcePage],
-        SOURCE_DESCRIPTION: descriptionLines.join('\n'),
+        SOURCE_DESCRIPTION: description,
         CONTACT_IDS: [contactId],
         OPENED: 'Y',
         ASSIGNED_BY_ID: 1,
@@ -130,7 +244,7 @@ export async function POST(request: Request) {
       params: { REGISTER_SONET_EVENT: 'N' },
     });
 
-    return NextResponse.json({ ok: true, contactId, dealId: Number(dealId) });
+    return NextResponse.json({ ok: true, contactId, dealId: Number(dealId), created: true });
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Unknown error';
     return NextResponse.json({ error: message }, { status: 500 });

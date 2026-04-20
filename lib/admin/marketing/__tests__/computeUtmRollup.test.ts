@@ -12,8 +12,8 @@ describe('computeUtmRollup', () => {
 
   it('computes per-source conversion and totals', () => {
     const rows: UtmFunnelRow[] = [
-      { utm_source: 'instagram', visitors: 100, registered: 100, started: 60, completed: 30 },
-      { utm_source: '(none)', visitors: 50, registered: 50, started: 40, completed: 25 },
+      { utm_source: 'instagram', visitors: 100, registered: 100, started: 60, completed: 30, consultations: 0 },
+      { utm_source: '(none)', visitors: 50, registered: 50, started: 40, completed: 25, consultations: 0 },
     ];
     const out = computeUtmRollup(rows);
     expect(out.totals).toEqual({ visitors: 150, registered: 150, started: 100, completed: 55 });
@@ -24,16 +24,16 @@ describe('computeUtmRollup', () => {
 
   it('sorts by completion rate descending', () => {
     const out = computeUtmRollup([
-      { utm_source: 'low', visitors: 100, registered: 100, started: 50, completed: 5 },
-      { utm_source: 'high', visitors: 20, registered: 20, started: 18, completed: 15 },
-      { utm_source: 'mid', visitors: 50, registered: 50, started: 40, completed: 20 },
+      { utm_source: 'low', visitors: 100, registered: 100, started: 50, completed: 5, consultations: 0 },
+      { utm_source: 'high', visitors: 20, registered: 20, started: 18, completed: 15, consultations: 0 },
+      { utm_source: 'mid', visitors: 50, registered: 50, started: 40, completed: 20, consultations: 0 },
     ]);
     expect(out.rows.map((r) => r.source)).toEqual(['high', 'mid', 'low']);
   });
 
   it('treats divisions by zero as 0 not NaN', () => {
     const out = computeUtmRollup([
-      { utm_source: 'empty', visitors: 0, registered: 0, started: 0, completed: 0 },
+      { utm_source: 'empty', visitors: 0, registered: 0, started: 0, completed: 0, consultations: 0 },
     ]);
     expect(out.rows[0].completionRate).toBe(0);
   });

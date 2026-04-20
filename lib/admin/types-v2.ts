@@ -83,6 +83,7 @@ export interface UtmFunnelRow {
   registered: number;
   started: number;
   completed: number;
+  consultations: number;
 }
 
 export interface DailyTrendRow {

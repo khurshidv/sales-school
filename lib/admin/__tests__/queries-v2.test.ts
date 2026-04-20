@@ -74,14 +74,14 @@ describe('queries-v2', () => {
   it('getUtmFunnel coerces all bigint columns to number', async () => {
     mockRpc.mockResolvedValue({
       data: [
-        { utm_source: 'instagram', visitors: '50', registered: '50', started: '40', completed: '20' },
+        { utm_source: 'instagram', visitors: '50', registered: '50', started: '40', completed: '20', consultations: '3' },
       ],
       error: null,
     });
     const rows = await getUtmFunnel({ from: null, to: null });
     expect(mockRpc).toHaveBeenCalledWith('get_utm_funnel', { p_from: null, p_to: null });
     expect(rows[0]).toEqual({
-      utm_source: 'instagram', visitors: 50, registered: 50, started: 40, completed: 20,
+      utm_source: 'instagram', visitors: 50, registered: 50, started: 40, completed: 20, consultations: 3,
     });
   });
 

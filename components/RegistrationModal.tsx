@@ -113,6 +113,11 @@ export default function RegistrationModal() {
                 referrer: utm.referrer,
               });
 
+              // On /game paths this modal is always the post-game consultation CTA
+              // (SchoolPitch uses it). Tell the server so the deal is moved/created
+              // at "Игра: заявка на консультацию" rather than creating a duplicate.
+              const gameStage = sourcePage === 'game' ? 'consultation' : null;
+
               const bitrixPost = fetch('/api/bitrix/lead', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -120,6 +125,7 @@ export default function RegistrationModal() {
                   name: name.trim(),
                   phone: fullPhone,
                   sourcePage,
+                  gameStage,
                   utmSource: utm.utm_source,
                   utmMedium: utm.utm_medium,
                   utmCampaign: utm.utm_campaign,

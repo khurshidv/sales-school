@@ -1,17 +1,15 @@
-import { createClient } from '@/lib/supabase/client';
-
 /**
  * Analytics — batched, fire-and-forget.
  *
- * Previously: each trackEvent() hit Supabase INSERT immediately, which on a
- * single playthrough fired 6+ HTTPS requests with full TLS handshake cost
- * on mobile. Now events go into a module-level queue and are flushed:
+ * Events go into a module-level queue and are flushed to /api/game/events:
  *   - 2 seconds after the first queued event (debounced)
- *   - on tab hide (visibilitychange=hidden)
- *   - on page unload (pagehide, for iOS Safari which skips beforeunload)
- * The "dropped_off" event flushes immediately because it fires from a
- * beforeunload handler and the debounce timer may never run.
+ *   - on tab hide (visibilitychange=hidden) via sendBeacon
+ *   - on page unload (pagehide) via sendBeacon
+ * The "dropped_off" event flushes immediately via sendBeacon because it
+ * fires from a beforeunload handler and the debounce timer may never run.
  */
+
+const EVENTS_ENDPOINT = '/api/game/events';
 
 interface QueuedEvent {
   player_id: string;
@@ -38,33 +36,40 @@ function attachFlushListeners(): void {
   listenersAttached = true;
 
   const onHidden = () => {
-    if (document.visibilityState === 'hidden') flush();
+    if (document.visibilityState === 'hidden') flush(true);
   };
   document.addEventListener('visibilitychange', onHidden);
-  // iOS Safari: beforeunload is unreliable, pagehide fires on bfcache put.
-  window.addEventListener('pagehide', flush);
+  // iOS Safari: beforeunload is unreliable; pagehide fires on bfcache put.
+  window.addEventListener('pagehide', () => flush(true));
 }
 
-function flush(): void {
+function flush(useBeacon: boolean = false): void {
   if (flushTimer) {
     clearTimeout(flushTimer);
     flushTimer = null;
   }
   if (queue.length === 0) return;
 
-  // Snapshot & reset queue so any concurrent trackEvent calls don't
-  // resurrect already-sent events.
   const batch = queue;
   queue = [];
+  const body = JSON.stringify({ events: batch });
 
   try {
-    const supabase = createClient();
-    supabase
-      .from('game_events')
-      .insert(batch)
-      .then(({ error }: { error: { message: string } | null }) => {
-        if (error) console.warn('[analytics] batch flush', error.message);
-      });
+    if (useBeacon && typeof navigator !== 'undefined' && navigator.sendBeacon) {
+      const blob = new Blob([body], { type: 'application/json' });
+      navigator.sendBeacon(EVENTS_ENDPOINT, blob);
+      return;
+    }
+    fetch(EVENTS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body,
+      keepalive: true,
+    }).then((res) => {
+      if (!res.ok) console.warn('[analytics] flush status', res.status);
+    }).catch((e) => {
+      console.warn('[analytics] flush failed', e);
+    });
   } catch (e) {
     console.warn('[analytics] failed to flush:', e);
   }
@@ -95,10 +100,10 @@ export function trackEvent(
     });
     attachFlushListeners();
 
-    // Critical drop-off event: flush immediately because we're on the way
-    // out of the page and the debounce timer may never fire.
+    // Critical drop-off event: flush immediately via beacon — we're on the
+    // way out of the page and the debounce timer may never fire.
     if (eventType === 'dropped_off') {
-      flush();
+      flush(true);
     } else {
       scheduleFlush();
     }

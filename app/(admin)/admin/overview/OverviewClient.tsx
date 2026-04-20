@@ -42,22 +42,20 @@ export default function OverviewClient() {
         registered: acc.registered + r.registered,
         started: acc.started + r.started,
         completed: acc.completed + r.completed,
+        consultations: acc.consultations + r.consultations,
       }),
-      { visitors: 0, registered: 0, started: 0, completed: 0 },
+      { visitors: 0, registered: 0, started: 0, completed: 0, consultations: 0 },
     );
   }, [utm]);
 
   const funnelSteps = useMemo(() => computeFunnelDeltas([
-    { label: 'Зарегистрированы', value: totals.registered },
-    { label: 'Начали игру',      value: totals.started },
-    { label: 'Завершили игру',   value: totals.completed },
-    { label: 'Дошли до оффера',  value: offer?.offer_view ?? 0 },
-    { label: 'Кликнули CTA',     value: offer?.offer_cta_click ?? 0 },
+    { label: 'Зарегистрированы',    value: totals.registered },
+    { label: 'Начали игру',         value: totals.started },
+    { label: 'Прошли всю игру',     value: totals.completed },
+    { label: 'Увидели оффер',       value: offer?.offer_view ?? 0 },
+    { label: 'Кликнули CTA',        value: offer?.offer_cta_click ?? 0 },
+    { label: 'Оставили заявку',     value: totals.consultations },
   ]), [totals, offer]);
-
-  const conversionPct = totals.registered > 0 && offer
-    ? ((offer.offer_cta_click / totals.registered) * 100).toFixed(1)
-    : '—';
 
   return (
     <div>
@@ -70,12 +68,12 @@ export default function OverviewClient() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
         <KpiCard label="Игроков" value={totals.registered.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="Начали игру" value={totals.started.toLocaleString('ru-RU')} accent="pink" />
-        <KpiCard label="Завершили" value={totals.completed.toLocaleString('ru-RU')} accent="green" />
+        <KpiCard label="Прошли всю игру" value={totals.completed.toLocaleString('ru-RU')} accent="green" />
         <KpiCard
-          label="Конверсия в CTA"
-          value={typeof conversionPct === 'string' && conversionPct !== '—' ? conversionPct + '%' : '—'}
+          label="Оставили заявку"
+          value={totals.consultations.toLocaleString('ru-RU')}
           accent="orange"
-          hint="кликнули CTA / зарегистрированы"
+          hint="попап после игры"
         />
       </div>
 

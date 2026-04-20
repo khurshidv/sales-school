@@ -106,13 +106,14 @@ export async function getUtmFunnel(args: DateRangeOnly): Promise<UtmFunnelRow[]>
   }
   return (data ?? []).map((r: {
     utm_source: string; visitors: string | number; registered: string | number;
-    started: string | number; completed: string | number;
+    started: string | number; completed: string | number; consultations: string | number;
   }) => ({
     utm_source: r.utm_source,
     visitors: Number(r.visitors),
     registered: Number(r.registered),
     started: Number(r.started),
     completed: Number(r.completed),
+    consultations: Number(r.consultations),
   }));
 }
 

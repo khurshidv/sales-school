@@ -1,8 +1,7 @@
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
-
 const SESSION_KEY = 'ss_offer_sid';
+const ENDPOINT = '/api/game/offer-events';
 
 export function getOfferSessionId(): string {
   if (typeof window === 'undefined') return '';
@@ -23,17 +22,21 @@ interface CtaClickArgs extends BaseArgs {
   ctaId: string;
 }
 
-async function insert(row: Record<string, unknown>): Promise<void> {
+async function post(row: Record<string, unknown>): Promise<void> {
   try {
-    const supabase = createClient();
-    await supabase.from('offer_events').insert(row);
+    await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(row),
+      keepalive: true,
+    });
   } catch (e) {
-    console.warn('[offerEvents] insert failed:', e);
+    console.warn('[offerEvents] post failed:', e);
   }
 }
 
 export async function trackOfferView(args: BaseArgs): Promise<void> {
-  await insert({
+  await post({
     player_id: args.playerId,
     session_id: getOfferSessionId(),
     event_type: 'offer_view',
@@ -42,7 +45,7 @@ export async function trackOfferView(args: BaseArgs): Promise<void> {
 }
 
 export async function trackOfferCtaClick(args: CtaClickArgs): Promise<void> {
-  await insert({
+  await post({
     player_id: args.playerId,
     session_id: getOfferSessionId(),
     event_type: 'offer_cta_click',
@@ -52,7 +55,7 @@ export async function trackOfferCtaClick(args: CtaClickArgs): Promise<void> {
 }
 
 export async function trackOfferConversion(args: BaseArgs): Promise<void> {
-  await insert({
+  await post({
     player_id: args.playerId,
     session_id: getOfferSessionId(),
     event_type: 'offer_conversion',

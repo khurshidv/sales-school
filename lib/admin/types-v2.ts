@@ -69,10 +69,13 @@ export const SCENARIOS = [
   { id: 'car-dealership', label: 'Автодилер' },
 ] as const;
 
+// IDs must match the actual scenario day objects in game/data/scenarios/
+// (car-dealership day files use 'car-day1' etc). Admin filters pass these
+// through to RPCs that query game_events.day_id directly.
 export const DAYS = [
-  { id: 'day1', label: 'День 1' },
-  { id: 'day2', label: 'День 2' },
-  { id: 'day3', label: 'День 3' },
+  { id: 'car-day1', label: 'День 1' },
+  { id: 'car-day2', label: 'День 2' },
+  { id: 'car-day3', label: 'День 3' },
 ] as const;
 
 // ---- Marketing (Phase 3) ----

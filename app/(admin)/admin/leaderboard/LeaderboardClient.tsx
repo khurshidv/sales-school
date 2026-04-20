@@ -15,18 +15,21 @@ export default function LeaderboardClient() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    fetchLeaderboard(50)
-      .then((res) => {
-        if (cancelled) return;
-        setRows(res.items); setLoading(false);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        console.error('[LeaderboardClient] fetchLeaderboard failed', err);
-        setLoading(false);
-      });
-    return () => { cancelled = true; };
+    const load = () => {
+      fetchLeaderboard(50)
+        .then((res) => {
+          if (cancelled) return;
+          setRows(res.items); setLoading(false);
+        })
+        .catch((err) => {
+          if (cancelled) return;
+          console.error('[LeaderboardClient] fetchLeaderboard failed', err);
+          setLoading(false);
+        });
+    };
+    load();
+    const interval = setInterval(load, 30_000);
+    return () => { cancelled = true; clearInterval(interval); };
   }, []);
 
   const top3 = rows.slice(0, 3);
@@ -38,7 +41,7 @@ export default function LeaderboardClient() {
     <div>
       <PageHeader
         title="Leaderboard"
-        subtitle="Топ игроков по очкам — обновляется в реальном времени."
+        subtitle="Топ игроков по очкам — обновляется каждые 30 секунд."
         actions={<ExportCsvButton type="leaderboard" />}
       />
 

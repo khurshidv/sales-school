@@ -103,6 +103,10 @@ export async function getLeads(
 
   if (slug) {
     query = query.eq('source_page', slug);
+  } else {
+    // End-of-game consultation requests are tracked separately (Overview funnel
+    // 'consultations' and Participants page). Excluded from the default Leads view.
+    query = query.neq('source_page', 'game');
   }
   if (search) {
     query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
@@ -123,17 +127,18 @@ export async function getLeads(
 export async function getLeadCounts(): Promise<Record<string, number>> {
   const admin = createAdminClient();
 
-  // Use COUNT with head:true instead of fetching all rows
-  const [allRes, ...pageResults] = await Promise.all([
-    admin.from('leads').select('*', { count: 'exact', head: true }),
-    ...PAGE_SLUGS.map((slug) =>
+  // `all` is home+target only — end-of-game consultations excluded by design.
+  const pageResults = await Promise.all(
+    PAGE_SLUGS.map((slug) =>
       admin.from('leads').select('*', { count: 'exact', head: true }).eq('source_page', slug),
     ),
-  ]);
+  );
 
-  const counts: Record<string, number> = { all: allRes.count ?? 0 };
+  const counts: Record<string, number> = { all: 0 };
   PAGE_SLUGS.forEach((slug, i) => {
-    counts[slug] = pageResults[i].count ?? 0;
+    const n = pageResults[i].count ?? 0;
+    counts[slug] = n;
+    counts.all += n;
   });
   return counts;
 }

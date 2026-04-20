@@ -261,6 +261,7 @@ export interface GetPlayersEnrichedArgs {
 export interface ParticipantStats {
   total_sa: number;
   total_any_day: number;
+  total_consultations: number;
 }
 
 export async function getPlayersEnriched(
@@ -280,26 +281,55 @@ export async function getPlayersEnriched(
   if (to) q = q.lte('created_at', to);
   q = q.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
-  const [{ data: rows, count, error }, { data: statsRaw }] = await Promise.all([
+  const [{ data: rows, count, error }, { data: statsRaw }, { data: allGameLeadPhones }] = await Promise.all([
     q,
     admin.rpc('get_participant_stats'),
+    // Every phone that submitted an end-of-game consultation (dedup later).
+    admin.from('leads').select('phone').eq('source_page', 'game'),
   ]);
   if (error || !rows) {
     if (error) console.warn('[queries-v2] getPlayersEnriched', error.message);
-    return { players: [], total: 0, stats: { total_sa: 0, total_any_day: 0 } };
+    return { players: [], total: 0, stats: { total_sa: 0, total_any_day: 0, total_consultations: 0 } };
   }
+
+  // Match against players table so the KPI counts "registered players who
+  // applied" — stays consistent with Overview funnel's `consultations` column
+  // (both JOIN by phone). An in-game consultation from a phone that isn't a
+  // registered player is a form-submission edge case, shown elsewhere if needed.
+  const consultationPhoneSet = Array.from(
+    new Set<string>((allGameLeadPhones ?? []).map((l) => l.phone)),
+  );
+  let matchedConsultationsCount = 0;
+  if (consultationPhoneSet.length > 0) {
+    const { count: matched } = await admin
+      .from('players')
+      .select('id', { count: 'exact', head: true })
+      .in('phone', consultationPhoneSet);
+    matchedConsultationsCount = matched ?? 0;
+  }
+
   const stats: ParticipantStats = {
     total_sa: Number((statsRaw as ParticipantStats | null)?.total_sa) || 0,
     total_any_day: Number((statsRaw as ParticipantStats | null)?.total_any_day) || 0,
+    total_consultations: matchedConsultationsCount,
   };
 
   const playerIds = rows.map((r) => r.id);
   if (playerIds.length === 0) return { players: [], total: count ?? 0, stats };
 
-  const { data: completions } = await admin
-    .from('completed_scenarios')
-    .select('player_id, day_id, rating, completed_at')
-    .in('player_id', playerIds);
+  const playerPhones = rows.map((r) => r.phone).filter((p): p is string => typeof p === 'string');
+
+  const [{ data: completions }, { data: gameLeads }] = await Promise.all([
+    admin
+      .from('completed_scenarios')
+      .select('player_id, day_id, rating, completed_at')
+      .in('player_id', playerIds),
+    playerPhones.length > 0
+      ? admin.from('leads').select('phone').eq('source_page', 'game').in('phone', playerPhones)
+      : Promise.resolve({ data: [] as { phone: string }[] }),
+  ]);
+
+  const consultationPhones = new Set<string>((gameLeads ?? []).map((l) => l.phone));
 
   const byPlayer: Record<string, { ratings: string[]; days: Set<string>; lastAt: string | null }> = {};
   for (const id of playerIds) byPlayer[id] = { ratings: [], days: new Set(), lastAt: null };
@@ -318,6 +348,7 @@ export async function getPlayersEnriched(
       best_rating: bestRating(acc.ratings),
       days_completed: acc.days.size,
       last_activity: acc.lastAt ?? r.last_seen_at,
+      submitted_consultation: consultationPhones.has(r.phone),
     };
   });
 

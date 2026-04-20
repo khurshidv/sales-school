@@ -12,11 +12,6 @@ const SOURCE_TABS: Array<{ slug: string | null; label: string }> = [
   { slug: 'target', label: 'Target' },
 ];
 
-function maskPhone(phone: string): string {
-  if (phone.length < 6) return phone;
-  return `${phone.slice(0, phone.length - 6)} *** ** ${phone.slice(-2)}`;
-}
-
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
@@ -120,7 +115,7 @@ export default function LeadsClient() {
                   <td style={{ padding: '10px 12px', fontWeight: 600 }}>{l.name}</td>
                   <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>
                     <a href={`https://wa.me/${l.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
-                      {maskPhone(l.phone)}
+                      {l.phone}
                     </a>
                   </td>
                   <td style={{ padding: '10px 12px' }}>

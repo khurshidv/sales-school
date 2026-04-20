@@ -6,7 +6,7 @@ describe('computeUtmRollup', () => {
   it('returns empty object on empty input', () => {
     expect(computeUtmRollup([])).toEqual({
       rows: [],
-      totals: { visitors: 0, registered: 0, started: 0, completed: 0 },
+      totals: { visitors: 0, registered: 0, started: 0, completed: 0, consultations: 0 },
     });
   });
 
@@ -16,7 +16,7 @@ describe('computeUtmRollup', () => {
       { utm_source: '(none)', visitors: 50, registered: 50, started: 40, completed: 25, consultations: 0 },
     ];
     const out = computeUtmRollup(rows);
-    expect(out.totals).toEqual({ visitors: 150, registered: 150, started: 100, completed: 55 });
+    expect(out.totals).toEqual({ visitors: 150, registered: 150, started: 100, completed: 55, consultations: 0 });
     expect(out.rows[0].source).toBe('(none)');
     expect(out.rows[0].completionRate).toBeCloseTo(50, 1);
     expect(out.rows[1].completionRate).toBeCloseTo(30, 1);

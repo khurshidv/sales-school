@@ -116,6 +116,14 @@ export default function BranchClient() {
           <div style={{ height: 480, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>
             Загружаем данные…
           </div>
+        ) : flows.length === 0 ? (
+          <div style={{ height: 480, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, color: 'var(--admin-text-dim)', fontSize: 13, textAlign: 'center', padding: 24 }}>
+            <div style={{ fontSize: 28, opacity: 0.6 }}>🌱</div>
+            <div><strong>Пока нет данных о переходах.</strong></div>
+            <div style={{ fontSize: 12, maxWidth: 420 }}>
+              События движения игроков между узлами появятся как только кто-то начнёт играть (нужен деплой новой аналитики).
+            </div>
+          </div>
         ) : tab === 'sankey' ? (
           <SankeyChart data={sankey} />
         ) : tab === 'tree' ? (

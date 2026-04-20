@@ -61,25 +61,25 @@ export default function EngagementClient() {
           label="Interest Index"
           value={idx ? `${idx.score.toFixed(1)}/10` : '—'}
           accent="violet"
-          hint="composite: completion + thinking + replay"
+          hint="завершаемость + обдумывание + переигровки"
         />
         <KpiCard
-          label="Completion rate"
+          label="% завершивших день"
           value={blob ? `${(blob.completion_rate * 100).toFixed(0)}%` : '—'}
           accent="green"
           hint="доля начавших, кто завершил день"
         />
         <KpiCard
-          label="Avg thinking time"
+          label="Среднее время выбора"
           value={blob?.avg_thinking_time_ms ? `${(blob.avg_thinking_time_ms / 1000).toFixed(1)}с` : '—'}
           accent="pink"
-          hint="оптимально 5-15 секунд"
+          hint="оптимально 5–15 секунд"
         />
         <KpiCard
-          label="Replay rate"
+          label="% переигровок"
           value={blob ? `${(blob.replay_rate * 100).toFixed(0)}%` : '—'}
           accent="orange"
-          hint="0.1-0.3 = здоровая повторяемость"
+          hint="10–30% — здоровая повторяемость"
         />
       </div>
 
@@ -95,6 +95,10 @@ export default function EngagementClient() {
         {loading ? (
           <div style={{ height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>
             Загружаем…
+          </div>
+        ) : stats.length === 0 ? (
+          <div style={{ height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)', fontSize: 13 }}>
+            Нет данных о выборах за период.
           </div>
         ) : (
           <ThinkingBarChart stats={stats} />

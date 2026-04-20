@@ -32,10 +32,10 @@ export default function OfferClient() {
   }, [period]);
 
   const steps = useMemo(() => computeFunnelDeltas([
-    { label: 'Завершили игру', value: funnel?.game_completed ?? 0 },
-    { label: 'Увидели оффер',  value: funnel?.offer_view ?? 0 },
-    { label: 'Кликнули CTA',   value: funnel?.offer_cta_click ?? 0 },
-    { label: 'Конверсия',      value: funnel?.offer_conversion ?? 0 },
+    { label: 'Прошли всю игру', value: funnel?.game_completed ?? 0 },
+    { label: 'Увидели оффер',   value: funnel?.offer_view ?? 0 },
+    { label: 'Кликнули CTA',    value: funnel?.offer_cta_click ?? 0 },
+    { label: 'Конверсия',       value: funnel?.offer_conversion ?? 0 },
   ]), [funnel]);
 
   const ctr = funnel && funnel.offer_view > 0

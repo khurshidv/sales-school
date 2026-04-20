@@ -127,7 +127,7 @@ export function fetchOffer(period: Period): Promise<OfferPayload> {
 export interface ParticipantsPayload {
   players: EnrichedPlayer[];
   total: number;
-  stats: { total_sa: number; total_any_day: number };
+  stats: { total_sa: number; total_any_day: number; total_consultations: number };
 }
 
 export function fetchParticipants(params: {

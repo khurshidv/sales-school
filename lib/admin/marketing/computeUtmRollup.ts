@@ -6,6 +6,7 @@ export interface UtmRollupRow {
   registered: number;
   started: number;
   completed: number;
+  consultations: number;
   completionRate: number; // 0..100, % of visitors who completed
 }
 
@@ -14,6 +15,7 @@ export interface UtmRollupTotals {
   registered: number;
   started: number;
   completed: number;
+  consultations: number;
 }
 
 export interface UtmRollup {
@@ -27,12 +29,13 @@ export interface UtmRollup {
  * non-NaN (zero-visitor sources show 0%).
  */
 export function computeUtmRollup(input: UtmFunnelRow[]): UtmRollup {
-  const totals: UtmRollupTotals = { visitors: 0, registered: 0, started: 0, completed: 0 };
+  const totals: UtmRollupTotals = { visitors: 0, registered: 0, started: 0, completed: 0, consultations: 0 };
   const rows: UtmRollupRow[] = input.map((r) => {
     totals.visitors += r.visitors;
     totals.registered += r.registered;
     totals.started += r.started;
     totals.completed += r.completed;
+    totals.consultations += r.consultations;
     const completionRate = r.visitors > 0 ? (r.completed / r.visitors) * 100 : 0;
     return {
       source: r.utm_source,
@@ -40,6 +43,7 @@ export function computeUtmRollup(input: UtmFunnelRow[]): UtmRollup {
       registered: r.registered,
       started: r.started,
       completed: r.completed,
+      consultations: r.consultations,
       completionRate,
     };
   });

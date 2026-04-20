@@ -41,12 +41,12 @@ export default function FunnelClient() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
         <KpiCard label="Источников" value={rollup.rows.length} accent="violet" />
-        <KpiCard label="Всего игроков" value={rollup.totals.visitors.toLocaleString('ru-RU')} accent="pink" />
-        <KpiCard label="Завершили" value={rollup.totals.completed.toLocaleString('ru-RU')} accent="green" />
+        <KpiCard label="Посетителей" value={rollup.totals.visitors.toLocaleString('ru-RU')} accent="pink" hint="уникальные просмотры лендингов" />
+        <KpiCard label="Прошли всю игру" value={rollup.totals.completed.toLocaleString('ru-RU')} accent="green" />
         <KpiCard
           label="Лучший источник"
           value={rollup.rows[0]?.source ?? '—'}
-          hint={rollup.rows[0] ? `${rollup.rows[0].completionRate.toFixed(1)}% completion` : undefined}
+          hint={rollup.rows[0] ? `${rollup.rows[0].completionRate.toFixed(1)}% завершаемость` : undefined}
           accent="orange"
         />
       </div>
@@ -65,9 +65,10 @@ export default function FunnelClient() {
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--admin-border)' }}>
                   <th style={{ textAlign: 'left', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Источник</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Игроков</th>
+                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Посетителей</th>
                   <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Начали</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Завершили</th>
+                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Прошли</th>
+                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Заявки</th>
                   <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Конверсия</th>
                 </tr>
               </thead>
@@ -78,6 +79,7 @@ export default function FunnelClient() {
                     <td style={{ padding: '8px 6px', textAlign: 'right' }}>{r.visitors}</td>
                     <td style={{ padding: '8px 6px', textAlign: 'right' }}>{r.started}</td>
                     <td style={{ padding: '8px 6px', textAlign: 'right' }}>{r.completed}</td>
+                    <td style={{ padding: '8px 6px', textAlign: 'right', fontWeight: 600, color: r.consultations > 0 ? 'var(--admin-accent-success)' : undefined }}>{r.consultations}</td>
                     <td style={{
                       padding: '8px 6px', textAlign: 'right', fontWeight: 700,
                       color: r.completionRate >= 30 ? 'var(--admin-accent-success)' :

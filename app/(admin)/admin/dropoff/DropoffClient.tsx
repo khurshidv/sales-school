@@ -90,6 +90,14 @@ export default function DropoffClient() {
         </div>
         {loading ? (
           <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+        ) : rows.length === 0 ? (
+          <div style={{ padding: '24px 20px', color: 'var(--admin-text-dim)', fontSize: 13, textAlign: 'center' }}>
+            <div style={{ fontSize: 24, opacity: 0.6, marginBottom: 6 }}>✅</div>
+            <strong>Пока никто не выпал из сценария.</strong>
+            <div style={{ fontSize: 12, marginTop: 4 }}>
+              Либо никто ещё не играл за выбранный период, либо все игроки проходят до конца.
+            </div>
+          </div>
         ) : (
           <DropoffBars rows={rows} />
         )}

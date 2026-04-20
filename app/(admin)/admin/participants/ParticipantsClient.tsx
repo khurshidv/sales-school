@@ -11,11 +11,6 @@ import type { EnrichedPlayer } from '@/lib/admin/types-v2';
 
 const RATINGS = ['S', 'A', 'B', 'C', 'F'] as const;
 
-function maskPhone(phone: string): string {
-  if (phone.length < 6) return phone;
-  return `${phone.slice(0, phone.length - 6)} *** ** ${phone.slice(-2)}`;
-}
-
 function formatRelative(iso: string | null): string {
   if (!iso) return '—';
   const diff = Date.now() - new Date(iso).getTime();
@@ -33,6 +28,7 @@ export default function ParticipantsClient() {
   const [total, setTotal] = useState(0);
   const [totalSa, setTotalSa] = useState(0);
   const [totalAnyDay, setTotalAnyDay] = useState(0);
+  const [totalConsultations, setTotalConsultations] = useState(0);
   const [search, setSearch] = useState('');
   const [ratingFilter, setRatingFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,6 +43,7 @@ export default function ParticipantsClient() {
         setTotal(res.total);
         setTotalSa(res.stats?.total_sa ?? 0);
         setTotalAnyDay(res.stats?.total_any_day ?? 0);
+        setTotalConsultations(res.stats?.total_consultations ?? 0);
         setLoading(false);
       })
       .catch((err) => {
@@ -79,7 +76,12 @@ export default function ParticipantsClient() {
           accent="pink"
           hint="все игроки в БД"
         />
-        <KpiCard label="На странице" value={players.length} accent="orange" />
+        <KpiCard
+          label="Оставили заявку"
+          value={totalConsultations.toLocaleString('ru-RU')}
+          accent="orange"
+          hint="попап после игры"
+        />
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
@@ -123,6 +125,7 @@ export default function ParticipantsClient() {
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Rating</th>
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Очки</th>
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Дней</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Заявка</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Активность</th>
               </tr>
@@ -135,10 +138,25 @@ export default function ParticipantsClient() {
                       {p.display_name}
                     </Link>
                   </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>{maskPhone(p.phone)}</td>
+                  <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>
+                    <a href={`https://wa.me/${p.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
+                      {p.phone}
+                    </a>
+                  </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}><RatingBadge rating={p.best_rating} size="sm" /></td>
                   <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>{p.total_score.toLocaleString('ru-RU')}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'right' }}>{p.days_completed}/3</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    {p.submitted_consultation ? (
+                      <span style={{
+                        display: 'inline-block', padding: '2px 8px',
+                        background: '#dcfce7', color: '#166534',
+                        borderRadius: 999, fontSize: 10, fontWeight: 700,
+                      }}>✓ есть</span>
+                    ) : (
+                      <span style={{ color: 'var(--admin-text-dim)', fontSize: 10 }}>—</span>
+                    )}
+                  </td>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                     {p.utm_source ?? '(прямой)'}
                   </td>

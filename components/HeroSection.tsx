@@ -4,21 +4,10 @@ import CTAButton from "./CTAButton";
 import CountUp from "./CountUp";
 import FadeUp from "./FadeUp";
 import { CompactCountdown } from "./FlipClock";
-import { REGISTRATION_COUNT, WEBINAR_DATE, AVATAR_IMAGES } from "@/lib/constants";
-import { useT, type TranslationKey } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 
 export default function HeroSection() {
   const { t, locale } = useT();
-
-  function formatDate(iso: string) {
-    const parts = iso.split("T")[0].split("-");
-    const day = parseInt(parts[2], 10);
-    const monthKey = `month.${parseInt(parts[1], 10)}` as TranslationKey;
-    const month = t(monthKey);
-    return `${day} ${month}`;
-  }
-
-  const dateLabel = formatDate(WEBINAR_DATE);
 
   const steps = [
     { num: "01", text: t("hero.step1") },
@@ -36,32 +25,6 @@ export default function HeroSection() {
 
           {/* ── Left column ── */}
           <div className="flex flex-col items-start flex-1 max-w-2xl">
-
-            {/* Social proof BEFORE headline — credibility first */}
-            <FadeUp delay={100}>
-              <div className="flex items-center gap-3 mb-7 bg-surface-container-low/50 backdrop-blur-sm p-2.5 pr-5 rounded-full border border-outline-variant/10">
-                <div className="flex -space-x-2 shrink-0">
-                  {AVATAR_IMAGES.map((src, i) => (
-                    <img
-                      key={i}
-                      src={src}
-                      alt=""
-                      width={36}
-                      height={36}
-                      loading="eager"
-                      className="w-9 h-9 rounded-full border-[3px] border-surface-container-low object-cover"
-                    />
-                  ))}
-                </div>
-                <span className="text-on-surface-variant text-sm font-semibold">
-                  <CountUp
-                    target={REGISTRATION_COUNT}
-                    className="text-primary-container font-bold tabular-nums"
-                  />{" "}
-                  {t("hero.registered")}
-                </span>
-              </div>
-            </FadeUp>
 
             {/* H1 */}
             <FadeUp delay={200} className="w-full">
@@ -127,8 +90,8 @@ export default function HeroSection() {
                 <div className="col-span-2 bg-white/95 backdrop-blur-xl p-5 md:p-7 rounded-2xl double-bezel bento-card">
                   <span className="block text-on-surface-variant font-bold uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_income_label")}</span>
                   <div className="font-[family-name:var(--font-heading)] leading-none mb-4">
-                    <span className="text-gradient-orange text-4xl md:text-5xl font-bold">$<CountUp target={800} duration={2000} /></span>
-                    <span className="text-gradient-orange text-xl md:text-2xl font-bold">/{locale === "ru" ? "мес" : "oy"}</span>
+                    <span className="text-gradient-orange text-4xl md:text-5xl font-bold"><CountUp target={10} duration={2000} /></span>
+                    <span className="text-gradient-orange text-xl md:text-2xl font-bold"> {locale === "ru" ? "млн сум/мес" : "mln so'm/oy"}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <div className="flex items-center gap-2 bg-surface-container/70 px-3 py-2 rounded-xl">

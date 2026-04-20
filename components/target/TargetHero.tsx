@@ -6,7 +6,8 @@ import { useT } from "@/lib/i18n";
 import { TARGET_HERO_IMAGE } from "@/lib/constants";
 
 export default function TargetHero() {
-  const { t } = useT();
+  const { t, locale } = useT();
+  const highlight = locale === "ru" ? "6-10 млн сум+" : "6-10 mln so'm+";
 
   return (
     <section className="relative pt-[88px] pb-10 md:pt-32 md:pb-20 mesh-hero overflow-hidden overflow-x-clip">
@@ -24,11 +25,11 @@ export default function TargetHero() {
 
           <FadeUp delay={100}>
             <h1 className="text-3xl sm:text-4xl md:text-[2.75rem] lg:text-5xl font-heading font-bold tracking-tight leading-[1.12] text-on-surface">
-              {t("target.hero.heading").split("$800").map((part, i, arr) =>
+              {t("target.hero.heading").split(highlight).map((part, i, arr) =>
                 i < arr.length - 1 ? (
                   <span key={i}>
                     {part}
-                    <span className="text-gradient-orange">$800</span>
+                    <span className="text-gradient-orange whitespace-nowrap">{highlight}</span>
                   </span>
                 ) : (
                   <span key={i}>{part}</span>
@@ -77,10 +78,10 @@ export default function TargetHero() {
                     Sohada o'rtacha oylik
                   </p>
                   <p className="text-xl font-bold text-on-surface">
-                    300–400$
+                    3,5–5 mln so'm
                   </p>
                   <p className="text-sm font-semibold text-primary">
-                    Biz bilan esa kamida $500+
+                    Biz bilan esa kamida 6 mln so'm+
                   </p>
                 </div>
               </div>

@@ -9,7 +9,7 @@ export default function TargetFooter() {
     <footer className="w-full py-16 md:py-20 border-t border-outline-variant/10 bg-surface-container-low">
       <div className="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12">
         <div className="space-y-4 md:space-y-6">
-          <div className="text-on-surface font-bold text-lg">SALES UP</div>
+          <img src="/logo.svg" alt="Sales Up" width={1445} height={422} className="h-8 w-auto" />
           <p className="text-sm text-on-surface-variant">
             {t("target.footer.tagline")}
           </p>

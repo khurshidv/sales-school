@@ -19,9 +19,9 @@ export default function TargetHeader() {
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md ambient-glow">
       <div className="flex justify-between items-center max-w-7xl mx-auto px-6 md:px-8 h-16 md:h-20">
-        <div className="text-lg md:text-xl font-bold text-on-surface tracking-tighter">
-          SALES UP
-        </div>
+        <a href="/" className="flex items-center">
+          <img src="/logo.svg" alt="Sales Up" width={1445} height={422} className="h-6 md:h-7 w-auto" />
+        </a>
 
         {/* Desktop nav */}
         <div className="hidden md:flex gap-6 lg:gap-8 items-center">

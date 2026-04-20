@@ -11,8 +11,8 @@ const translations = {
     uz: "🎙 BEPUL VEBINAR",
   },
   "hero.heading": {
-    ru: "Узнайте, как с нуля стать менеджером по продажам и за 30 дней найти работу с зарплатой $800+",
-    uz: "Qanday qilib 0 dan sotuv menejerlikni o'rganib 30 kunda $800+ oylik oladigan ishga kirish mumkinligini bilib oling",
+    ru: "Узнайте, как с нуля стать менеджером по продажам и за 30 дней найти работу с зарплатой от 6-10 млн сум+",
+    uz: "Qanday qilib 0 dan sotuv menejerlikni o'rganib 30 kunda 6-10 mln so'm+ oylik oladigan ishga kirish mumkinligini bilib oling",
   },
   "hero.subheading": {
     ru: "Пошаговый план входа в профессию продаж: где искать первую работу, как пройти собеседование и сколько можно заработать в первый месяц.",
@@ -51,8 +51,8 @@ const translations = {
     uz: "Majburiyatsiz",
   },
   "hero.badge_income": {
-    ru: "$800/мес",
-    uz: "$800/oy",
+    ru: "10 млн сум/мес",
+    uz: "10 mln so'm/oy",
   },
   "hero.badge_income_label": {
     ru: "Стартовый доход",
@@ -124,8 +124,8 @@ const translations = {
   /* Bonus 3 */
   "bonus.3.badge": { ru: "Template", uz: "Shablon" },
   "bonus.3.title": {
-    ru: 'Шаблон резюме "Продажник на миллион"',
-    uz: '"10mln+ sotuvchi" rezyume shabloni',
+    ru: 'Шаблон резюме "Продажник от 10 млн"',
+    uz: '"10 mln+ sotuvchi" rezyume shabloni',
   },
   "bonus.3.desc": {
     ru: "Выделитесь среди сотен кандидатов за 2 минуты.",
@@ -226,7 +226,7 @@ const translations = {
   "ba.before3": { ru: "Маленький доход или его отсутствие", uz: "Kam daromad yoki umuman yo'qligi" },
   "ba.after1": { ru: "Четкий план действий 1-2-3", uz: "Aniq harakatlar rejasi 1-2-3" },
   "ba.after2": { ru: "Уверенность в своих навыках", uz: "O'z ko'nikmalariga ishonch" },
-  "ba.after3": { ru: "Первая работа с окладом $800+", uz: "$800+ maoshli birinchi ish" },
+  "ba.after3": { ru: "Первая работа с окладом от 10 млн сум+", uz: "10 mln so'm+ maoshli birinchi ish" },
   "ba.now": { ru: "Сейчас", uz: "Hozir" },
   "ba.goal": { ru: "Цель за 30 дней", uz: "30 kunlik maqsad" },
   "ba.after_label": { ru: "После вебинара", uz: "Vebinardan keyin" },
@@ -316,8 +316,8 @@ const translations = {
     uz: "Ish qidirib yurganlar diqqatiga!",
   },
   "target.hero.heading": {
-    ru: "Нет опыта? Не проблема. Мы поможем вам найти работу в сфере продаж с зарплатой от $500-$800+",
-    uz: "Tajriba yo'qmi? Muammo emas. Biz sizga sotuv sohasida oyligi $500-$800+ dan boshlanadigan ish topishga yordam beramiz",
+    ru: "Нет опыта? Не проблема. Мы поможем вам найти работу в сфере продаж с зарплатой от 6-10 млн сум+",
+    uz: "Tajriba yo'qmi? Muammo emas. Biz sizga sotuv sohasida oyligi 6-10 mln so'm+ dan boshlanadigan ish topishga yordam beramiz",
   },
   "target.hero.subheading": {
     ru: "Обучение + практика + реальное трудоустройство",
@@ -369,12 +369,12 @@ const translations = {
     uz: "01. Muammo",
   },
   "target.pain.heading": {
-    ru: "Почему ты до сих пор не зарабатываешь $800+?",
-    uz: "Nega siz hali ham $800+ ishlamayapsiz?",
+    ru: "Почему ты до сих пор не зарабатываешь 10 млн сум+?",
+    uz: "Nega siz hali ham 10 mln so'm+ ishlamayapsiz?",
   },
   "target.pain.1": {
-    ru: "Работаешь, но доход остаётся на уровне $200–300",
-    uz: "Ishlaysiz, lekin daromad $200–300 darajasida qolmoqda",
+    ru: "Работаешь, но доход остаётся на уровне 2,5–3,5 млн сум",
+    uz: "Ishlaysiz, lekin daromad 2,5–3,5 mln so'm darajasida qolmoqda",
   },
   "target.pain.2": {
     ru: "Нет навыка, который реально приносит деньги",
@@ -437,12 +437,12 @@ const translations = {
 
   /* --- Target Loss Aversion --- */
   "target.loss.heading": {
-    ru: "Вы теряете минимум $500 каждый месяц, оставаясь на текущем месте",
-    uz: "Hozirgi joyingizda qolish orqali har oyda kamida $500 yo'qotmoqdasiz",
+    ru: "Вы теряете минимум 6 млн сум каждый месяц, оставаясь на текущем месте",
+    uz: "Hozirgi joyingizda qolish orqali har oyda kamida 6 mln so'm yo'qotmoqdasiz",
   },
   "target.loss.desc": {
-    ru: "Каждый месяц без навыка продаж = минус $500–$1000 к вашему доходу. Пока вы откладываете — другие уже зарабатывают и растут в 2–3 раза быстрее.",
-    uz: "Sotuv ko'nikmasiz har oy = daromadingizga minus $500–$1000. Siz kechiktirganingizda — boshqalar allaqachon 2–3 baravar tezroq ishlaydi va o'sadi.",
+    ru: "Каждый месяц без навыка продаж = минус 6–12 млн сум к вашему доходу. Пока вы откладываете — другие уже зарабатывают и растут в 2–3 раза быстрее.",
+    uz: "Sotuv ko'nikmasiz har oy = daromadingizga minus 6–12 mln so'm. Siz kechiktirganingizda — boshqalar allaqachon 2–3 baravar tezroq ishlaydi va o'sadi.",
   },
   "target.loss.cta": {
     ru: "Рассчитать мой доход",
@@ -475,8 +475,8 @@ const translations = {
 
   /* --- Target Cases --- */
   "target.cases.heading": {
-    ru: "Как наши ученики вышли на доход $800+",
-    uz: "$800+ daromad qiladigan o'quvchilarimiz",
+    ru: "Как наши ученики вышли на доход 10 млн сум+",
+    uz: "10 mln so'm+ daromad qiladigan o'quvchilarimiz",
   },
   "target.cases.placeholder": {
     ru: "Видео кейсы скоро будут добавлены",
@@ -487,8 +487,8 @@ const translations = {
     uz: "Anna, 22 yosh",
   },
   "target.case.1.desc": {
-    ru: "До курса работала бариста. После обучения устроилась в SaaS компанию. Первый бонус — $450.",
-    uz: "Kursdan oldin barista bo'lgan. O'qishdan keyin SaaS kompaniyasiga ishga kirdi. Birinchi bonus — $450.",
+    ru: "До курса работала бариста. После обучения устроилась в SaaS компанию. Первый бонус — 5,5 млн сум.",
+    uz: "Kursdan oldin barista bo'lgan. O'qishdan keyin SaaS kompaniyasiga ishga kirdi. Birinchi bonus — 5,5 mln so'm.",
   },
   "target.case.1.tag": { ru: "B2B Sales", uz: "B2B Sales" },
   "target.case.2.name": {
@@ -496,8 +496,8 @@ const translations = {
     uz: "Maksim, 19 yosh",
   },
   "target.case.2.desc": {
-    ru: "Был студентом без опыта. Сейчас — Junior Account Manager. Доход от $900.",
-    uz: "Tajribasiz talaba edi. Hozir — Junior Account Manager. Daromad $900 dan.",
+    ru: "Был студентом без опыта. Сейчас — Junior Account Manager. Доход от 11 млн сум.",
+    uz: "Tajribasiz talaba edi. Hozir — Junior Account Manager. Daromad 11 mln so'mdan.",
   },
   "target.case.2.tag": { ru: "IT Solutions", uz: "IT Solutions" },
   "target.case.3.name": {
@@ -505,8 +505,8 @@ const translations = {
     uz: "Igor, 25 yosh",
   },
   "target.case.3.desc": {
-    ru: "Ушел из госсектора. Спустя 2 месяца обучения закрыл сделку на $2000 комиссии.",
-    uz: "Davlat sektoridan ketdi. 2 oylik o'qishdan keyin $2000 komissiya bilan bitim tuzdi.",
+    ru: "Ушел из госсектора. Спустя 2 месяца обучения закрыл сделку на 25 млн сум комиссии.",
+    uz: "Davlat sektoridan ketdi. 2 oylik o'qishdan keyin 25 mln so'm komissiya bilan bitim tuzdi.",
   },
   "target.case.3.tag": { ru: "Real Estate", uz: "Real Estate" },
   "target.cases.watch": {
@@ -570,8 +570,8 @@ const translations = {
     uz: "Bitimlarni yopish va buning ustida ishlash",
   },
   "target.program.outcome.4": {
-    ru: "Получить работу и выйти на доход от $800",
-    uz: "Ishga kirish va $800 dan daromadga chiqish",
+    ru: "Получить работу и выйти на доход от 10 млн сум",
+    uz: "Ishga kirish va 10 mln so'mdan daromadga chiqish",
   },
   "target.program.module.1.range": { ru: "01-03", uz: "01-03" },
   "target.program.module.1.title": {
@@ -616,8 +616,8 @@ const translations = {
     uz: "Siz 18–30 yoshdasiz va istiqbolli boshlanish qidirmoqdasiz",
   },
   "target.whom.yes_2": {
-    ru: "Хотите зарабатывать от $800+ сразу после курса",
-    uz: "Kursdan keyin darhol $800+ ishlashni xohlaysiz",
+    ru: "Хотите зарабатывать от 10 млн сум+ сразу после курса",
+    uz: "Kursdan keyin darhol 10 mln so'm+ ishlashni xohlaysiz",
   },
   "target.whom.yes_3": {
     ru: "Готовы учиться и работать на результат",

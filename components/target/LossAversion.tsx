@@ -5,7 +5,7 @@ import FadeUp from "../FadeUp";
 import { useT } from "@/lib/i18n";
 
 export default function LossAversion() {
-  const { t } = useT();
+  const { t, locale } = useT();
 
   return (
     <section className="py-20 md:py-24 bg-background">
@@ -51,16 +51,19 @@ export default function LossAversion() {
         <div className="space-y-6 md:space-y-8">
           <FadeUp>
             <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight text-on-surface">
-              {t("target.loss.heading").split("$500").map((part, i, arr) =>
-                i < arr.length - 1 ? (
-                  <span key={i}>
-                    {part}
-                    <span className="text-error">$500</span>
-                  </span>
-                ) : (
-                  <span key={i}>{part}</span>
-                )
-              )}
+              {(() => {
+                const highlight = locale === "ru" ? "6 млн сум" : "6 mln so'm";
+                return t("target.loss.heading").split(highlight).map((part, i, arr) =>
+                  i < arr.length - 1 ? (
+                    <span key={i}>
+                      {part}
+                      <span className="text-error">{highlight}</span>
+                    </span>
+                  ) : (
+                    <span key={i}>{part}</span>
+                  )
+                );
+              })()}
             </h2>
           </FadeUp>
 

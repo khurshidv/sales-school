@@ -14,8 +14,8 @@ export default function Footer() {
   return (
     <footer className="bg-surface-container-low w-full py-16 md:py-20 pb-28 md:pb-20">
       <div className="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-6 md:px-12">
-        <div className="font-[family-name:var(--font-heading)] font-bold text-on-surface text-xl mb-8 md:mb-0">
-          Sales Up
+        <div className="mb-8 md:mb-0">
+          <img src="/logo.svg" alt="Sales Up" width={1445} height={422} className="h-8 w-auto" />
         </div>
 
         <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center text-sm text-on-surface-variant">

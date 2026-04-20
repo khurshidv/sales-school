@@ -15,7 +15,8 @@ const RATING_COLORS: Record<string, string> = {
 function formatTime(seconds: number) {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
-  return `${m}m ${s}s`;
+  if (m === 0) return `${s}с`;
+  return `${m}м ${s}с`;
 }
 
 const thStyle: React.CSSProperties = {

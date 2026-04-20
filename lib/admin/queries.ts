@@ -122,12 +122,15 @@ export async function getGameMetrics(
   const admin = createAdminClient();
   const { from, to } = options;
 
+  // inner join + filter on players.is_test keeps test-player data out of metrics.
   let completionsQuery = admin
     .from('completed_scenarios')
-    .select('score, rating, time_taken, scenario_id, created_at');
+    .select('score, rating, time_taken, scenario_id, created_at, players!inner(is_test)')
+    .eq('players.is_test', false);
   let eventsQuery = admin
     .from('game_events')
-    .select('day_id, event_type, player_id, created_at')
+    .select('day_id, event_type, player_id, created_at, players!inner(is_test)')
+    .eq('players.is_test', false)
     .in('event_type', ['day_started', 'day_completed', 'day_failed', 'dropped_off']);
 
   if (from) {

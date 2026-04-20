@@ -139,6 +139,7 @@ export interface PlayerSummary {
   device_fingerprint: string | null;
   last_seen_at: string;
   created_at: string;
+  is_test: boolean;
   admin_notes: string;
 }
 

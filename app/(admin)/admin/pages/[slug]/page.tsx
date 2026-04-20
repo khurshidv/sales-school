@@ -11,7 +11,7 @@ import type {
 } from '@/lib/admin/types';
 
 function fmt(n: number) {
-  return n.toLocaleString('en-US');
+  return n.toLocaleString('ru-RU');
 }
 
 function fmtDuration(ms: number) {
@@ -98,7 +98,7 @@ function UTMTable({ data }: { data: UTMBreakdown[] }) {
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead>
           <tr style={{ borderBottom: '2px solid #f3f4f6' }}>
-            {['Источник', 'Medium', 'Кампания', 'Просмотры', 'Уникальные'].map((h) => (
+            {['Источник', 'Канал', 'Кампания', 'Просмотры', 'Уникальные'].map((h) => (
               <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>{h}</th>
             ))}
           </tr>

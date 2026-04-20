@@ -113,4 +113,5 @@ export interface Lead {
   browser: string | null;
   referrer: string | null;
   created_at: string;
+  is_test: boolean;
 }

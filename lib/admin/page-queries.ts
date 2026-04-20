@@ -92,15 +92,17 @@ export async function getLeads(
     sortAsc?: boolean;
     from?: string;
     to?: string;
+    includeTest?: boolean;
   } = {},
 ): Promise<{ leads: Lead[]; total: number }> {
   const admin = createAdminClient();
-  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to } = options;
+  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false } = options;
 
   let query = admin
     .from('leads')
-    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at', { count: 'exact' });
+    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at, is_test', { count: 'exact' });
 
+  if (!includeTest) query = query.eq('is_test', false);
   if (slug) {
     query = query.eq('source_page', slug);
   } else {
@@ -124,14 +126,16 @@ export async function getLeads(
   return { leads: data ?? [], total: count ?? 0 };
 }
 
-export async function getLeadCounts(): Promise<Record<string, number>> {
+export async function getLeadCounts(includeTest = false): Promise<Record<string, number>> {
   const admin = createAdminClient();
 
   // `all` is home+target only — end-of-game consultations excluded by design.
   const pageResults = await Promise.all(
-    PAGE_SLUGS.map((slug) =>
-      admin.from('leads').select('*', { count: 'exact', head: true }).eq('source_page', slug),
-    ),
+    PAGE_SLUGS.map((slug) => {
+      let q = admin.from('leads').select('*', { count: 'exact', head: true }).eq('source_page', slug);
+      if (!includeTest) q = q.eq('is_test', false);
+      return q;
+    }),
   );
 
   const counts: Record<string, number> = { all: 0 };

@@ -256,6 +256,7 @@ export interface GetPlayersEnrichedArgs {
   offset?: number;
   from?: string | null;
   to?: string | null;
+  includeTest?: boolean;
 }
 
 export interface ParticipantStats {
@@ -268,14 +269,15 @@ export async function getPlayersEnriched(
   args: GetPlayersEnrichedArgs = {},
 ): Promise<{ players: EnrichedPlayer[]; total: number; stats: ParticipantStats }> {
   const admin = createAdminClient();
-  const { search, limit = 50, offset = 0, from, to } = args;
+  const { search, limit = 50, offset = 0, from, to, includeTest = false } = args;
 
   let q = admin
     .from('players')
     .select(
-      'id, phone, display_name, avatar_id, level, total_xp, total_score, coins, utm_source, utm_medium, utm_campaign, referrer, device_fingerprint, last_seen_at, created_at',
+      'id, phone, display_name, avatar_id, level, total_xp, total_score, coins, utm_source, utm_medium, utm_campaign, referrer, device_fingerprint, last_seen_at, created_at, is_test',
       { count: 'exact' },
     );
+  if (!includeTest) q = q.eq('is_test', false);
   if (search) q = q.or(`display_name.ilike.%${search}%,phone.ilike.%${search}%`);
   if (from) q = q.gte('created_at', from);
   if (to) q = q.lte('created_at', to);
@@ -373,9 +375,13 @@ export interface LeaderboardItem {
 
 export async function getLeaderboardEnriched(limit = 50): Promise<LeaderboardItem[]> {
   const admin = createAdminClient();
+  // Leaderboard table mirrors players; filter out test rows by cross-checking
+  // players.is_test. We query more rows than asked to compensate for dropped
+  // test entries then slice.
   const { data, error } = await admin
     .from('leaderboard')
-    .select('player_id, display_name, total_score, scenarios_completed, level, updated_at')
+    .select('player_id, display_name, total_score, scenarios_completed, level, updated_at, players!inner(is_test)')
+    .eq('players.is_test', false)
     .order('total_score', { ascending: false })
     .limit(limit);
   if (error || !data) {

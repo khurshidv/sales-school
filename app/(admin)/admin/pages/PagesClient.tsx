@@ -51,7 +51,7 @@ function PageCard({ data }: PageCardProps) {
             fontWeight: 700, fontSize: 13,
             color: data.bounce_rate > 60 ? 'var(--admin-accent-warn)' : 'var(--admin-text)',
           }}>{data.bounce_rate.toFixed(0)}%</div>
-          <div>Bounce</div>
+          <div>Отказы</div>
         </div>
         <div>
           <div style={{ fontWeight: 700, color: 'var(--admin-accent-success)', fontSize: 13 }}>{data.conversion_rate.toFixed(1)}%</div>
@@ -100,7 +100,7 @@ export default function PagesClient() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
         <KpiCard label="Всего просмотров" value={totalViews.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="Уник. визиторов" value={totalUnique.toLocaleString('ru-RU')} accent="pink" />
-        <KpiCard label="Средний bounce" value={`${avgBounce.toFixed(0)}%`} accent="orange" />
+        <KpiCard label="Средний % отказов" value={`${avgBounce.toFixed(0)}%`} accent="orange" hint="ушли без взаимодействия" />
       </div>
 
       {loading ? (

@@ -12,11 +12,6 @@ export interface PlayerProfileProps {
   onReplay?: () => void;
 }
 
-function maskPhone(phone: string): string {
-  if (phone.length < 6) return phone;
-  return `${phone.slice(0, phone.length - 6)} *** ** ${phone.slice(-2)}`;
-}
-
 function whatsappLink(phone: string): string {
   const digits = phone.replace(/\D/g, '');
   return `https://wa.me/${digits}?text=${encodeURIComponent('Здравствуйте! Заметил вас в Sales School.')}`;
@@ -50,7 +45,7 @@ export default function PlayerProfile({
             <RatingBadge rating={bestRating} />
           </div>
           <div style={{ fontSize: 11, color: 'var(--admin-text-muted)', marginTop: 2 }}>
-            {maskPhone(player.phone)} · UTM: {player.utm_source ?? '(прямой)'}
+            {player.phone} · UTM: {player.utm_source ?? '(прямой)'}
             {player.utm_campaign && ` / ${player.utm_campaign}`}
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 8, fontSize: 11, color: 'var(--admin-text)' }}>

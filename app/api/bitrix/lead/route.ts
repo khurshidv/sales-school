@@ -23,6 +23,12 @@ const SOURCE_LABEL: Record<SourcePage, string> = {
   game: 'RPG игра',
 };
 
+const SOURCE_PATH: Record<SourcePage, string> = {
+  target: '/target',
+  home: '/',
+  game: '/game',
+};
+
 type Body = {
   name: string;
   phone: string;
@@ -90,7 +96,7 @@ export async function POST(request: Request) {
     const contactId = existingId ?? (await createContact(name, phone));
 
     const sourceLabel = SOURCE_LABEL[sourcePage];
-    const title = `Sales Up | ${sourceLabel} | ${name}`;
+    const title = `${name} | ${SOURCE_PATH[sourcePage]} | Sales Up`;
 
     const descriptionLines = [
       `Лендинг: ${body.landingUrl || `/${sourcePage === 'home' ? '' : sourcePage}`}`,

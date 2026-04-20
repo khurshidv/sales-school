@@ -62,7 +62,7 @@ export default function OverviewClient() {
   return (
     <div>
       <PageHeader
-        title="Overview"
+        title="Обзор"
         subtitle="Главные показатели воронки и тренды по дням."
         actions={<PeriodFilter value={period} onChange={setPeriod} />}
       />

@@ -9,10 +9,11 @@ import FunnelBars from '@/components/admin/charts/FunnelBars';
 import TrendLineChart from '@/components/admin/charts/TrendLineChart';
 import { fetchOverview } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
-import type { DailyTrendRow, OfferFunnel, UtmFunnelRow, Period } from '@/lib/admin/types-v2';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import type { DailyTrendRow, OfferFunnel, UtmFunnelRow } from '@/lib/admin/types-v2';
 
 export default function OverviewClient() {
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
   const [trends, setTrends] = useState<DailyTrendRow[]>([]);
   const [utm, setUtm] = useState<UtmFunnelRow[]>([]);
   const [offer, setOffer] = useState<OfferFunnel | null>(null);

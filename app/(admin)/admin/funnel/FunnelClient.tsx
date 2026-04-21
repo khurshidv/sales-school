@@ -7,10 +7,11 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import DonutChart from '@/components/admin/charts/DonutChart';
 import { fetchFunnel } from '@/lib/admin/api';
 import { computeUtmRollup } from '@/lib/admin/marketing/computeUtmRollup';
-import type { UtmFunnelRow, Period } from '@/lib/admin/types-v2';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import type { UtmFunnelRow } from '@/lib/admin/types-v2';
 
 export default function FunnelClient() {
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
   const [rows, setRows] = useState<UtmFunnelRow[]>([]);
   const [loading, setLoading] = useState(true);
 

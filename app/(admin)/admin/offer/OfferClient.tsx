@@ -8,10 +8,11 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
 import { fetchOffer } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
-import type { OfferFunnel, OfferBreakdownRow, Period } from '@/lib/admin/types-v2';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
 
 export default function OfferClient() {
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
   const [funnel, setFunnel] = useState<OfferFunnel | null>(null);
   const [byRating, setByRating] = useState<OfferBreakdownRow[]>([]);
   const [byUtm, setByUtm] = useState<OfferBreakdownRow[]>([]);

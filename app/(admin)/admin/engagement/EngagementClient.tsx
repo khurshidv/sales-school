@@ -10,13 +10,14 @@ import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
 import { fetchEngagement } from '@/lib/admin/api';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
-import type { EngagementBlob, NodeStat, Period } from '@/lib/admin/types-v2';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
 
 export default function EngagementClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);

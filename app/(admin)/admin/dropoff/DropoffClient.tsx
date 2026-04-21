@@ -8,12 +8,13 @@ import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import DropoffBars from '@/components/admin/charts/DropoffBars';
 import { fetchDropoff } from '@/lib/admin/api';
-import type { DropoffRow, Period } from '@/lib/admin/types-v2';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import type { DropoffRow } from '@/lib/admin/types-v2';
 import { SCENARIOS } from '@/lib/admin/types-v2';
 
 export default function DropoffClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
   const [rows, setRows] = useState<DropoffRow[]>([]);
   const [loading, setLoading] = useState(true);
 

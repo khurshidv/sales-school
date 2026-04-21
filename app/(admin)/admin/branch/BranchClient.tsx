@@ -11,7 +11,8 @@ import ScenarioFlowMap from '@/components/admin/charts/ScenarioFlowMap';
 import { fetchBranch } from '@/lib/admin/api';
 import { day1, day2, day3 } from '@/game/data/scenarios/car-dealership';
 import type { Day } from '@/game/engine/types';
-import type { BranchFlowRow, NodeStat, DropoffRow, Period } from '@/lib/admin/types-v2';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import type { BranchFlowRow, NodeStat, DropoffRow } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
 
 const DAY_REGISTRY: Record<string, Day> = {
@@ -23,7 +24,7 @@ const DAY_REGISTRY: Record<string, Day> = {
 export default function BranchClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
 
   const [flows, setFlows] = useState<BranchFlowRow[]>([]);
   const [stats, setStats] = useState<NodeStat[]>([]);

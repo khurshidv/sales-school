@@ -18,6 +18,7 @@ import { checkAchievements, type AchievementContext } from '@/game/systems/Achie
 import { getCoinsForOutcome, getCoinsForAchievement, getCoinsForFirstCompletion } from '@/game/systems/CoinSystem';
 import { syncDayResults, syncAchievement, syncProgress } from '@/game/store/middleware/supabaseSync';
 import { trackEvent } from '@/lib/game/analytics';
+import { loadSession as loadPersistedSession, clearSession as clearPersistedSession } from '@/lib/game/sessionPersist';
 import type {
   Scenario,
   Rating,
@@ -487,12 +488,40 @@ export function useGameEngine(scenarioId: string) {
     );
   }, [currentNode, session, player]);
 
-  // Start first day when scenario loads
+  // Start first day when scenario loads.
+  // If there's a persisted in-progress session for this scenario, restore it
+  // (user refreshed mid-day) instead of starting from scratch.
   useEffect(() => {
-    if (scenario && flowState === 'day_intro' && !session) {
-      startDay(0);
+    if (!scenario || flowState !== 'day_intro' || session) return;
+
+    const persisted = loadPersistedSession();
+    if (persisted && persisted.scenarioId === scenario.id) {
+      const dayIndex = scenario.days.findIndex((d) => d.id === persisted.dayId);
+      if (dayIndex >= 0) {
+        ensureDay(scenario.id, dayIndex)
+          .then((day) => {
+            if (!day) {
+              startDay(0);
+              return;
+            }
+            setCurrentDayIndex(dayIndex);
+            gsRestoreSession(day, persisted.session);
+            setFlowState('playing');
+          })
+          .catch(() => startDay(0));
+        return;
+      }
     }
-  }, [scenario, flowState, session, startDay]);
+
+    startDay(0);
+  }, [scenario, flowState, session, startDay, gsRestoreSession]);
+
+  // Clear persisted session when game fully completes.
+  useEffect(() => {
+    if (flowState === 'school_cta') {
+      clearPersistedSession();
+    }
+  }, [flowState]);
 
   // ---- Memoized return object ----
   //

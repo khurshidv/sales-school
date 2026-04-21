@@ -35,7 +35,23 @@ const t = {
   growthZone: { uz: "O'sish zonasi", ru: 'Зона роста' },
   next: { uz: 'Mening sertifikatim', ru: 'Мой сертификат' },
   toMenu: { uz: 'Menyuga', ru: 'В меню' },
+  share: { uz: 'Telegram’da ulashish', ru: 'Поделиться в Telegram' },
 } as const;
+
+const SHARE_URL = typeof window !== 'undefined' ? window.location.origin + '/game' : 'https://salesschool.uz/game';
+
+const shareText = {
+  uz: (score: number) =>
+    `Men SalesUp stajirovkasidan ${score} ball oldim 🏆 Sen ham sinab ko‘r:`,
+  ru: (score: number) =>
+    `Я прошёл стажировку SalesUp и набрал ${score} баллов 🏆 Попробуй и ты:`,
+} as const;
+
+function handleTelegramShare(totalScore: number, lang: 'uz' | 'ru') {
+  const text = shareText[lang](totalScore);
+  const url = `https://t.me/share/url?url=${encodeURIComponent(SHARE_URL)}&text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
 
 export default function FinalResults({
   totalScore,
@@ -170,6 +186,20 @@ export default function FinalResults({
           style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}
         >
           {t.next[lang]}
+        </button>
+
+        {/* Share to Telegram */}
+        <button
+          type="button"
+          onClick={() => handleTelegramShare(totalScore, lang)}
+          className="w-full py-2.5 mt-2 rounded-xl font-semibold text-white transition-colors flex items-center justify-center gap-2"
+          style={{ background: '#229ED9' }}
+          aria-label="Share to Telegram"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+          </svg>
+          {t.share[lang]}
         </button>
 
         {/* Skip to menu */}

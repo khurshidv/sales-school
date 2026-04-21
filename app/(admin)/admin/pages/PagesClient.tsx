@@ -6,8 +6,8 @@ import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import { fetchPages } from '@/lib/admin/api';
 import { periodToRange } from '@/lib/admin/period';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { PageSummary } from '@/lib/admin/types';
-import type { Period } from '@/lib/admin/types-v2';
 
 function fmt(n: number) {
   return n.toLocaleString('ru-RU');
@@ -63,7 +63,7 @@ function PageCard({ data }: PageCardProps) {
 }
 
 export default function PagesClient() {
-  const [period, setPeriod] = useState<Period>('30d');
+  const [period, setPeriod] = usePeriodParam();
   const [pages, setPages] = useState<PageSummary[]>([]);
   const [loading, setLoading] = useState(true);
 

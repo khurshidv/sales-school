@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import MotionProvider from "@/components/game/MotionProvider";
 import SWRegistration from "@/components/game/SWRegistration";
+import GameSessionPersister from "@/components/game/GameSessionPersister";
 
 export const metadata: Metadata = {
   title: "Sales Up — Симуляция",
@@ -42,6 +43,7 @@ export default function GameLayout({
       }}
     >
       <SWRegistration />
+      <GameSessionPersister />
       <MotionProvider>{children}</MotionProvider>
     </div>
   );

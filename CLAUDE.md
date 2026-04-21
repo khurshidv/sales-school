@@ -6,6 +6,28 @@ RPG визуальная новелла для тренировки навыко
 
 ---
 
+## Статус (2026-04-21)
+
+- **Фазы 0–3 завершены**: GDD, engine, game UI, контент (Car Dealership, 3 дня), интро-анимация.
+- **Фаза 5 (мета)**: Supabase-синк, ачивки, уровни, лидерборд — **в проде**.
+- **Dashboard 2.0**: 11 админ-страниц в Premium-стиле + 15 guarded API-роутов, cookie-only auth, real-time KPI, HR-инструменты, CSV-экспорт, auto-insights.
+- **Аналитика**: `game_events` пишется через `/api/game/events` (service_role); `offer_events` — через `/api/game/offer-events`. Raw anon-insert убран, RLS закрыт.
+- **Бэкфил**: migration `013_backfill_game_events.sql` восстанавливает historical events из `completed_scenarios`.
+- **Session persistence**: `lib/game/sessionPersist.ts` + `<GameSessionPersister/>` в `(game)/layout.tsx`; refresh сохраняет текущий день, `useGameEngine` авто-ресторит.
+- **Админ-фильтры в URL**: `usePeriodParam` → `?period=7d|30d|90d|all`; shareable links работают.
+- **Безопасность**: `proxy.ts` fail-closed (пустой `ADMIN_PASSWORD` = админ недоступен), rate-limit 8 запросов/мин на `/api/admin/login`.
+- **Узбекский интерфейс админки НЕ делаем** — только русский (deliberate product decision).
+
+## Следующий scope (если появится запрос)
+
+- A/B-тесты offer-страницы (variant_id уже логируется в `offer_events`, не хватает UI).
+- AI-инсайты через LLM поверх `detectAutoInsights`.
+- Push / Slack уведомления на критичные авто-инсайты.
+- Video-replay с реконструкцией UI игры.
+- Новые сценарии (недвижимость, электроника, мебель) — **в паузе по явному решению**.
+
+---
+
 ## Аудитория и локализация
 
 - **Основная аудитория**: узбекская (uz)
@@ -257,8 +279,12 @@ lib/
 - Сценарии — TypeScript объекты (НЕ JSON, НЕ YAML) для type-safety
 - RLS на каждой новой таблице в Supabase
 - Зависимости текут в одну сторону: `game/` → `components/game/` (не наоборот)
-- Все тексты через i18n (uz + ru)
+- Все **игровые** тексты через i18n (uz + ru). **Админка** — только русский.
 - UI компоненты — landscape 16:9 first
+- Новые клиентские фичи админки → создавать API-роут в `app/api/admin/*`, типизированный `fetchX()` в `lib/admin/api.ts`. Не импортировать `queries-v2` / `page-queries` / `supabase/admin.ts` из client-компонентов (сборка упадёт — там стоит `import 'server-only';`).
+- События клиента (`game_events`, `offer_events`) пишутся через API-роуты (`/api/game/events`, `/api/game/offer-events`), НЕ через client supabase insert. RLS на этих таблицах закрыт.
+- Миграции Supabase — **ADD-only**: никогда не модифицируем существующие колонки/таблицы. Новые миграции нумеруются по порядку.
+- Admin-фильтры периода — через `usePeriodParam()` из `lib/admin/usePeriodParam.ts` (URL-params, shareable). Не городить новые `useState<Period>`.
 
 ### ЗАПРЕЩЕНО
 - Импортировать React в файлы внутри `game/` (кроме `game/store/` где Zustand hooks)
@@ -266,6 +292,8 @@ lib/
 - Обходить RLS через service key на клиенте
 - Импортировать из `components/game/` в `game/`
 - Хардкодить тексты — только через i18n
+- Добавлять узбекский в админку — по решению, админка только на русском
+- Писать `--no-verify` / `--no-gpg-sign` на коммитах (pre-commit hooks обязательны)
 
 ### Формат сценариев
 Сценарии определяются как TypeScript const объекты в `game/data/scenarios/`:

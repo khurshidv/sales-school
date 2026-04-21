@@ -7,12 +7,11 @@ import DayTabs from '@/components/admin/DayTabs';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import InsightCard from '@/components/admin/InsightCard';
 import KpiCard from '@/components/admin/KpiCard';
-import SankeyChart from '@/components/admin/charts/SankeyChart';
+import JourneyFlow from '@/components/admin/charts/JourneyFlow';
 import BranchTree from '@/components/admin/charts/BranchTree';
 import ScenarioMap from '@/components/admin/charts/ScenarioMap';
 import { GitBranch, Network, TreePine } from 'lucide-react';
 import { fetchBranch } from '@/lib/admin/api';
-import { buildSankeyData } from '@/lib/admin/branch/buildSankeyData';
 import { buildTreeData } from '@/lib/admin/branch/buildTreeData';
 import { buildGraphData } from '@/lib/admin/branch/buildGraphData';
 import type { BranchFlowRow, NodeStat, DropoffRow, Period } from '@/lib/admin/types-v2';
@@ -45,7 +44,6 @@ export default function BranchClient() {
     return () => { cancelled = true; };
   }, [scenarioId, dayId, period]);
 
-  const sankey = useMemo(() => buildSankeyData(flows), [flows]);
   const graph = useMemo(() => buildGraphData(flows, stats, dropoffs), [flows, stats, dropoffs]);
 
   const rootId = useMemo(() => {
@@ -125,7 +123,7 @@ export default function BranchClient() {
             </div>
           </div>
         ) : tab === 'sankey' ? (
-          <SankeyChart data={sankey} />
+          <JourneyFlow flows={flows} stats={stats} dropoffs={dropoffs} />
         ) : tab === 'tree' ? (
           <BranchTree nodes={tree} total={rootCount} />
         ) : (

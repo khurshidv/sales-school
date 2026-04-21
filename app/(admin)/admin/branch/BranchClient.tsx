@@ -7,23 +7,23 @@ import DayTabs from '@/components/admin/DayTabs';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import InsightCard from '@/components/admin/InsightCard';
 import KpiCard from '@/components/admin/KpiCard';
-import JourneyFlow from '@/components/admin/charts/JourneyFlow';
-import BranchTree from '@/components/admin/charts/BranchTree';
-import ScenarioMap from '@/components/admin/charts/ScenarioMap';
-import { GitBranch, Network, TreePine } from 'lucide-react';
+import ScenarioFlowMap from '@/components/admin/charts/ScenarioFlowMap';
 import { fetchBranch } from '@/lib/admin/api';
-import { buildTreeData } from '@/lib/admin/branch/buildTreeData';
-import { buildGraphData } from '@/lib/admin/branch/buildGraphData';
+import { day1, day2, day3 } from '@/game/data/scenarios/car-dealership';
+import type { Day } from '@/game/engine/types';
 import type { BranchFlowRow, NodeStat, DropoffRow, Period } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
 
-type Tab = 'sankey' | 'tree' | 'map';
+const DAY_REGISTRY: Record<string, Day> = {
+  'car-day1': day1,
+  'car-day2': day2,
+  'car-day3': day3,
+};
 
 export default function BranchClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
   const [period, setPeriod] = useState<Period>('30d');
-  const [tab, setTab] = useState<Tab>('sankey');
 
   const [flows, setFlows] = useState<BranchFlowRow[]>([]);
   const [stats, setStats] = useState<NodeStat[]>([]);
@@ -44,27 +44,22 @@ export default function BranchClient() {
     return () => { cancelled = true; };
   }, [scenarioId, dayId, period]);
 
-  const graph = useMemo(() => buildGraphData(flows, stats, dropoffs), [flows, stats, dropoffs]);
-
-  const rootId = useMemo(() => {
-    const targets = new Set(flows.map((f) => f.to_node));
-    const sources = flows.map((f) => f.from_node);
-    return sources.find((s) => !targets.has(s)) ?? flows[0]?.from_node ?? '';
-  }, [flows]);
-  const tree = useMemo(() => buildTreeData(flows, rootId), [flows, rootId]);
-  const rootCount = useMemo(() => {
-    return flows.filter((f) => f.from_node === rootId).reduce((acc, f) => acc + f.flow_count, 0);
-  }, [flows, rootId]);
-
+  const day = DAY_REGISTRY[dayId];
   const totalFlows = flows.reduce((acc, f) => acc + f.flow_count, 0);
+  const totalNodes = useMemo(() => day ? Object.keys(day.nodes).length : 0, [day]);
+  const visitedNodes = useMemo(() => {
+    if (!day) return 0;
+    const visited = new Set(stats.filter((s) => s.entered_count > 0).map((s) => s.node_id));
+    return [...visited].filter((id) => id in day.nodes).length;
+  }, [day, stats]);
   const topNode = stats[0];
   const slowNode = [...stats].sort((a, b) => b.avg_thinking_time_ms - a.avg_thinking_time_ms)[0];
 
   return (
     <div>
       <PageHeader
-        title="Branch Analytics"
-        subtitle="Как игроки проходят сценарий — главные пути, проблемные узлы, выпадения."
+        title="Карта сценария"
+        subtitle="Полный граф узлов и ветвлений. Цифры — сколько игроков прошли и какой % выбрал каждый путь."
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
@@ -75,22 +70,12 @@ export default function BranchClient() {
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <DayTabs value={dayId} onChange={setDayId} />
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
-          <button onClick={() => setTab('sankey')} className={tab === 'sankey' ? 'admin-btn admin-btn-primary' : 'admin-btn'}>
-            <GitBranch size={14} /> Поток
-          </button>
-          <button onClick={() => setTab('tree')} className={tab === 'tree' ? 'admin-btn admin-btn-primary' : 'admin-btn'}>
-            <TreePine size={14} /> Дерево
-          </button>
-          <button onClick={() => setTab('map')} className={tab === 'map' ? 'admin-btn admin-btn-primary' : 'admin-btn'}>
-            <Network size={14} /> Карта
-          </button>
-        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
         <KpiCard label="Всего переходов" value={totalFlows.toLocaleString('ru-RU')} accent="violet" />
-        <KpiCard label="Узлов задействовано" value={stats.length} accent="pink" />
+        <KpiCard label="Узлов в сценарии" value={totalNodes} accent="pink" />
+        <KpiCard label="Посещено игроками" value={`${visitedNodes} / ${totalNodes}`} accent="violet" />
         <KpiCard label="Drop-off узлов" value={dropoffs.length} accent="orange" />
       </div>
 
@@ -110,24 +95,16 @@ export default function BranchClient() {
       )}
 
       <div className="admin-card" style={{ padding: 16 }}>
-        {loading ? (
+        {!day ? (
+          <div style={{ height: 480, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>
+            Сценарий не найден.
+          </div>
+        ) : loading ? (
           <div style={{ height: 480, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>
             Загружаем данные…
           </div>
-        ) : flows.length === 0 ? (
-          <div style={{ height: 480, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, color: 'var(--admin-text-dim)', fontSize: 13, textAlign: 'center', padding: 24 }}>
-            <div style={{ fontSize: 28, opacity: 0.6 }}>🌱</div>
-            <div><strong>Пока нет данных о переходах.</strong></div>
-            <div style={{ fontSize: 12, maxWidth: 420 }}>
-              События движения игроков между узлами появятся как только кто-то начнёт играть (нужен деплой новой аналитики).
-            </div>
-          </div>
-        ) : tab === 'sankey' ? (
-          <JourneyFlow flows={flows} stats={stats} dropoffs={dropoffs} />
-        ) : tab === 'tree' ? (
-          <BranchTree nodes={tree} total={rootCount} />
         ) : (
-          <ScenarioMap data={graph} />
+          <ScenarioFlowMap key={day.id} day={day} flows={flows} stats={stats} dropoffs={dropoffs} />
         )}
       </div>
 

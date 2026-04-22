@@ -12,6 +12,7 @@ import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { ConversionHint } from '@/components/admin/offer/ConversionHint';
+import { RevenueKpiCard } from '@/components/admin/offer/RevenueKpiCard';
 
 export default function OfferClient() {
   const [periodState, setPeriod] = usePeriodParam();
@@ -67,6 +68,7 @@ export default function OfferClient() {
       />
 
       <div className="admin-kpi-row">
+        <RevenueKpiCard periodState={periodState} />
         <KpiCard label="Просмотров оффера" value={funnel?.offer_view ?? 0} accent="violet" />
         <KpiCard label="Кликов CTA" value={funnel?.offer_cta_click ?? 0} accent="pink" />
         <KpiCard

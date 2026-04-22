@@ -29,6 +29,16 @@ export const THRESHOLDS = {
     podiumSize: 3,
     topLimit: 50,
   },
+  funnel: {
+    minVisitorsForBest: 100,
+  },
+  retention: {
+    healthyD1: 0.30,
+    healthyD7: 0.15,
+  },
+  analytics: {
+    minSampleForPercentile: 30,
+  },
 } as const;
 
 export type Thresholds = typeof THRESHOLDS;

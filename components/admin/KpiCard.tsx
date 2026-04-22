@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { DeltaBadge } from './shared/DeltaBadge';
+import { Sparkline } from './shared/Sparkline';
 
 type KpiAccent = 'violet' | 'pink' | 'green' | 'orange' | 'blue';
 
@@ -13,12 +15,13 @@ const ACCENTS: Record<KpiAccent, { label: string; shadow: string }> = {
 export interface KpiCardProps {
   label: string;
   value: ReactNode;
-  delta?: { value: string; positive?: boolean };
+  delta?: { value: number | null; invert?: boolean };
+  sparkline?: number[];
   hint?: string;
   accent?: KpiAccent;
 }
 
-export default function KpiCard({ label, value, delta, hint, accent = 'violet' }: KpiCardProps) {
+export default function KpiCard({ label, value, delta, sparkline, hint, accent = 'violet' }: KpiCardProps) {
   const { label: labelColor, shadow } = ACCENTS[accent];
   return (
     <div
@@ -28,16 +31,19 @@ export default function KpiCard({ label, value, delta, hint, accent = 'violet' }
       <div style={{ fontSize: 9, color: labelColor, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase' }}>
         {label}
       </div>
-      <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--admin-text)', marginTop: 4 }}>
-        {value}
-      </div>
-      {delta && (
-        <div style={{ fontSize: 10, color: delta.positive ? 'var(--admin-accent-success)' : 'var(--admin-accent-danger)', marginTop: 2 }}>
-          {delta.positive ? '↑' : '↓'} {delta.value}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 4, gap: 8 }}>
+        <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--admin-text)' }}>
+          {value}
         </div>
-      )}
+        {delta && <DeltaBadge value={delta.value} invert={delta.invert} />}
+      </div>
       {hint && (
         <div style={{ fontSize: 9, color: 'var(--admin-text-dim)', marginTop: 4 }}>{hint}</div>
+      )}
+      {sparkline && sparkline.length >= 2 && (
+        <div style={{ marginTop: 8 }}>
+          <Sparkline values={sparkline} color={labelColor} />
+        </div>
       )}
     </div>
   );

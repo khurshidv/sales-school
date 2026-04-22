@@ -229,3 +229,24 @@ export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
 export function fetchLeadCounts(): Promise<Record<string, number>> {
   return adminGet<Record<string, number>>('/api/admin/leads/counts');
 }
+
+// ─── Node Labels ───
+
+export interface NodeLabelResult {
+  title: string;
+  type: string;
+  preview: string | null;
+  dayId: string | null;
+}
+
+export async function fetchNodeLabels(
+  scenarioId: string,
+  ids: string[],
+): Promise<Record<string, NodeLabelResult>> {
+  if (ids.length === 0) return {};
+  const qs = new URLSearchParams({ scenario: scenarioId, ids: ids.join(',') });
+  const res = await fetch(`/api/admin/node-label?${qs}`);
+  if (!res.ok) throw new Error(`node-labels fetch failed: ${res.status}`);
+  const data = await res.json();
+  return data.labels;
+}

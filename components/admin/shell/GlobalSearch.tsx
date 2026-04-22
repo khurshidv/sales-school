@@ -104,7 +104,7 @@ export function GlobalSearch({ open, onClose }: GlobalSearchProps) {
             icon: 'player' as const,
             title: p.display_name ?? 'Игрок без имени',
             subtitle: p.phone ?? '—',
-            href: `/admin/participants`,
+            href: `/admin/player/${p.id}`,
           }));
 
         // leads route returns { leads: Lead[], total }

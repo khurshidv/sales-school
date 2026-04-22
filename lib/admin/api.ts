@@ -148,9 +148,17 @@ export function fetchDropoff(params: {
   });
 }
 
+export interface ThinkingPercentiles {
+  p50_ms: number | null;
+  p90_ms: number | null;
+  p95_ms: number | null;
+  sample_size: number;
+}
+
 export interface EngagementPayload {
   engagement: EngagementBlob;
   stats: NodeStat[];
+  percentiles: ThinkingPercentiles;
 }
 
 export function fetchEngagement(params: {

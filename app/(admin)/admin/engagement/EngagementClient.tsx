@@ -10,6 +10,7 @@ import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
 import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
 import { fetchEngagement } from '@/lib/admin/api';
+import type { ThinkingPercentiles } from '@/lib/admin/api';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
@@ -24,6 +25,7 @@ export default function EngagementClient() {
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
+  const [percentiles, setPercentiles] = useState<ThinkingPercentiles | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +33,10 @@ export default function EngagementClient() {
     setLoading(true);
     fetchEngagement({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
-      setBlob(res.engagement); setStats(res.stats); setLoading(false);
+      setBlob(res.engagement);
+      setStats(res.stats);
+      setPercentiles(res.percentiles ?? null);
+      setLoading(false);
     }).catch((err) => {
       if (cancelled) return;
       console.error('[engagement] fetch failed', err);
@@ -117,6 +122,21 @@ export default function EngagementClient() {
             />
           </div>
         </div>
+      </div>
+
+      <div className="admin-kpi-row" style={{ marginTop: 8 }}>
+        <KpiCard
+          label="Время на выбор"
+          value={percentiles?.p50_ms != null ? `${Math.round(percentiles.p50_ms / 1000)} сек` : '—'}
+          hint={
+            percentiles == null
+              ? undefined
+              : percentiles.sample_size < THRESHOLDS.analytics.minSampleForPercentile
+              ? `выборка ${percentiles.sample_size} — мало данных`
+              : `p90 ${Math.round((percentiles.p90_ms ?? 0) / 1000)}с · p95 ${Math.round((percentiles.p95_ms ?? 0) / 1000)}с`
+          }
+          accent="pink"
+        />
       </div>
 
       <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>

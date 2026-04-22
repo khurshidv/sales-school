@@ -8,6 +8,8 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
 import { DualTrendChart } from '@/components/admin/overview/DualTrendChart';
 import { TopSourcesCard } from '@/components/admin/overview/TopSourcesCard';
+import { MoversCard } from '@/components/admin/overview/MoversCard';
+import { RealtimeMiniCard } from '@/components/admin/overview/RealtimeMiniCard';
 import { fetchOverview } from '@/lib/admin/api';
 import type { OverviewTotals, OverviewSparks } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
@@ -146,6 +148,8 @@ export default function OverviewClient() {
             )}
           </div>
           <TopSourcesCard utm={utm} />
+          <MoversCard rows={trends} />
+          <RealtimeMiniCard />
         </div>
       </div>
 

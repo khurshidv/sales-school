@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
-import DonutChart from '@/components/admin/charts/DonutChart';
+import { StackedBars } from '@/components/admin/funnel/StackedBars';
 import {
   fetchFunnel,
   fetchRevenue,
@@ -122,7 +122,7 @@ export default function FunnelClient() {
     else { setSortKey(key); setSortDir('desc'); }
   }
 
-  const slices = sorted.map(r => ({ label: r.segment, value: r.visitors }));
+  const directRow = rows.find(r => r.segment === 'direct');
 
   return (
     <div>
@@ -150,7 +150,12 @@ export default function FunnelClient() {
       />
 
       <div className="admin-kpi-row">
-        <KpiCard label="Сегментов" value={rows.length} accent="violet" />
+        <KpiCard
+          label="Без UTM"
+          value={(directRow?.visitors ?? 0).toLocaleString('ru-RU')}
+          accent="violet"
+          hint={`${rows.length} сегментов всего`}
+        />
         <KpiCard label="Посетителей" value={totals.visitors.toLocaleString('ru-RU')} accent="pink" hint="уникальные визиты" />
         <KpiCard label="Прошли игру" value={totals.completed.toLocaleString('ru-RU')} accent="green" />
         <KpiCard
@@ -219,7 +224,17 @@ export default function FunnelClient() {
               <tbody>
                 {sorted.map(r => (
                   <tr key={r.segment} style={{ borderBottom: '1px solid var(--admin-border)' }}>
-                    <td style={{ padding: '6px 6px', fontWeight: 600 }}>{r.segment}</td>
+                    <td
+                      style={{ padding: '6px 6px', fontWeight: 600 }}
+                      title={r.segment === 'direct' ? 'direct = визиты без UTM-меток' : undefined}
+                    >
+                      {r.segment}
+                      {r.segment === 'direct' && (
+                        <span style={{ marginLeft: 6, fontSize: 10, color: 'var(--admin-text-muted)', fontWeight: 400 }}>
+                          (без UTM)
+                        </span>
+                      )}
+                    </td>
                     <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.visitors.toLocaleString('ru-RU')}</td>
                     <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.registered.toLocaleString('ru-RU')}</td>
                     <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.completed.toLocaleString('ru-RU')}</td>
@@ -233,9 +248,9 @@ export default function FunnelClient() {
         </div>
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
-            Доли сегментов (визиты)
+            Конверсии по сегментам
           </div>
-          <DonutChart slices={slices} />
+          <StackedBars rows={rows} />
         </div>
       </div>
     </div>

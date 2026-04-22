@@ -19,6 +19,7 @@ import {
 } from '@/components/admin/leads/LeadStatusBadge';
 import { UtmFilter } from '@/components/admin/leads/UtmFilter';
 import { LeadActionBar } from '@/components/admin/leads/LeadActionBar';
+import { BitrixDealBadge } from '@/components/admin/leads/BitrixDealBadge';
 
 
 function fmtDate(iso: string): string {
@@ -302,6 +303,7 @@ export default function LeadsClient() {
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Страница</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Игрок</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Сделка</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Устройство</th>
               </tr>
             </thead>
@@ -380,6 +382,9 @@ export default function LeadsClient() {
                     ) : (
                       <span style={{ color: 'var(--admin-text-dim)', fontSize: 11 }}>—</span>
                     )}
+                  </td>
+                  <td style={{ padding: '10px 12px' }}>
+                    <BitrixDealBadge dealId={l.bitrix_deal_id} />
                   </td>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                     {l.device_type === 'mobile' ? '📱 моб.' : l.device_type === 'desktop' ? '💻 десктоп' : l.device_type ?? '—'}

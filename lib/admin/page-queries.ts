@@ -92,6 +92,31 @@ export async function getPageTitle(slug: string): Promise<string> {
   return data?.title_ru ?? slug;
 }
 
+export interface PageAnnotation {
+  scroll_depth: number;
+  label: string;
+  tone?: 'offer' | 'cta' | 'info';
+}
+
+export interface PageRegistryInfo {
+  title: string;
+  annotations: PageAnnotation[];
+}
+
+export async function getPageTitleFromRegistry(slug: string): Promise<PageRegistryInfo> {
+  const sb = createAdminClient();
+  const { data, error } = await sb
+    .from('pages_registry')
+    .select('title_ru, annotations')
+    .eq('slug', slug)
+    .maybeSingle();
+  if (error || !data) return { title: slug, annotations: [] };
+  return {
+    title: (data as { title_ru: string | null }).title_ru ?? slug,
+    annotations: ((data as { annotations: PageAnnotation[] | null }).annotations ?? []),
+  };
+}
+
 export async function getLeads(
   options: {
     slug?: string;

@@ -380,6 +380,36 @@ export function fetchPageAnalytics(
   return adminGet<PageAnalyticsPayload>(`/api/admin/pages/${encodeURIComponent(slug)}`, params);
 }
 
+export interface PageAnnotation {
+  scroll_depth: number;
+  label: string;
+  tone?: 'offer' | 'cta' | 'info';
+}
+
+export interface PageDetailPayload {
+  slug: string;
+  title: string;
+  annotations: PageAnnotation[];
+  summary: PageSummary;
+  breakdowns: PageBreakdowns;
+  device_conversion: DeviceConversion[];
+}
+
+export interface DeviceConversion {
+  device_type: string;
+  views: number;
+  leads: number;
+  cr: number;
+}
+
+export function fetchPageDetail(params: {
+  slug: string;
+  period: Period | PeriodParamState;
+}): Promise<PageDetailPayload> {
+  const { slug, period } = params;
+  return adminGet<PageDetailPayload>(`/api/admin/pages/${encodeURIComponent(slug)}`, periodParams(period));
+}
+
 // ─── Leads ───
 
 export interface LeadsPayload {

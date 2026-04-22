@@ -20,6 +20,8 @@ export interface ScenarioFlowMapProps {
   dropoffs: DropoffRow[];
   language?: Language;
   height?: number;
+  heatmapMode?: 'none' | 'traffic' | 'dropoff';
+  onNodeClick?: (nodeId: string) => void;
 }
 
 // ---- Layout constants ----
@@ -169,6 +171,8 @@ export default function ScenarioFlowMap({
   dropoffs,
   language = 'ru',
   height = 640,
+  heatmapMode = 'none',
+  onNodeClick,
 }: ScenarioFlowMapProps) {
   const { nodes, edges, rootId } = useMemo(() => extractScenarioGraph(day), [day]);
   const { cards, connections, width, height: contentH } = useMemo(
@@ -197,6 +201,25 @@ export default function ScenarioFlowMap({
     statsMap.get(rootId)?.entered_count ?? 0,
     ...stats.map((s) => s.entered_count),
   );
+
+  const maxEntered = useMemo(() => Math.max(1, ...stats.map(s => s.entered_count)), [stats]);
+
+  function nodeBg(nodeId: string): string | undefined {
+    if (!heatmapMode || heatmapMode === 'none') return undefined;
+    const stat = statsMap.get(nodeId);
+    const entered = stat?.entered_count ?? 0;
+    if (heatmapMode === 'traffic') {
+      const intensity = entered / maxEntered;
+      const alpha = Math.round(intensity * 200).toString(16).padStart(2, '0');
+      return `#6366f1${alpha}`;
+    }
+    // dropoff
+    const drop = dropMap.get(nodeId) ?? 0;
+    const rate = entered > 0 ? drop / entered : 0;
+    if (rate >= 0.30) return 'rgba(239, 68, 68, 0.6)';
+    if (rate >= 0.10) return 'rgba(245, 158, 11, 0.5)';
+    return 'rgba(16, 185, 129, 0.3)';
+  }
 
   const [expanded, setExpanded] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
@@ -308,6 +331,8 @@ export default function ScenarioFlowMap({
               onHoverIn={() => setHover(card.id)}
               onHoverOut={() => setHover((h) => (h === card.id ? null : h))}
               language={language}
+              heatmapBg={nodeBg(card.id)}
+              onNodeClick={onNodeClick}
             />
           ))}
         </div>
@@ -365,10 +390,12 @@ interface NodeCardProps {
   onHoverIn: () => void;
   onHoverOut: () => void;
   language: Language;
+  heatmapBg?: string;
+  onNodeClick?: (nodeId: string) => void;
 }
 
 function NodeCard({
-  card, stat, dropoff, rootVisits, isExpanded, isHover, isDimmed, onToggle, onHoverIn, onHoverOut, language,
+  card, stat, dropoff, rootVisits, isExpanded, isHover, isDimmed, onToggle, onHoverIn, onHoverOut, language, heatmapBg, onNodeClick,
 }: NodeCardProps) {
   const entered = stat?.entered_count ?? 0;
   const visited = entered > 0;
@@ -385,7 +412,7 @@ function NodeCard({
 
   return (
     <div
-      onClick={(e) => { e.stopPropagation(); onToggle(); }}
+      onClick={(e) => { e.stopPropagation(); onToggle(); onNodeClick?.(card.id); }}
       onMouseEnter={onHoverIn}
       onMouseLeave={onHoverOut}
       style={{
@@ -394,7 +421,7 @@ function NodeCard({
         top: card.y,
         width: CARD_WIDTH,
         height: isExpanded ? 'auto' : CARD_HEIGHT,
-        background: cardBg,
+        background: heatmapBg ?? cardBg,
         border: `1px solid ${cardBorder}`,
         borderRadius: 10,
         padding: 10,

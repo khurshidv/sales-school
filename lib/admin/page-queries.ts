@@ -92,6 +92,67 @@ export async function getPageTitle(slug: string): Promise<string> {
   return data?.title_ru ?? slug;
 }
 
+export interface PageAnnotation {
+  scroll_depth: number;
+  label: string;
+  tone?: 'offer' | 'cta' | 'info';
+}
+
+export interface PageRegistryInfo {
+  title: string;
+  annotations: PageAnnotation[];
+}
+
+export async function getPageTitleFromRegistry(slug: string): Promise<PageRegistryInfo> {
+  const sb = createAdminClient();
+  const { data, error } = await sb
+    .from('pages_registry')
+    .select('title_ru, annotations')
+    .eq('slug', slug)
+    .maybeSingle();
+  if (error || !data) return { title: slug, annotations: [] };
+  return {
+    title: (data as { title_ru: string | null }).title_ru ?? slug,
+    annotations: ((data as { annotations: PageAnnotation[] | null }).annotations ?? []),
+  };
+}
+
+export interface DeviceConversion {
+  device_type: string;
+  views: number;
+  leads: number;
+  cr: number;   // 0..100
+}
+
+export async function getConversionPerDevice(slug: string, from: Date, to: Date): Promise<DeviceConversion[]> {
+  const sb = createAdminClient();
+  const [viewsRes, leadsRes] = await Promise.all([
+    sb.from('page_events').select('device_type')
+      .eq('event_type', 'page_view').eq('page_slug', slug)
+      .gte('created_at', from.toISOString()).lte('created_at', to.toISOString()),
+    sb.from('leads').select('device_type')
+      .eq('source_page', slug)
+      .gte('created_at', from.toISOString()).lte('created_at', to.toISOString()),
+  ]);
+
+  const vmap = new Map<string, number>();
+  for (const v of (viewsRes.data ?? []) as Array<{ device_type: string | null }>) {
+    const d = v.device_type ?? 'unknown';
+    vmap.set(d, (vmap.get(d) ?? 0) + 1);
+  }
+  const lmap = new Map<string, number>();
+  for (const l of (leadsRes.data ?? []) as Array<{ device_type: string | null }>) {
+    const d = l.device_type ?? 'unknown';
+    lmap.set(d, (lmap.get(d) ?? 0) + 1);
+  }
+  const all = new Set<string>([...vmap.keys(), ...lmap.keys()]);
+  return Array.from(all).map(d => {
+    const v = vmap.get(d) ?? 0;
+    const lc = lmap.get(d) ?? 0;
+    return { device_type: d, views: v, leads: lc, cr: v > 0 ? (lc / v) * 100 : 0 };
+  }).sort((a, b) => b.views - a.views);
+}
+
 export async function getLeads(
   options: {
     slug?: string;

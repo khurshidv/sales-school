@@ -28,17 +28,22 @@ function periodParams(p: Period | PeriodParamState): Record<string, string | nul
   };
 }
 
-// NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
-// shape here so the client bundle never reaches into server code.
+// NOTE: LeaderboardItem shape is mirrored in server-only lib/admin/leaderboard-queries.ts.
+// We redeclare here so the client bundle never imports server-only code.
 export interface LeaderboardItem {
   player_id: string;
   display_name: string;
+  avatar_id: string;
+  level: number;
   total_score: number;
   scenarios_completed: number;
-  level: number;
-  best_rating: string | null;
-  updated_at: string;
+  best_rating: 'S' | 'A' | 'B' | 'C' | 'F' | null;
+  s_rating_count: number;
+  avg_completion_seconds: number | null;
 }
+
+export type LeaderboardPeriod = 'week' | 'month' | 'all';
+export type LeaderboardSort = 'total_score' | 'completion_time' | 's_rating_count';
 
 // NOTE: RealtimeKpis and RecentGameEvent are defined in server-only queries-v2.ts.
 // Mirrored here so the client bundle never reaches into server code.
@@ -108,10 +113,17 @@ export function fetchOverview(period: Period | PeriodParamState): Promise<Overvi
   return adminGet<OverviewPayload>('/api/admin/overview', periodParams(period));
 }
 
+export interface BranchCoverage {
+  visited: number;
+  total: number;
+  rate: number;
+}
+
 export interface BranchPayload {
   flows: BranchFlowRow[];
   stats: NodeStat[];
   dropoffs: DropoffRow[];
+  coverage: BranchCoverage;
 }
 
 export function fetchBranch(params: {
@@ -300,10 +312,27 @@ export function fetchParticipants(params: ParticipantsOptions = {}): Promise<Par
 
 export interface LeaderboardPayload {
   items: LeaderboardItem[];
+  total: number;
+  period: LeaderboardPeriod;
+  sort: LeaderboardSort;
+  limit: number;
+  offset: number;
 }
 
-export function fetchLeaderboard(limit = 100): Promise<LeaderboardPayload> {
-  return adminGet<LeaderboardPayload>('/api/admin/leaderboard', { limit });
+export function fetchLeaderboard(params: {
+  period?: LeaderboardPeriod;
+  sort?: LeaderboardSort;
+  limit?: number;
+  offset?: number;
+  scenarioId?: string | null;
+} = {}): Promise<LeaderboardPayload> {
+  return adminGet<LeaderboardPayload>('/api/admin/leaderboard', {
+    period: params.period ?? null,
+    sort: params.sort ?? null,
+    limit: params.limit ?? null,
+    offset: params.offset ?? null,
+    scenarioId: params.scenarioId ?? null,
+  });
 }
 
 export interface PlayerPayload {
@@ -349,6 +378,53 @@ export function fetchPageAnalytics(
   params?: { from?: string; to?: string },
 ): Promise<PageAnalyticsPayload> {
   return adminGet<PageAnalyticsPayload>(`/api/admin/pages/${encodeURIComponent(slug)}`, params);
+}
+
+export interface PageAnnotation {
+  scroll_depth: number;
+  label: string;
+  tone?: 'offer' | 'cta' | 'info';
+}
+
+export function fetchPageAnnotations(slug: string): Promise<{ annotations: PageAnnotation[] }> {
+  return adminGet<{ annotations: PageAnnotation[] }>(`/api/admin/pages/${encodeURIComponent(slug)}/annotations`);
+}
+
+export async function updatePageAnnotations(slug: string, annotations: PageAnnotation[]): Promise<void> {
+  const res = await fetch(`/api/admin/pages/${encodeURIComponent(slug)}/annotations`, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ annotations }),
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new AdminApiError(res.status, (body as { error?: string }).error ?? res.statusText);
+  }
+}
+
+export interface PageDetailPayload {
+  slug: string;
+  title: string;
+  annotations: PageAnnotation[];
+  summary: PageSummary;
+  breakdowns: PageBreakdowns;
+  device_conversion: DeviceConversion[];
+}
+
+export interface DeviceConversion {
+  device_type: string;
+  views: number;
+  leads: number;
+  cr: number;
+}
+
+export function fetchPageDetail(params: {
+  slug: string;
+  period: Period | PeriodParamState;
+}): Promise<PageDetailPayload> {
+  const { slug, period } = params;
+  return adminGet<PageDetailPayload>(`/api/admin/pages/${encodeURIComponent(slug)}`, periodParams(period));
 }
 
 // ─── Leads ───

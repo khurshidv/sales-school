@@ -245,6 +245,28 @@ export function fetchLeadCounts(): Promise<Record<string, number>> {
   return adminGet<Record<string, number>>('/api/admin/leads/counts');
 }
 
+// ─── Bitrix Revenue ───
+
+export interface RevenueData {
+  total: number;
+  currency: string;
+  deals: number;
+  error?: string;
+}
+
+export async function fetchRevenue(options: {
+  period: Period;
+  from?: string | null;
+  to?: string | null;
+}): Promise<RevenueData> {
+  const qs = new URLSearchParams({ period: options.period });
+  if (options.from) qs.set('from', options.from);
+  if (options.to) qs.set('to', options.to);
+  const res = await fetch(`/api/admin/bitrix/revenue?${qs}`);
+  if (!res.ok) throw new Error(`revenue fetch failed: ${res.status}`);
+  return res.json();
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

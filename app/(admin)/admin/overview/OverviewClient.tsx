@@ -6,7 +6,7 @@ import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
-import TrendLineChart from '@/components/admin/charts/TrendLineChart';
+import { DualTrendChart } from '@/components/admin/overview/DualTrendChart';
 import { fetchOverview } from '@/lib/admin/api';
 import type { OverviewTotals, OverviewSparks } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
@@ -125,12 +125,12 @@ export default function OverviewClient() {
       <div className="admin-two-col">
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
-            Динамика по дням
+            Регистрации vs прохождения (по дням)
           </div>
           {loading ? (
             <div style={{ height: 280, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>Загружаем…</div>
           ) : (
-            <TrendLineChart rows={trends} />
+            <DualTrendChart rows={trends} />
           )}
         </div>
         <div className="admin-card" style={{ padding: 16 }}>

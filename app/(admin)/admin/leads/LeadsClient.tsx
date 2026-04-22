@@ -12,6 +12,7 @@ import {
   LEAD_STATUS_CONFIG,
   LEAD_STATUS_ORDER,
 } from '@/components/admin/leads/LeadStatusBadge';
+import { UtmFilter } from '@/components/admin/leads/UtmFilter';
 
 
 function fmtDate(iso: string): string {
@@ -83,6 +84,9 @@ export default function LeadsClient() {
   const [search, setSearch] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [utmSources, setUtmSources] = useState<string[]>([]);
+  const [utmCampaigns, setUtmCampaigns] = useState<string[]>([]);
+  const [utmOptions, setUtmOptions] = useState<{ sources: string[]; campaigns: string[] }>({ sources: [], campaigns: [] });
   const [loading, setLoading] = useState(true);
   const [periodState, setPeriod] = usePeriodParam();
   const [sourceTabs, setSourceTabs] = useState<Array<{ slug: string | null; label: string }>>([
@@ -104,6 +108,8 @@ export default function LeadsClient() {
         from: from ?? undefined,
         to: to ?? undefined,
         status: statusFilter === 'all' ? undefined : statusFilter,
+        utmSource: utmSources.length ? utmSources : undefined,
+        utmCampaign: utmCampaigns.length ? utmCampaigns : undefined,
       }),
       fetchLeadCounts(),
     ])
@@ -116,7 +122,7 @@ export default function LeadsClient() {
         setLeads([]); setTotal(0); setCounts({}); setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, sourceFilter, statusFilter, period, from, to]);
+  }, [search, sourceFilter, statusFilter, utmSources, utmCampaigns, period, from, to]);
 
   useEffect(() => {
     fetch('/api/admin/source-tabs')
@@ -124,6 +130,13 @@ export default function LeadsClient() {
       .then((d: { tabs: Array<{ slug: string; label: string }> }) => {
         setSourceTabs([{ slug: null, label: 'Все' }, ...d.tabs]);
       })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/admin/leads/filters')
+      .then(r => r.ok ? r.json() : { sources: [], campaigns: [] })
+      .then((d: { sources?: string[]; campaigns?: string[] }) => setUtmOptions({ sources: d.sources ?? [], campaigns: d.campaigns ?? [] }))
       .catch(() => {});
   }, []);
 
@@ -177,6 +190,18 @@ export default function LeadsClient() {
             <option key={s} value={s}>{LEAD_STATUS_CONFIG[s].label}</option>
           ))}
         </select>
+        <UtmFilter
+          label="UTM source"
+          options={utmOptions.sources}
+          value={utmSources}
+          onChange={setUtmSources}
+        />
+        <UtmFilter
+          label="UTM campaign"
+          options={utmOptions.campaigns}
+          value={utmCampaigns}
+          onChange={setUtmCampaigns}
+        />
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>

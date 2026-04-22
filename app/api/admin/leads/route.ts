@@ -27,6 +27,8 @@ export async function GET(req: NextRequest) {
   const range = periodToRange(period === 'custom' ? { period, from: fromParam, to: toParam } : period);
 
   const status = sp.get('status') ?? undefined;
+  const utmSource = sp.get('utm_source')?.split(',').filter(Boolean);
+  const utmCampaign = sp.get('utm_campaign')?.split(',').filter(Boolean);
 
   const result = await getLeads({
     slug: sp.get('slug') ?? undefined,
@@ -38,6 +40,8 @@ export async function GET(req: NextRequest) {
     from: range.from ?? undefined,
     to: range.to ?? undefined,
     status,
+    utmSource,
+    utmCampaign,
   });
   return NextResponse.json(result);
 }

@@ -104,10 +104,12 @@ export async function getLeads(
     to?: string;
     includeTest?: boolean;
     status?: string;
+    utmSource?: string[];
+    utmCampaign?: string[];
   } = {},
 ): Promise<{ leads: Lead[]; total: number }> {
   const admin = createAdminClient();
-  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false, status } = options;
+  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false, status, utmSource, utmCampaign } = options;
 
   let query = admin
     .from('leads')
@@ -127,6 +129,8 @@ export async function getLeads(
   if (status) {
     query = query.eq('status', status);
   }
+  if (utmSource && utmSource.length > 0) query = query.in('utm_source', utmSource);
+  if (utmCampaign && utmCampaign.length > 0) query = query.in('utm_campaign', utmCampaign);
   if (from) {
     query = query.gte('created_at', normalizeFrom(from));
   }

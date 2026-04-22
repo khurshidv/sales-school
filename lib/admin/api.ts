@@ -226,6 +226,8 @@ export interface LeadsOptions {
   from?: string;
   to?: string;
   status?: string;
+  utmSource?: string[];
+  utmCampaign?: string[];
 }
 
 export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
@@ -240,6 +242,8 @@ export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
     from: options.from,
     to: options.to,
     status: options.status,
+    utm_source: options.utmSource?.join(',') || undefined,
+    utm_campaign: options.utmCampaign?.join(',') || undefined,
   });
 }
 

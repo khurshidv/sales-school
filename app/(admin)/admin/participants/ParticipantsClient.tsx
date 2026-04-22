@@ -43,6 +43,8 @@ const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
   skip: { bg: '#fee2e2', color: '#991b1b' },
 };
 
+const PAGE_SIZE = 50;
+
 export default function ParticipantsClient() {
   const [players, setPlayers] = useState<EnrichedPlayer[]>([]);
   const [total, setTotal] = useState(0);
@@ -51,6 +53,7 @@ export default function ParticipantsClient() {
   const [totalConsultations, setTotalConsultations] = useState(0);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [offset, setOffset] = useState(0);
 
   const [filters, setFilters] = useState<ParticipantFiltersState>({
     ratings: [],
@@ -62,6 +65,13 @@ export default function ParticipantsClient() {
 
   const [periodState, setPeriod] = usePeriodParam();
 
+  // Reset effect — whenever filters change, reset offset and players
+  useEffect(() => {
+    setOffset(0);
+    setPlayers([]);
+  }, [search, filters, periodState.period, periodState.from, periodState.to]);
+
+  // Load effect — fetch and append when offset changes or filters change
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -75,11 +85,12 @@ export default function ParticipantsClient() {
       period: periodState.period,
       from: periodState.from,
       to: periodState.to,
-      limit: 100,
+      limit: PAGE_SIZE,
+      offset,
     })
       .then((res) => {
         if (cancelled) return;
-        setPlayers(res.players);
+        setPlayers(prev => offset === 0 ? res.players : [...prev, ...res.players]);
         setTotal(res.total);
         setTotalSa(res.stats?.total_sa ?? 0);
         setTotalAnyDay(res.stats?.total_any_day ?? 0);
@@ -92,7 +103,7 @@ export default function ParticipantsClient() {
         setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, filters, periodState]);
+  }, [offset, search, filters, periodState.period, periodState.from, periodState.to]);
 
   return (
     <div>
@@ -214,6 +225,19 @@ export default function ParticipantsClient() {
           </table>
         )}
       </div>
+
+      {players.length < total && (
+        <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <button
+            type="button"
+            className="admin-btn"
+            onClick={() => setOffset(offset + PAGE_SIZE)}
+            disabled={loading}
+          >
+            {loading ? 'Загружаем…' : `Загрузить ещё (${total - players.length} осталось)`}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -75,7 +75,7 @@ export default function BranchClient() {
         <DayTabs value={dayId} onChange={setDayId} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего переходов" value={totalFlows.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="Узлов в сценарии" value={totalNodes} accent="pink" />
         <KpiCard label="Посещено игроками" value={`${visitedNodes} / ${totalNodes}`} accent="violet" />

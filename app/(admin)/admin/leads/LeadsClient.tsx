@@ -68,7 +68,7 @@ export default function LeadsClient() {
         actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего заявок" value={(counts.all ?? 0).toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="С Home" value={counts.home ?? 0} accent="pink" />
         <KpiCard label="С Target" value={counts.target ?? 0} accent="green" />

@@ -61,7 +61,7 @@ export default function OfferClient() {
         actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Просмотров оффера" value={funnel?.offer_view ?? 0} accent="violet" />
         <KpiCard label="Кликов CTA" value={funnel?.offer_cta_click ?? 0} accent="pink" />
         <KpiCard
@@ -99,7 +99,7 @@ export default function OfferClient() {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="admin-two-col admin-two-col--equal">
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
             CTR по рейтингу игрока

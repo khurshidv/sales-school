@@ -51,7 +51,7 @@ export default function RealtimeClient() {
         subtitle="Что происходит прямо сейчас. Обновляется каждые 5 секунд."
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard
           label="Сейчас играют"
           value={kpis.active}
@@ -76,7 +76,7 @@ export default function RealtimeClient() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+      <div className="admin-two-col">
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)' }}>

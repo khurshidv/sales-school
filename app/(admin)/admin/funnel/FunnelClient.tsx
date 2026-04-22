@@ -41,7 +41,7 @@ export default function FunnelClient() {
         actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Источников" value={rollup.rows.length} accent="violet" />
         <KpiCard label="Посетителей" value={rollup.totals.visitors.toLocaleString('ru-RU')} accent="pink" hint="уникальные просмотры лендингов" />
         <KpiCard label="Прошли всю игру" value={rollup.totals.completed.toLocaleString('ru-RU')} accent="green" />
@@ -53,7 +53,7 @@ export default function FunnelClient() {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+      <div className="admin-two-col">
         <div className="admin-card" style={{ padding: 16, overflowX: 'auto' }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
             Источники по конверсии

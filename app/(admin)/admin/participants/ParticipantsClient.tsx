@@ -62,7 +62,7 @@ export default function ParticipantsClient() {
         actions={<ExportCsvButton type="participants" />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего игроков" value={total.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard
           label="С оценкой S/A"

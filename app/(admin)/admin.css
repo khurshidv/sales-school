@@ -433,6 +433,33 @@
 .admin-search-row-title { font-size: 13px; font-weight: 500; }
 .admin-search-row-sub { font-size: 11px; color: var(--admin-text-muted); margin-top: 2px; }
 
+/* Responsive grids — shared across admin pages */
+
+.admin-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-two-col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-two-col--equal {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 880px) {
+  .admin-two-col,
+  .admin-two-col--equal {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .admin-sidebar {
     position: fixed;

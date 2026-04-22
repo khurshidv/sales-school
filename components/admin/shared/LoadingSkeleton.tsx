@@ -10,7 +10,7 @@ interface Props {
 export function LoadingSkeleton({ variant, rows = 5 }: Props) {
   if (variant === 'kpi-row') {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+      <div className="admin-kpi-row">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="admin-card admin-skeleton" style={{ height: 104 }} />
         ))}

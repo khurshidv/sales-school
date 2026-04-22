@@ -59,7 +59,7 @@ export default function EngagementClient() {
         }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard
           label="Interest Index"
           value={idx ? `${idx.score.toFixed(1)}/10` : '—'}

@@ -54,7 +54,7 @@ export default function DropoffClient() {
         }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего drop-off" value={total} accent="orange" />
         <KpiCard label="Уникальных узлов" value={rows.length} accent="pink" />
         <KpiCard

@@ -166,7 +166,7 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
         onReplay={journey.days.length > 0 ? () => setReplayDayId(journey.days[journey.days.length - 1].day_id) : undefined}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 12 }}>
+      <div className="admin-two-col">
         <div className="admin-card" style={{ padding: 16, maxHeight: 600, overflowY: 'auto' }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
             Полный таймлайн ({journey.totalEvents} событий)

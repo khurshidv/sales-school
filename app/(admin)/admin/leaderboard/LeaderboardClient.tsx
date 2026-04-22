@@ -46,14 +46,14 @@ export default function LeaderboardClient() {
         actions={<ExportCsvButton type="leaderboard" />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Игроков в топе" value={rows.length} accent="violet" />
         <KpiCard label="Лидер" value={topScore.toLocaleString('ru-RU') + ' очков'} accent="orange" />
         <KpiCard label="Всего прохождений" value={totalCompletions.toLocaleString('ru-RU')} accent="green" />
       </div>
 
       {top3.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+        <div className="admin-kpi-row">
           {top3.map((r, i) => (
             <div key={r.player_id} className="admin-card" style={{ padding: 16, textAlign: 'center' }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}>

@@ -98,7 +98,7 @@ export default function PagesClient() {
         actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего просмотров" value={totalViews.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="Уник. визиторов" value={totalUnique.toLocaleString('ru-RU')} accent="pink" />
         <KpiCard label="Средний % отказов" value={`${avgBounce.toFixed(0)}%`} accent="orange" hint="ушли без взаимодействия" />

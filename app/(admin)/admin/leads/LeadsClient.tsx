@@ -7,7 +7,9 @@ import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import SortableHeader from '@/components/admin/SortableHeader';
-import { fetchLeads, fetchLeadCounts, updateLeadStatusApi } from '@/lib/admin/api';
+import { fetchLeads, fetchLeadCounts, updateLeadStatusApi, fetchLeadDedupAndPlayers } from '@/lib/admin/api';
+import { User } from 'lucide-react';
+import Link from 'next/link';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { Lead } from '@/lib/admin/types';
 import {
@@ -98,6 +100,8 @@ export default function LeadsClient() {
   ]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [refreshKey, setRefreshKey] = useState(0);
+  const [dedup, setDedup] = useState<Record<string, number>>({});
+  const [playerByPhone, setPlayerByPhone] = useState<Record<string, { id: string; display_name: string | null }>>({});
 
   function toggleSelection(id: string) {
     setSelectedIds(prev => {
@@ -168,6 +172,24 @@ export default function LeadsClient() {
       .then((d: { sources?: string[]; campaigns?: string[] }) => setUtmOptions({ sources: d.sources ?? [], campaigns: d.campaigns ?? [] }))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (leads.length === 0) { setDedup({}); setPlayerByPhone({}); return; }
+    let cancelled = false;
+    const phones = Array.from(new Set(leads.map(l => l.phone).filter(Boolean)));
+    fetchLeadDedupAndPlayers(phones)
+      .then(d => {
+        if (cancelled) return;
+        setDedup(d.dedup ?? {});
+        setPlayerByPhone(d.players ?? {});
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setDedup({});
+        setPlayerByPhone({});
+      });
+    return () => { cancelled = true; };
+  }, [leads]);
 
   const todayCount = useMemo(() => {
     const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -279,6 +301,7 @@ export default function LeadsClient() {
                 <SortableHeader column="phone" label="Телефон" />
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Страница</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Игрок</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Устройство</th>
               </tr>
             </thead>
@@ -307,6 +330,18 @@ export default function LeadsClient() {
                     <a href={`https://wa.me/${l.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
                       {l.phone}
                     </a>
+                    {dedup[l.phone] > 1 && (
+                      <span
+                        style={{
+                          marginLeft: 6, padding: '1px 6px',
+                          background: '#fef3c7', color: '#92400e',
+                          borderRadius: 4, fontSize: 10, fontWeight: 700,
+                        }}
+                        title={`Телефон встречается ${dedup[l.phone]} раз в leads`}
+                      >
+                        дубль ×{dedup[l.phone]}
+                      </span>
+                    )}
                   </td>
                   <td style={{ padding: '10px 12px' }}>
                     <span style={{
@@ -321,6 +356,30 @@ export default function LeadsClient() {
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                     {l.utm_source ?? '(прямой)'}
                     {l.utm_campaign && <span style={{ opacity: 0.7 }}> / {l.utm_campaign}</span>}
+                  </td>
+                  <td style={{ padding: '10px 12px' }}>
+                    {playerByPhone[l.phone] ? (
+                      <Link
+                        href={`/admin/player/${playerByPhone[l.phone].id}`}
+                        style={{
+                          display: 'inline-flex',
+                          gap: 4,
+                          alignItems: 'center',
+                          padding: '2px 8px',
+                          background: '#f1f5f9',
+                          color: 'var(--admin-text)',
+                          borderRadius: 6,
+                          fontSize: 11,
+                          fontWeight: 600,
+                          textDecoration: 'none',
+                        }}
+                        title={playerByPhone[l.phone].display_name ?? undefined}
+                      >
+                        <User size={11} /> {playerByPhone[l.phone].display_name ?? 'Игрок'}
+                      </Link>
+                    ) : (
+                      <span style={{ color: 'var(--admin-text-dim)', fontSize: 11 }}>—</span>
+                    )}
                   </td>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                     {l.device_type === 'mobile' ? '📱 моб.' : l.device_type === 'desktop' ? '💻 десктоп' : l.device_type ?? '—'}

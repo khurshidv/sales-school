@@ -225,6 +225,7 @@ export interface LeadsOptions {
   period?: Period;
   from?: string;
   to?: string;
+  status?: string;
 }
 
 export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
@@ -238,7 +239,20 @@ export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
     period: options.period,
     from: options.from,
     to: options.to,
+    status: options.status,
   });
+}
+
+export async function updateLeadStatusApi(
+  leadId: string,
+  status: 'new' | 'in_progress' | 'done' | 'invalid',
+): Promise<void> {
+  const res = await fetch(`/api/admin/leads/${leadId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) throw new Error(`status update failed: ${res.status}`);
 }
 
 export function fetchLeadCounts(): Promise<Record<string, number>> {

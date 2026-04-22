@@ -26,6 +26,8 @@ export async function GET(req: NextRequest) {
   const toParam = sp.get('to');
   const range = periodToRange(period === 'custom' ? { period, from: fromParam, to: toParam } : period);
 
+  const status = sp.get('status') ?? undefined;
+
   const result = await getLeads({
     slug: sp.get('slug') ?? undefined,
     limit,
@@ -35,6 +37,7 @@ export async function GET(req: NextRequest) {
     sortAsc: sp.get('sortAsc') === 'true',
     from: range.from ?? undefined,
     to: range.to ?? undefined,
+    status,
   });
   return NextResponse.json(result);
 }

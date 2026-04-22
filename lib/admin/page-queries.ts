@@ -103,14 +103,15 @@ export async function getLeads(
     from?: string;
     to?: string;
     includeTest?: boolean;
+    status?: string;
   } = {},
 ): Promise<{ leads: Lead[]; total: number }> {
   const admin = createAdminClient();
-  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false } = options;
+  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false, status } = options;
 
   let query = admin
     .from('leads')
-    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at, is_test', { count: 'exact' });
+    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at, is_test, status, assigned_to, bitrix_deal_id, bitrix_contact_id', { count: 'exact' });
 
   if (!includeTest) query = query.eq('is_test', false);
   if (slug) {
@@ -122,6 +123,9 @@ export async function getLeads(
   }
   if (search) {
     query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
+  }
+  if (status) {
+    query = query.eq('status', status);
   }
   if (from) {
     query = query.gte('created_at', normalizeFrom(from));

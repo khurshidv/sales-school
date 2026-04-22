@@ -114,4 +114,8 @@ export interface Lead {
   referrer: string | null;
   created_at: string;
   is_test: boolean;
+  status?: string;
+  assigned_to?: string | null;
+  bitrix_deal_id?: number | null;
+  bitrix_contact_id?: number | null;
 }

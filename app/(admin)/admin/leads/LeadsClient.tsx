@@ -4,14 +4,77 @@ import { useEffect, useMemo, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
-import { fetchLeads, fetchLeadCounts } from '@/lib/admin/api';
+import { fetchLeads, fetchLeadCounts, updateLeadStatusApi } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { Lead } from '@/lib/admin/types';
+import {
+  LeadStatusBadge,
+  LEAD_STATUS_CONFIG,
+  LEAD_STATUS_ORDER,
+} from '@/components/admin/leads/LeadStatusBadge';
 
 
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
+
+function InlineStatusEditor({
+  leadId,
+  status,
+  onChanged,
+}: {
+  leadId: string;
+  status: string;
+  onChanged: (s: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function pick(next: string) {
+    if (next === status) { setOpen(false); return; }
+    setBusy(true);
+    try {
+      await updateLeadStatusApi(leadId, next as 'new' | 'in_progress' | 'done' | 'invalid');
+      onChanged(next);
+    } catch (e) {
+      console.warn('status update failed', e);
+    } finally {
+      setBusy(false);
+      setOpen(false);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        disabled={busy}
+        style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer' }}
+      >
+        <LeadStatusBadge status={status} />
+      </button>
+    );
+  }
+  return (
+    <div style={{ display: 'flex', gap: 4 }}>
+      {LEAD_STATUS_ORDER.map((s) => (
+        <button
+          key={s}
+          type="button"
+          onClick={() => pick(s)}
+          disabled={busy}
+          style={{ background: 'transparent', border: 0, padding: 2, cursor: 'pointer' }}
+          title={LEAD_STATUS_CONFIG[s].label}
+        >
+          <LeadStatusBadge status={s} />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+type StatusFilter = 'all' | 'new' | 'in_progress' | 'done' | 'invalid';
 
 export default function LeadsClient() {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -19,6 +82,7 @@ export default function LeadsClient() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [search, setSearch] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [loading, setLoading] = useState(true);
   const [periodState, setPeriod] = usePeriodParam();
   const [sourceTabs, setSourceTabs] = useState<Array<{ slug: string | null; label: string }>>([
@@ -39,6 +103,7 @@ export default function LeadsClient() {
         period,
         from: from ?? undefined,
         to: to ?? undefined,
+        status: statusFilter === 'all' ? undefined : statusFilter,
       }),
       fetchLeadCounts(),
     ])
@@ -51,7 +116,7 @@ export default function LeadsClient() {
         setLeads([]); setTotal(0); setCounts({}); setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, sourceFilter, period, from, to]);
+  }, [search, sourceFilter, statusFilter, period, from, to]);
 
   useEffect(() => {
     fetch('/api/admin/source-tabs')
@@ -102,6 +167,16 @@ export default function LeadsClient() {
             )}
           </button>
         ))}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+          className="admin-btn"
+        >
+          <option value="all">Статус: все</option>
+          {LEAD_STATUS_ORDER.map((s) => (
+            <option key={s} value={s}>{LEAD_STATUS_CONFIG[s].label}</option>
+          ))}
+        </select>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -117,6 +192,7 @@ export default function LeadsClient() {
               <tr style={{ borderBottom: '1px solid var(--admin-border)', background: '#fafaff' }}>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Дата</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Имя</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Статус</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Телефон</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Страница</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
@@ -128,6 +204,15 @@ export default function LeadsClient() {
                 <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)', whiteSpace: 'nowrap' }}>{fmtDate(l.created_at)}</td>
                   <td style={{ padding: '10px 12px', fontWeight: 600 }}>{l.name}</td>
+                  <td style={{ padding: '10px 12px' }}>
+                    <InlineStatusEditor
+                      leadId={l.id}
+                      status={l.status ?? 'new'}
+                      onChanged={(newStatus) => {
+                        setLeads((prev) => prev.map((x) => x.id === l.id ? { ...x, status: newStatus } : x));
+                      }}
+                    />
+                  </td>
                   <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>
                     <a href={`https://wa.me/${l.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
                       {l.phone}

@@ -222,6 +222,7 @@ export interface LeadsOptions {
   search?: string;
   sortBy?: string;
   sortAsc?: boolean;
+  period?: Period;
   from?: string;
   to?: string;
 }
@@ -234,6 +235,7 @@ export function fetchLeads(options: LeadsOptions = {}): Promise<LeadsPayload> {
     search: options.search,
     sortBy: options.sortBy,
     sortAsc: options.sortAsc != null ? String(options.sortAsc) : undefined,
+    period: options.period,
     from: options.from,
     to: options.to,
   });

@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
+import PeriodFilter from '@/components/admin/PeriodFilter';
 import { fetchLeads, fetchLeadCounts } from '@/lib/admin/api';
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { Lead } from '@/lib/admin/types';
 
 const SOURCE_TABS: Array<{ slug: string | null; label: string }> = [
@@ -23,6 +25,8 @@ export default function LeadsClient() {
   const [search, setSearch] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
 
   useEffect(() => {
     let cancelled = false;
@@ -34,6 +38,9 @@ export default function LeadsClient() {
         limit: 100,
         sortBy: 'created_at',
         sortAsc: false,
+        period,
+        from: from ?? undefined,
+        to: to ?? undefined,
       }),
       fetchLeadCounts(),
     ])
@@ -46,7 +53,7 @@ export default function LeadsClient() {
         setLeads([]); setTotal(0); setCounts({}); setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, sourceFilter]);
+  }, [search, sourceFilter, period, from, to]);
 
   const todayCount = useMemo(() => {
     const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -58,6 +65,7 @@ export default function LeadsClient() {
       <PageHeader
         title="Заявки (формы)"
         subtitle="Заявки с регистрационных форм на маркетинговых лендингах. Отдельно от участников игры."
+        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>

@@ -15,6 +15,7 @@ import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { ConversionHint } from '@/components/admin/offer/ConversionHint';
 import { RevenueKpiCard } from '@/components/admin/offer/RevenueKpiCard';
 import { OfferTrendChart } from '@/components/admin/offer/OfferTrendChart';
+import { SegmentTabs } from '@/components/admin/offer/SegmentTabs';
 
 export default function OfferClient() {
   const [periodState, setPeriod] = usePeriodParam();
@@ -211,6 +212,10 @@ export default function OfferClient() {
             </table>
           )}
         </div>
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <SegmentTabs periodState={periodState} />
       </div>
     </div>
   );

@@ -348,6 +348,32 @@ export async function fetchOfferTrend(options: {
   return data.rows ?? [];
 }
 
+// ─── Offer Segment Breakdown ───
+
+export interface OfferSegmentRow {
+  segment: string;
+  views: number;
+  clicks: number;
+  conversions: number;
+  ctr: number;
+  cr: number;
+}
+
+export async function fetchOfferSegmentBreakdown(options: {
+  field: 'device_type' | 'browser';
+  period: Period;
+  from?: string | null;
+  to?: string | null;
+}): Promise<OfferSegmentRow[]> {
+  const qs = new URLSearchParams({ field: options.field, period: options.period });
+  if (options.from) qs.set('from', options.from);
+  if (options.to) qs.set('to', options.to);
+  const res = await fetch(`/api/admin/offer/segment?${qs}`);
+  if (!res.ok) throw new Error(`offer segment fetch failed: ${res.status}`);
+  const data = await res.json();
+  return data.rows ?? [];
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

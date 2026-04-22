@@ -18,7 +18,8 @@ import { THRESHOLDS } from '@/lib/admin/thresholds';
 export default function EngagementClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
@@ -27,7 +28,7 @@ export default function EngagementClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchEngagement({ scenarioId, dayId, period }).then((res) => {
+    fetchEngagement({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
       setBlob(res.engagement); setStats(res.stats); setLoading(false);
     }).catch((err) => {
@@ -36,7 +37,7 @@ export default function EngagementClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, dayId, period]);
+  }, [scenarioId, dayId, period, from, to]);
 
   const idx = useMemo(() => blob ? computeInterestIndex(blob) : null, [blob]);
 
@@ -53,7 +54,7 @@ export default function EngagementClient() {
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
-            <PeriodFilter value={period} onChange={setPeriod} />
+            <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }
       />

@@ -16,7 +16,17 @@ import type {
   PlayerJourneyEvent,
   CompletedDay,
 } from './types-v2';
+import type { PeriodParamState } from './usePeriodParam';
 import type { PageSummary, PageBreakdowns, Lead } from './types';
+
+/** Extract period + optional from/to into flat query params. */
+function periodParams(p: Period | PeriodParamState): Record<string, string | null | undefined> {
+  if (typeof p === 'string') return { period: p };
+  return {
+    period: p.period,
+    ...(p.period === 'custom' ? { from: p.from, to: p.to } : {}),
+  };
+}
 
 // NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
 // shape here so the client bundle never reaches into server code.
@@ -75,8 +85,8 @@ export interface OverviewPayload {
   offer: OfferFunnel;
 }
 
-export function fetchOverview(period: Period): Promise<OverviewPayload> {
-  return adminGet<OverviewPayload>('/api/admin/overview', { period });
+export function fetchOverview(period: Period | PeriodParamState): Promise<OverviewPayload> {
+  return adminGet<OverviewPayload>('/api/admin/overview', periodParams(period));
 }
 
 export interface BranchPayload {
@@ -86,15 +96,17 @@ export interface BranchPayload {
 }
 
 export function fetchBranch(params: {
-  scenarioId: string; dayId: string; period: Period;
+  scenarioId: string; dayId: string; period: Period | PeriodParamState;
 }): Promise<BranchPayload> {
-  return adminGet<BranchPayload>('/api/admin/branch', params);
+  const { period, ...rest } = params;
+  return adminGet<BranchPayload>('/api/admin/branch', { ...rest, ...periodParams(period) });
 }
 
 export interface DropoffPayload { dropoffs: DropoffRow[] }
 
-export function fetchDropoff(params: { scenarioId: string; period: Period }): Promise<DropoffPayload> {
-  return adminGet<DropoffPayload>('/api/admin/dropoff', params);
+export function fetchDropoff(params: { scenarioId: string; period: Period | PeriodParamState }): Promise<DropoffPayload> {
+  const { period, ...rest } = params;
+  return adminGet<DropoffPayload>('/api/admin/dropoff', { ...rest, ...periodParams(period) });
 }
 
 export interface EngagementPayload {
@@ -103,15 +115,16 @@ export interface EngagementPayload {
 }
 
 export function fetchEngagement(params: {
-  scenarioId: string; dayId: string; period: Period;
+  scenarioId: string; dayId: string; period: Period | PeriodParamState;
 }): Promise<EngagementPayload> {
-  return adminGet<EngagementPayload>('/api/admin/engagement', params);
+  const { period, ...rest } = params;
+  return adminGet<EngagementPayload>('/api/admin/engagement', { ...rest, ...periodParams(period) });
 }
 
 export interface FunnelPayload { utm: UtmFunnelRow[] }
 
-export function fetchFunnel(period: Period): Promise<FunnelPayload> {
-  return adminGet<FunnelPayload>('/api/admin/funnel', { period });
+export function fetchFunnel(period: Period | PeriodParamState): Promise<FunnelPayload> {
+  return adminGet<FunnelPayload>('/api/admin/funnel', periodParams(period));
 }
 
 export interface OfferPayload {
@@ -120,8 +133,8 @@ export interface OfferPayload {
   byUtm: OfferBreakdownRow[];
 }
 
-export function fetchOffer(period: Period): Promise<OfferPayload> {
-  return adminGet<OfferPayload>('/api/admin/offer', { period });
+export function fetchOffer(period: Period | PeriodParamState): Promise<OfferPayload> {
+  return adminGet<OfferPayload>('/api/admin/offer', periodParams(period));
 }
 
 export interface ParticipantsPayload {

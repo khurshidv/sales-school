@@ -25,7 +25,8 @@ const DAY_REGISTRY: Record<string, Day> = {
 export default function BranchClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
 
   const [flows, setFlows] = useState<BranchFlowRow[]>([]);
   const [stats, setStats] = useState<NodeStat[]>([]);
@@ -35,7 +36,7 @@ export default function BranchClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchBranch({ scenarioId, dayId, period }).then((res) => {
+    fetchBranch({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
       setFlows(res.flows); setStats(res.stats); setDropoffs(res.dropoffs); setLoading(false);
     }).catch((err) => {
@@ -44,7 +45,7 @@ export default function BranchClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, dayId, period]);
+  }, [scenarioId, dayId, period, from, to]);
 
   const day = DAY_REGISTRY[dayId];
   const totalFlows = flows.reduce((acc, f) => acc + f.flow_count, 0);
@@ -65,7 +66,7 @@ export default function BranchClient() {
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
-            <PeriodFilter value={period} onChange={setPeriod} />
+            <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }
       />

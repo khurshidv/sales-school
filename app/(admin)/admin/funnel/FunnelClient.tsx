@@ -11,14 +11,15 @@ import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { UtmFunnelRow } from '@/lib/admin/types-v2';
 
 export default function FunnelClient() {
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [rows, setRows] = useState<UtmFunnelRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchFunnel(period).then((res) => {
+    fetchFunnel(periodState).then((res) => {
       if (cancelled) return;
       setRows(res.utm); setLoading(false);
     }).catch((err) => {
@@ -27,7 +28,7 @@ export default function FunnelClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [period]);
+  }, [period, from, to]);
 
   const rollup = useMemo(() => computeUtmRollup(rows), [rows]);
   const slices = rollup.rows.map((r) => ({ label: r.source, value: r.visitors }));
@@ -37,7 +38,7 @@ export default function FunnelClient() {
       <PageHeader
         title="Funnel & UTM"
         subtitle="Воронка по источникам трафика — какие каналы дают качественных игроков."
-        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>

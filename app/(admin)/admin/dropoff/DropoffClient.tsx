@@ -14,14 +14,15 @@ import { SCENARIOS } from '@/lib/admin/types-v2';
 
 export default function DropoffClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [rows, setRows] = useState<DropoffRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchDropoff({ scenarioId, period }).then((res) => {
+    fetchDropoff({ scenarioId, period: periodState }).then((res) => {
       if (cancelled) return;
       setRows(res.dropoffs); setLoading(false);
     }).catch((err) => {
@@ -30,7 +31,7 @@ export default function DropoffClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, period]);
+  }, [scenarioId, period, from, to]);
 
   const total = rows.reduce((acc, r) => acc + r.dropoff_count, 0);
   const top = rows[0];
@@ -48,7 +49,7 @@ export default function DropoffClient() {
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
-            <PeriodFilter value={period} onChange={setPeriod} />
+            <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }
       />

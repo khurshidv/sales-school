@@ -62,7 +62,7 @@ export interface EngagementIndex {
 
 // ---- Filters ----
 
-export type Period = '7d' | '30d' | '90d' | 'all';
+export type Period = '7d' | '30d' | '90d' | 'all' | 'today' | 'yesterday' | 'custom';
 export interface DateRange { from: string | null; to: string | null }
 
 export const SCENARIOS = [

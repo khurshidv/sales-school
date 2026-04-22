@@ -13,7 +13,8 @@ import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function OfferClient() {
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [funnel, setFunnel] = useState<OfferFunnel | null>(null);
   const [byRating, setByRating] = useState<OfferBreakdownRow[]>([]);
   const [byUtm, setByUtm] = useState<OfferBreakdownRow[]>([]);
@@ -22,7 +23,7 @@ export default function OfferClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchOffer(period).then((res) => {
+    fetchOffer(periodState).then((res) => {
       if (cancelled) return;
       setFunnel(res.funnel); setByRating(res.byRating); setByUtm(res.byUtm); setLoading(false);
     }).catch((err) => {
@@ -31,7 +32,7 @@ export default function OfferClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [period]);
+  }, [period, from, to]);
 
   const steps = useMemo(() => computeFunnelDeltas([
     { label: 'Прошли всю игру', value: funnel?.game_completed ?? 0 },
@@ -57,7 +58,7 @@ export default function OfferClient() {
       <PageHeader
         title="Offer Conversion"
         subtitle="Финальная оффер-страница — кто видит, кто кликает, кто конвертируется."
-        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>

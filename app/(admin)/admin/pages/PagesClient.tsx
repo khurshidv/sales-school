@@ -63,14 +63,15 @@ function PageCard({ data }: PageCardProps) {
 }
 
 export default function PagesClient() {
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [pages, setPages] = useState<PageSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const range = periodToRange(period);
+    const range = periodToRange(periodState);
     fetchPages({ from: range.from ?? undefined, to: range.to ?? undefined })
       .then((res) => {
         if (cancelled) return;
@@ -83,7 +84,7 @@ export default function PagesClient() {
         setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [period]);
+  }, [period, from, to]);
 
   const totalViews = pages.reduce((acc, p) => acc + p.total_views, 0);
   const totalUnique = pages.reduce((acc, p) => acc + p.unique_visitors, 0);
@@ -94,7 +95,7 @@ export default function PagesClient() {
       <PageHeader
         title="Pages Analytics"
         subtitle="Поведение на маркетинговых лендингах — просмотры, bounce, конверсия."
-        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>

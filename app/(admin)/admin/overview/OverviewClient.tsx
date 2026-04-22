@@ -14,7 +14,8 @@ import type { DailyTrendRow, OfferFunnel, UtmFunnelRow } from '@/lib/admin/types
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function OverviewClient() {
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [trends, setTrends] = useState<DailyTrendRow[]>([]);
   const [utm, setUtm] = useState<UtmFunnelRow[]>([]);
   const [offer, setOffer] = useState<OfferFunnel | null>(null);
@@ -23,7 +24,7 @@ export default function OverviewClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchOverview(period).then((res) => {
+    fetchOverview(periodState).then((res) => {
       if (cancelled) return;
       setTrends(res.trends);
       setUtm(res.utm);
@@ -35,7 +36,7 @@ export default function OverviewClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [period]);
+  }, [period, from, to]);
 
   const totals = useMemo(() => {
     return utm.reduce(
@@ -64,7 +65,7 @@ export default function OverviewClient() {
       <PageHeader
         title="Обзор"
         subtitle="Главные показатели воронки и тренды по дням."
-        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>

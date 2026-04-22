@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
+import SortableHeader from '@/components/admin/SortableHeader';
 import { fetchLeads, fetchLeadCounts, updateLeadStatusApi } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { Lead } from '@/lib/admin/types';
@@ -94,6 +96,13 @@ export default function LeadsClient() {
   ]);
   const { period, from, to } = periodState;
 
+  const searchParams = useSearchParams();
+  const sortBy = searchParams.get('sort') ?? 'created_at';
+  const sortDir = searchParams.get('dir') ?? 'desc';
+  const VALID_SORT_COLUMNS = new Set(['created_at', 'name', 'phone', 'status']);
+  const safeSortBy = VALID_SORT_COLUMNS.has(sortBy) ? sortBy : 'created_at';
+  const sortAsc = sortDir === 'asc';
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -102,8 +111,8 @@ export default function LeadsClient() {
         slug: sourceFilter ?? undefined,
         search: search || undefined,
         limit: 100,
-        sortBy: 'created_at',
-        sortAsc: false,
+        sortBy: safeSortBy,
+        sortAsc,
         period,
         from: from ?? undefined,
         to: to ?? undefined,
@@ -122,7 +131,7 @@ export default function LeadsClient() {
         setLeads([]); setTotal(0); setCounts({}); setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, sourceFilter, statusFilter, utmSources, utmCampaigns, period, from, to]);
+  }, [search, sourceFilter, statusFilter, utmSources, utmCampaigns, period, from, to, safeSortBy, sortAsc]);
 
   useEffect(() => {
     fetch('/api/admin/source-tabs')
@@ -215,10 +224,10 @@ export default function LeadsClient() {
           <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--admin-border)', background: '#fafaff' }}>
-                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Дата</th>
-                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Имя</th>
-                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Статус</th>
-                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Телефон</th>
+                <SortableHeader column="created_at" label="Дата" />
+                <SortableHeader column="name" label="Имя" />
+                <SortableHeader column="status" label="Статус" />
+                <SortableHeader column="phone" label="Телефон" />
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Страница</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Устройство</th>

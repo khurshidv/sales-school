@@ -5,6 +5,7 @@ import type { RecentGameEvent } from '@/lib/admin/api';
 export interface LiveFeedProps {
   events: RecentGameEvent[];
   maxItems?: number;
+  onRowClick?: (playerId: string) => void;
 }
 
 const DOT_COLOR: Record<string, string> = {
@@ -41,10 +42,11 @@ function fmt(iso: string): string {
 }
 
 function shortPlayerLabel(e: RecentGameEvent): string {
-  return e.display_name ?? e.player_id.slice(0, 8);
+  if (e.display_name) return e.display_name;
+  return `игрок ${e.player_id.slice(0, 4)}`;
 }
 
-export default function LiveFeed({ events, maxItems = 30 }: LiveFeedProps) {
+export default function LiveFeed({ events, maxItems = 30, onRowClick }: LiveFeedProps) {
   if (events.length === 0) {
     return (
       <div style={{ color: 'var(--admin-text-dim)', fontSize: 12, padding: 16, textAlign: 'center' }}>
@@ -61,10 +63,12 @@ export default function LiveFeed({ events, maxItems = 30 }: LiveFeedProps) {
         return (
           <div
             key={`${e.created_at}-${e.player_id}-${i}`}
+            onClick={onRowClick ? () => onRowClick(e.player_id) : undefined}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
               padding: '4px 6px', fontSize: 11,
               borderBottom: '1px solid #f1f5f9',
+              cursor: onRowClick ? 'pointer' : 'default',
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />

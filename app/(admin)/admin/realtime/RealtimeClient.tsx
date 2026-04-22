@@ -1,14 +1,18 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Pause, Play } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import LiveFeed from '@/components/admin/LiveFeed';
 import ActivityAreaChart from '@/components/admin/charts/ActivityAreaChart';
+import { EventFilter, EVENT_GROUP_TYPES } from '@/components/admin/realtime/EventFilter';
 import { fetchRealtimeKpis, fetchRecentEvents, type RealtimeKpis, type RecentGameEvent } from '@/lib/admin/api';
 import { detectAutoInsights } from '@/lib/admin/realtime/detectAutoInsights';
 import { buildActivitySeries } from '@/lib/admin/realtime/buildActivitySeries';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 // Polling every 5s through the admin API (service_role, bypasses RLS).
 // Supabase Realtime subscription was removed — it relied on anon client,
@@ -16,11 +20,15 @@ import { buildActivitySeries } from '@/lib/admin/realtime/buildActivitySeries';
 const REFRESH_MS = 5_000;
 
 export default function RealtimeClient() {
+  const router = useRouter();
   const [kpis, setKpis] = useState<RealtimeKpis>({ active: 0, today: 0, completed_today: 0 });
   const [snapshot, setSnapshot] = useState<RecentGameEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<string>('all');
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    if (paused) return;
     let cancelled = false;
     const fetchAll = () => {
       Promise.all([fetchRealtimeKpis(), fetchRecentEvents(60)])
@@ -37,12 +45,17 @@ export default function RealtimeClient() {
     fetchAll();
     const interval = setInterval(fetchAll, REFRESH_MS);
     return () => { cancelled = true; clearInterval(interval); };
-  }, []);
+  }, [paused]);
 
   const insights = useMemo(() => detectAutoInsights(snapshot), [snapshot]);
   const activity = useMemo(() => buildActivitySeries(snapshot, 60), [snapshot]);
 
   const problemNode = insights.find((i) => i.tone === 'danger');
+
+  const visibleEvents = useMemo(() => {
+    const allowed = EVENT_GROUP_TYPES[filter] ?? [];
+    return filter === 'all' ? snapshot : snapshot.filter(e => allowed.includes(e.event_type));
+  }, [snapshot, filter]);
 
   return (
     <div>
@@ -51,26 +64,36 @@ export default function RealtimeClient() {
         subtitle="Что происходит прямо сейчас. Обновляется каждые 5 секунд."
       />
 
+      {problemNode && (
+        <div style={{ marginBottom: 12 }}>
+          <InsightCard tone="danger" title={problemNode.title} body={problemNode.body} />
+        </div>
+      )}
+
       <div className="admin-kpi-row">
         <KpiCard
-          label="Сейчас играют"
+          label="Онлайн сейчас"
           value={kpis.active}
           accent="green"
-          hint="heartbeat за 90 сек"
+          hint={`heartbeat за ${THRESHOLDS.heartbeat.liveWindowSeconds}с`}
         />
-        <KpiCard label="За сегодня" value={kpis.today} accent="violet" />
-        <KpiCard label="Прошли игру" value={kpis.completed_today} accent="pink" />
         <KpiCard
-          label="Проблемная зона"
-          value={problemNode ? '⚠ Есть' : '✓ Норма'}
-          accent={problemNode ? 'orange' : 'green'}
-          hint={problemNode ? problemNode.body.slice(0, 60) + '…' : undefined}
+          label="Сыграли сегодня"
+          value={kpis.today}
+          accent="violet"
+          hint="уникальных игроков с 00:00"
+        />
+        <KpiCard
+          label="Прошли сегодня"
+          value={kpis.completed_today}
+          accent="pink"
+          hint="завершили сценарий"
         />
       </div>
 
       {insights.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-          {insights.map((i) => (
+          {insights.filter(i => i.id !== problemNode?.id).map((i) => (
             <InsightCard key={i.id} tone={i.tone} title={i.title} body={i.body} />
           ))}
         </div>
@@ -90,17 +113,32 @@ export default function RealtimeClient() {
         </div>
 
         <div className="admin-card" style={{ padding: 16, maxHeight: 480, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)' }}>
-              Лента событий
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)' }}>Лента событий</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--admin-text-dim)' }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 6px #22c55e' }} />
-              обновляется каждые 5 сек
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: paused ? '#94a3b8' : '#22c55e', boxShadow: paused ? 'none' : '0 0 6px #22c55e' }} />
+              {paused ? 'пауза' : `обновляется каждые ${REFRESH_MS / 1000} сек`}
             </div>
           </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' }}>
+            <EventFilter active={filter} onChange={setFilter} />
+            <button
+              onClick={() => setPaused(!paused)}
+              className="admin-btn"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+            >
+              {paused ? <Play size={12} /> : <Pause size={12} />}
+              {paused ? 'Продолжить' : 'Пауза'}
+            </button>
+          </div>
+
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            <LiveFeed events={snapshot} maxItems={50} />
+            <LiveFeed
+              events={visibleEvents}
+              maxItems={50}
+              onRowClick={(id) => router.push(`/admin/player/${id}`)}
+            />
           </div>
         </div>
       </div>

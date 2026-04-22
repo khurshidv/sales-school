@@ -8,9 +8,10 @@ import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
+import { HeatCurveChart } from '@/components/admin/engagement/HeatCurveChart';
 import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
-import { fetchEngagement, fetchEngagementTrend } from '@/lib/admin/api';
-import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow } from '@/lib/admin/api';
+import { fetchEngagement, fetchEngagementTrend, fetchNodeLabels } from '@/lib/admin/api';
+import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow, NodeLabelResult } from '@/lib/admin/api';
 import { RetentionCard } from '@/components/admin/engagement/RetentionCard';
 import { InterestTrendChart } from '@/components/admin/engagement/InterestTrendChart';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
@@ -27,6 +28,7 @@ export default function EngagementClient() {
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
+  const [labels, setLabels] = useState<Record<string, NodeLabelResult>>({});
   const [percentiles, setPercentiles] = useState<ThinkingPercentiles | null>(null);
   const [retention, setRetention] = useState<RetentionSummary | null>(null);
   const [trend, setTrend] = useState<EngagementTrendRow[]>([]);
@@ -42,6 +44,11 @@ export default function EngagementClient() {
       setPercentiles(res.percentiles ?? null);
       setRetention(res.retention ?? null);
       setLoading(false);
+      if (res.stats.length > 0) {
+        fetchNodeLabels(scenarioId, res.stats.map(s => s.node_id))
+          .then((lbls) => { if (!cancelled) setLabels(lbls); })
+          .catch((err) => console.error('[engagement] node-labels fetch failed', err));
+      }
     }).catch((err) => {
       if (cancelled) return;
       console.error('[engagement] fetch failed', err);
@@ -179,6 +186,22 @@ export default function EngagementClient() {
 
       <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+          Распределение посещений по узлам ({dayId})
+        </div>
+        <div style={{ fontSize: 10, color: 'var(--admin-text-muted)', marginBottom: 8 }}>
+          Узлы отсортированы по убыванию посещений — кривая показывает drop-off.
+        </div>
+        {loading ? (
+          <div style={{ height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>
+            Загружаем…
+          </div>
+        ) : (
+          <HeatCurveChart stats={stats} labels={labels} height={180} />
+        )}
+      </div>
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
           Среднее время на выбор по узлам ({dayId})
         </div>
         {loading ? (
@@ -190,7 +213,7 @@ export default function EngagementClient() {
             Нет данных о выборах за период.
           </div>
         ) : (
-          <ThinkingBarChart stats={stats} />
+          <ThinkingBarChart stats={stats} labels={labels} />
         )}
       </div>
 
@@ -200,7 +223,12 @@ export default function EngagementClient() {
           title={`${slowNodes.length} «медленных» узлов`}
           body={
             <>
-              Игроки задумываются &gt;15с на: {slowNodes.map((n) => <code key={n.node_id} style={{ marginRight: 6 }}>{n.node_id}</code>)}
+              Игроки задумываются &gt;15с на:{' '}
+              {slowNodes.map((n) => (
+                <code key={n.node_id} style={{ marginRight: 6 }}>
+                  {labels[n.node_id]?.title ?? n.node_id}
+                </code>
+              ))}
             </>
           }
         />

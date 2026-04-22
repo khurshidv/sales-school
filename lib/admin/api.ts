@@ -108,10 +108,17 @@ export function fetchOverview(period: Period | PeriodParamState): Promise<Overvi
   return adminGet<OverviewPayload>('/api/admin/overview', periodParams(period));
 }
 
+export interface BranchCoverage {
+  visited: number;
+  total: number;
+  rate: number;
+}
+
 export interface BranchPayload {
   flows: BranchFlowRow[];
   stats: NodeStat[];
   dropoffs: DropoffRow[];
+  coverage: BranchCoverage;
 }
 
 export function fetchBranch(params: {

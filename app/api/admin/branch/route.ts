@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/admin/authGuard';
 import { getBranchFlow, getNodeStats, getDropoffZones } from '@/lib/admin/queries-v2';
 import { periodToRange } from '@/lib/admin/period';
 import type { Period } from '@/lib/admin/types-v2';
+import { SCENARIOS } from '@/game/data/scenarios';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,5 +33,16 @@ export async function GET(req: NextRequest) {
     getDropoffZones({ scenarioId, ...range }),
   ]);
 
-  return NextResponse.json({ flows, stats, dropoffs });
+  const scenario = SCENARIOS[scenarioId];
+  const day = scenario?.days.find(d => d.id === dayId);
+  const totalNodes = day ? Object.keys(day.nodes).length : 0;
+  const visitedNodeIds = new Set(stats.filter(s => s.entered_count > 0).map(s => s.node_id));
+  const visitedNodes = visitedNodeIds.size;
+  const coverage = {
+    visited: visitedNodes,
+    total: totalNodes,
+    rate: totalNodes > 0 ? visitedNodes / totalNodes : 0,
+  };
+
+  return NextResponse.json({ flows, stats, dropoffs, coverage });
 }

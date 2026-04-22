@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
-import PlayerProfile from '@/components/admin/PlayerProfile';
+import PlayerProfile, { type ReplayDayOption } from '@/components/admin/PlayerProfile';
 import Timeline, { type TimelineItem, type TimelineTone } from '@/components/admin/Timeline';
 import PerDayBars from '@/components/admin/charts/PerDayBars';
 import InsightCard from '@/components/admin/InsightCard';
@@ -93,6 +93,7 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
   const [notFound, setNotFound] = useState(false);
   const [replayDayId, setReplayDayId] = useState<string | null>(null);
   const [bitrixPortalUrl, setBitrixPortalUrl] = useState<string | null>(null);
+  const [showSystemEvents, setShowSystemEvents] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -128,6 +129,8 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
     return () => { cancelled = true; };
   }, [player?.phone]);
 
+  const SYSTEM_EVENTS = new Set(['heartbeat', 'node_entered', 'node_exited']);
+
   const journey = useMemo(() => parseJourney(events), [events]);
   const insight = useMemo(
     () => player ? deriveStrengthsWeaknesses(journey, completed) : null,
@@ -139,9 +142,22 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
     return [...completed].map((c) => c.rating).sort((a, b) => (order[a] ?? 99) - (order[b] ?? 99))[0];
   }, [completed]);
 
+  const availableDays: ReplayDayOption[] = useMemo(
+    () => journey.days.map(d => ({
+      dayId: d.day_id,
+      label: d.day_id.replace(/^day/i, 'День '),
+    })),
+    [journey.days],
+  );
+
+  const visibleEvents = useMemo(
+    () => showSystemEvents ? events : events.filter(e => !SYSTEM_EVENTS.has(e.event_type)),
+    [events, showSystemEvents],
+  );
+
   const items = useMemo(
-    () => events.map((e, i) => eventToTimelineItem(e, i)),
-    [events],
+    () => visibleEvents.map((e, i) => eventToTimelineItem(e, i)),
+    [visibleEvents],
   );
 
   if (loading) {
@@ -182,14 +198,25 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
         bestRating={bestRating}
         daysCompleted={completed.length}
         totalSessions={journey.totalSessions}
-        onReplay={journey.days.length > 0 ? () => setReplayDayId(journey.days[journey.days.length - 1].day_id) : undefined}
+        availableDays={availableDays.length > 0 ? availableDays : undefined}
+        onReplayDay={availableDays.length > 0 ? (dayId) => setReplayDayId(dayId) : undefined}
         bitrixPortalUrl={bitrixPortalUrl}
       />
 
       <div className="admin-two-col">
         <div className="admin-card" style={{ padding: 16, maxHeight: 600, overflowY: 'auto' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
-            Полный таймлайн ({journey.totalEvents} событий)
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)' }}>
+              Таймлайн ({visibleEvents.length} из {events.length} событий)
+            </div>
+            <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--admin-text-muted)', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={showSystemEvents}
+                onChange={(e) => setShowSystemEvents(e.target.checked)}
+              />
+              Показать служебные
+            </label>
           </div>
           <Timeline items={items} emptyText="Нет событий — игрок не начинал игру." />
         </div>

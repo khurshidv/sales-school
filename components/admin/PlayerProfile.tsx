@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Phone, MessageCircle, PlayCircle, ExternalLink } from 'lucide-react';
 import RatingBadge from './RatingBadge';
 import type { PlayerSummary } from '@/lib/admin/types-v2';
@@ -19,17 +20,45 @@ export function formatLastSeen(iso: string): string {
   return `${Math.floor(days / 30)} мес назад`;
 }
 
+export interface ReplayDayOption {
+  dayId: string;
+  label: string;
+}
+
 export interface PlayerProfileProps {
   player: PlayerSummary;
   bestRating: string | null;
   daysCompleted: number;
   totalSessions: number;
-  onReplay?: () => void;
+  availableDays?: ReplayDayOption[];
+  onReplayDay?: (dayId: string) => void;
   bitrixPortalUrl?: string | null;
 }
 
+function ReplayPicker({ days, onReplayDay }: { days: ReplayDayOption[]; onReplayDay: (id: string) => void }) {
+  const [selected, setSelected] = useState(days[days.length - 1]?.dayId ?? '');
+  if (days.length === 0) return null;
+  return (
+    <div style={{ display: 'flex', gap: 4 }}>
+      <select
+        value={selected}
+        onChange={(e) => setSelected(e.target.value)}
+        className="admin-btn"
+        style={{ minWidth: 90, paddingRight: 20 }}
+      >
+        {days.map(d => (
+          <option key={d.dayId} value={d.dayId}>{d.label}</option>
+        ))}
+      </select>
+      <button type="button" onClick={() => onReplayDay(selected)} className="admin-btn">
+        <PlayCircle size={14} /> Replay
+      </button>
+    </div>
+  );
+}
+
 export default function PlayerProfile({
-  player, bestRating, daysCompleted, totalSessions, onReplay, bitrixPortalUrl,
+  player, bestRating, daysCompleted, totalSessions, availableDays, onReplayDay, bitrixPortalUrl,
 }: PlayerProfileProps) {
   return (
     <div className="admin-card" style={{ padding: 18, marginBottom: 16 }}>
@@ -101,10 +130,8 @@ export default function PlayerProfile({
               <ExternalLink size={14} /> Bitrix
             </a>
           )}
-          {onReplay && (
-            <button onClick={onReplay} className="admin-btn">
-              <PlayCircle size={14} /> Replay
-            </button>
+          {availableDays && availableDays.length > 0 && onReplayDay && (
+            <ReplayPicker days={availableDays} onReplayDay={onReplayDay} />
           )}
         </div>
       </div>

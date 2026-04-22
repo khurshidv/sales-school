@@ -11,9 +11,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="admin-root">
       <Sidebar />
       <div className="admin-main">
-        {/* TopBar is rendered per-page via <TopBar /> so each page can set its
-            title, subtitle, and actions; kept out of the layout to avoid
-            prop drilling. */}
         <div className="admin-content">{children}</div>
       </div>
     </div>

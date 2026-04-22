@@ -16,8 +16,8 @@ export function periodToRange(
 
   if (period === 'custom') {
     const p = typeof input === 'string' ? { from: null, to: null } : input;
-    const from = p.from ? toStartOfDayIso(p.from) : null;
-    const to = p.to ? toEndOfDayIso(p.to) : null;
+    const from = safeDateIso(p.from, toStartOfDayIso);
+    const to = safeDateIso(p.to, toEndOfDayIso);
     return { from, to };
   }
 
@@ -47,4 +47,12 @@ function toEndOfDayIso(d: Date | string): string {
   const date = new Date(d);
   date.setHours(23, 59, 59, 999);
   return date.toISOString();
+}
+
+function safeDateIso(raw: string | null | undefined, fn: (d: string) => string): string | null {
+  if (!raw) return null;
+  if (!/^\d{4}-\d{2}-\d{2}/.test(raw)) return null;
+  const parsed = new Date(raw);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return fn(raw);
 }

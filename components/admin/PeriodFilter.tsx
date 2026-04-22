@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import type { Period } from '@/lib/admin/types-v2';
 import type { PeriodParamState } from '@/lib/admin/usePeriodParam';
 
@@ -20,12 +19,8 @@ export interface PeriodFilterProps {
 }
 
 export default function PeriodFilter({ value, onChange }: PeriodFilterProps) {
-  const [, setShowCustom] = useState(value.period === 'custom');
-
   function handlePeriod(next: Period) {
     if (next === 'custom') {
-      setShowCustom(true);
-      // Initialise with last 7 days if no existing range
       if (!value.from || !value.to) {
         const today = new Date();
         const weekAgo = new Date(today);
@@ -40,7 +35,6 @@ export default function PeriodFilter({ value, onChange }: PeriodFilterProps) {
       }
       return;
     }
-    setShowCustom(false);
     onChange({ period: next, from: null, to: null });
   }
 

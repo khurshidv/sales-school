@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/authGuard';
-import { getDropoffZones } from '@/lib/admin/queries-v2';
+import { getDropoffRate } from '@/lib/admin/dropoff-queries';
 import { periodToRange } from '@/lib/admin/period';
 import type { Period } from '@/lib/admin/types-v2';
 
@@ -21,8 +21,22 @@ export async function GET(req: NextRequest) {
   }
   const from = sp.get('from');
   const to = sp.get('to');
+  const dayId = sp.get('day'); // null means 'all'
   const range = periodToRange(period === 'custom' ? { period, from, to } : period);
 
-  const dropoffs = await getDropoffZones({ scenarioId, ...range });
-  return NextResponse.json({ dropoffs });
+  const rows = await getDropoffRate(scenarioId, range.from, range.to, {
+    minVisits: 20,
+    dayId,
+  });
+
+  const totals = rows.reduce(
+    (acc, r) => ({
+      entered: acc.entered + r.entered_count,
+      dropped: acc.dropped + r.dropoff_count,
+    }),
+    { entered: 0, dropped: 0 },
+  );
+  const rate = totals.entered > 0 ? totals.dropped / totals.entered : 0;
+
+  return NextResponse.json({ rows, totals: { ...totals, rate } });
 }

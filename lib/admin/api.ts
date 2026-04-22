@@ -121,11 +121,31 @@ export function fetchBranch(params: {
   return adminGet<BranchPayload>('/api/admin/branch', { ...rest, ...periodParams(period) });
 }
 
-export interface DropoffPayload { dropoffs: DropoffRow[] }
+export interface DropoffRateRow {
+  node_id: string;
+  day_id: string;
+  dropoff_count: number;
+  entered_count: number;
+  dropoff_rate: number;
+  avg_time_on_node_ms: number | null;
+}
 
-export function fetchDropoff(params: { scenarioId: string; period: Period | PeriodParamState }): Promise<DropoffPayload> {
-  const { period, ...rest } = params;
-  return adminGet<DropoffPayload>('/api/admin/dropoff', { ...rest, ...periodParams(period) });
+export interface DropoffPayload {
+  rows: DropoffRateRow[];
+  totals: { entered: number; dropped: number; rate: number };
+}
+
+export function fetchDropoff(params: {
+  scenarioId: string;
+  period: Period | PeriodParamState;
+  day?: string | null;
+}): Promise<DropoffPayload> {
+  const { scenarioId, period, day } = params;
+  return adminGet<DropoffPayload>('/api/admin/dropoff', {
+    scenarioId,
+    ...periodParams(period),
+    day: day ?? null,
+  });
 }
 
 export interface EngagementPayload {

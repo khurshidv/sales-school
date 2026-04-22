@@ -374,6 +374,33 @@ export async function fetchOfferSegmentBreakdown(options: {
   return data.rows ?? [];
 }
 
+// ─── Offer Variant Breakdown ───
+
+export interface OfferVariantRow {
+  variant_id: string;
+  views: number;
+  clicks: number;
+  conversions: number;
+  first_seen: string;
+  last_seen: string;
+  ctr: number;
+  cr: number;
+}
+
+export async function fetchOfferVariants(options: {
+  period: Period;
+  from?: string | null;
+  to?: string | null;
+}): Promise<OfferVariantRow[]> {
+  const qs = new URLSearchParams({ period: options.period });
+  if (options.from) qs.set('from', options.from);
+  if (options.to) qs.set('to', options.to);
+  const res = await fetch(`/api/admin/offer/variants?${qs}`);
+  if (!res.ok) throw new Error(`variants fetch failed: ${res.status}`);
+  const data = await res.json();
+  return data.rows ?? [];
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

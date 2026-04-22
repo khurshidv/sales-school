@@ -42,6 +42,51 @@ export async function getOfferSegmentBreakdown(
   });
 }
 
+export interface OfferVariantRow {
+  variant_id: string;
+  views: number;
+  clicks: number;
+  conversions: number;
+  first_seen: string;
+  last_seen: string;
+  ctr: number;
+  cr: number;
+}
+
+export async function getOfferVariantBreakdown(range: DateRange): Promise<OfferVariantRow[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc('get_offer_variant_breakdown', {
+    p_from: range.from,
+    p_to: range.to,
+  });
+  if (error) {
+    console.warn('[offer-queries] get_offer_variant_breakdown', error.message);
+    return [];
+  }
+  return (data ?? []).map((r: {
+    variant_id: string;
+    views: number | string;
+    clicks: number | string;
+    conversions: number | string;
+    first_seen: string;
+    last_seen: string;
+  }) => {
+    const views = Number(r.views);
+    const clicks = Number(r.clicks);
+    const conv = Number(r.conversions);
+    return {
+      variant_id: r.variant_id,
+      views,
+      clicks,
+      conversions: conv,
+      first_seen: r.first_seen,
+      last_seen: r.last_seen,
+      ctr: views > 0 ? (clicks / views) * 100 : 0,
+      cr: views > 0 ? (conv / views) * 100 : 0,
+    };
+  });
+}
+
 export interface OfferTrendRow {
   day: string;
   views: number;

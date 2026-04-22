@@ -16,6 +16,7 @@ import { ConversionHint } from '@/components/admin/offer/ConversionHint';
 import { RevenueKpiCard } from '@/components/admin/offer/RevenueKpiCard';
 import { OfferTrendChart } from '@/components/admin/offer/OfferTrendChart';
 import { SegmentTabs } from '@/components/admin/offer/SegmentTabs';
+import { VariantHistoryPanel } from '@/components/admin/offer/VariantHistoryPanel';
 
 export default function OfferClient() {
   const [periodState, setPeriod] = usePeriodParam();
@@ -216,6 +217,10 @@ export default function OfferClient() {
 
       <div style={{ marginTop: 16 }}>
         <SegmentTabs periodState={periodState} />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <VariantHistoryPanel periodState={periodState} />
       </div>
     </div>
   );

@@ -9,8 +9,9 @@ import InsightCard from '@/components/admin/InsightCard';
 import DropoffBars from '@/components/admin/charts/DropoffBars';
 import { DropoffFilters } from '@/components/admin/dropoff/DropoffFilters';
 import type { DayFilter, NodeTypeFilter } from '@/components/admin/dropoff/DropoffFilters';
-import { fetchDropoff, fetchNodeLabels } from '@/lib/admin/api';
-import type { DropoffRateRow, NodeLabelResult } from '@/lib/admin/api';
+import { DropoffTrendChart } from '@/components/admin/dropoff/DropoffTrendChart';
+import { fetchDropoff, fetchNodeLabels, fetchDropoffTrend } from '@/lib/admin/api';
+import type { DropoffRateRow, NodeLabelResult, DropoffTrendPoint } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import { SCENARIOS } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
@@ -25,6 +26,7 @@ export default function DropoffClient() {
   const [totals, setTotals] = useState({ entered: 0, dropped: 0, rate: 0 });
   const [labels, setLabels] = useState<Record<string, NodeLabelResult>>({});
   const [loading, setLoading] = useState(true);
+  const [trend, setTrend] = useState<DropoffTrendPoint[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +54,20 @@ export default function DropoffClient() {
       cancelled = true;
     };
   }, [scenarioId, period, from, to, day]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDropoffTrend({ scenarioId, period: periodState })
+      .then((res) => {
+        if (!cancelled) setTrend(res.points);
+      })
+      .catch(() => {
+        if (!cancelled) setTrend([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [scenarioId, period, from, to]);
 
   const visibleRows = useMemo(() => {
     if (nodeType === 'all') return rows;
@@ -133,6 +149,13 @@ export default function DropoffClient() {
           />
         </div>
       )}
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+          Динамика drop-off по дням
+        </div>
+        <DropoffTrendChart points={trend} />
+      </div>
 
       <div className="admin-card" style={{ padding: 16 }}>
         <div

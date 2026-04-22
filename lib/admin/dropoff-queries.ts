@@ -1,6 +1,36 @@
 import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+export interface DropoffTrendPoint {
+  bucket_date: string;
+  entered: number;
+  dropped: number;
+  rate: number;
+}
+
+export async function getDropoffTrend(
+  scenarioId: string,
+  from: string | null,
+  to: string | null,
+): Promise<DropoffTrendPoint[]> {
+  const sb = createAdminClient();
+  const { data, error } = await sb.rpc('get_dropoff_trend', {
+    p_scenario_id: scenarioId,
+    p_from: from,
+    p_to: to,
+  });
+  if (error) {
+    console.warn('[dropoff-queries] get_dropoff_trend', error);
+    return [];
+  }
+  return (data ?? []).map((r: { bucket_date: string; entered: number | string; dropped: number | string; rate: number | string }) => ({
+    bucket_date: r.bucket_date,
+    entered: Number(r.entered),
+    dropped: Number(r.dropped),
+    rate: Number(r.rate),
+  }));
+}
+
 export interface DropoffRateRow {
   node_id: string;
   day_id: string;

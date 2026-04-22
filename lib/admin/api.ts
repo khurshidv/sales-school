@@ -605,6 +605,26 @@ export function fetchFunnelTrend(params: {
   });
 }
 
+// ─── Dropoff Trend ───
+
+export interface DropoffTrendPoint {
+  bucket_date: string;
+  entered: number;
+  dropped: number;
+  rate: number;
+}
+
+export function fetchDropoffTrend(params: {
+  scenarioId: string;
+  period: Period | PeriodParamState;
+}): Promise<{ points: DropoffTrendPoint[] }> {
+  const { scenarioId, period } = params;
+  return adminGet<{ points: DropoffTrendPoint[] }>('/api/admin/dropoff/trend', {
+    scenarioId,
+    ...periodParams(period),
+  });
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

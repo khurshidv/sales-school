@@ -1,8 +1,23 @@
 'use client';
 
-import { Phone, MessageCircle, PlayCircle } from 'lucide-react';
+import { Phone, MessageCircle, PlayCircle, ExternalLink } from 'lucide-react';
 import RatingBadge from './RatingBadge';
 import type { PlayerSummary } from '@/lib/admin/types-v2';
+import { buildWhatsAppUrl, buildTelegramUrl } from '@/lib/admin/outreach';
+
+export function formatLastSeen(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+  if (days === 0) {
+    const hours = Math.floor(diff / (60 * 60 * 1000));
+    if (hours < 1) return 'только что';
+    return `${hours} ч назад`;
+  }
+  if (days === 1) return 'вчера';
+  if (days < 7) return `${days} дней назад`;
+  if (days < 30) return `${Math.floor(days / 7)} нед назад`;
+  return `${Math.floor(days / 30)} мес назад`;
+}
 
 export interface PlayerProfileProps {
   player: PlayerSummary;
@@ -10,20 +25,11 @@ export interface PlayerProfileProps {
   daysCompleted: number;
   totalSessions: number;
   onReplay?: () => void;
-}
-
-function whatsappLink(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  return `https://wa.me/${digits}?text=${encodeURIComponent('Здравствуйте! Заметил вас в Sales School.')}`;
-}
-
-function telegramLink(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  return `https://t.me/+${digits}`;
+  bitrixPortalUrl?: string | null;
 }
 
 export default function PlayerProfile({
-  player, bestRating, daysCompleted, totalSessions, onReplay,
+  player, bestRating, daysCompleted, totalSessions, onReplay, bitrixPortalUrl,
 }: PlayerProfileProps) {
   return (
     <div className="admin-card" style={{ padding: 18, marginBottom: 16 }}>
@@ -45,8 +51,17 @@ export default function PlayerProfile({
             <RatingBadge rating={bestRating} />
           </div>
           <div style={{ fontSize: 11, color: 'var(--admin-text-muted)', marginTop: 2 }}>
-            {player.phone} · UTM: {player.utm_source ?? '(прямой)'}
-            {player.utm_campaign && ` / ${player.utm_campaign}`}
+            {player.phone}
+            {' · '}
+            <span>Регистрация: {new Date(player.created_at).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
+            {' · '}
+            <span>Активность: {formatLastSeen(player.last_seen_at)}</span>
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--admin-text-muted)', marginTop: 2 }}>
+            UTM: {player.utm_source ?? '(прямой)'}
+            {player.utm_medium && ` · ${player.utm_medium}`}
+            {player.utm_campaign && ` · ${player.utm_campaign}`}
+            {player.referrer && <span title={player.referrer}>{' · реф.'}</span>}
           </div>
           <div style={{ display: 'flex', gap: 14, marginTop: 8, fontSize: 11, color: 'var(--admin-text)' }}>
             <span>⏱️ Сессий: <strong>{totalSessions}</strong></span>
@@ -57,7 +72,7 @@ export default function PlayerProfile({
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <a
-            href={whatsappLink(player.phone)}
+            href={buildWhatsAppUrl(player.phone, player.display_name)}
             target="_blank"
             rel="noopener noreferrer"
             className="admin-btn"
@@ -66,7 +81,7 @@ export default function PlayerProfile({
             <Phone size={14} /> WhatsApp
           </a>
           <a
-            href={telegramLink(player.phone)}
+            href={buildTelegramUrl(player.phone, player.display_name)}
             target="_blank"
             rel="noopener noreferrer"
             className="admin-btn"
@@ -74,6 +89,18 @@ export default function PlayerProfile({
           >
             <MessageCircle size={14} /> Telegram
           </a>
+          {bitrixPortalUrl && (
+            <a
+              href={bitrixPortalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="admin-btn"
+              style={{ background: '#2fc6f6', color: '#fff', borderColor: 'transparent' }}
+              title="Открыть сделку в Bitrix"
+            >
+              <ExternalLink size={14} /> Bitrix
+            </a>
+          )}
           {onReplay && (
             <button onClick={onReplay} className="admin-btn">
               <PlayCircle size={14} /> Replay

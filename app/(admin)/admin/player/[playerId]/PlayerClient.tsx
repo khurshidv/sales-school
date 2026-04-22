@@ -9,7 +9,8 @@ import InsightCard from '@/components/admin/InsightCard';
 import PlayerNotes from '@/components/admin/PlayerNotes';
 import DayReplayModal from '@/components/admin/DayReplayModal';
 import { Breadcrumbs } from '@/components/admin/shared/Breadcrumbs';
-import { fetchPlayer } from '@/lib/admin/api';
+import { fetchPlayer, fetchParticipantPhoneLookup } from '@/lib/admin/api';
+import { formatLastSeen } from '@/components/admin/PlayerProfile';
 import { parseJourney } from '@/lib/admin/player/parseJourney';
 import { deriveStrengthsWeaknesses } from '@/lib/admin/player/deriveStrengthsWeaknesses';
 import type { PlayerSummary, PlayerJourneyEvent, CompletedDay } from '@/lib/admin/types-v2';
@@ -91,6 +92,7 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [replayDayId, setReplayDayId] = useState<string | null>(null);
+  const [bitrixPortalUrl, setBitrixPortalUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -108,6 +110,23 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
       });
     return () => { cancelled = true; };
   }, [playerId]);
+
+  useEffect(() => {
+    if (!player?.phone) { setBitrixPortalUrl(null); return; }
+    let cancelled = false;
+    fetchParticipantPhoneLookup([player.phone])
+      .then(data => {
+        const info = data.leadsByPhone[player.phone];
+        if (!info?.bitrixDealId) { if (!cancelled) setBitrixPortalUrl(null); return; }
+        return fetch(`/api/admin/bitrix/deal/${info.bitrixDealId}`)
+          .then(r => r.ok ? r.json() : null)
+          .then((d: { portalUrl?: string | null } | null) => {
+            if (!cancelled) setBitrixPortalUrl(d?.portalUrl ?? null);
+          });
+      })
+      .catch(() => { if (!cancelled) setBitrixPortalUrl(null); });
+    return () => { cancelled = true; };
+  }, [player?.phone]);
 
   const journey = useMemo(() => parseJourney(events), [events]);
   const insight = useMemo(
@@ -154,8 +173,8 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
         ]}
       />
       <PageHeader
-        title="Player Journey"
-        subtitle={`ID: ${player.id}`}
+        title="Путь игрока"
+        subtitle={`${player.phone} · активность ${formatLastSeen(player.last_seen_at)}`}
       />
 
       <PlayerProfile
@@ -164,6 +183,7 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
         daysCompleted={completed.length}
         totalSessions={journey.totalSessions}
         onReplay={journey.days.length > 0 ? () => setReplayDayId(journey.days[journey.days.length - 1].day_id) : undefined}
+        bitrixPortalUrl={bitrixPortalUrl}
       />
 
       <div className="admin-two-col">

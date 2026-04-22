@@ -7,7 +7,8 @@ import KpiCard from '@/components/admin/KpiCard';
 import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
 import PeriodFilter from '@/components/admin/PeriodFilter';
-import { fetchParticipants } from '@/lib/admin/api';
+import { fetchParticipants, fetchParticipantPhoneLookup } from '@/lib/admin/api';
+import { BitrixDealBadge } from '@/components/admin/leads/BitrixDealBadge';
 import type { EnrichedPlayer } from '@/lib/admin/types-v2';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import {
@@ -25,6 +26,12 @@ function formatRelative(iso: string | null): string {
   if (h < 24) return `${h} ч назад`;
   const d = Math.floor(h / 24);
   return `${d} д назад`;
+}
+
+function daysIdle(iso: string | null): number | null {
+  if (!iso) return null;
+  const diffMs = Date.now() - new Date(iso).getTime();
+  return Math.floor(diffMs / (24 * 60 * 60 * 1000));
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -63,6 +70,8 @@ export default function ParticipantsClient() {
     status: [],
   });
 
+  const [phoneLookup, setPhoneLookup] = useState<Record<string, { count: number; bitrixDealId: number | null }>>({});
+
   const [periodState, setPeriod] = usePeriodParam();
 
   // Reset effect — whenever filters change, reset offset and players
@@ -70,6 +79,17 @@ export default function ParticipantsClient() {
     setOffset(0);
     setPlayers([]);
   }, [search, filters, periodState.period, periodState.from, periodState.to]);
+
+  // Phone lookup effect — batch-fetch lead annotations for all loaded players
+  useEffect(() => {
+    if (players.length === 0) { setPhoneLookup({}); return; }
+    let cancelled = false;
+    const phones = Array.from(new Set(players.map(p => p.phone).filter(Boolean)));
+    fetchParticipantPhoneLookup(phones)
+      .then(d => { if (!cancelled) setPhoneLookup(d.leadsByPhone ?? {}); })
+      .catch(() => { if (!cancelled) setPhoneLookup({}); });
+    return () => { cancelled = true; };
+  }, [players]);
 
   // Load effect — fetch and append when offset changes or filters change
   useEffect(() => {
@@ -168,7 +188,10 @@ export default function ParticipantsClient() {
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Rating</th>
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Очки</th>
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Дней</th>
+                <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Idle</th>
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Заявка</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Лид</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Bitrix</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Статус</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Активность</th>
@@ -193,6 +216,14 @@ export default function ParticipantsClient() {
                     <td style={{ padding: '10px 12px', textAlign: 'center' }}><RatingBadge rating={p.best_rating} size="sm" /></td>
                     <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>{p.total_score.toLocaleString('ru-RU')}</td>
                     <td style={{ padding: '10px 12px', textAlign: 'right' }}>{p.days_completed}/3</td>
+                    <td style={{ padding: '10px 12px', textAlign: 'right' }}>
+                      {(() => {
+                        const d = daysIdle(p.last_activity);
+                        if (d === null) return <span style={{ color: 'var(--admin-text-dim)' }}>—</span>;
+                        const tone = d > 14 ? '#991b1b' : d > 7 ? '#92400e' : 'var(--admin-text-muted)';
+                        return <span style={{ color: tone, fontWeight: d > 7 ? 700 : 400 }}>{d}д</span>;
+                      })()}
+                    </td>
                     <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                       {p.submitted_consultation ? (
                         <span style={{
@@ -203,6 +234,29 @@ export default function ParticipantsClient() {
                       ) : (
                         <span style={{ color: 'var(--admin-text-dim)', fontSize: 10 }}>—</span>
                       )}
+                    </td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                      {phoneLookup[p.phone]?.count ? (
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            background: '#fef3c7',
+                            color: '#92400e',
+                            padding: '1px 6px',
+                            borderRadius: 4,
+                            fontSize: 10,
+                            fontWeight: 700,
+                          }}
+                          title={`${phoneLookup[p.phone].count} заявок в leads с этого телефона`}
+                        >
+                          + лид{phoneLookup[p.phone].count > 1 ? ` ×${phoneLookup[p.phone].count}` : ''}
+                        </span>
+                      ) : (
+                        <span style={{ color: 'var(--admin-text-dim)', fontSize: 11 }}>—</span>
+                      )}
+                    </td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                      <BitrixDealBadge dealId={phoneLookup[p.phone]?.bitrixDealId ?? null} />
                     </td>
                     <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                       {p.utm_source ?? '(прямой)'}

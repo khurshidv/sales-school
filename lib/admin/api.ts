@@ -422,6 +422,23 @@ export async function fetchOfferVariants(options: {
   return data.rows ?? [];
 }
 
+// ─── Participant Phone Lookup (leads-by-phone) ───
+
+export interface ParticipantPhoneLookup {
+  leadsByPhone: Record<string, { count: number; bitrixDealId: number | null }>;
+}
+
+export async function fetchParticipantPhoneLookup(phones: string[]): Promise<ParticipantPhoneLookup> {
+  if (phones.length === 0) return { leadsByPhone: {} };
+  const res = await fetch('/api/admin/participants/leads-by-phone', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phones }),
+  });
+  if (!res.ok) throw new Error(`phone lookup failed: ${res.status}`);
+  return res.json();
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

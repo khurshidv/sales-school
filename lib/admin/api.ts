@@ -155,10 +155,17 @@ export interface ThinkingPercentiles {
   sample_size: number;
 }
 
+export interface RetentionSummary {
+  cohort_size: number;
+  d1_rate: number;
+  d7_rate: number;
+}
+
 export interface EngagementPayload {
   engagement: EngagementBlob;
   stats: NodeStat[];
   percentiles: ThinkingPercentiles;
+  retention: RetentionSummary;
 }
 
 export function fetchEngagement(params: {

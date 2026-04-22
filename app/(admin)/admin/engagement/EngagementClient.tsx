@@ -10,7 +10,8 @@ import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
 import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
 import { fetchEngagement } from '@/lib/admin/api';
-import type { ThinkingPercentiles } from '@/lib/admin/api';
+import type { ThinkingPercentiles, RetentionSummary } from '@/lib/admin/api';
+import { RetentionCard } from '@/components/admin/engagement/RetentionCard';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
@@ -26,6 +27,7 @@ export default function EngagementClient() {
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
   const [percentiles, setPercentiles] = useState<ThinkingPercentiles | null>(null);
+  const [retention, setRetention] = useState<RetentionSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,6 +38,7 @@ export default function EngagementClient() {
       setBlob(res.engagement);
       setStats(res.stats);
       setPercentiles(res.percentiles ?? null);
+      setRetention(res.retention ?? null);
       setLoading(false);
     }).catch((err) => {
       if (cancelled) return;
@@ -143,6 +146,12 @@ export default function EngagementClient() {
         <span style={{ fontSize: 12, color: 'var(--admin-text-muted)' }}>День:</span>
         <DayTabs value={dayId} onChange={setDayId} />
       </div>
+
+      {retention && (
+        <div style={{ marginBottom: 16 }}>
+          <RetentionCard retention={retention} />
+        </div>
+      )}
 
       <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>

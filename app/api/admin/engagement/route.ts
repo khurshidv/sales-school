@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/authGuard';
 import { getEngagementIndexRaw, getNodeStats } from '@/lib/admin/queries-v2';
-import { getThinkingPercentiles } from '@/lib/admin/engagement-queries';
+import { getThinkingPercentiles, getRetentionSummary } from '@/lib/admin/engagement-queries';
 import { periodToRange } from '@/lib/admin/period';
 import type { Period } from '@/lib/admin/types-v2';
 
@@ -25,11 +25,12 @@ export async function GET(req: NextRequest) {
   const to = sp.get('to');
   const range = periodToRange(period === 'custom' ? { period, from, to } : period);
 
-  const [engagement, stats, percentiles] = await Promise.all([
+  const [engagement, stats, percentiles, retention] = await Promise.all([
     getEngagementIndexRaw({ scenarioId, ...range }),
     getNodeStats({ scenarioId, dayId, ...range }),
     getThinkingPercentiles({ scenarioId, dayId, ...range }),
+    getRetentionSummary(range.from, range.to),
   ]);
 
-  return NextResponse.json({ engagement, stats, percentiles });
+  return NextResponse.json({ engagement, stats, percentiles, retention });
 }

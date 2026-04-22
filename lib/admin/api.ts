@@ -28,17 +28,22 @@ function periodParams(p: Period | PeriodParamState): Record<string, string | nul
   };
 }
 
-// NOTE: LeaderboardItem is defined in server-only queries-v2.ts. We mirror the
-// shape here so the client bundle never reaches into server code.
+// NOTE: LeaderboardItem shape is mirrored in server-only lib/admin/leaderboard-queries.ts.
+// We redeclare here so the client bundle never imports server-only code.
 export interface LeaderboardItem {
   player_id: string;
   display_name: string;
+  avatar_id: string;
+  level: number;
   total_score: number;
   scenarios_completed: number;
-  level: number;
-  best_rating: string | null;
-  updated_at: string;
+  best_rating: 'S' | 'A' | 'B' | 'C' | 'F' | null;
+  s_rating_count: number;
+  avg_completion_seconds: number | null;
 }
+
+export type LeaderboardPeriod = 'week' | 'month' | 'all';
+export type LeaderboardSort = 'total_score' | 'completion_time' | 's_rating_count';
 
 // NOTE: RealtimeKpis and RecentGameEvent are defined in server-only queries-v2.ts.
 // Mirrored here so the client bundle never reaches into server code.
@@ -307,10 +312,27 @@ export function fetchParticipants(params: ParticipantsOptions = {}): Promise<Par
 
 export interface LeaderboardPayload {
   items: LeaderboardItem[];
+  total: number;
+  period: LeaderboardPeriod;
+  sort: LeaderboardSort;
+  limit: number;
+  offset: number;
 }
 
-export function fetchLeaderboard(limit = 100): Promise<LeaderboardPayload> {
-  return adminGet<LeaderboardPayload>('/api/admin/leaderboard', { limit });
+export function fetchLeaderboard(params: {
+  period?: LeaderboardPeriod;
+  sort?: LeaderboardSort;
+  limit?: number;
+  offset?: number;
+  scenarioId?: string | null;
+} = {}): Promise<LeaderboardPayload> {
+  return adminGet<LeaderboardPayload>('/api/admin/leaderboard', {
+    period: params.period ?? null,
+    sort: params.sort ?? null,
+    limit: params.limit ?? null,
+    offset: params.offset ?? null,
+    scenarioId: params.scenarioId ?? null,
+  });
 }
 
 export interface PlayerPayload {

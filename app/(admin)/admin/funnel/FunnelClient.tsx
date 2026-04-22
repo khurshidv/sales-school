@@ -1,95 +1,164 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DonutChart from '@/components/admin/charts/DonutChart';
-import { fetchFunnel } from '@/lib/admin/api';
-import { computeUtmRollup } from '@/lib/admin/marketing/computeUtmRollup';
+import { fetchFunnel, type UtmFunnelV2Row, type UtmDimension } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
-import type { UtmFunnelRow } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
+import { DimensionSelector } from '@/components/admin/funnel/DimensionSelector';
+
+type SortKey = 'segment' | 'visitors' | 'registered' | 'completed' | 'consultations' | 'cr';
+
+const VALID_DIMS: UtmDimension[] = ['utm_source', 'utm_medium', 'utm_campaign'];
+
+function toDimension(raw: string | null): UtmDimension {
+  return VALID_DIMS.includes(raw as UtmDimension) ? (raw as UtmDimension) : 'utm_source';
+}
+
+type RowWithCr = UtmFunnelV2Row & { cr: number };
 
 export default function FunnelClient() {
   const [periodState, setPeriod] = usePeriodParam();
-  const { period, from, to } = periodState;
-  const [rows, setRows] = useState<UtmFunnelRow[]>([]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [dimension, setDimensionState] = useState<UtmDimension>(() => toDimension(searchParams.get('dim')));
+  const [rows, setRows] = useState<UtmFunnelV2Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortKey, setSortKey] = useState<SortKey>('visitors');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+
+  function setDimension(next: UtmDimension) {
+    setDimensionState(next);
+    const sp = new URLSearchParams(searchParams.toString());
+    sp.set('dim', next);
+    router.replace(`?${sp.toString()}`, { scroll: false });
+  }
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchFunnel(periodState).then((res) => {
+    fetchFunnel({ period: periodState, dimension }).then((res) => {
       if (cancelled) return;
-      setRows(res.utm); setLoading(false);
+      setRows(res.rows);
+      setLoading(false);
     }).catch((err) => {
       if (cancelled) return;
       console.error('[funnel] fetch failed', err);
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [period, from, to]);
+  }, [periodState.period, periodState.from, periodState.to, dimension]);
 
-  const rollup = useMemo(() => computeUtmRollup(rows), [rows]);
-  const slices = rollup.rows.map((r) => ({ label: r.source, value: r.visitors }));
+  const sorted = useMemo<RowWithCr[]>(() => {
+    const withCr: RowWithCr[] = rows.map(r => ({
+      ...r,
+      cr: r.visitors > 0 ? (r.consultations / r.visitors) * 100 : 0,
+    }));
+    const sign = sortDir === 'desc' ? -1 : 1;
+    return [...withCr].sort((a, b) => {
+      if (sortKey === 'segment') return sign * a.segment.localeCompare(b.segment);
+      return sign * ((a[sortKey] as number) - (b[sortKey] as number));
+    });
+  }, [rows, sortKey, sortDir]);
+
+  const totals = useMemo(() => rows.reduce(
+    (acc, r) => ({
+      visitors: acc.visitors + r.visitors,
+      completed: acc.completed + r.completed,
+    }),
+    { visitors: 0, completed: 0 },
+  ), [rows]);
+
+  const best = useMemo(() => {
+    const eligible = rows
+      .filter(r => r.visitors >= THRESHOLDS.funnel.minVisitorsForBest)
+      .map(r => ({ segment: r.segment, cr: r.visitors > 0 ? (r.consultations / r.visitors) * 100 : 0 }))
+      .sort((a, b) => b.cr - a.cr);
+    return eligible[0] ?? null;
+  }, [rows]);
+
+  function toggleSort(key: SortKey) {
+    if (sortKey === key) setSortDir(d => d === 'desc' ? 'asc' : 'desc');
+    else { setSortKey(key); setSortDir('desc'); }
+  }
+
+  const slices = sorted.map(r => ({ label: r.segment, value: r.visitors }));
 
   return (
     <div>
       <PageHeader
-        title="Funnel & UTM"
-        subtitle="Воронка по источникам трафика — какие каналы дают качественных игроков."
-        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
+        title="Воронка и источники"
+        subtitle="Воронка по рекламным измерениям — какие каналы дают качественных игроков."
+        actions={
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <DimensionSelector value={dimension} onChange={setDimension} />
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+          </div>
+        }
       />
 
       <div className="admin-kpi-row">
-        <KpiCard label="Источников" value={rollup.rows.length} accent="violet" />
-        <KpiCard label="Посетителей" value={rollup.totals.visitors.toLocaleString('ru-RU')} accent="pink" hint="уникальные просмотры лендингов" />
-        <KpiCard label="Прошли всю игру" value={rollup.totals.completed.toLocaleString('ru-RU')} accent="green" />
+        <KpiCard label="Сегментов" value={rows.length} accent="violet" />
+        <KpiCard label="Посетителей" value={totals.visitors.toLocaleString('ru-RU')} accent="pink" hint="уникальные визиты" />
+        <KpiCard label="Прошли игру" value={totals.completed.toLocaleString('ru-RU')} accent="green" />
         <KpiCard
-          label="Лучший источник"
-          value={rollup.rows[0]?.source ?? '—'}
-          hint={rollup.rows[0] ? `${rollup.rows[0].completionRate.toFixed(1)}% завершаемость` : undefined}
+          label="Лучший сегмент"
+          value={best?.segment ?? '—'}
+          hint={best ? `${best.cr.toFixed(1)}% CR (визит→заявка)` : `нужно ≥${THRESHOLDS.funnel.minVisitorsForBest} визитов`}
           accent="orange"
         />
       </div>
 
-      <div className="admin-two-col">
-        <div className="admin-card" style={{ padding: 16, overflowX: 'auto' }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
-            Источники по конверсии
+      <div className="admin-two-col admin-two-col--equal">
+        <div className="admin-card" style={{ padding: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+            Сегменты (сортируется по клику)
           </div>
           {loading ? (
             <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
-          ) : rollup.rows.length === 0 ? (
+          ) : sorted.length === 0 ? (
             <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Нет данных за период</div>
           ) : (
             <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--admin-border)' }}>
-                  <th style={{ textAlign: 'left', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Источник</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Посетителей</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Начали</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Прошли</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Заявки</th>
-                  <th style={{ textAlign: 'right', padding: '8px 6px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Конверсия</th>
+                  {(
+                    [
+                      ['segment',       'Сегмент',      'left'],
+                      ['visitors',      'Визиты',       'right'],
+                      ['registered',    'Регистрации',  'right'],
+                      ['completed',     'Прошли',       'right'],
+                      ['consultations', 'Заявки',       'right'],
+                      ['cr',            'CR',           'right'],
+                    ] as Array<[SortKey, string, 'left' | 'right']>
+                  ).map(([k, label, align]) => (
+                    <th
+                      key={k}
+                      onClick={() => toggleSort(k)}
+                      style={{
+                        textAlign: align, padding: '8px 6px',
+                        color: 'var(--admin-text-muted)', fontWeight: 600, cursor: 'pointer',
+                        userSelect: 'none',
+                      }}
+                    >
+                      {label}{sortKey === k ? (sortDir === 'desc' ? ' ▼' : ' ▲') : ''}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {rollup.rows.map((r) => (
-                  <tr key={r.source} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '8px 6px', fontWeight: 600, color: 'var(--admin-text)' }}>{r.source}</td>
-                    <td style={{ padding: '8px 6px', textAlign: 'right' }}>{r.visitors}</td>
-                    <td style={{ padding: '8px 6px', textAlign: 'right' }}>{r.started}</td>
-                    <td style={{ padding: '8px 6px', textAlign: 'right' }}>{r.completed}</td>
-                    <td style={{ padding: '8px 6px', textAlign: 'right', fontWeight: 600, color: r.consultations > 0 ? 'var(--admin-accent-success)' : undefined }}>{r.consultations}</td>
-                    <td style={{
-                      padding: '8px 6px', textAlign: 'right', fontWeight: 700,
-                      color: r.completionRate >= 30 ? 'var(--admin-accent-success)' :
-                             r.completionRate >= 15 ? 'var(--admin-accent-warn)' :
-                             'var(--admin-accent-danger)',
-                    }}>
-                      {r.completionRate.toFixed(1)}%
-                    </td>
+                {sorted.map(r => (
+                  <tr key={r.segment} style={{ borderBottom: '1px solid var(--admin-border)' }}>
+                    <td style={{ padding: '6px 6px', fontWeight: 600 }}>{r.segment}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.visitors.toLocaleString('ru-RU')}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.registered.toLocaleString('ru-RU')}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.completed.toLocaleString('ru-RU')}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.consultations.toLocaleString('ru-RU')}</td>
+                    <td style={{ padding: '6px 6px', textAlign: 'right', fontWeight: 700 }}>{r.cr.toFixed(1)}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -98,7 +167,7 @@ export default function FunnelClient() {
         </div>
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
-            Доли источников
+            Доли сегментов (визиты)
           </div>
           <DonutChart slices={slices} />
         </div>

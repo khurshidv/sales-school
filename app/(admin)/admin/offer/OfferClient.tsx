@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { Download } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
@@ -74,12 +75,27 @@ export default function OfferClient() {
     })[0];
   }, [byRating]);
 
+  const retargetHref = useMemo(() => {
+    const p = new URLSearchParams();
+    p.set('period', periodState.period);
+    if (periodState.from) p.set('from', periodState.from);
+    if (periodState.to) p.set('to', periodState.to);
+    return `/api/admin/offer/retarget?${p.toString()}`;
+  }, [periodState]);
+
   return (
     <div>
       <PageHeader
         title="Offer Conversion"
         subtitle="Финальная оффер-страница — кто видит, кто кликает, кто конвертируется."
-        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
+        actions={
+          <div style={{ display: 'flex', gap: 8 }}>
+            <a href={retargetHref} className="admin-btn" download title="Экспорт игроков, которые видели оффер но не кликнули">
+              <Download size={12} /> Retarget CSV
+            </a>
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+          </div>
+        }
       />
 
       <div className="admin-kpi-row">
@@ -105,8 +121,14 @@ export default function OfferClient() {
         </div>
         <KpiCard
           label="Лучший rating"
-          value={bestRating?.segment ?? '—'}
-          hint={bestRating && bestRating.views > 0 ? `${((bestRating.clicks / bestRating.views) * 100).toFixed(0)}% CTR` : undefined}
+          value={bestRating && bestRating.views >= THRESHOLDS.offer.minViewsForStat ? (bestRating.segment ?? '—') : '—'}
+          hint={
+            bestRating && bestRating.views >= THRESHOLDS.offer.minViewsForStat
+              ? `${((bestRating.clicks / bestRating.views) * 100).toFixed(0)}% CTR · ${bestRating.views} просм.`
+              : bestRating
+                ? `нужно ≥${THRESHOLDS.offer.minViewsForStat} просмотров`
+                : 'нет данных'
+          }
           accent="orange"
         />
       </div>

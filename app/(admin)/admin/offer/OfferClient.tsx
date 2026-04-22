@@ -6,13 +6,15 @@ import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
-import { fetchOffer } from '@/lib/admin/api';
+import { fetchOffer, fetchOfferTrend } from '@/lib/admin/api';
+import type { OfferTrendRow } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { ConversionHint } from '@/components/admin/offer/ConversionHint';
 import { RevenueKpiCard } from '@/components/admin/offer/RevenueKpiCard';
+import { OfferTrendChart } from '@/components/admin/offer/OfferTrendChart';
 
 export default function OfferClient() {
   const [periodState, setPeriod] = usePeriodParam();
@@ -21,6 +23,8 @@ export default function OfferClient() {
   const [byRating, setByRating] = useState<OfferBreakdownRow[]>([]);
   const [byUtm, setByUtm] = useState<OfferBreakdownRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [trend, setTrend] = useState<OfferTrendRow[]>([]);
+  const [trendLoading, setTrendLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -35,6 +39,15 @@ export default function OfferClient() {
     });
     return () => { cancelled = true; };
   }, [period, from, to]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setTrendLoading(true);
+    fetchOfferTrend({ period: periodState.period, from: periodState.from, to: periodState.to })
+      .then(rows => { if (!cancelled) { setTrend(rows); setTrendLoading(false); } })
+      .catch(() => { if (!cancelled) { setTrend([]); setTrendLoading(false); } });
+    return () => { cancelled = true; };
+  }, [periodState.period, periodState.from, periodState.to]);
 
   const steps = useMemo(() => computeFunnelDeltas([
     { label: 'Прошли всю игру', value: funnel?.game_completed ?? 0 },
@@ -114,6 +127,17 @@ export default function OfferClient() {
           <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
         ) : (
           <FunnelBars steps={steps} />
+        )}
+      </div>
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+          Тренд CTR и CR по дням
+        </div>
+        {trendLoading ? (
+          <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+        ) : (
+          <OfferTrendChart rows={trend} />
         )}
       </div>
 

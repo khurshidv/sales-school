@@ -323,6 +323,31 @@ export async function fetchLeadDedupAndPlayers(phones: string[]): Promise<DedupI
   return res.json();
 }
 
+// ─── Offer Trend ───
+
+export interface OfferTrendRow {
+  day: string;
+  views: number;
+  clicks: number;
+  conversions: number;
+  ctr: number;
+  cr: number;
+}
+
+export async function fetchOfferTrend(options: {
+  period: Period;
+  from?: string | null;
+  to?: string | null;
+}): Promise<OfferTrendRow[]> {
+  const qs = new URLSearchParams({ period: options.period });
+  if (options.from) qs.set('from', options.from);
+  if (options.to) qs.set('to', options.to);
+  const res = await fetch(`/api/admin/offer/trend?${qs}`);
+  if (!res.ok) throw new Error(`offer trend fetch failed: ${res.status}`);
+  const data = await res.json();
+  return data.rows ?? [];
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

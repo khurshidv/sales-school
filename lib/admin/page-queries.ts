@@ -82,6 +82,16 @@ export async function getPageAnalytics(
   return { summary, breakdowns };
 }
 
+export async function getPageTitle(slug: string): Promise<string> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from('pages_registry')
+    .select('title_ru')
+    .eq('slug', slug)
+    .maybeSingle();
+  return data?.title_ru ?? slug;
+}
+
 export async function getLeads(
   options: {
     slug?: string;

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getPageAnalytics } from '@/lib/admin/page-queries';
+import { getPageAnalytics, getPageTitle } from '@/lib/admin/page-queries';
 import type {
   PageSummary,
   PageBreakdowns,
@@ -22,11 +22,6 @@ function fmtDuration(ms: number) {
   const rest = sec % 60;
   return `${min}м ${rest}с`;
 }
-
-const PAGE_TITLES: Record<string, string> = {
-  home: 'Вебинар',
-  target: 'Курс',
-};
 
 // ─── KPI Card ───
 
@@ -256,8 +251,10 @@ export default async function PageDetailDashboard({
   const to = sp.to ? new Date(sp.to) : now;
   const from = sp.from ? new Date(sp.from) : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  const { summary, breakdowns } = await getPageAnalytics(slug, from, to);
-  const title = PAGE_TITLES[slug] ?? slug;
+  const [{ summary, breakdowns }, title] = await Promise.all([
+    getPageAnalytics(slug, from, to),
+    getPageTitle(slug),
+  ]);
 
   return (
     <div>

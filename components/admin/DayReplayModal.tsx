@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { PlayerJourneyEvent } from '@/lib/admin/types-v2';
+import { fetchNodeLabels } from '@/lib/admin/api';
 
 export interface DayReplayModalProps {
   events: PlayerJourneyEvent[];
@@ -33,6 +34,39 @@ function fmtTime(iso: string): string {
 
 export default function DayReplayModal({ events, dayLabel, onClose }: DayReplayModalProps) {
   const [idx, setIdx] = useState(0);
+  const [labels, setLabels] = useState<Record<string, { title: string; preview: string | null }>>({});
+
+  const scenarioId = useMemo(
+    () => events.find(e => e.scenario_id)?.scenario_id ?? null,
+    [events],
+  );
+
+  useEffect(() => {
+    if (!scenarioId || events.length === 0) return;
+    const ids = new Set<string>();
+    for (const e of events) {
+      const d = e.event_data;
+      const nodeId = (d as { node_id?: string }).node_id;
+      const fromNode = (d as { from_node_id?: string }).from_node_id;
+      const toNode = (d as { to_node_id?: string }).to_node_id;
+      if (nodeId) ids.add(nodeId);
+      if (fromNode) ids.add(fromNode);
+      if (toNode) ids.add(toNode);
+    }
+    if (ids.size === 0) return;
+    let cancelled = false;
+    fetchNodeLabels(scenarioId, Array.from(ids))
+      .then(res => {
+        if (cancelled) return;
+        const simplified: Record<string, { title: string; preview: string | null }> = {};
+        for (const [id, label] of Object.entries(res.labels)) {
+          simplified[id] = { title: label.title, preview: label.preview };
+        }
+        setLabels(simplified);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [scenarioId, events]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -60,7 +94,9 @@ export default function DayReplayModal({ events, dayLabel, onClose }: DayReplayM
   const current = events[idx];
   const data = current.event_data;
   const label = EVENT_LABEL[current.event_type] ?? current.event_type;
-  const detail = formatDetail(current.event_type, data);
+  const detail = formatDetail(current.event_type, data, labels);
+  const currentNodeId = (current.event_data as { node_id?: string }).node_id;
+  const currentPreview = currentNodeId ? labels[currentNodeId]?.preview : null;
 
   return (
     <div style={overlayStyle} onClick={onClose}>
@@ -77,6 +113,20 @@ export default function DayReplayModal({ events, dayLabel, onClose }: DayReplayM
           {detail && (
             <div style={{ fontSize: 13, color: 'var(--admin-text-muted)', whiteSpace: 'pre-wrap' }}>
               {detail}
+            </div>
+          )}
+          {currentPreview && (
+            <div style={{
+              marginTop: 12,
+              padding: 10,
+              background: '#f8fafc',
+              borderLeft: '3px solid var(--admin-accent)',
+              fontSize: 12,
+              color: 'var(--admin-text-muted)',
+              fontStyle: 'italic',
+              whiteSpace: 'pre-wrap',
+            }}>
+              «{currentPreview}»
             </div>
           )}
 
@@ -132,25 +182,36 @@ function Header({ dayLabel, onClose }: { dayLabel: string; onClose: () => void }
   );
 }
 
-function formatDetail(type: string, data: Record<string, unknown>): string {
+function formatDetail(
+  type: string,
+  data: Record<string, unknown>,
+  labels: Record<string, { title: string; preview: string | null }>,
+): string {
+  function renderNodeRef(nodeId: string | undefined): string {
+    if (!nodeId) return '?';
+    const label = labels[nodeId];
+    if (!label) return nodeId; // fallback to raw id if not yet loaded
+    return label.title;
+  }
+
   if (type === 'choice_made') {
-    const nodeId = data.node_id;
+    const nodeId = data.node_id as string | undefined;
     const choiceId = data.choice_id;
     const tt = data.thinking_time_ms;
     const parts: string[] = [];
-    if (nodeId) parts.push(`Узел: ${nodeId}`);
+    if (nodeId) parts.push(`Узел: ${renderNodeRef(nodeId)}`);
     if (choiceId) parts.push(`Выбор: ${choiceId}`);
     if (typeof tt === 'number') parts.push(`Время: ${(tt / 1000).toFixed(1)}с`);
     return parts.join('\n');
   }
   if (type === 'back_navigation') {
-    return `${data.from_node_id ?? '?'} → ${data.to_node_id ?? '?'}`;
+    return `${renderNodeRef(data.from_node_id as string | undefined)} → ${renderNodeRef(data.to_node_id as string | undefined)}`;
   }
   if (type === 'node_entered' || type === 'node_exited') {
-    const nodeId = data.node_id;
+    const nodeId = data.node_id as string | undefined;
     const ts = data.time_spent_ms;
     return [
-      nodeId ? `Узел: ${nodeId}` : null,
+      nodeId ? `Узел: ${renderNodeRef(nodeId)}` : null,
       typeof ts === 'number' ? `На узле провёл: ${(ts / 1000).toFixed(1)}с` : null,
     ].filter(Boolean).join('\n');
   }

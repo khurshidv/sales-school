@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
@@ -22,11 +23,13 @@ function fmtDuration(ms: number) {
 
 interface PageCardProps {
   data: PageSummary;
+  href: string;
 }
 
-function PageCard({ data }: PageCardProps) {
+function PageCard({ data, href }: PageCardProps) {
   return (
-    <div className="admin-card" style={{ padding: 16, minWidth: 240 }}>
+    <Link href={href} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <div className="admin-card" style={{ padding: 16, minWidth: 240, cursor: 'pointer' }}>
       <div style={{ fontSize: 11, color: 'var(--admin-text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
         /{data.page_slug}
       </div>
@@ -59,6 +62,7 @@ function PageCard({ data }: PageCardProps) {
         </div>
       </div>
     </div>
+    </Link>
   );
 }
 
@@ -108,7 +112,13 @@ export default function PagesClient() {
         <div className="admin-card" style={{ padding: 32, textAlign: 'center', color: 'var(--admin-text-dim)' }}>Загружаем…</div>
       ) : (
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          {pages.map((p) => <PageCard key={p.page_slug} data={p} />)}
+          {pages.map((p) => {
+            const qs = new URLSearchParams({ period: periodState.period });
+            if (periodState.period === 'custom' && periodState.from) qs.set('from', periodState.from);
+            if (periodState.period === 'custom' && periodState.to) qs.set('to', periodState.to);
+            const href = `/admin/pages/${encodeURIComponent(p.page_slug)}?${qs.toString()}`;
+            return <PageCard key={p.page_slug} data={p} href={href} />;
+          })}
         </div>
       )}
 

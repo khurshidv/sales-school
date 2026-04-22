@@ -7,6 +7,7 @@ import InsightCard from '@/components/admin/InsightCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
 import { DualTrendChart } from '@/components/admin/overview/DualTrendChart';
+import { TopSourcesCard } from '@/components/admin/overview/TopSourcesCard';
 import { fetchOverview } from '@/lib/admin/api';
 import type { OverviewTotals, OverviewSparks } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
@@ -133,15 +134,18 @@ export default function OverviewClient() {
             <DualTrendChart rows={trends} />
           )}
         </div>
-        <div className="admin-card" style={{ padding: 16 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
-            Воронка
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="admin-card" style={{ padding: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+              Воронка
+            </div>
+            {loading ? (
+              <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+            ) : (
+              <FunnelBars steps={funnelSteps} />
+            )}
           </div>
-          {loading ? (
-            <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
-          ) : (
-            <FunnelBars steps={funnelSteps} />
-          )}
+          <TopSourcesCard utm={utm} />
         </div>
       </div>
 

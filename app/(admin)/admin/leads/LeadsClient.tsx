@@ -8,11 +8,6 @@ import { fetchLeads, fetchLeadCounts } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { Lead } from '@/lib/admin/types';
 
-const SOURCE_TABS: Array<{ slug: string | null; label: string }> = [
-  { slug: null, label: 'Все' },
-  { slug: 'home', label: 'Home' },
-  { slug: 'target', label: 'Target' },
-];
 
 function fmtDate(iso: string): string {
   return new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -26,6 +21,9 @@ export default function LeadsClient() {
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [periodState, setPeriod] = usePeriodParam();
+  const [sourceTabs, setSourceTabs] = useState<Array<{ slug: string | null; label: string }>>([
+    { slug: null, label: 'Все' },
+  ]);
   const { period, from, to } = periodState;
 
   useEffect(() => {
@@ -55,6 +53,15 @@ export default function LeadsClient() {
     return () => { cancelled = true; };
   }, [search, sourceFilter, period, from, to]);
 
+  useEffect(() => {
+    fetch('/api/admin/source-tabs')
+      .then(r => r.ok ? r.json() : { tabs: [] })
+      .then((d: { tabs: Array<{ slug: string; label: string }> }) => {
+        setSourceTabs([{ slug: null, label: 'Все' }, ...d.tabs]);
+      })
+      .catch(() => {});
+  }, []);
+
   const todayCount = useMemo(() => {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     return leads.filter((l) => new Date(l.created_at) >= today).length;
@@ -83,7 +90,7 @@ export default function LeadsClient() {
           className="admin-btn"
           style={{ flex: 1, minWidth: 200, padding: '8px 14px' }}
         />
-        {SOURCE_TABS.map((t) => (
+        {sourceTabs.map((t) => (
           <button
             key={t.slug ?? 'all'}
             onClick={() => setSourceFilter(t.slug)}

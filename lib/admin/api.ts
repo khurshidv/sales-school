@@ -386,6 +386,23 @@ export interface PageAnnotation {
   tone?: 'offer' | 'cta' | 'info';
 }
 
+export function fetchPageAnnotations(slug: string): Promise<{ annotations: PageAnnotation[] }> {
+  return adminGet<{ annotations: PageAnnotation[] }>(`/api/admin/pages/${encodeURIComponent(slug)}/annotations`);
+}
+
+export async function updatePageAnnotations(slug: string, annotations: PageAnnotation[]): Promise<void> {
+  const res = await fetch(`/api/admin/pages/${encodeURIComponent(slug)}/annotations`, {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ annotations }),
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new AdminApiError(res.status, (body as { error?: string }).error ?? res.statusText);
+  }
+}
+
 export interface PageDetailPayload {
   slug: string;
   title: string;

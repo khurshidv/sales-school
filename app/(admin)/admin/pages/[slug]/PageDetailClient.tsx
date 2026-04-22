@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { Tag } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import { Breadcrumbs } from '@/components/admin/shared/Breadcrumbs';
 import PeriodFilter from '@/components/admin/PeriodFilter';
@@ -12,6 +13,7 @@ import { DeviceBars } from '@/components/admin/pages/DeviceBars';
 import { ReferrerTable } from '@/components/admin/pages/ReferrerTable';
 import { UtmTable } from '@/components/admin/pages/UtmTable';
 import { UtmDrilldownModal } from '@/components/admin/pages/UtmDrilldownModal';
+import { AnnotationsDialog } from '@/components/admin/pages/AnnotationsDialog';
 import type { UTMBreakdown } from '@/lib/admin/types';
 
 export default function PageDetailClient({ slug }: { slug: string }) {
@@ -19,6 +21,8 @@ export default function PageDetailClient({ slug }: { slug: string }) {
   const [data, setData] = useState<PageDetailPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [utmDrill, setUtmDrill] = useState<UTMBreakdown | null>(null);
+  const [annotationsOpen, setAnnotationsOpen] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -27,7 +31,7 @@ export default function PageDetailClient({ slug }: { slug: string }) {
       .then(d => { if (!cancelled) { setData(d); setLoading(false); } })
       .catch(err => { if (!cancelled) { console.error('[pages/detail]', err); setLoading(false); } });
     return () => { cancelled = true; };
-  }, [slug, periodState.period, periodState.from, periodState.to]);
+  }, [slug, periodState.period, periodState.from, periodState.to, reloadKey]);
 
   const title = data?.title ?? slug;
 
@@ -37,7 +41,14 @@ export default function PageDetailClient({ slug }: { slug: string }) {
       <PageHeader
         title={title}
         subtitle={`Slug: ${slug}`}
-        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
+        actions={
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button onClick={() => setAnnotationsOpen(true)} className="admin-btn">
+              <Tag size={12} /> Аннотации
+            </button>
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+          </div>
+        }
       />
 
       {loading ? (
@@ -82,6 +93,13 @@ export default function PageDetailClient({ slug }: { slug: string }) {
         row={utmDrill}
         periodState={periodState}
         onClose={() => setUtmDrill(null)}
+      />
+
+      <AnnotationsDialog
+        open={annotationsOpen}
+        slug={slug}
+        onClose={() => setAnnotationsOpen(false)}
+        onSaved={() => setReloadKey(k => k + 1)}
       />
     </div>
   );

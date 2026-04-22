@@ -8,6 +8,7 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import InsightCard from '@/components/admin/InsightCard';
 import KpiCard from '@/components/admin/KpiCard';
 import ScenarioFlowMap from '@/components/admin/charts/ScenarioFlowMap';
+import { DesktopOnlyOverlay } from '@/components/admin/shared/DesktopOnlyOverlay';
 import { fetchBranch, fetchNodeLabels } from '@/lib/admin/api';
 import type { NodeLabelResult } from '@/lib/admin/api';
 import { NodeDrilldownModal } from '@/components/admin/branch/NodeDrilldownModal';
@@ -137,7 +138,9 @@ export default function BranchClient() {
             Загружаем данные…
           </div>
         ) : (
-          <ScenarioFlowMap key={day.id} day={day} flows={flows} stats={stats} dropoffs={dropoffs} heatmapMode={heatmapMode} onNodeClick={setDrillNode} />
+          <DesktopOnlyOverlay>
+            <ScenarioFlowMap key={day.id} day={day} flows={flows} stats={stats} dropoffs={dropoffs} heatmapMode={heatmapMode} onNodeClick={setDrillNode} />
+          </DesktopOnlyOverlay>
         )}
       </div>
       <NodeDrilldownModal

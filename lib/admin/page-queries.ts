@@ -82,6 +82,16 @@ export async function getPageAnalytics(
   return { summary, breakdowns };
 }
 
+export async function getPageTitle(slug: string): Promise<string> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from('pages_registry')
+    .select('title_ru')
+    .eq('slug', slug)
+    .maybeSingle();
+  return data?.title_ru ?? slug;
+}
+
 export async function getLeads(
   options: {
     slug?: string;
@@ -93,14 +103,17 @@ export async function getLeads(
     from?: string;
     to?: string;
     includeTest?: boolean;
+    status?: string;
+    utmSource?: string[];
+    utmCampaign?: string[];
   } = {},
 ): Promise<{ leads: Lead[]; total: number }> {
   const admin = createAdminClient();
-  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false } = options;
+  const { slug, limit = 25, offset = 0, search, sortBy = 'created_at', sortAsc = false, from, to, includeTest = false, status, utmSource, utmCampaign } = options;
 
   let query = admin
     .from('leads')
-    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at, is_test', { count: 'exact' });
+    .select('id, name, phone, source_page, utm_source, utm_medium, utm_campaign, device_type, browser, referrer, created_at, is_test, status, assigned_to, bitrix_deal_id, bitrix_contact_id', { count: 'exact' });
 
   if (!includeTest) query = query.eq('is_test', false);
   if (slug) {
@@ -113,6 +126,11 @@ export async function getLeads(
   if (search) {
     query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
   }
+  if (status) {
+    query = query.eq('status', status);
+  }
+  if (utmSource && utmSource.length > 0) query = query.in('utm_source', utmSource);
+  if (utmCampaign && utmCampaign.length > 0) query = query.in('utm_campaign', utmCampaign);
   if (from) {
     query = query.gte('created_at', normalizeFrom(from));
   }

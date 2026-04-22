@@ -11,9 +11,11 @@ import { fetchOverview } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { DailyTrendRow, OfferFunnel, UtmFunnelRow } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function OverviewClient() {
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [trends, setTrends] = useState<DailyTrendRow[]>([]);
   const [utm, setUtm] = useState<UtmFunnelRow[]>([]);
   const [offer, setOffer] = useState<OfferFunnel | null>(null);
@@ -22,7 +24,7 @@ export default function OverviewClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchOverview(period).then((res) => {
+    fetchOverview(periodState).then((res) => {
       if (cancelled) return;
       setTrends(res.trends);
       setUtm(res.utm);
@@ -34,7 +36,7 @@ export default function OverviewClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [period]);
+  }, [period, from, to]);
 
   const totals = useMemo(() => {
     return utm.reduce(
@@ -63,10 +65,10 @@ export default function OverviewClient() {
       <PageHeader
         title="Обзор"
         subtitle="Главные показатели воронки и тренды по дням."
-        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Игроков" value={totals.registered.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="Начали игру" value={totals.started.toLocaleString('ru-RU')} accent="pink" />
         <KpiCard label="Прошли всю игру" value={totals.completed.toLocaleString('ru-RU')} accent="green" />
@@ -78,7 +80,7 @@ export default function OverviewClient() {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12, marginBottom: 16 }}>
+      <div className="admin-two-col">
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
             Динамика по дням
@@ -101,7 +103,7 @@ export default function OverviewClient() {
         </div>
       </div>
 
-      {totals.registered > 0 && totals.completed / totals.registered < 0.1 && (
+      {totals.registered > 0 && totals.completed / totals.registered < THRESHOLDS.overview.lowCompletionRate && (
         <InsightCard
           tone="warning"
           title="Низкое прохождение"

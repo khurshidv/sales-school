@@ -62,7 +62,7 @@ export interface EngagementIndex {
 
 // ---- Filters ----
 
-export type Period = '7d' | '30d' | '90d' | 'all';
+export type Period = '7d' | '30d' | '90d' | 'all' | 'today' | 'yesterday' | 'custom';
 export interface DateRange { from: string | null; to: string | null }
 
 export const SCENARIOS = [
@@ -187,4 +187,6 @@ export interface EnrichedPlayer extends PlayerSummary {
   days_completed: number;
   last_activity: string | null;
   submitted_consultation: boolean;
+  status?: string;
+  assigned_to?: string | null;
 }

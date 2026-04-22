@@ -1,27 +1,38 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { Download } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
-import { fetchOffer } from '@/lib/admin/api';
+import { fetchOffer, fetchOfferTrend } from '@/lib/admin/api';
+import type { OfferTrendRow } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
+import { ConversionHint } from '@/components/admin/offer/ConversionHint';
+import { RevenueKpiCard } from '@/components/admin/offer/RevenueKpiCard';
+import { OfferTrendChart } from '@/components/admin/offer/OfferTrendChart';
+import { SegmentTabs } from '@/components/admin/offer/SegmentTabs';
+import { VariantHistoryPanel } from '@/components/admin/offer/VariantHistoryPanel';
 
 export default function OfferClient() {
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
   const [funnel, setFunnel] = useState<OfferFunnel | null>(null);
   const [byRating, setByRating] = useState<OfferBreakdownRow[]>([]);
   const [byUtm, setByUtm] = useState<OfferBreakdownRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [trend, setTrend] = useState<OfferTrendRow[]>([]);
+  const [trendLoading, setTrendLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchOffer(period).then((res) => {
+    fetchOffer(periodState).then((res) => {
       if (cancelled) return;
       setFunnel(res.funnel); setByRating(res.byRating); setByUtm(res.byUtm); setLoading(false);
     }).catch((err) => {
@@ -30,7 +41,16 @@ export default function OfferClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [period]);
+  }, [period, from, to]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setTrendLoading(true);
+    fetchOfferTrend({ period: periodState.period, from: periodState.from, to: periodState.to })
+      .then(rows => { if (!cancelled) { setTrend(rows); setTrendLoading(false); } })
+      .catch(() => { if (!cancelled) { setTrend([]); setTrendLoading(false); } });
+    return () => { cancelled = true; };
+  }, [periodState.period, periodState.from, periodState.to]);
 
   const steps = useMemo(() => computeFunnelDeltas([
     { label: 'Прошли всю игру', value: funnel?.game_completed ?? 0 },
@@ -43,6 +63,10 @@ export default function OfferClient() {
     ? (funnel.offer_cta_click / funnel.offer_view) * 100
     : 0;
 
+  const cr = funnel && funnel.offer_view > 0
+    ? (funnel.offer_conversion / funnel.offer_view) * 100
+    : 0;
+
   const bestRating = useMemo(() => {
     return [...byRating].sort((a, b) => {
       const ra = a.views > 0 ? a.clicks / a.views : 0;
@@ -51,15 +75,31 @@ export default function OfferClient() {
     })[0];
   }, [byRating]);
 
+  const retargetHref = useMemo(() => {
+    const p = new URLSearchParams();
+    p.set('period', periodState.period);
+    if (periodState.from) p.set('from', periodState.from);
+    if (periodState.to) p.set('to', periodState.to);
+    return `/api/admin/offer/retarget?${p.toString()}`;
+  }, [periodState]);
+
   return (
     <div>
       <PageHeader
         title="Offer Conversion"
         subtitle="Финальная оффер-страница — кто видит, кто кликает, кто конвертируется."
-        actions={<PeriodFilter value={period} onChange={setPeriod} />}
+        actions={
+          <div style={{ display: 'flex', gap: 8 }}>
+            <a href={retargetHref} className="admin-btn" download title="Экспорт игроков, которые видели оффер но не кликнули">
+              <Download size={12} /> Retarget CSV
+            </a>
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+          </div>
+        }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
+        <RevenueKpiCard periodState={periodState} />
         <KpiCard label="Просмотров оффера" value={funnel?.offer_view ?? 0} accent="violet" />
         <KpiCard label="Кликов CTA" value={funnel?.offer_cta_click ?? 0} accent="pink" />
         <KpiCard
@@ -68,15 +108,32 @@ export default function OfferClient() {
           accent="green"
           hint="кликов / просмотров"
         />
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="CR"
+            value={`${cr.toFixed(1)}%`}
+            accent="green"
+            hint="заявки / просмотры"
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <ConversionHint />
+          </div>
+        </div>
         <KpiCard
           label="Лучший rating"
-          value={bestRating?.segment ?? '—'}
-          hint={bestRating && bestRating.views > 0 ? `${((bestRating.clicks / bestRating.views) * 100).toFixed(0)}% CTR` : undefined}
+          value={bestRating && bestRating.views >= THRESHOLDS.offer.minViewsForStat ? (bestRating.segment ?? '—') : '—'}
+          hint={
+            bestRating && bestRating.views >= THRESHOLDS.offer.minViewsForStat
+              ? `${((bestRating.clicks / bestRating.views) * 100).toFixed(0)}% CTR · ${bestRating.views} просм.`
+              : bestRating
+                ? `нужно ≥${THRESHOLDS.offer.minViewsForStat} просмотров`
+                : 'нет данных'
+          }
           accent="orange"
         />
       </div>
 
-      {ctr < 5 && funnel && funnel.offer_view > 10 && (
+      {ctr < THRESHOLDS.offer.lowCtrThreshold * 100 && funnel && funnel.offer_view > THRESHOLDS.offer.minViewsForStat && (
         <div style={{ marginBottom: 16 }}>
           <InsightCard
             tone="danger"
@@ -97,7 +154,18 @@ export default function OfferClient() {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+          Тренд CTR и CR по дням
+        </div>
+        {trendLoading ? (
+          <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+        ) : (
+          <OfferTrendChart rows={trend} />
+        )}
+      </div>
+
+      <div className="admin-two-col admin-two-col--equal">
         <div className="admin-card" style={{ padding: 16 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
             CTR по рейтингу игрока
@@ -167,6 +235,14 @@ export default function OfferClient() {
             </table>
           )}
         </div>
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <SegmentTabs periodState={periodState} />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <VariantHistoryPanel periodState={periodState} />
       </div>
     </div>
   );

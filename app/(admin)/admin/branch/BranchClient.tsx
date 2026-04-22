@@ -14,6 +14,7 @@ import type { Day } from '@/game/engine/types';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { BranchFlowRow, NodeStat, DropoffRow } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 const DAY_REGISTRY: Record<string, Day> = {
   'car-day1': day1,
@@ -24,7 +25,8 @@ const DAY_REGISTRY: Record<string, Day> = {
 export default function BranchClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
 
   const [flows, setFlows] = useState<BranchFlowRow[]>([]);
   const [stats, setStats] = useState<NodeStat[]>([]);
@@ -34,7 +36,7 @@ export default function BranchClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchBranch({ scenarioId, dayId, period }).then((res) => {
+    fetchBranch({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
       setFlows(res.flows); setStats(res.stats); setDropoffs(res.dropoffs); setLoading(false);
     }).catch((err) => {
@@ -43,7 +45,7 @@ export default function BranchClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, dayId, period]);
+  }, [scenarioId, dayId, period, from, to]);
 
   const day = DAY_REGISTRY[dayId];
   const totalFlows = flows.reduce((acc, f) => acc + f.flow_count, 0);
@@ -64,7 +66,7 @@ export default function BranchClient() {
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
-            <PeriodFilter value={period} onChange={setPeriod} />
+            <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }
       />
@@ -73,14 +75,14 @@ export default function BranchClient() {
         <DayTabs value={dayId} onChange={setDayId} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего переходов" value={totalFlows.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="Узлов в сценарии" value={totalNodes} accent="pink" />
         <KpiCard label="Посещено игроками" value={`${visitedNodes} / ${totalNodes}`} accent="violet" />
         <KpiCard label="Drop-off узлов" value={dropoffs.length} accent="orange" />
       </div>
 
-      {slowNode && slowNode.avg_thinking_time_ms > 15_000 && (
+      {slowNode && slowNode.avg_thinking_time_ms > THRESHOLDS.engagement.slowNodeMs && (
         <div style={{ marginBottom: 16 }}>
           <InsightCard
             tone="warning"

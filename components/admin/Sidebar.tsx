@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Radio, LayoutDashboard, GitBranch, Sparkles, AlertTriangle,
-  TrendingUp, Globe, Target, Users, User, Trophy, Menu, Mail,
+  TrendingUp, Globe, Target, Users, Trophy, Menu, Mail,
 } from 'lucide-react';
 
 interface NavItem {
@@ -24,33 +24,32 @@ const GROUPS: NavGroup[] = [
   {
     label: 'Мониторинг',
     items: [
-      { href: '/admin/realtime', label: 'Real-time', Icon: Radio, live: true },
-      { href: '/admin/overview', label: 'Overview', Icon: LayoutDashboard },
+      { href: '/admin/realtime', label: 'Мониторинг live', Icon: Radio, live: true },
+      { href: '/admin/overview', label: 'Обзор', Icon: LayoutDashboard },
     ],
   },
   {
     label: 'Игра',
     items: [
-      { href: '/admin/branch', label: 'Branch Analytics', Icon: GitBranch },
-      { href: '/admin/engagement', label: 'Engagement', Icon: Sparkles },
-      { href: '/admin/dropoff', label: 'Drop-off Zones', Icon: AlertTriangle },
+      { href: '/admin/branch', label: 'Карта сценария', Icon: GitBranch },
+      { href: '/admin/engagement', label: 'Вовлечённость', Icon: Sparkles },
+      { href: '/admin/dropoff', label: 'Точки выхода', Icon: AlertTriangle },
     ],
   },
   {
     label: 'Маркетинг',
     items: [
-      { href: '/admin/funnel', label: 'Funnel & UTM', Icon: TrendingUp },
-      { href: '/admin/leads', label: 'Заявки (формы)', Icon: Mail },
-      { href: '/admin/pages', label: 'Pages', Icon: Globe },
-      { href: '/admin/offer', label: 'Offer Conversion', Icon: Target },
+      { href: '/admin/funnel', label: 'Воронка и источники', Icon: TrendingUp },
+      { href: '/admin/leads', label: 'Заявки', Icon: Mail },
+      { href: '/admin/pages', label: 'Аналитика лендингов', Icon: Globe },
+      { href: '/admin/offer', label: 'Конверсия оффера', Icon: Target },
     ],
   },
   {
     label: 'Игроки',
     items: [
-      { href: '/admin/participants', label: 'Participants', Icon: Users },
-      { href: '/admin/player', label: 'Player Journey', Icon: User },
-      { href: '/admin/leaderboard', label: 'Leaderboard', Icon: Trophy },
+      { href: '/admin/participants', label: 'Участники', Icon: Users },
+      { href: '/admin/leaderboard', label: 'Таблица лидеров', Icon: Trophy },
     ],
   },
 ];

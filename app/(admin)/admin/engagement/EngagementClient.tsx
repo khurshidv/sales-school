@@ -13,11 +13,13 @@ import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function EngagementClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
-  const [period, setPeriod] = usePeriodParam();
+  const [periodState, setPeriod] = usePeriodParam();
+  const { period, from, to } = periodState;
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
@@ -26,7 +28,7 @@ export default function EngagementClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchEngagement({ scenarioId, dayId, period }).then((res) => {
+    fetchEngagement({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
       setBlob(res.engagement); setStats(res.stats); setLoading(false);
     }).catch((err) => {
@@ -35,12 +37,12 @@ export default function EngagementClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, dayId, period]);
+  }, [scenarioId, dayId, period, from, to]);
 
   const idx = useMemo(() => blob ? computeInterestIndex(blob) : null, [blob]);
 
   const slowNodes = useMemo(
-    () => stats.filter((s) => s.avg_thinking_time_ms > 15_000).slice(0, 3),
+    () => stats.filter((s) => s.avg_thinking_time_ms > THRESHOLDS.engagement.slowNodeMs).slice(0, 3),
     [stats],
   );
 
@@ -52,12 +54,12 @@ export default function EngagementClient() {
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
-            <PeriodFilter value={period} onChange={setPeriod} />
+            <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard
           label="Interest Index"
           value={idx ? `${idx.score.toFixed(1)}/10` : '—'}

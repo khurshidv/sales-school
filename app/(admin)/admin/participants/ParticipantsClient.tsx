@@ -6,10 +6,20 @@ import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
-import { fetchParticipants } from '@/lib/admin/api';
+import PeriodFilter from '@/components/admin/PeriodFilter';
+import { fetchParticipants, fetchParticipantPhoneLookup, updateParticipantStatusApi } from '@/lib/admin/api';
+import { BitrixDealBadge } from '@/components/admin/leads/BitrixDealBadge';
 import type { EnrichedPlayer } from '@/lib/admin/types-v2';
-
-const RATINGS = ['S', 'A', 'B', 'C', 'F'] as const;
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import {
+  ParticipantFilters,
+  type ParticipantFiltersState,
+} from '@/components/admin/participants/ParticipantFilters';
+import {
+  ParticipantStatusBadge,
+  PARTICIPANT_STATUS_ORDER,
+} from '@/components/admin/participants/ParticipantStatusBadge';
+import { ParticipantActionBar } from '@/components/admin/participants/ParticipantActionBar';
 
 function formatRelative(iso: string | null): string {
   if (!iso) return '—';
@@ -23,6 +33,73 @@ function formatRelative(iso: string | null): string {
   return `${d} д назад`;
 }
 
+function daysIdle(iso: string | null): number | null {
+  if (!iso) return null;
+  const diffMs = Date.now() - new Date(iso).getTime();
+  return Math.floor(diffMs / (24 * 60 * 60 * 1000));
+}
+
+const PAGE_SIZE = 50;
+
+function InlineParticipantStatusEditor({
+  playerId,
+  status,
+  onChanged,
+}: {
+  playerId: string;
+  status: string;
+  onChanged: (s: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function pick(next: string) {
+    if (next === status) { setOpen(false); return; }
+    setBusy(true);
+    try {
+      await updateParticipantStatusApi(
+        playerId,
+        next as 'new' | 'in_progress' | 'done' | 'hire' | 'skip',
+      );
+      onChanged(next);
+    } catch (e) {
+      console.warn('status update failed', e);
+    } finally {
+      setBusy(false);
+      setOpen(false);
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        disabled={busy}
+        style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer' }}
+      >
+        <ParticipantStatusBadge status={status} />
+      </button>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+      {PARTICIPANT_STATUS_ORDER.map(s => (
+        <button
+          key={s}
+          type="button"
+          onClick={() => pick(s)}
+          disabled={busy}
+          style={{ background: 'transparent', border: 0, padding: 2, cursor: 'pointer' }}
+        >
+          <ParticipantStatusBadge status={s} />
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function ParticipantsClient() {
   const [players, setPlayers] = useState<EnrichedPlayer[]>([]);
   const [total, setTotal] = useState(0);
@@ -30,16 +107,77 @@ export default function ParticipantsClient() {
   const [totalAnyDay, setTotalAnyDay] = useState(0);
   const [totalConsultations, setTotalConsultations] = useState(0);
   const [search, setSearch] = useState('');
-  const [ratingFilter, setRatingFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  function toggleSelection(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+  function selectAllOnPage() {
+    setSelectedIds(new Set(players.map(p => p.id)));
+  }
+  function clearSelection() {
+    setSelectedIds(new Set());
+  }
+  const allSelected = players.length > 0 && selectedIds.size === players.length;
+
+  const [filters, setFilters] = useState<ParticipantFiltersState>({
+    ratings: [],
+    utmSources: [],
+    utmCampaigns: [],
+    hasLead: null,
+    status: [],
+  });
+
+  const [phoneLookup, setPhoneLookup] = useState<Record<string, { count: number; bitrixDealId: number | null }>>({});
+
+  const [periodState, setPeriod] = usePeriodParam();
+
+  // Reset effect — whenever filters change, reset offset, players, and selection
+  useEffect(() => {
+    setOffset(0);
+    setPlayers([]);
+    setSelectedIds(new Set());
+  }, [search, filters, periodState.period, periodState.from, periodState.to]);
+
+  // Phone lookup effect — batch-fetch lead annotations for all loaded players
+  useEffect(() => {
+    if (players.length === 0) { setPhoneLookup({}); return; }
+    let cancelled = false;
+    const phones = Array.from(new Set(players.map(p => p.phone).filter(Boolean)));
+    fetchParticipantPhoneLookup(phones)
+      .then(d => { if (!cancelled) setPhoneLookup(d.leadsByPhone ?? {}); })
+      .catch(() => { if (!cancelled) setPhoneLookup({}); });
+    return () => { cancelled = true; };
+  }, [players]);
+
+  // Load effect — fetch and append when offset/filters/refreshKey change
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchParticipants({ search: search || undefined, ratingFilter, limit: 100 })
+    fetchParticipants({
+      search: search || undefined,
+      ratings: filters.ratings,
+      utmSource: filters.utmSources,
+      utmCampaign: filters.utmCampaigns,
+      hasLead: filters.hasLead,
+      status: filters.status,
+      period: periodState.period,
+      from: periodState.from,
+      to: periodState.to,
+      limit: PAGE_SIZE,
+      offset,
+    })
       .then((res) => {
         if (cancelled) return;
-        setPlayers(res.players);
+        setPlayers(prev => offset === 0 ? res.players : [...prev, ...res.players]);
         setTotal(res.total);
         setTotalSa(res.stats?.total_sa ?? 0);
         setTotalAnyDay(res.stats?.total_any_day ?? 0);
@@ -52,17 +190,23 @@ export default function ParticipantsClient() {
         setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, ratingFilter]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offset, search, filters, periodState.period, periodState.from, periodState.to, refreshKey]);
 
   return (
     <div>
       <PageHeader
         title="Participants"
         subtitle="Все игроки с фильтрами и быстрым переходом к индивидуальному пути."
-        actions={<ExportCsvButton type="participants" />}
+        actions={
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+            <ExportCsvButton type="participants" />
+          </div>
+        }
       />
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+      <div className="admin-kpi-row">
         <KpiCard label="Всего игроков" value={total.toLocaleString('ru-RU')} accent="violet" />
         <KpiCard
           label="С оценкой S/A"
@@ -92,22 +236,9 @@ export default function ParticipantsClient() {
           className="admin-btn"
           style={{ flex: 1, minWidth: 200, padding: '8px 14px' }}
         />
-        <button
-          onClick={() => setRatingFilter(null)}
-          className={ratingFilter === null ? 'admin-btn admin-btn-primary' : 'admin-btn'}
-        >
-          Все
-        </button>
-        {RATINGS.map((r) => (
-          <button
-            key={r}
-            onClick={() => setRatingFilter(r)}
-            className={ratingFilter === r ? 'admin-btn admin-btn-primary' : 'admin-btn'}
-          >
-            {r}
-          </button>
-        ))}
       </div>
+
+      <ParticipantFilters value={filters} onChange={setFilters} />
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
         {loading ? (
@@ -120,19 +251,37 @@ export default function ParticipantsClient() {
           <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--admin-border)', background: '#fafaff' }}>
+                <th style={{ padding: '10px 12px', width: 32 }}>
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={() => allSelected ? clearSelection() : selectAllOnPage()}
+                  />
+                </th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Имя</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Телефон</th>
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Rating</th>
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Очки</th>
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Дней</th>
+                <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Idle</th>
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Заявка</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Лид</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Bitrix</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Статус</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Активность</th>
               </tr>
             </thead>
             <tbody>
               {players.map((p) => (
                 <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '10px 12px' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(p.id)}
+                      onChange={() => toggleSelection(p.id)}
+                    />
+                  </td>
                   <td style={{ padding: '10px 12px', fontWeight: 600 }}>
                     <Link href={`/admin/player/${p.id}`} style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
                       {p.display_name}
@@ -143,9 +292,21 @@ export default function ParticipantsClient() {
                       {p.phone}
                     </a>
                   </td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center' }}><RatingBadge rating={p.best_rating} size="sm" /></td>
-                  <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>{p.total_score.toLocaleString('ru-RU')}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    <RatingBadge rating={p.best_rating} size="sm" />
+                  </td>
+                  <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>
+                    {p.total_score.toLocaleString('ru-RU')}
+                  </td>
                   <td style={{ padding: '10px 12px', textAlign: 'right' }}>{p.days_completed}/3</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'right' }}>
+                    {(() => {
+                      const d = daysIdle(p.last_activity);
+                      if (d === null) return <span style={{ color: 'var(--admin-text-dim)' }}>—</span>;
+                      const tone = d > 14 ? '#991b1b' : d > 7 ? '#92400e' : 'var(--admin-text-muted)';
+                      return <span style={{ color: tone, fontWeight: d > 7 ? 700 : 400 }}>{d}д</span>;
+                    })()}
+                  </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                     {p.submitted_consultation ? (
                       <span style={{
@@ -157,16 +318,79 @@ export default function ParticipantsClient() {
                       <span style={{ color: 'var(--admin-text-dim)', fontSize: 10 }}>—</span>
                     )}
                   </td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    {phoneLookup[p.phone]?.count ? (
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          background: '#fef3c7',
+                          color: '#92400e',
+                          padding: '1px 6px',
+                          borderRadius: 4,
+                          fontSize: 10,
+                          fontWeight: 700,
+                        }}
+                        title={`${phoneLookup[p.phone].count} заявок в leads с этого телефона`}
+                      >
+                        + лид{phoneLookup[p.phone].count > 1 ? ` ×${phoneLookup[p.phone].count}` : ''}
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--admin-text-dim)', fontSize: 11 }}>—</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    <BitrixDealBadge dealId={phoneLookup[p.phone]?.bitrixDealId ?? null} />
+                  </td>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                     {p.utm_source ?? '(прямой)'}
                   </td>
-                  <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>{formatRelative(p.last_activity)}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    <InlineParticipantStatusEditor
+                      playerId={p.id}
+                      status={p.status ?? 'new'}
+                      onChanged={(newStatus) =>
+                        setPlayers(prev =>
+                          prev.map(x => x.id === p.id ? { ...x, status: newStatus } : x),
+                        )
+                      }
+                    />
+                  </td>
+                  <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
+                    {formatRelative(p.last_activity)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      {players.length < total && (
+        <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <button
+            type="button"
+            className="admin-btn"
+            onClick={() => setOffset(offset + PAGE_SIZE)}
+            disabled={loading}
+          >
+            {loading ? 'Загружаем…' : `Загрузить ещё (${total - players.length} осталось)`}
+          </button>
+        </div>
+      )}
+
+      <ParticipantActionBar
+        selectedIds={Array.from(selectedIds)}
+        selectedPhones={players
+          .filter(p => selectedIds.has(p.id))
+          .map(p => p.phone)
+          .filter(Boolean)}
+        onClear={clearSelection}
+        onRefresh={() => {
+          setOffset(0);
+          setPlayers([]);
+          setRefreshKey(k => k + 1);
+        }}
+      />
     </div>
   );
 }

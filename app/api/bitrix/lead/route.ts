@@ -1,5 +1,24 @@
 import { NextResponse } from 'next/server';
 import { bitrixCall } from '@/lib/bitrix/client';
+import { createAdminClient } from '@/lib/supabase/admin';
+
+// Associates the matching leads row (by phone, inserted in last 5 minutes,
+// not yet linked to a Bitrix deal) with the deal+contact IDs. Best-effort —
+// failure is logged, never thrown (Bitrix side is already done).
+async function writeBackBitrixIds(phone: string, dealId: number, contactId: number): Promise<void> {
+  try {
+    const admin = createAdminClient();
+    const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    await admin
+      .from('leads')
+      .update({ bitrix_deal_id: dealId, bitrix_contact_id: contactId })
+      .eq('phone', phone)
+      .gte('created_at', cutoff)
+      .is('bitrix_deal_id', null);
+  } catch (e) {
+    console.warn('[bitrix/lead] writeBackBitrixIds failed', e);
+  }
+}
 
 // POST /api/bitrix/lead
 // Creates (or reuses) a contact by phone, then creates a deal in the
@@ -168,6 +187,7 @@ export async function POST(request: Request) {
 
         // Onboarding replay: never disturb an existing deal.
         if (gameStage === 'onboarding') {
+          await writeBackBitrixIds(phone, Number(openDeal.ID), contactId);
           return NextResponse.json({
             ok: true,
             contactId,
@@ -186,6 +206,7 @@ export async function POST(request: Request) {
             fields: { SOURCE_DESCRIPTION: description },
             params: { REGISTER_SONET_EVENT: 'N' },
           });
+          await writeBackBitrixIds(phone, Number(openDeal.ID), contactId);
           return NextResponse.json({
             ok: true,
             contactId,
@@ -213,6 +234,7 @@ export async function POST(request: Request) {
           params: { REGISTER_SONET_EVENT: 'N' },
         });
 
+        await writeBackBitrixIds(phone, Number(openDeal.ID), contactId);
         return NextResponse.json({
           ok: true,
           contactId,
@@ -244,6 +266,7 @@ export async function POST(request: Request) {
       params: { REGISTER_SONET_EVENT: 'N' },
     });
 
+    await writeBackBitrixIds(phone, Number(dealId), contactId);
     return NextResponse.json({ ok: true, contactId, dealId: Number(dealId), created: true });
   } catch (e) {
     const message = e instanceof Error ? e.message : 'Unknown error';

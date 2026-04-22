@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getPageAnalytics } from '@/lib/admin/page-queries';
+import { Breadcrumbs } from '@/components/admin/shared/Breadcrumbs';
+import { getPageAnalytics, getPageTitle } from '@/lib/admin/page-queries';
 import type {
   PageSummary,
   PageBreakdowns,
@@ -22,11 +23,6 @@ function fmtDuration(ms: number) {
   const rest = sec % 60;
   return `${min}м ${rest}с`;
 }
-
-const PAGE_TITLES: Record<string, string> = {
-  home: 'Вебинар',
-  target: 'Курс',
-};
 
 // ─── KPI Card ───
 
@@ -256,16 +252,19 @@ export default async function PageDetailDashboard({
   const to = sp.to ? new Date(sp.to) : now;
   const from = sp.from ? new Date(sp.from) : new Date(to.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  const { summary, breakdowns } = await getPageAnalytics(slug, from, to);
-  const title = PAGE_TITLES[slug] ?? slug;
+  const [{ summary, breakdowns }, title] = await Promise.all([
+    getPageAnalytics(slug, from, to),
+    getPageTitle(slug),
+  ]);
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-        <Link href="/admin/pages" style={{ color: '#6b7280', textDecoration: 'none', fontSize: 14 }}>
-          ← Страницы
-        </Link>
-      </div>
+      <Breadcrumbs
+        items={[
+          { href: '/admin/pages', label: 'Аналитика лендингов' },
+          { label: title },
+        ]}
+      />
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4, color: '#111827' }}>
         {title}
       </h1>

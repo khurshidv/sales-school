@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import Sidebar from '@/components/admin/Sidebar';
+import { ToastProvider } from '@/components/admin/shared/ToastProvider';
+import { AdminShell } from '@/components/admin/shell/AdminShell';
 import './admin.css';
 
 export const metadata: Metadata = {
@@ -8,14 +9,8 @@ export const metadata: Metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="admin-root">
-      <Sidebar />
-      <div className="admin-main">
-        {/* TopBar is rendered per-page via <TopBar /> so each page can set its
-            title, subtitle, and actions; kept out of the layout to avoid
-            prop drilling. */}
-        <div className="admin-content">{children}</div>
-      </div>
-    </div>
+    <ToastProvider>
+      <AdminShell>{children}</AdminShell>
+    </ToastProvider>
   );
 }

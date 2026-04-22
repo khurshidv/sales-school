@@ -10,10 +10,11 @@ import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
 import { HeatCurveChart } from '@/components/admin/engagement/HeatCurveChart';
 import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
-import { fetchEngagement, fetchEngagementTrend, fetchNodeLabels } from '@/lib/admin/api';
-import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow, NodeLabelResult } from '@/lib/admin/api';
+import { fetchEngagement, fetchEngagementTrend, fetchNodeLabels, fetchRatingCorrelation } from '@/lib/admin/api';
+import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow, NodeLabelResult, RatingCorrelationCell } from '@/lib/admin/api';
 import { RetentionCard } from '@/components/admin/engagement/RetentionCard';
 import { InterestTrendChart } from '@/components/admin/engagement/InterestTrendChart';
+import { RatingCorrelationChart } from '@/components/admin/engagement/RatingCorrelationChart';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
@@ -32,6 +33,7 @@ export default function EngagementClient() {
   const [percentiles, setPercentiles] = useState<ThinkingPercentiles | null>(null);
   const [retention, setRetention] = useState<RetentionSummary | null>(null);
   const [trend, setTrend] = useState<EngagementTrendRow[]>([]);
+  const [correlationCells, setCorrelationCells] = useState<RatingCorrelationCell[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,6 +67,18 @@ export default function EngagementClient() {
     }).catch((err) => {
       if (cancelled) return;
       console.error('[engagement] trend fetch failed', err);
+    });
+    return () => { cancelled = true; };
+  }, [scenarioId, period, from, to]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchRatingCorrelation({ scenarioId, period: periodState }).then((res) => {
+      if (cancelled) return;
+      setCorrelationCells(res.cells);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[engagement] rating correlation fetch failed', err);
     });
     return () => { cancelled = true; };
   }, [scenarioId, period, from, to]);
@@ -182,6 +196,13 @@ export default function EngagementClient() {
         <div style={{ fontSize: 10, color: 'var(--admin-text-muted)', marginTop: 6 }}>
           Replay rate усреднён; полный Interest Index — в KPI выше.
         </div>
+      </div>
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+          Корреляция с S-рейтингом
+        </div>
+        <RatingCorrelationChart cells={correlationCells} />
       </div>
 
       <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>

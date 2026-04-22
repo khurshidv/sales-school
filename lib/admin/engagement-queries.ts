@@ -79,3 +79,44 @@ export async function getThinkingPercentiles(params: {
     sample_size: Number(row.sample_size ?? 0),
   };
 }
+
+export interface RatingCorrelationCell {
+  day_id: string;
+  rating: 'S' | 'A' | 'B' | 'C' | 'F';
+  count: number;
+  avg_time_seconds: number;    // from completed_scenarios.time_taken (already seconds, not ms)
+}
+
+export async function getRatingCorrelation(params: {
+  scenarioId: string; from: string | null; to: string | null;
+}): Promise<RatingCorrelationCell[]> {
+  const sb = createAdminClient();
+  let q = sb
+    .from('completed_scenarios')
+    .select('day_id, rating, time_taken')
+    .eq('scenario_id', params.scenarioId);
+  if (params.from) q = q.gte('completed_at', params.from);
+  if (params.to)   q = q.lte('completed_at', params.to);
+  const { data, error } = await q;
+  if (error) { console.warn('[engagement-queries] rating correlation', error); return []; }
+  const buckets = new Map<string, { count: number; sum: number }>();
+  for (const r of (data ?? []) as Array<{ day_id: string; rating: string; time_taken: number | null }>) {
+    const key = `${r.day_id}::${r.rating}`;
+    const b = buckets.get(key) ?? { count: 0, sum: 0 };
+    b.count += 1;
+    b.sum += r.time_taken ?? 0;
+    buckets.set(key, b);
+  }
+  const result: RatingCorrelationCell[] = [];
+  for (const [key, b] of buckets) {
+    const [day_id, rating] = key.split('::');
+    if (!['S', 'A', 'B', 'C', 'F'].includes(rating)) continue;
+    result.push({
+      day_id,
+      rating: rating as RatingCorrelationCell['rating'],
+      count: b.count,
+      avg_time_seconds: b.count > 0 ? b.sum / b.count : 0,
+    });
+  }
+  return result;
+}

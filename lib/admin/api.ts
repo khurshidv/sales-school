@@ -190,6 +190,22 @@ export function fetchEngagementTrend(params: {
   return adminGet<{ points: EngagementTrendRow[] }>('/api/admin/engagement/trend', { scenarioId, ...periodParams(period) });
 }
 
+// ─── Rating Correlation ───
+
+export interface RatingCorrelationCell {
+  day_id: string;
+  rating: 'S' | 'A' | 'B' | 'C' | 'F';
+  count: number;
+  avg_time_seconds: number;
+}
+
+export function fetchRatingCorrelation(params: {
+  scenarioId: string; period: Period | PeriodParamState;
+}): Promise<{ cells: RatingCorrelationCell[] }> {
+  const { scenarioId, period } = params;
+  return adminGet<{ cells: RatingCorrelationCell[] }>('/api/admin/engagement/correlation', { scenarioId, ...periodParams(period) });
+}
+
 // ─── Funnel v2 types (mirrored from server-only funnel-queries.ts) ───
 
 export type UtmDimension = 'utm_source' | 'utm_medium' | 'utm_campaign';

@@ -31,8 +31,10 @@ export default function Header() {
       <div className="bg-transparent backdrop-blur-sm">
         <div className="flex justify-between items-center max-w-[1440px] mx-auto px-3 md:px-8 h-[52px] md:h-[64px]">
 
-          {/* Spacer */}
-          <div />
+          {/* Logo */}
+          <a href="/" className="flex items-center">
+            <img src="/logo.svg" alt="Sales Up" width={1445} height={422} className="h-6 md:h-7 w-auto" />
+          </a>
 
           {/* Language switcher — right */}
           <div className="flex items-center gap-0.5 bg-surface-container rounded-full p-0.5 shrink-0">

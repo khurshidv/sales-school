@@ -51,8 +51,8 @@ const translations = {
     uz: "Majburiyatsiz",
   },
   "hero.badge_income": {
-    ru: "10 млн сум/мес",
-    uz: "10 mln so'm/oy",
+    ru: "6-10 млн сум/мес",
+    uz: "6-10 mln so'm/oy",
   },
   "hero.badge_income_label": {
     ru: "Стартовый доход",

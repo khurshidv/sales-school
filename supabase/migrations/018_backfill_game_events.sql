@@ -94,7 +94,7 @@ where jsonb_typeof(cs.choices) = 'array'
       and (ge.event_data->>'backfilled')::boolean = true
   );
 
--- game_completed if player finished all 5 days of a scenario
+-- game_completed if player finished all 3 days of a scenario (current scenario has 3 days)
 insert into public.game_events (player_id, event_type, event_data, scenario_id, day_id, created_at)
 select
   sub.player_id,
@@ -118,7 +118,7 @@ from (
   from public.completed_scenarios cs
   group by cs.player_id, cs.scenario_id
 ) sub
-where sub.days >= 5
+where sub.days >= 3
   and not exists (
     select 1 from public.game_events ge
     where ge.player_id = sub.player_id

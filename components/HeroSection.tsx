@@ -1,7 +1,6 @@
 "use client";
 
 import CTAButton from "./CTAButton";
-import CountUp from "./CountUp";
 import FadeUp from "./FadeUp";
 import { CompactCountdown } from "./FlipClock";
 import { useT } from "@/lib/i18n";
@@ -90,7 +89,7 @@ export default function HeroSection() {
                 <div className="col-span-2 bg-white/95 backdrop-blur-xl p-5 md:p-7 rounded-2xl double-bezel bento-card">
                   <span className="block text-on-surface-variant font-bold uppercase text-[10px] tracking-[0.2em] mb-2">{t("hero.badge_income_label")}</span>
                   <div className="font-[family-name:var(--font-heading)] leading-none mb-4">
-                    <span className="text-gradient-orange text-4xl md:text-5xl font-bold"><CountUp target={10} duration={2000} /></span>
+                    <span className="text-gradient-orange text-4xl md:text-5xl font-bold">6-10</span>
                     <span className="text-gradient-orange text-xl md:text-2xl font-bold"> {locale === "ru" ? "млн сум/мес" : "mln so'm/oy"}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">

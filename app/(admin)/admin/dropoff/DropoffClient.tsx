@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { Download } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
@@ -89,6 +90,16 @@ export default function DropoffClient() {
   const topRatePct = top ? `${(top.dropoff_rate * 100).toFixed(1)}%` : undefined;
   const overallRatePct = `${(totals.rate * 100).toFixed(1)}%`;
 
+  const exportHref = useMemo(() => {
+    const p = new URLSearchParams();
+    p.set('scenarioId', scenarioId);
+    p.set('period', periodState.period);
+    if (periodState.from) p.set('from', periodState.from);
+    if (periodState.to) p.set('to', periodState.to);
+    if (day !== 'all') p.set('day', day);
+    return `/api/admin/dropoff/export?${p.toString()}`;
+  }, [scenarioId, periodState.period, periodState.from, periodState.to, day]);
+
   return (
     <div>
       <PageHeader
@@ -98,6 +109,9 @@ export default function DropoffClient() {
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
             <PeriodFilter value={periodState} onChange={setPeriod} />
+            <a href={exportHref} className="admin-btn" download title="Экспорт drop-off в CSV" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Download size={12} /> CSV
+            </a>
           </>
         }
       />
@@ -183,7 +197,17 @@ export default function DropoffClient() {
             </div>
           </div>
         ) : (
-          <DropoffBars rows={visibleRows} labels={labels} />
+          <>
+            <DropoffBars rows={visibleRows} labels={labels} />
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--admin-border)' }}>
+              <a
+                href={`/admin/branch?scenario=${scenarioId}`}
+                style={{ fontSize: 12, color: 'var(--admin-text-muted)', textDecoration: 'none' }}
+              >
+                Перейти на карту сценария →
+              </a>
+            </div>
+          </>
         )}
       </div>
     </div>

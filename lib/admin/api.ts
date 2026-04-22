@@ -79,10 +79,29 @@ export async function adminGet<T>(path: string, params?: Record<string, string |
   return res.json() as Promise<T>;
 }
 
+export interface OverviewTotals {
+  visitors: number;
+  registered: number;
+  started: number;
+  completed: number;
+  consultations: number;
+}
+
+export interface OverviewSparks {
+  visitors: number[];
+  registered: number[];
+  started: number[];
+  completed: number[];
+  consultations: number[];
+}
+
 export interface OverviewPayload {
+  current: OverviewTotals;
+  prev: OverviewTotals | null;
   trends: DailyTrendRow[];
   utm: UtmFunnelRow[];
   offer: OfferFunnel;
+  sparks: OverviewSparks;
 }
 
 export function fetchOverview(period: Period | PeriodParamState): Promise<OverviewPayload> {

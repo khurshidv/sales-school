@@ -18,6 +18,7 @@ import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { DimensionSelector } from '@/components/admin/funnel/DimensionSelector';
 import { SpendDialog } from '@/components/admin/funnel/SpendDialog';
+import { SourceTrendModal } from '@/components/admin/funnel/SourceTrendModal';
 
 type SortKey = 'segment' | 'visitors' | 'registered' | 'completed' | 'consultations' | 'cr';
 
@@ -41,6 +42,7 @@ export default function FunnelClient() {
   const [sortKey, setSortKey] = useState<SortKey>('visitors');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [spendDialogOpen, setSpendDialogOpen] = useState(false);
+  const [drillSource, setDrillSource] = useState<string | null>(null);
 
   function setDimension(next: UtmDimension) {
     setDimensionState(next);
@@ -222,8 +224,17 @@ export default function FunnelClient() {
                 </tr>
               </thead>
               <tbody>
-                {sorted.map(r => (
-                  <tr key={r.segment} style={{ borderBottom: '1px solid var(--admin-border)' }}>
+                {sorted.map(r => {
+                  const isSourceDim = dimension === 'utm_source';
+                  return (
+                  <tr
+                    key={r.segment}
+                    onClick={isSourceDim ? () => setDrillSource(r.segment) : undefined}
+                    style={{
+                      borderBottom: '1px solid var(--admin-border)',
+                      cursor: isSourceDim ? 'pointer' : 'default',
+                    }}
+                  >
                     <td
                       style={{ padding: '6px 6px', fontWeight: 600 }}
                       title={r.segment === 'direct' ? 'direct = визиты без UTM-меток' : undefined}
@@ -241,7 +252,8 @@ export default function FunnelClient() {
                     <td style={{ padding: '6px 6px', textAlign: 'right' }}>{r.consultations.toLocaleString('ru-RU')}</td>
                     <td style={{ padding: '6px 6px', textAlign: 'right', fontWeight: 700 }}>{r.cr.toFixed(1)}%</td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           )}
@@ -253,6 +265,13 @@ export default function FunnelClient() {
           <StackedBars rows={rows} />
         </div>
       </div>
+      {drillSource && (
+        <SourceTrendModal
+          utmSource={drillSource}
+          period={periodState}
+          onClose={() => setDrillSource(null)}
+        />
+      )}
     </div>
   );
 }

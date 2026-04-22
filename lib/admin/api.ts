@@ -565,6 +565,26 @@ export async function bulkUpdateParticipantsApi(
   return res.json();
 }
 
+// ─── UTM Trend (funnel drill-down) ───
+
+export interface UtmTrendPoint {
+  bucket_date: string;
+  registered: number;
+  completed: number;
+  consultations: number;
+}
+
+export function fetchFunnelTrend(params: {
+  utm_source: string;
+  period: Period | PeriodParamState;
+}): Promise<{ points: UtmTrendPoint[] }> {
+  const { utm_source, period } = params;
+  return adminGet<{ points: UtmTrendPoint[] }>('/api/admin/funnel/trend', {
+    utm_source,
+    ...periodParams(period),
+  });
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

@@ -6,10 +6,18 @@ import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DonutChart from '@/components/admin/charts/DonutChart';
-import { fetchFunnel, type UtmFunnelV2Row, type UtmDimension } from '@/lib/admin/api';
+import {
+  fetchFunnel,
+  fetchRevenue,
+  type UtmFunnelV2Row,
+  type UtmDimension,
+  type UtmSpendRollupRow,
+  type RevenueData,
+} from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { DimensionSelector } from '@/components/admin/funnel/DimensionSelector';
+import { SpendDialog } from '@/components/admin/funnel/SpendDialog';
 
 type SortKey = 'segment' | 'visitors' | 'registered' | 'completed' | 'consultations' | 'cr';
 
@@ -27,9 +35,12 @@ export default function FunnelClient() {
   const searchParams = useSearchParams();
   const [dimension, setDimensionState] = useState<UtmDimension>(() => toDimension(searchParams.get('dim')));
   const [rows, setRows] = useState<UtmFunnelV2Row[]>([]);
+  const [spend, setSpend] = useState<UtmSpendRollupRow[]>([]);
+  const [revenue, setRevenue] = useState<RevenueData | null>(null);
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<SortKey>('visitors');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [spendDialogOpen, setSpendDialogOpen] = useState(false);
 
   function setDimension(next: UtmDimension) {
     setDimensionState(next);
@@ -38,19 +49,34 @@ export default function FunnelClient() {
     router.replace(`?${sp.toString()}`, { scroll: false });
   }
 
+  async function loadFunnel() {
+    setLoading(true);
+    try {
+      const [funnelRes, revenueRes] = await Promise.all([
+        fetchFunnel({ period: periodState, dimension }),
+        fetchRevenue({
+          period: periodState.period,
+          from: periodState.period === 'custom' ? periodState.from : undefined,
+          to: periodState.period === 'custom' ? periodState.to : undefined,
+        }).catch(() => null),
+      ]);
+      setRows(funnelRes.rows);
+      setSpend(funnelRes.spend ?? []);
+      setRevenue(revenueRes);
+    } catch (err) {
+      console.error('[funnel] fetch failed', err);
+    }
+    setLoading(false);
+  }
+
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    fetchFunnel({ period: periodState, dimension }).then((res) => {
+    void (async () => {
       if (cancelled) return;
-      setRows(res.rows);
-      setLoading(false);
-    }).catch((err) => {
-      if (cancelled) return;
-      console.error('[funnel] fetch failed', err);
-      setLoading(false);
-    });
+      await loadFunnel();
+    })();
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [periodState.period, periodState.from, periodState.to, dimension]);
 
   const sorted = useMemo<RowWithCr[]>(() => {
@@ -81,6 +107,16 @@ export default function FunnelClient() {
     return eligible[0] ?? null;
   }, [rows]);
 
+  const totalSpend = useMemo(() => spend.reduce((acc, s) => acc + s.total_kzt, 0), [spend]);
+
+  const leads = useMemo(() => rows.reduce((acc, r) => acc + r.consultations, 0), [rows]);
+
+  const cpl: number | null = leads > 0 ? totalSpend / leads : null;
+
+  const roas: number | null = totalSpend > 0 && revenue && revenue.total > 0
+    ? revenue.total / totalSpend
+    : null;
+
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir(d => d === 'desc' ? 'asc' : 'desc');
     else { setSortKey(key); setSortDir('desc'); }
@@ -95,10 +131,22 @@ export default function FunnelClient() {
         subtitle="Воронка по рекламным измерениям — какие каналы дают качественных игроков."
         actions={
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              className="admin-btn"
+              onClick={() => setSpendDialogOpen(true)}
+            >
+              Ввести расходы
+            </button>
             <DimensionSelector value={dimension} onChange={setDimension} />
             <PeriodFilter value={periodState} onChange={setPeriod} />
           </div>
         }
+      />
+
+      <SpendDialog
+        open={spendDialogOpen}
+        onClose={() => setSpendDialogOpen(false)}
+        onChange={() => void loadFunnel()}
       />
 
       <div className="admin-kpi-row">
@@ -110,6 +158,24 @@ export default function FunnelClient() {
           value={best?.segment ?? '—'}
           hint={best ? `${best.cr.toFixed(1)}% CR (визит→заявка)` : `нужно ≥${THRESHOLDS.funnel.minVisitorsForBest} визитов`}
           accent="orange"
+        />
+        <KpiCard
+          label="Расход"
+          value={`${totalSpend.toLocaleString('ru-RU')} ₸`}
+          accent="blue"
+          hint={spend.length > 0 ? `${spend.length} источников` : 'нет данных'}
+        />
+        <KpiCard
+          label="CPL"
+          value={cpl !== null ? `${cpl.toFixed(0)} ₸` : '—'}
+          accent="orange"
+          hint="расход / заявки"
+        />
+        <KpiCard
+          label="ROAS"
+          value={roas !== null ? `${roas.toFixed(2)}x` : '—'}
+          accent="green"
+          hint={revenue && revenue.total > 0 ? `выручка ${revenue.total.toLocaleString('ru-RU')} ₸` : 'нет выручки'}
         />
       </div>
 

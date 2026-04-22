@@ -400,6 +400,45 @@ export async function fetchLeadDedupAndPlayers(phones: string[]): Promise<DedupI
   return res.json();
 }
 
+// ─── UTM Spend ───
+
+export interface UtmSpendRow {
+  id: string;
+  bucket_date: string;
+  utm_source: string;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  amount_kzt: number;
+  note: string | null;
+}
+
+export function fetchUtmSpendList(period?: Period | PeriodParamState): Promise<{ rows: UtmSpendRow[] }> {
+  return adminGet<{ rows: UtmSpendRow[] }>('/api/admin/utm-spend', period ? periodParams(period) : undefined);
+}
+
+export async function upsertUtmSpend(body: {
+  bucket_date: string;
+  utm_source: string;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  amount_kzt: number;
+  note?: string | null;
+}): Promise<{ row: UtmSpendRow }> {
+  const res = await fetch('/api/admin/utm-spend', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new AdminApiError(res.status, (await res.json().catch(() => ({}))).error ?? res.statusText);
+  return res.json();
+}
+
+export async function deleteUtmSpend(id: string): Promise<void> {
+  const res = await fetch(`/api/admin/utm-spend?id=${encodeURIComponent(id)}`, { method: 'DELETE', cache: 'no-store' });
+  if (!res.ok) throw new AdminApiError(res.status, (await res.json().catch(() => ({}))).error ?? res.statusText);
+}
+
 // ─── Offer Trend ───
 
 export interface OfferTrendRow {

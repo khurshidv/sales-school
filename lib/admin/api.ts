@@ -140,10 +140,47 @@ export function fetchEngagement(params: {
   return adminGet<EngagementPayload>('/api/admin/engagement', { ...rest, ...periodParams(period) });
 }
 
-export interface FunnelPayload { utm: UtmFunnelRow[] }
+// ─── Funnel v2 types (mirrored from server-only funnel-queries.ts) ───
 
-export function fetchFunnel(period: Period | PeriodParamState): Promise<FunnelPayload> {
-  return adminGet<FunnelPayload>('/api/admin/funnel', periodParams(period));
+export type UtmDimension = 'utm_source' | 'utm_medium' | 'utm_campaign';
+
+export interface UtmFunnelV2Row {
+  segment: string;
+  visitors: number;
+  registered: number;
+  started: number;
+  completed: number;
+  consultations: number;
+}
+
+export interface UtmSpendRollupRow {
+  utm_source: string;
+  total_kzt: number;
+  days: number;
+}
+
+export interface FunnelPayload {
+  rows: UtmFunnelV2Row[];
+  spend: UtmSpendRollupRow[];
+  dimension: UtmDimension;
+}
+
+type FunnelFetchArg =
+  | (Period | PeriodParamState)
+  | { period: Period | PeriodParamState; dimension?: UtmDimension };
+
+export function fetchFunnel(arg: FunnelFetchArg): Promise<FunnelPayload> {
+  const hasDimension = typeof arg === 'object' && arg !== null && 'dimension' in (arg as object);
+  const period = hasDimension
+    ? (arg as { period: Period | PeriodParamState }).period
+    : (arg as Period | PeriodParamState);
+  const dimension = hasDimension
+    ? (arg as { period: Period | PeriodParamState; dimension?: UtmDimension }).dimension
+    : undefined;
+  return adminGet<FunnelPayload>('/api/admin/funnel', {
+    ...periodParams(period),
+    ...(dimension != null ? { dimension } : {}),
+  });
 }
 
 export interface OfferPayload {

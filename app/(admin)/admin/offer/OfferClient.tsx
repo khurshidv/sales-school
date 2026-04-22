@@ -11,6 +11,7 @@ import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
+import { ConversionHint } from '@/components/admin/offer/ConversionHint';
 
 export default function OfferClient() {
   const [periodState, setPeriod] = usePeriodParam();
@@ -45,6 +46,10 @@ export default function OfferClient() {
     ? (funnel.offer_cta_click / funnel.offer_view) * 100
     : 0;
 
+  const cr = funnel && funnel.offer_view > 0
+    ? (funnel.offer_conversion / funnel.offer_view) * 100
+    : 0;
+
   const bestRating = useMemo(() => {
     return [...byRating].sort((a, b) => {
       const ra = a.views > 0 ? a.clicks / a.views : 0;
@@ -70,6 +75,17 @@ export default function OfferClient() {
           accent="green"
           hint="кликов / просмотров"
         />
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="CR"
+            value={`${cr.toFixed(1)}%`}
+            accent="green"
+            hint="заявки / просмотры"
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <ConversionHint />
+          </div>
+        </div>
         <KpiCard
           label="Лучший rating"
           value={bestRating?.segment ?? '—'}

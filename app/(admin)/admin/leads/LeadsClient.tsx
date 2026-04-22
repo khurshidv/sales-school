@@ -20,6 +20,7 @@ import {
 import { UtmFilter } from '@/components/admin/leads/UtmFilter';
 import { LeadActionBar } from '@/components/admin/leads/LeadActionBar';
 import { BitrixDealBadge } from '@/components/admin/leads/BitrixDealBadge';
+import { OutreachButtons } from '@/components/admin/leads/OutreachButtons';
 
 
 function fmtDate(iso: string): string {
@@ -216,7 +217,7 @@ export default function LeadsClient() {
     <div>
       <PageHeader
         title="Заявки (формы)"
-        subtitle="Заявки с регистрационных форм на маркетинговых лендингах. Отдельно от участников игры."
+        subtitle="Заявки с регистрационных форм на маркетинговых лендингах."
         actions={
           <div style={{ display: 'flex', gap: 8 }}>
             <a href={csvHref} className="admin-btn" download>
@@ -231,7 +232,7 @@ export default function LeadsClient() {
         <KpiCard label="Всего заявок" value={(counts.all ?? 0).toLocaleString('ru-RU')} accent="violet" />
         <KpiCard label="С Home" value={counts.home ?? 0} accent="pink" />
         <KpiCard label="С Target" value={counts.target ?? 0} accent="green" />
-        <KpiCard label="На странице" value={leads.length} hint={`${todayCount} за сегодня`} accent="orange" />
+        <KpiCard label="Новых сегодня" value={todayCount} hint="за последние 24 часа" accent="orange" />
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
@@ -305,6 +306,7 @@ export default function LeadsClient() {
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Игрок</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Сделка</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Устройство</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Действия</th>
               </tr>
             </thead>
             <tbody>
@@ -329,9 +331,7 @@ export default function LeadsClient() {
                     />
                   </td>
                   <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>
-                    <a href={`https://wa.me/${l.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
-                      {l.phone}
-                    </a>
+                    {l.phone}
                     {dedup[l.phone] > 1 && (
                       <span
                         style={{
@@ -388,6 +388,9 @@ export default function LeadsClient() {
                   </td>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
                     {l.device_type === 'mobile' ? '📱 моб.' : l.device_type === 'desktop' ? '💻 десктоп' : l.device_type ?? '—'}
+                  </td>
+                  <td style={{ padding: '10px 12px' }}>
+                    <OutreachButtons phone={l.phone} name={l.name} />
                   </td>
                 </tr>
               ))}

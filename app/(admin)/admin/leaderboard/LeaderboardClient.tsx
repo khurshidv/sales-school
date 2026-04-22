@@ -78,7 +78,7 @@ export default function LeaderboardClient() {
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <LeaderboardTabs value={period} onChange={setPeriod} />
             <SortSelector value={sort} onChange={setSort} />
-            <ExportCsvButton type="leaderboard" />
+            <ExportCsvButton type="leaderboard" params={{ period, sort, limit: String(limit), offset: String(offset) }} />
           </div>
         }
       />

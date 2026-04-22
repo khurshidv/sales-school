@@ -8,7 +8,9 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import InsightCard from '@/components/admin/InsightCard';
 import KpiCard from '@/components/admin/KpiCard';
 import ScenarioFlowMap from '@/components/admin/charts/ScenarioFlowMap';
-import { fetchBranch } from '@/lib/admin/api';
+import { fetchBranch, fetchNodeLabels } from '@/lib/admin/api';
+import type { NodeLabelResult } from '@/lib/admin/api';
+import { NodeDrilldownModal } from '@/components/admin/branch/NodeDrilldownModal';
 import { day1, day2, day3 } from '@/game/data/scenarios/car-dealership';
 import type { Day } from '@/game/engine/types';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
@@ -35,6 +37,8 @@ export default function BranchClient() {
   const [coverage, setCoverage] = useState<BranchCoverage>({ visited: 0, total: 0, rate: 0 });
   const [heatmapMode, setHeatmapMode] = useState<'none' | 'traffic' | 'dropoff'>('traffic');
   const [loading, setLoading] = useState(true);
+  const [nodeLabels, setNodeLabels] = useState<Record<string, NodeLabelResult>>({});
+  const [drillNode, setDrillNode] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,6 +46,11 @@ export default function BranchClient() {
     fetchBranch({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
       setFlows(res.flows); setStats(res.stats); setDropoffs(res.dropoffs); setCoverage(res.coverage); setLoading(false);
+      if (res.stats.length > 0) {
+        fetchNodeLabels(scenarioId, res.stats.map(s => s.node_id))
+          .then(labels => { if (!cancelled) setNodeLabels(labels); })
+          .catch(() => {});
+      }
     }).catch((err) => {
       if (cancelled) return;
       console.error('[branch] fetch failed', err);
@@ -93,7 +102,7 @@ export default function BranchClient() {
             title="Медленный узел"
             body={
               <>
-                Узел <code>{slowNode.node_id}</code> — игроки задумываются{' '}
+                Узел <code>{nodeLabels[slowNode.node_id]?.title ?? slowNode.node_id}</code> — игроки задумываются{' '}
                 {(slowNode.avg_thinking_time_ms / 1000).toFixed(1)}с в среднем. Возможно, формулировка непонятна.
               </>
             }
@@ -128,9 +137,21 @@ export default function BranchClient() {
             Загружаем данные…
           </div>
         ) : (
-          <ScenarioFlowMap key={day.id} day={day} flows={flows} stats={stats} dropoffs={dropoffs} heatmapMode={heatmapMode} />
+          <ScenarioFlowMap key={day.id} day={day} flows={flows} stats={stats} dropoffs={dropoffs} heatmapMode={heatmapMode} onNodeClick={setDrillNode} />
         )}
       </div>
+      <NodeDrilldownModal
+        open={!!drillNode}
+        nodeId={drillNode}
+        scenarioId={scenarioId}
+        dayId={dayId}
+        stats={stats}
+        dropoffs={dropoffs}
+        nodeTitle={drillNode ? nodeLabels[drillNode]?.title : undefined}
+        nodeType={drillNode ? nodeLabels[drillNode]?.type : undefined}
+        nodePreview={drillNode ? nodeLabels[drillNode]?.preview : undefined}
+        onClose={() => setDrillNode(null)}
+      />
     </div>
   );
 }

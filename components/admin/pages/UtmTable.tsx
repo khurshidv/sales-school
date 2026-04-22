@@ -1,6 +1,6 @@
 import type { UTMBreakdown } from '@/lib/admin/types';
 
-export function UtmTable({ data }: { data: UTMBreakdown[] }) {
+export function UtmTable({ data, onRowClick }: { data: UTMBreakdown[]; onRowClick?: (row: UTMBreakdown) => void }) {
   if (data.length === 0) {
     return <p style={{ color: 'var(--admin-text-dim)', fontSize: 13 }}>Нет данных по UTM</p>;
   }
@@ -17,7 +17,14 @@ export function UtmTable({ data }: { data: UTMBreakdown[] }) {
         </thead>
         <tbody>
           {data.map((row, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid var(--admin-border, #f9fafb)' }}>
+            <tr
+              key={i}
+              onClick={() => onRowClick?.(row)}
+              style={{
+                borderBottom: '1px solid var(--admin-border, #f9fafb)',
+                cursor: onRowClick ? 'pointer' : undefined,
+              }}
+            >
               <td style={{ padding: '8px 12px', fontWeight: 500, color: 'var(--admin-text)' }}>{row.source}</td>
               <td style={{ padding: '8px 12px', color: 'var(--admin-text-muted)' }}>{row.medium}</td>
               <td style={{ padding: '8px 12px', color: 'var(--admin-text-muted)' }}>{row.campaign}</td>

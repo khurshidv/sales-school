@@ -11,11 +11,14 @@ import { ScrollFunnel } from '@/components/admin/pages/ScrollFunnel';
 import { DeviceBars } from '@/components/admin/pages/DeviceBars';
 import { ReferrerTable } from '@/components/admin/pages/ReferrerTable';
 import { UtmTable } from '@/components/admin/pages/UtmTable';
+import { UtmDrilldownModal } from '@/components/admin/pages/UtmDrilldownModal';
+import type { UTMBreakdown } from '@/lib/admin/types';
 
 export default function PageDetailClient({ slug }: { slug: string }) {
   const [periodState, setPeriod] = usePeriodParam();
   const [data, setData] = useState<PageDetailPayload | null>(null);
   const [loading, setLoading] = useState(true);
+  const [utmDrill, setUtmDrill] = useState<UTMBreakdown | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,10 +72,17 @@ export default function PageDetailClient({ slug }: { slug: string }) {
 
           <div className="admin-card" style={{ padding: 16, marginTop: 16 }}>
             <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: 'var(--admin-text)' }}>Источники трафика (UTM)</div>
-            <UtmTable data={data.breakdowns.utm_breakdown} />
+            <UtmTable data={data.breakdowns.utm_breakdown} onRowClick={setUtmDrill} />
           </div>
         </>
       )}
+
+      <UtmDrilldownModal
+        open={!!utmDrill}
+        row={utmDrill}
+        periodState={periodState}
+        onClose={() => setUtmDrill(null)}
+      />
     </div>
   );
 }

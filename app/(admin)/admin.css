@@ -433,6 +433,25 @@
 .admin-search-row-title { font-size: 13px; font-weight: 500; }
 .admin-search-row-sub { font-size: 11px; color: var(--admin-text-muted); margin-top: 2px; }
 
+.admin-action-bar {
+  position: sticky;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+  margin: 16px auto 0;
+  width: fit-content;
+  max-width: 96%;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
 /* Responsive grids — shared across admin pages */
 
 .admin-kpi-row {

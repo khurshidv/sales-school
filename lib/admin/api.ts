@@ -263,6 +263,27 @@ export function fetchLeadCounts(): Promise<Record<string, number>> {
   return adminGet<Record<string, number>>('/api/admin/leads/counts');
 }
 
+export interface BulkUpdateResult {
+  updated: number;
+}
+
+export async function bulkUpdateLeadsApi(
+  ids: string[],
+  action: 'status' | 'assign',
+  value: string,
+): Promise<BulkUpdateResult> {
+  const res = await fetch('/api/admin/leads/bulk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids, action, value }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'unknown' }));
+    throw new Error((err as { error?: string }).error ?? 'bulk update failed');
+  }
+  return res.json();
+}
+
 // ─── Bitrix Revenue ───
 
 export interface RevenueData {

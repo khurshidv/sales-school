@@ -16,6 +16,7 @@ import {
   LEAD_STATUS_ORDER,
 } from '@/components/admin/leads/LeadStatusBadge';
 import { UtmFilter } from '@/components/admin/leads/UtmFilter';
+import { LeadActionBar } from '@/components/admin/leads/LeadActionBar';
 
 
 function fmtDate(iso: string): string {
@@ -95,6 +96,22 @@ export default function LeadsClient() {
   const [sourceTabs, setSourceTabs] = useState<Array<{ slug: string | null; label: string }>>([
     { slug: null, label: 'Все' },
   ]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  function toggleSelection(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
+  function selectAll() {
+    setSelectedIds(new Set(leads.map(l => l.id)));
+  }
+  function clearSelection() {
+    setSelectedIds(new Set());
+  }
   const { period, from, to } = periodState;
 
   const searchParams = useSearchParams();
@@ -126,13 +143,15 @@ export default function LeadsClient() {
       .then(([res, c]) => {
         if (cancelled) return;
         setLeads(res.leads); setTotal(res.total); setCounts(c); setLoading(false);
+        setSelectedIds(new Set());
       })
       .catch(() => {
         if (cancelled) return;
         setLeads([]); setTotal(0); setCounts({}); setLoading(false);
+        setSelectedIds(new Set());
       });
     return () => { cancelled = true; };
-  }, [search, sourceFilter, statusFilter, utmSources, utmCampaigns, period, from, to, safeSortBy, sortAsc]);
+  }, [search, sourceFilter, statusFilter, utmSources, utmCampaigns, period, from, to, safeSortBy, sortAsc, refreshKey]);
 
   useEffect(() => {
     fetch('/api/admin/source-tabs')
@@ -167,6 +186,8 @@ export default function LeadsClient() {
     if (utmCampaigns.length > 0) p.set('utm_campaign', utmCampaigns.join(','));
     return `/api/admin/leads/export?${p.toString()}`;
   }, [period, from, to, sourceFilter, search, statusFilter, utmSources, utmCampaigns]);
+
+  const allSelected = leads.length > 0 && selectedIds.size === leads.length;
 
   return (
     <div>
@@ -245,6 +266,13 @@ export default function LeadsClient() {
           <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--admin-border)', background: '#fafaff' }}>
+                <th style={{ padding: '10px 12px', width: 32 }}>
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={() => allSelected ? clearSelection() : selectAll()}
+                  />
+                </th>
                 <SortableHeader column="created_at" label="Дата" />
                 <SortableHeader column="name" label="Имя" />
                 <SortableHeader column="status" label="Статус" />
@@ -257,6 +285,13 @@ export default function LeadsClient() {
             <tbody>
               {leads.map((l) => (
                 <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '10px 12px' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(l.id)}
+                      onChange={() => toggleSelection(l.id)}
+                    />
+                  </td>
                   <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)', whiteSpace: 'nowrap' }}>{fmtDate(l.created_at)}</td>
                   <td style={{ padding: '10px 12px', fontWeight: 600 }}>{l.name}</td>
                   <td style={{ padding: '10px 12px' }}>
@@ -302,6 +337,13 @@ export default function LeadsClient() {
           Показано {leads.length} из {total.toLocaleString('ru-RU')} (топ-100). Используй поиск для конкретного контакта.
         </div>
       )}
+
+      <LeadActionBar
+        selectedIds={Array.from(selectedIds)}
+        selectedPhones={leads.filter(l => selectedIds.has(l.id)).map(l => l.phone)}
+        onClear={clearSelection}
+        onRefresh={() => setRefreshKey(k => k + 1)}
+      />
     </div>
   );
 }

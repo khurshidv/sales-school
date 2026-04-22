@@ -8,6 +8,7 @@ import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
+import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
 import { fetchEngagement } from '@/lib/admin/api';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
@@ -60,30 +61,62 @@ export default function EngagementClient() {
       />
 
       <div className="admin-kpi-row">
-        <KpiCard
-          label="Interest Index"
-          value={idx ? `${idx.score.toFixed(1)}/10` : '—'}
-          accent="violet"
-          hint="завершаемость + обдумывание + переигровки"
-        />
-        <KpiCard
-          label="% завершивших день"
-          value={blob ? `${(blob.completion_rate * 100).toFixed(0)}%` : '—'}
-          accent="green"
-          hint="доля начавших, кто завершил день"
-        />
-        <KpiCard
-          label="Среднее время выбора"
-          value={blob?.avg_thinking_time_ms ? `${(blob.avg_thinking_time_ms / 1000).toFixed(1)}с` : '—'}
-          accent="pink"
-          hint="оптимально 5–15 секунд"
-        />
-        <KpiCard
-          label="% переигровок"
-          value={blob ? `${(blob.replay_rate * 100).toFixed(0)}%` : '—'}
-          accent="orange"
-          hint="10–30% — здоровая повторяемость"
-        />
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Interest Index"
+            value={idx ? `${idx.score.toFixed(1)}/10` : '—'}
+            accent="violet"
+            hint="завершаемость + обдумывание + переигровки"
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Interest Index"
+              body="Взвешенная сумма трёх компонентов: Completion×0.5 + Thinking×0.3 + Replay×0.2. Каждый компонент в диапазоне 0–10."
+            />
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Completion"
+            value={blob ? `${(blob.completion_rate * 100).toFixed(1)}%` : '—'}
+            accent="green"
+            hint={idx ? `${idx.components.completion.toFixed(1)}/10` : 'доля начавших, кто завершил день'}
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Completion"
+              body="Процент игроков, завершивших день после старта. 10% → 1 балл, 100% → 10 баллов."
+            />
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Thinking score"
+            value={idx ? `${idx.components.thinking.toFixed(1)}/10` : '—'}
+            accent="pink"
+            hint={blob?.avg_thinking_time_ms ? `avg ${(blob.avg_thinking_time_ms / 1000).toFixed(1)}с` : 'оптимально 5–15 секунд'}
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Thinking"
+              body="Близость среднего времени на выбор к «сладкой зоне» 5–15 сек. <2с или >30с → 0; 5–15с → 10."
+            />
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Replay score"
+            value={idx ? `${idx.components.replay.toFixed(1)}/10` : '—'}
+            accent="orange"
+            hint={blob ? `${(blob.replay_rate * 100).toFixed(1)}%` : '10–30% — здоровая повторяемость'}
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Replay"
+              body="Здоровый replay rate 10–30%. Ниже — слабая вовлечённость. Выше 50% — игроки застревают."
+            />
+          </div>
+        </div>
       </div>
 
       <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>

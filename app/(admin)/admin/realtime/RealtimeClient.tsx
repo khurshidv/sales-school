@@ -13,11 +13,17 @@ import { fetchRealtimeKpis, fetchRecentEvents, type RealtimeKpis, type RecentGam
 import { detectAutoInsights } from '@/lib/admin/realtime/detectAutoInsights';
 import { buildActivitySeries } from '@/lib/admin/realtime/buildActivitySeries';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
+import { notificationsEnabled, notify } from '@/lib/admin/realtime/notify';
+import { NotificationToggle } from '@/components/admin/realtime/NotificationToggle';
 
 // Polling every 5s through the admin API (service_role, bypasses RLS).
 // Supabase Realtime subscription was removed — it relied on anon client,
 // and game_events has no SELECT policy for anon by design (no data leak).
 const REFRESH_MS = 5_000;
+
+function eventKey(e: RecentGameEvent): string {
+  return `${e.created_at}|${e.player_id}|${e.event_type}`;
+}
 
 export default function RealtimeClient() {
   const router = useRouter();
@@ -26,6 +32,7 @@ export default function RealtimeClient() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
   const [paused, setPaused] = useState(false);
+  const [lastSeenKey, setLastSeenKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (paused) return;
@@ -47,6 +54,33 @@ export default function RealtimeClient() {
     return () => { cancelled = true; clearInterval(interval); };
   }, [paused]);
 
+  useEffect(() => {
+    if (snapshot.length === 0) return;
+    const headKey = eventKey(snapshot[0]);
+    if (lastSeenKey === null) {
+      // first poll — don't notify, just set baseline
+      setLastSeenKey(headKey);
+      return;
+    }
+    if (headKey === lastSeenKey) return;
+
+    // Find all events newer than lastSeenKey
+    const newerIdx = snapshot.findIndex(e => eventKey(e) === lastSeenKey);
+    const fresh = newerIdx === -1 ? snapshot : snapshot.slice(0, newerIdx);
+
+    if (notificationsEnabled()) {
+      for (const e of fresh) {
+        const name = e.display_name ?? `игрок ${e.player_id.slice(0, 4)}`;
+        if (e.event_type === 'game_completed') {
+          notify('🏆 Игрок завершил игру', name);
+        } else if (e.event_type === 'dropped_off') {
+          notify('⚠ Игрок ушёл', name);
+        }
+      }
+    }
+    setLastSeenKey(headKey);
+  }, [snapshot, lastSeenKey]);
+
   const insights = useMemo(() => detectAutoInsights(snapshot), [snapshot]);
   const activity = useMemo(() => buildActivitySeries(snapshot, 60), [snapshot]);
 
@@ -62,6 +96,7 @@ export default function RealtimeClient() {
       <PageHeader
         title="В реальном времени"
         subtitle="Что происходит прямо сейчас. Обновляется каждые 5 секунд."
+        actions={<NotificationToggle />}
       />
 
       {problemNode && (

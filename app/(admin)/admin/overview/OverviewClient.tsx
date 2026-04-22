@@ -8,14 +8,22 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import FunnelBars from '@/components/admin/charts/FunnelBars';
 import TrendLineChart from '@/components/admin/charts/TrendLineChart';
 import { fetchOverview } from '@/lib/admin/api';
+import type { OverviewTotals, OverviewSparks } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
+import { pctDelta } from '@/lib/admin/overview/computeDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { DailyTrendRow, OfferFunnel, UtmFunnelRow } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 
+const EMPTY_TOTALS: OverviewTotals = { visitors: 0, registered: 0, started: 0, completed: 0, consultations: 0 };
+const EMPTY_SPARKS: OverviewSparks = { visitors: [], registered: [], started: [], completed: [], consultations: [] };
+
 export default function OverviewClient() {
   const [periodState, setPeriod] = usePeriodParam();
   const { period, from, to } = periodState;
+  const [current, setCurrent] = useState<OverviewTotals | null>(null);
+  const [prev, setPrev] = useState<OverviewTotals | null>(null);
+  const [sparks, setSparks] = useState<OverviewSparks>(EMPTY_SPARKS);
   const [trends, setTrends] = useState<DailyTrendRow[]>([]);
   const [utm, setUtm] = useState<UtmFunnelRow[]>([]);
   const [offer, setOffer] = useState<OfferFunnel | null>(null);
@@ -26,6 +34,9 @@ export default function OverviewClient() {
     setLoading(true);
     fetchOverview(periodState).then((res) => {
       if (cancelled) return;
+      setCurrent(res.current);
+      setPrev(res.prev);
+      setSparks(res.sparks);
       setTrends(res.trends);
       setUtm(res.utm);
       setOffer(res.offer);
@@ -38,27 +49,22 @@ export default function OverviewClient() {
     return () => { cancelled = true; };
   }, [period, from, to]);
 
-  const totals = useMemo(() => {
-    return utm.reduce(
-      (acc, r) => ({
-        visitors: acc.visitors + r.visitors,
-        registered: acc.registered + r.registered,
-        started: acc.started + r.started,
-        completed: acc.completed + r.completed,
-        consultations: acc.consultations + r.consultations,
-      }),
-      { visitors: 0, registered: 0, started: 0, completed: 0, consultations: 0 },
-    );
-  }, [utm]);
+  const t = current ?? EMPTY_TOTALS;
+
+  const crVisitorToReg    = t.visitors > 0 ? (t.registered / t.visitors) * 100 : 0;
+  const crRegToCompleted  = t.registered > 0 ? (t.completed / t.registered) * 100 : 0;
+  const crCompletedToLead = t.completed > 0 ? (t.consultations / t.completed) * 100 : 0;
+  const ctr = offer && offer.offer_view > 0
+    ? (offer.offer_cta_click / offer.offer_view) * 100 : 0;
 
   const funnelSteps = useMemo(() => computeFunnelDeltas([
-    { label: 'Зарегистрированы',    value: totals.registered },
-    { label: 'Начали игру',         value: totals.started },
-    { label: 'Прошли всю игру',     value: totals.completed },
+    { label: 'Зарегистрированы',    value: t.registered },
+    { label: 'Начали игру',         value: t.started },
+    { label: 'Прошли всю игру',     value: t.completed },
     { label: 'Увидели оффер',       value: offer?.offer_view ?? 0 },
     { label: 'Кликнули CTA',        value: offer?.offer_cta_click ?? 0 },
-    { label: 'Оставили заявку',     value: totals.consultations },
-  ]), [totals, offer]);
+    { label: 'Оставили заявку',     value: t.consultations },
+  ]), [t, offer]);
 
   return (
     <div>
@@ -69,14 +75,50 @@ export default function OverviewClient() {
       />
 
       <div className="admin-kpi-row">
-        <KpiCard label="Игроков" value={totals.registered.toLocaleString('ru-RU')} accent="violet" />
-        <KpiCard label="Начали игру" value={totals.started.toLocaleString('ru-RU')} accent="pink" />
-        <KpiCard label="Прошли всю игру" value={totals.completed.toLocaleString('ru-RU')} accent="green" />
         <KpiCard
-          label="Оставили заявку"
-          value={totals.consultations.toLocaleString('ru-RU')}
+          label="Визитёров"
+          value={t.visitors.toLocaleString('ru-RU')}
+          delta={{ value: pctDelta(t.visitors, prev?.visitors) }}
+          sparkline={sparks.visitors}
+          accent="blue"
+          hint="уникальные просмотры"
+        />
+        <KpiCard
+          label="Регистраций"
+          value={t.registered.toLocaleString('ru-RU')}
+          delta={{ value: pctDelta(t.registered, prev?.registered) }}
+          sparkline={sparks.registered}
+          accent="violet"
+          hint={`CR ${crVisitorToReg.toFixed(1)}%`}
+        />
+        <KpiCard
+          label="Начали игру"
+          value={t.started.toLocaleString('ru-RU')}
+          delta={{ value: pctDelta(t.started, prev?.started) }}
+          sparkline={sparks.started}
+          accent="pink"
+        />
+        <KpiCard
+          label="Прошли всю игру"
+          value={t.completed.toLocaleString('ru-RU')}
+          delta={{ value: pctDelta(t.completed, prev?.completed) }}
+          sparkline={sparks.completed}
+          accent="green"
+          hint={`CR ${crRegToCompleted.toFixed(1)}%`}
+        />
+        <KpiCard
+          label="Заявок"
+          value={t.consultations.toLocaleString('ru-RU')}
+          delta={{ value: pctDelta(t.consultations, prev?.consultations) }}
+          sparkline={sparks.consultations}
           accent="orange"
-          hint="попап после игры"
+          hint={`CR ${crCompletedToLead.toFixed(1)}%`}
+        />
+        <KpiCard
+          label="Оффер CTR"
+          value={`${ctr.toFixed(1)}%`}
+          accent="violet"
+          hint="клики / просмотры оффера"
         />
       </div>
 
@@ -103,13 +145,13 @@ export default function OverviewClient() {
         </div>
       </div>
 
-      {totals.registered > 0 && totals.completed / totals.registered < THRESHOLDS.overview.lowCompletionRate && (
+      {t.registered > 0 && t.completed / t.registered < THRESHOLDS.overview.lowCompletionRate && (
         <InsightCard
           tone="warning"
           title="Низкое прохождение"
           body={
             <>
-              Только {((totals.completed / totals.registered) * 100).toFixed(1)}% игроков завершают игру.
+              Только {((t.completed / t.registered) * 100).toFixed(1)}% игроков завершают игру.
               Посмотри <a href="/admin/dropoff" style={{ textDecoration: 'underline' }}>Drop-off Zones</a>,
               чтобы понять где они отваливаются.
             </>

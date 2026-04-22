@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Download } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
@@ -154,12 +155,32 @@ export default function LeadsClient() {
     return leads.filter((l) => new Date(l.created_at) >= today).length;
   }, [leads]);
 
+  const csvHref = useMemo(() => {
+    const p = new URLSearchParams();
+    p.set('period', period);
+    if (from) p.set('from', from);
+    if (to) p.set('to', to);
+    if (sourceFilter) p.set('slug', sourceFilter);
+    if (search) p.set('search', search);
+    if (statusFilter !== 'all') p.set('status', statusFilter);
+    if (utmSources.length > 0) p.set('utm_source', utmSources.join(','));
+    if (utmCampaigns.length > 0) p.set('utm_campaign', utmCampaigns.join(','));
+    return `/api/admin/leads/export?${p.toString()}`;
+  }, [period, from, to, sourceFilter, search, statusFilter, utmSources, utmCampaigns]);
+
   return (
     <div>
       <PageHeader
         title="Заявки (формы)"
         subtitle="Заявки с регистрационных форм на маркетинговых лендингах. Отдельно от участников игры."
-        actions={<PeriodFilter value={periodState} onChange={setPeriod} />}
+        actions={
+          <div style={{ display: 'flex', gap: 8 }}>
+            <a href={csvHref} className="admin-btn" download>
+              <Download size={12} /> CSV
+            </a>
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+          </div>
+        }
       />
 
       <div className="admin-kpi-row">

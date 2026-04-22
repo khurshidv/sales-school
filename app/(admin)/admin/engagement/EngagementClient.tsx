@@ -13,6 +13,7 @@ import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function EngagementClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
@@ -40,7 +41,7 @@ export default function EngagementClient() {
   const idx = useMemo(() => blob ? computeInterestIndex(blob) : null, [blob]);
 
   const slowNodes = useMemo(
-    () => stats.filter((s) => s.avg_thinking_time_ms > 15_000).slice(0, 3),
+    () => stats.filter((s) => s.avg_thinking_time_ms > THRESHOLDS.engagement.slowNodeMs).slice(0, 3),
     [stats],
   );
 

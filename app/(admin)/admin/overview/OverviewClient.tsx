@@ -11,6 +11,7 @@ import { fetchOverview } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { DailyTrendRow, OfferFunnel, UtmFunnelRow } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function OverviewClient() {
   const [period, setPeriod] = usePeriodParam();
@@ -101,7 +102,7 @@ export default function OverviewClient() {
         </div>
       </div>
 
-      {totals.registered > 0 && totals.completed / totals.registered < 0.1 && (
+      {totals.registered > 0 && totals.completed / totals.registered < THRESHOLDS.overview.lowCompletionRate && (
         <InsightCard
           tone="warning"
           title="Низкое прохождение"

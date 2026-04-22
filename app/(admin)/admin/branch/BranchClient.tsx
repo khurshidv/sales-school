@@ -14,6 +14,7 @@ import type { Day } from '@/game/engine/types';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { BranchFlowRow, NodeStat, DropoffRow } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 const DAY_REGISTRY: Record<string, Day> = {
   'car-day1': day1,
@@ -80,7 +81,7 @@ export default function BranchClient() {
         <KpiCard label="Drop-off узлов" value={dropoffs.length} accent="orange" />
       </div>
 
-      {slowNode && slowNode.avg_thinking_time_ms > 15_000 && (
+      {slowNode && slowNode.avg_thinking_time_ms > THRESHOLDS.engagement.slowNodeMs && (
         <div style={{ marginBottom: 16 }}>
           <InsightCard
             tone="warning"

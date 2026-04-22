@@ -10,6 +10,7 @@ import { fetchOffer } from '@/lib/admin/api';
 import { computeFunnelDeltas } from '@/lib/admin/marketing/computeFunnelDeltas';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { OfferFunnel, OfferBreakdownRow } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function OfferClient() {
   const [period, setPeriod] = usePeriodParam();
@@ -76,7 +77,7 @@ export default function OfferClient() {
         />
       </div>
 
-      {ctr < 5 && funnel && funnel.offer_view > 10 && (
+      {ctr < THRESHOLDS.offer.lowCtrThreshold * 100 && funnel && funnel.offer_view > THRESHOLDS.offer.minViewsForStat && (
         <div style={{ marginBottom: 16 }}>
           <InsightCard
             tone="danger"

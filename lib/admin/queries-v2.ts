@@ -1,6 +1,7 @@
 import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { BranchFlowRow, NodeStat, DropoffRow, EngagementBlob, UtmFunnelRow, DailyTrendRow, OfferFunnel, OfferBreakdownRow, PlayerJourneyEvent } from './types-v2';
+import { THRESHOLDS } from './thresholds';
 
 interface ScenarioRange {
   scenarioId: string;
@@ -373,7 +374,7 @@ export interface LeaderboardItem {
   updated_at: string;
 }
 
-export async function getLeaderboardEnriched(limit = 50): Promise<LeaderboardItem[]> {
+export async function getLeaderboardEnriched(limit: number = THRESHOLDS.leaderboard.topLimit): Promise<LeaderboardItem[]> {
   const admin = createAdminClient();
   // Leaderboard table mirrors players; filter out test rows by cross-checking
   // players.is_test. We query more rows than asked to compensate for dropped

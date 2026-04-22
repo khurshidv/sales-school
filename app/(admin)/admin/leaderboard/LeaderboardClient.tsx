@@ -8,6 +8,7 @@ import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
 import MedalBadge from '@/components/admin/charts/MedalBadge';
 import { fetchLeaderboard, type LeaderboardItem } from '@/lib/admin/api';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function LeaderboardClient() {
   const [rows, setRows] = useState<LeaderboardItem[]>([]);
@@ -16,7 +17,7 @@ export default function LeaderboardClient() {
   useEffect(() => {
     let cancelled = false;
     const load = () => {
-      fetchLeaderboard(50)
+      fetchLeaderboard(THRESHOLDS.leaderboard.topLimit)
         .then((res) => {
           if (cancelled) return;
           setRows(res.items); setLoading(false);

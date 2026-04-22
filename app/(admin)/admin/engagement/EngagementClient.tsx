@@ -9,9 +9,10 @@ import PeriodFilter from '@/components/admin/PeriodFilter';
 import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
 import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
-import { fetchEngagement } from '@/lib/admin/api';
-import type { ThinkingPercentiles, RetentionSummary } from '@/lib/admin/api';
+import { fetchEngagement, fetchEngagementTrend } from '@/lib/admin/api';
+import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow } from '@/lib/admin/api';
 import { RetentionCard } from '@/components/admin/engagement/RetentionCard';
+import { InterestTrendChart } from '@/components/admin/engagement/InterestTrendChart';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
@@ -28,6 +29,7 @@ export default function EngagementClient() {
   const [stats, setStats] = useState<NodeStat[]>([]);
   const [percentiles, setPercentiles] = useState<ThinkingPercentiles | null>(null);
   const [retention, setRetention] = useState<RetentionSummary | null>(null);
+  const [trend, setTrend] = useState<EngagementTrendRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,6 +49,18 @@ export default function EngagementClient() {
     });
     return () => { cancelled = true; };
   }, [scenarioId, dayId, period, from, to]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchEngagementTrend({ scenarioId, period: periodState }).then((res) => {
+      if (cancelled) return;
+      setTrend(res.points);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[engagement] trend fetch failed', err);
+    });
+    return () => { cancelled = true; };
+  }, [scenarioId, period, from, to]);
 
   const idx = useMemo(() => blob ? computeInterestIndex(blob) : null, [blob]);
 
@@ -152,6 +166,16 @@ export default function EngagementClient() {
           <RetentionCard retention={retention} />
         </div>
       )}
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+          Interest Index — тренд по дням
+        </div>
+        <InterestTrendChart points={trend} />
+        <div style={{ fontSize: 10, color: 'var(--admin-text-muted)', marginTop: 6 }}>
+          Replay rate усреднён; полный Interest Index — в KPI выше.
+        </div>
+      </div>
 
       <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>

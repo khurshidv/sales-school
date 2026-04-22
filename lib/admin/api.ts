@@ -175,6 +175,21 @@ export function fetchEngagement(params: {
   return adminGet<EngagementPayload>('/api/admin/engagement', { ...rest, ...periodParams(period) });
 }
 
+export interface EngagementTrendRow {
+  bucket_date: string;
+  started: number;
+  completed: number;
+  avg_thinking_ms: number | null;
+  completion_rate: number;
+}
+
+export function fetchEngagementTrend(params: {
+  scenarioId: string; period: Period | PeriodParamState;
+}): Promise<{ points: EngagementTrendRow[] }> {
+  const { scenarioId, period } = params;
+  return adminGet<{ points: EngagementTrendRow[] }>('/api/admin/engagement/trend', { scenarioId, ...periodParams(period) });
+}
+
 // ─── Funnel v2 types (mirrored from server-only funnel-queries.ts) ───
 
 export type UtmDimension = 'utm_source' | 'utm_medium' | 'utm_campaign';

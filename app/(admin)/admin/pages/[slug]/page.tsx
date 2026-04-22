@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Breadcrumbs } from '@/components/admin/shared/Breadcrumbs';
 import { getPageAnalytics, getPageTitle } from '@/lib/admin/page-queries';
 import type {
   PageSummary,
@@ -258,11 +259,12 @@ export default async function PageDetailDashboard({
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-        <Link href="/admin/pages" style={{ color: '#6b7280', textDecoration: 'none', fontSize: 14 }}>
-          ← Страницы
-        </Link>
-      </div>
+      <Breadcrumbs
+        items={[
+          { href: '/admin/pages', label: 'Аналитика лендингов' },
+          { label: title },
+        ]}
+      />
       <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4, color: '#111827' }}>
         {title}
       </h1>

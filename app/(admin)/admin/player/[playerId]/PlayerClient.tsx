@@ -8,6 +8,7 @@ import PerDayBars from '@/components/admin/charts/PerDayBars';
 import InsightCard from '@/components/admin/InsightCard';
 import PlayerNotes from '@/components/admin/PlayerNotes';
 import DayReplayModal from '@/components/admin/DayReplayModal';
+import { Breadcrumbs } from '@/components/admin/shared/Breadcrumbs';
 import { fetchPlayer } from '@/lib/admin/api';
 import { parseJourney } from '@/lib/admin/player/parseJourney';
 import { deriveStrengthsWeaknesses } from '@/lib/admin/player/deriveStrengthsWeaknesses';
@@ -146,6 +147,12 @@ export default function PlayerClient({ playerId }: PlayerClientProps) {
 
   return (
     <div>
+      <Breadcrumbs
+        items={[
+          { href: '/admin/participants', label: 'Участники' },
+          { label: player.display_name || 'Игрок' },
+        ]}
+      />
       <PageHeader
         title="Player Journey"
         subtitle={`ID: ${player.id}`}

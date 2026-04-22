@@ -328,6 +328,35 @@
   cursor: not-allowed;
 }
 
+.admin-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--admin-text-muted);
+}
+.admin-crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-crumb-link {
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.admin-crumb-link:hover {
+  color: var(--admin-accent);
+}
+.admin-crumb-current {
+  color: var(--admin-text);
+  font-weight: 500;
+}
+.admin-crumb-sep {
+  color: var(--admin-text-dim);
+}
+
 @media (max-width: 768px) {
   .admin-sidebar {
     position: fixed;

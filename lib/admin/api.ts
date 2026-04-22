@@ -439,6 +439,37 @@ export async function fetchParticipantPhoneLookup(phones: string[]): Promise<Par
   return res.json();
 }
 
+// ─── Participants — Status & Bulk ───
+
+export async function updateParticipantStatusApi(
+  playerId: string,
+  status: 'new' | 'in_progress' | 'done' | 'hire' | 'skip',
+): Promise<void> {
+  const res = await fetch(`/api/admin/participants/${playerId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) throw new Error(`status update failed: ${res.status}`);
+}
+
+export async function bulkUpdateParticipantsApi(
+  ids: string[],
+  action: 'status' | 'assign',
+  value: string,
+): Promise<{ updated: number }> {
+  const res = await fetch('/api/admin/participants/bulk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids, action, value }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'unknown' }));
+    throw new Error((err as { error?: string }).error ?? 'bulk update failed');
+  }
+  return res.json();
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

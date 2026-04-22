@@ -143,15 +143,36 @@ export interface ParticipantsPayload {
   stats: { total_sa: number; total_any_day: number; total_consultations: number };
 }
 
-export function fetchParticipants(params: {
+export interface ParticipantsOptions {
   search?: string;
+  /** @deprecated Use ratings (multi-select). */
   ratingFilter?: string | null;
+  ratings?: string[];
   limit?: number;
-}): Promise<ParticipantsPayload> {
+  offset?: number;
+  period?: Period;
+  from?: string | null;
+  to?: string | null;
+  utmSource?: string[];
+  utmCampaign?: string[];
+  hasLead?: boolean | null;
+  status?: string[];
+}
+
+export function fetchParticipants(params: ParticipantsOptions = {}): Promise<ParticipantsPayload> {
   return adminGet<ParticipantsPayload>('/api/admin/participants', {
     search: params.search,
-    ratingFilter: params.ratingFilter,
+    ratingFilter: params.ratings && params.ratings.length > 0 ? undefined : params.ratingFilter,
+    ratings: params.ratings && params.ratings.length > 0 ? params.ratings.join(',') : undefined,
     limit: params.limit,
+    offset: params.offset,
+    period: params.period,
+    from: params.period === 'custom' ? params.from : undefined,
+    to: params.period === 'custom' ? params.to : undefined,
+    utm_source: params.utmSource && params.utmSource.length > 0 ? params.utmSource.join(',') : undefined,
+    utm_campaign: params.utmCampaign && params.utmCampaign.length > 0 ? params.utmCampaign.join(',') : undefined,
+    has_lead: params.hasLead != null ? String(params.hasLead) : undefined,
+    status: params.status && params.status.length > 0 ? params.status.join(',') : undefined,
   });
 }
 

@@ -252,12 +252,18 @@ function bestRating(ratings: string[]): string | null {
 
 export interface GetPlayersEnrichedArgs {
   search?: string;
+  /** @deprecated Use ratings (multi-select). Kept for backwards-compat. */
   ratingFilter?: string | null;
+  ratings?: string[];
   limit?: number;
   offset?: number;
   from?: string | null;
   to?: string | null;
   includeTest?: boolean;
+  utmSource?: string[];
+  utmCampaign?: string[];
+  hasLead?: boolean | null;
+  status?: string[];
 }
 
 export interface ParticipantStats {
@@ -270,7 +276,45 @@ export async function getPlayersEnriched(
   args: GetPlayersEnrichedArgs = {},
 ): Promise<{ players: EnrichedPlayer[]; total: number; stats: ParticipantStats }> {
   const admin = createAdminClient();
-  const { search, limit = 50, offset = 0, from, to, includeTest = false } = args;
+  const {
+    search,
+    limit = 50,
+    offset = 0,
+    from,
+    to,
+    includeTest = false,
+    utmSource = [],
+    utmCampaign = [],
+    hasLead = null,
+    status = [],
+  } = args;
+
+  // Resolve effective ratings filter: new multi-select takes precedence over legacy single-value.
+  const effectiveRatings: string[] =
+    args.ratings && args.ratings.length > 0
+      ? args.ratings
+      : args.ratingFilter
+        ? [args.ratingFilter]
+        : [];
+
+  // -- has-lead pre-filter: fetch lead phones if needed --
+  let leadPhoneSet: Set<string> | null = null;
+  if (hasLead !== null) {
+    const { data: leadRows } = await admin.from('leads').select('phone');
+    leadPhoneSet = new Set<string>(
+      (leadRows ?? []).map((l: { phone: string }) => l.phone).filter(Boolean),
+    );
+  }
+
+  // -- status pre-filter: fetch player IDs with matching status --
+  let statusPlayerIds: string[] | null = null;
+  if (status.length > 0) {
+    const { data: stateRows } = await admin
+      .from('player_admin_states')
+      .select('player_id')
+      .in('status', status);
+    statusPlayerIds = (stateRows ?? []).map((r: { player_id: string }) => r.player_id);
+  }
 
   let q = admin
     .from('players')
@@ -282,6 +326,29 @@ export async function getPlayersEnriched(
   if (search) q = q.or(`display_name.ilike.%${search}%,phone.ilike.%${search}%`);
   if (from) q = q.gte('created_at', from);
   if (to) q = q.lte('created_at', to);
+  if (utmSource.length > 0) q = q.in('utm_source', utmSource);
+  if (utmCampaign.length > 0) q = q.in('utm_campaign', utmCampaign);
+  if (statusPlayerIds !== null) {
+    if (statusPlayerIds.length === 0) {
+      // No players match the requested status — short-circuit.
+      return { players: [], total: 0, stats: { total_sa: 0, total_any_day: 0, total_consultations: 0 } };
+    }
+    q = q.in('id', statusPlayerIds);
+  }
+  if (leadPhoneSet !== null) {
+    const leadPhones = Array.from(leadPhoneSet);
+    if (hasLead === true) {
+      if (leadPhones.length === 0) {
+        return { players: [], total: 0, stats: { total_sa: 0, total_any_day: 0, total_consultations: 0 } };
+      }
+      q = q.in('phone', leadPhones);
+    } else {
+      // hasLead === false
+      if (leadPhones.length > 0) {
+        q = q.not('phone', 'in', `(${leadPhones.map((p) => `"${p}"`).join(',')})`);
+      }
+    }
+  }
   q = q.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
   const [{ data: rows, count, error }, { data: statsRaw }, { data: allGameLeadPhones }] = await Promise.all([
@@ -322,7 +389,7 @@ export async function getPlayersEnriched(
 
   const playerPhones = rows.map((r) => r.phone).filter((p): p is string => typeof p === 'string');
 
-  const [{ data: completions }, { data: gameLeads }] = await Promise.all([
+  const [{ data: completions }, { data: gameLeads }, { data: adminStates }] = await Promise.all([
     admin
       .from('completed_scenarios')
       .select('player_id, day_id, rating, completed_at')
@@ -330,9 +397,17 @@ export async function getPlayersEnriched(
     playerPhones.length > 0
       ? admin.from('leads').select('phone').eq('source_page', 'game').in('phone', playerPhones)
       : Promise.resolve({ data: [] as { phone: string }[] }),
+    admin
+      .from('player_admin_states')
+      .select('player_id, status, assigned_to')
+      .in('player_id', playerIds),
   ]);
 
   const consultationPhones = new Set<string>((gameLeads ?? []).map((l) => l.phone));
+  const adminStateMap = new Map<string, { status: string; assigned_to: string | null }>();
+  for (const s of adminStates ?? []) {
+    adminStateMap.set(s.player_id, { status: s.status, assigned_to: s.assigned_to ?? null });
+  }
 
   const byPlayer: Record<string, { ratings: string[]; days: Set<string>; lastAt: string | null }> = {};
   for (const id of playerIds) byPlayer[id] = { ratings: [], days: new Set(), lastAt: null };
@@ -346,17 +421,20 @@ export async function getPlayersEnriched(
 
   let players: EnrichedPlayer[] = rows.map((r) => {
     const acc = byPlayer[r.id];
+    const adminState = adminStateMap.get(r.id);
     return {
       ...(r as PlayerSummary),
       best_rating: bestRating(acc.ratings),
       days_completed: acc.days.size,
       last_activity: acc.lastAt ?? r.last_seen_at,
       submitted_consultation: consultationPhones.has(r.phone),
+      status: adminState?.status ?? 'new',
+      assigned_to: adminState?.assigned_to ?? null,
     };
   });
 
-  if (args.ratingFilter) {
-    players = players.filter((p) => p.best_rating === args.ratingFilter);
+  if (effectiveRatings.length > 0) {
+    players = players.filter((p) => effectiveRatings.includes(p.best_rating ?? ''));
   }
 
   return { players, total: count ?? 0, stats };

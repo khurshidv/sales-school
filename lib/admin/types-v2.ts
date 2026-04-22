@@ -187,4 +187,6 @@ export interface EnrichedPlayer extends PlayerSummary {
   days_completed: number;
   last_activity: string | null;
   submitted_consultation: boolean;
+  status?: string;
+  assigned_to?: string | null;
 }

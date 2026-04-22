@@ -6,10 +6,14 @@ import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import ExportCsvButton from '@/components/admin/ExportCsvButton';
 import RatingBadge from '@/components/admin/RatingBadge';
+import PeriodFilter from '@/components/admin/PeriodFilter';
 import { fetchParticipants } from '@/lib/admin/api';
 import type { EnrichedPlayer } from '@/lib/admin/types-v2';
-
-const RATINGS = ['S', 'A', 'B', 'C', 'F'] as const;
+import { usePeriodParam } from '@/lib/admin/usePeriodParam';
+import {
+  ParticipantFilters,
+  type ParticipantFiltersState,
+} from '@/components/admin/participants/ParticipantFilters';
 
 function formatRelative(iso: string | null): string {
   if (!iso) return '—';
@@ -23,6 +27,22 @@ function formatRelative(iso: string | null): string {
   return `${d} д назад`;
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  new: 'Новый',
+  in_progress: 'В работе',
+  done: 'Готово',
+  hire: 'Нанять',
+  skip: 'Пропустить',
+};
+
+const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
+  new: { bg: '#f1f5f9', color: '#64748b' },
+  in_progress: { bg: '#dbeafe', color: '#1d4ed8' },
+  done: { bg: '#dcfce7', color: '#166534' },
+  hire: { bg: '#fef9c3', color: '#854d0e' },
+  skip: { bg: '#fee2e2', color: '#991b1b' },
+};
+
 export default function ParticipantsClient() {
   const [players, setPlayers] = useState<EnrichedPlayer[]>([]);
   const [total, setTotal] = useState(0);
@@ -30,13 +50,33 @@ export default function ParticipantsClient() {
   const [totalAnyDay, setTotalAnyDay] = useState(0);
   const [totalConsultations, setTotalConsultations] = useState(0);
   const [search, setSearch] = useState('');
-  const [ratingFilter, setRatingFilter] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [filters, setFilters] = useState<ParticipantFiltersState>({
+    ratings: [],
+    utmSources: [],
+    utmCampaigns: [],
+    hasLead: null,
+    status: [],
+  });
+
+  const [periodState, setPeriod] = usePeriodParam();
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchParticipants({ search: search || undefined, ratingFilter, limit: 100 })
+    fetchParticipants({
+      search: search || undefined,
+      ratings: filters.ratings,
+      utmSource: filters.utmSources,
+      utmCampaign: filters.utmCampaigns,
+      hasLead: filters.hasLead,
+      status: filters.status,
+      period: periodState.period,
+      from: periodState.from,
+      to: periodState.to,
+      limit: 100,
+    })
       .then((res) => {
         if (cancelled) return;
         setPlayers(res.players);
@@ -52,14 +92,19 @@ export default function ParticipantsClient() {
         setLoading(false);
       });
     return () => { cancelled = true; };
-  }, [search, ratingFilter]);
+  }, [search, filters, periodState]);
 
   return (
     <div>
       <PageHeader
         title="Participants"
         subtitle="Все игроки с фильтрами и быстрым переходом к индивидуальному пути."
-        actions={<ExportCsvButton type="participants" />}
+        actions={
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <PeriodFilter value={periodState} onChange={setPeriod} />
+            <ExportCsvButton type="participants" />
+          </div>
+        }
       />
 
       <div className="admin-kpi-row">
@@ -92,22 +137,9 @@ export default function ParticipantsClient() {
           className="admin-btn"
           style={{ flex: 1, minWidth: 200, padding: '8px 14px' }}
         />
-        <button
-          onClick={() => setRatingFilter(null)}
-          className={ratingFilter === null ? 'admin-btn admin-btn-primary' : 'admin-btn'}
-        >
-          Все
-        </button>
-        {RATINGS.map((r) => (
-          <button
-            key={r}
-            onClick={() => setRatingFilter(r)}
-            className={ratingFilter === r ? 'admin-btn admin-btn-primary' : 'admin-btn'}
-          >
-            {r}
-          </button>
-        ))}
       </div>
+
+      <ParticipantFilters value={filters} onChange={setFilters} />
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
         {loading ? (
@@ -127,42 +159,57 @@ export default function ParticipantsClient() {
                 <th style={{ textAlign: 'right', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Дней</th>
                 <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Заявка</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>UTM</th>
+                <th style={{ textAlign: 'center', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Статус</th>
                 <th style={{ textAlign: 'left', padding: '10px 12px', color: 'var(--admin-text-muted)', fontWeight: 600 }}>Активность</th>
               </tr>
             </thead>
             <tbody>
-              {players.map((p) => (
-                <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <td style={{ padding: '10px 12px', fontWeight: 600 }}>
-                    <Link href={`/admin/player/${p.id}`} style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
-                      {p.display_name}
-                    </Link>
-                  </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>
-                    <a href={`https://wa.me/${p.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
-                      {p.phone}
-                    </a>
-                  </td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center' }}><RatingBadge rating={p.best_rating} size="sm" /></td>
-                  <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>{p.total_score.toLocaleString('ru-RU')}</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'right' }}>{p.days_completed}/3</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {p.submitted_consultation ? (
+              {players.map((p) => {
+                const statusKey = p.status ?? 'new';
+                const statusStyle = STATUS_COLORS[statusKey] ?? STATUS_COLORS.new;
+                return (
+                  <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '10px 12px', fontWeight: 600 }}>
+                      <Link href={`/admin/player/${p.id}`} style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
+                        {p.display_name}
+                      </Link>
+                    </td>
+                    <td style={{ padding: '10px 12px', fontFamily: 'ui-monospace, monospace' }}>
+                      <a href={`https://wa.me/${p.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--admin-text)', textDecoration: 'none' }}>
+                        {p.phone}
+                      </a>
+                    </td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center' }}><RatingBadge rating={p.best_rating} size="sm" /></td>
+                    <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>{p.total_score.toLocaleString('ru-RU')}</td>
+                    <td style={{ padding: '10px 12px', textAlign: 'right' }}>{p.days_completed}/3</td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                      {p.submitted_consultation ? (
+                        <span style={{
+                          display: 'inline-block', padding: '2px 8px',
+                          background: '#dcfce7', color: '#166534',
+                          borderRadius: 999, fontSize: 10, fontWeight: 700,
+                        }}>✓ есть</span>
+                      ) : (
+                        <span style={{ color: 'var(--admin-text-dim)', fontSize: 10 }}>—</span>
+                      )}
+                    </td>
+                    <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
+                      {p.utm_source ?? '(прямой)'}
+                    </td>
+                    <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                       <span style={{
                         display: 'inline-block', padding: '2px 8px',
-                        background: '#dcfce7', color: '#166534',
-                        borderRadius: 999, fontSize: 10, fontWeight: 700,
-                      }}>✓ есть</span>
-                    ) : (
-                      <span style={{ color: 'var(--admin-text-dim)', fontSize: 10 }}>—</span>
-                    )}
-                  </td>
-                  <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>
-                    {p.utm_source ?? '(прямой)'}
-                  </td>
-                  <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>{formatRelative(p.last_activity)}</td>
-                </tr>
-              ))}
+                        background: statusStyle.bg, color: statusStyle.color,
+                        borderRadius: 999, fontSize: 10, fontWeight: 600,
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {STATUS_LABELS[statusKey] ?? statusKey}
+                      </span>
+                    </td>
+                    <td style={{ padding: '10px 12px', color: 'var(--admin-text-muted)' }}>{formatRelative(p.last_activity)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}

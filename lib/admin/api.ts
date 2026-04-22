@@ -267,6 +267,23 @@ export async function fetchRevenue(options: {
   return res.json();
 }
 
+// ─── Lead Dedup + Player Linkage ───
+
+export interface DedupInfo {
+  dedup: Record<string, number>;
+  players: Record<string, { id: string; display_name: string | null }>;
+}
+
+export async function fetchLeadDedupAndPlayers(phones: string[]): Promise<DedupInfo> {
+  const res = await fetch(`/api/admin/leads/dedup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phones }),
+  });
+  if (!res.ok) throw new Error(`dedup fetch failed: ${res.status}`);
+  return res.json();
+}
+
 // ─── Node Labels ───
 
 export interface NodeLabelResult {

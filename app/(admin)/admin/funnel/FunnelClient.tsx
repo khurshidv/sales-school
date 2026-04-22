@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Download } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import PeriodFilter from '@/components/admin/PeriodFilter';
@@ -109,6 +110,15 @@ export default function FunnelClient() {
     return eligible[0] ?? null;
   }, [rows]);
 
+  const exportHref = useMemo(() => {
+    const p = new URLSearchParams();
+    p.set('period', periodState.period);
+    if (periodState.from) p.set('from', periodState.from);
+    if (periodState.to) p.set('to', periodState.to);
+    p.set('dimension', dimension);
+    return `/api/admin/funnel/export?${p.toString()}`;
+  }, [periodState.period, periodState.from, periodState.to, dimension]);
+
   const totalSpend = useMemo(() => spend.reduce((acc, s) => acc + s.total_kzt, 0), [spend]);
 
   const leads = useMemo(() => rows.reduce((acc, r) => acc + r.consultations, 0), [rows]);
@@ -141,6 +151,9 @@ export default function FunnelClient() {
             </button>
             <DimensionSelector value={dimension} onChange={setDimension} />
             <PeriodFilter value={periodState} onChange={setPeriod} />
+            <a href={exportHref} className="admin-btn" download title="Экспорт текущей воронки в CSV" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Download size={12} /> CSV
+            </a>
           </div>
         }
       />

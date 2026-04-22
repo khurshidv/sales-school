@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PageHeader from '@/components/admin/PageHeader';
 import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import DropoffBars from '@/components/admin/charts/DropoffBars';
+import { DropoffFilters } from '@/components/admin/dropoff/DropoffFilters';
+import type { DayFilter, NodeTypeFilter } from '@/components/admin/dropoff/DropoffFilters';
 import { fetchDropoff, fetchNodeLabels } from '@/lib/admin/api';
 import type { DropoffRateRow, NodeLabelResult } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
@@ -17,6 +19,8 @@ export default function DropoffClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [periodState, setPeriod] = usePeriodParam();
   const { period, from, to } = periodState;
+  const [day, setDay] = useState<DayFilter>('all');
+  const [nodeType, setNodeType] = useState<NodeTypeFilter>('all');
   const [rows, setRows] = useState<DropoffRateRow[]>([]);
   const [totals, setTotals] = useState({ entered: 0, dropped: 0, rate: 0 });
   const [labels, setLabels] = useState<Record<string, NodeLabelResult>>({});
@@ -25,7 +29,7 @@ export default function DropoffClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchDropoff({ scenarioId, period: periodState })
+    fetchDropoff({ scenarioId, period: periodState, day: day === 'all' ? null : day })
       .then(async (res) => {
         if (cancelled) return;
         setRows(res.rows);
@@ -47,16 +51,21 @@ export default function DropoffClient() {
     return () => {
       cancelled = true;
     };
-  }, [scenarioId, period, from, to]);
+  }, [scenarioId, period, from, to, day]);
 
-  const top = rows[0];
-  const aboveThreshold = rows.filter(
+  const visibleRows = useMemo(() => {
+    if (nodeType === 'all') return rows;
+    return rows.filter(r => (labels[r.node_id]?.type ?? 'dialogue') === nodeType);
+  }, [rows, labels, nodeType]);
+
+  const top = visibleRows[0];
+  const aboveThreshold = visibleRows.filter(
     (r) => r.dropoff_rate >= THRESHOLDS.dropoff.insightRateMin,
   ).length;
 
   const avgTimeMs =
-    rows.length > 0
-      ? rows.reduce((acc, r) => acc + (r.avg_time_on_node_ms ?? 0), 0) / rows.length
+    visibleRows.length > 0
+      ? visibleRows.reduce((acc, r) => acc + (r.avg_time_on_node_ms ?? 0), 0) / visibleRows.length
       : null;
   const avgTimeSec = avgTimeMs !== null ? (avgTimeMs / 1000).toFixed(1) : '—';
 
@@ -75,6 +84,13 @@ export default function DropoffClient() {
             <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }
+      />
+
+      <DropoffFilters
+        day={day}
+        nodeType={nodeType}
+        onDayChange={setDay}
+        onNodeTypeChange={setNodeType}
       />
 
       <div className="admin-kpi-row">
@@ -102,7 +118,7 @@ export default function DropoffClient() {
         />
       </div>
 
-      {top && totals.rate >= THRESHOLDS.dropoff.insightRateMin && (
+      {top && top.dropoff_rate >= THRESHOLDS.dropoff.insightRateMin && (
         <div style={{ marginBottom: 16 }}>
           <InsightCard
             tone="danger"
@@ -144,7 +160,7 @@ export default function DropoffClient() {
             </div>
           </div>
         ) : (
-          <DropoffBars rows={rows} labels={labels} />
+          <DropoffBars rows={visibleRows} labels={labels} />
         )}
       </div>
     </div>

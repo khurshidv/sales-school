@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/authGuard';
-import { getPageAnalytics, getPageTitleFromRegistry } from '@/lib/admin/page-queries';
+import { getPageAnalytics, getPageTitleFromRegistry, getConversionPerDevice } from '@/lib/admin/page-queries';
 import { periodToRange } from '@/lib/admin/period';
 import type { Period } from '@/lib/admin/types-v2';
 
@@ -27,9 +27,10 @@ export async function GET(
   const from = range.from ? new Date(range.from) : new Date(Date.now() - 30 * 86_400_000);
   const to = range.to ? new Date(range.to) : new Date();
 
-  const [analytics, registry] = await Promise.all([
+  const [analytics, registry, deviceConversion] = await Promise.all([
     getPageAnalytics(slug, from, to),
     getPageTitleFromRegistry(slug),
+    getConversionPerDevice(slug, from, to),
   ]);
 
   return NextResponse.json({
@@ -38,5 +39,6 @@ export async function GET(
     annotations: registry.annotations,
     summary: analytics.summary,
     breakdowns: analytics.breakdowns,
+    device_conversion: deviceConversion,
   });
 }

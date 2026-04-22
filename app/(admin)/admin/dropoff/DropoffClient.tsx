@@ -1,45 +1,104 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Download } from 'lucide-react';
 import PageHeader from '@/components/admin/PageHeader';
 import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
 import DropoffBars from '@/components/admin/charts/DropoffBars';
-import { fetchDropoff } from '@/lib/admin/api';
+import { DropoffFilters } from '@/components/admin/dropoff/DropoffFilters';
+import type { DayFilter, NodeTypeFilter } from '@/components/admin/dropoff/DropoffFilters';
+import { DropoffTrendChart } from '@/components/admin/dropoff/DropoffTrendChart';
+import { fetchDropoff, fetchNodeLabels, fetchDropoffTrend } from '@/lib/admin/api';
+import type { DropoffRateRow, NodeLabelResult, DropoffTrendPoint } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
-import type { DropoffRow } from '@/lib/admin/types-v2';
 import { SCENARIOS } from '@/lib/admin/types-v2';
+import { THRESHOLDS } from '@/lib/admin/thresholds';
 
 export default function DropoffClient() {
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [periodState, setPeriod] = usePeriodParam();
   const { period, from, to } = periodState;
-  const [rows, setRows] = useState<DropoffRow[]>([]);
+  const [day, setDay] = useState<DayFilter>('all');
+  const [nodeType, setNodeType] = useState<NodeTypeFilter>('all');
+  const [rows, setRows] = useState<DropoffRateRow[]>([]);
+  const [totals, setTotals] = useState({ entered: 0, dropped: 0, rate: 0 });
+  const [labels, setLabels] = useState<Record<string, NodeLabelResult>>({});
   const [loading, setLoading] = useState(true);
+  const [trend, setTrend] = useState<DropoffTrendPoint[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchDropoff({ scenarioId, period: periodState }).then((res) => {
-      if (cancelled) return;
-      setRows(res.dropoffs); setLoading(false);
-    }).catch((err) => {
-      if (cancelled) return;
-      console.error('[dropoff] fetch failed', err);
-      setLoading(false);
-    });
-    return () => { cancelled = true; };
+    fetchDropoff({ scenarioId, period: periodState, day: day === 'all' ? null : day })
+      .then(async (res) => {
+        if (cancelled) return;
+        setRows(res.rows);
+        setTotals(res.totals);
+        if (res.rows.length > 0) {
+          const nodeIds = res.rows.map((r) => r.node_id);
+          const fetched = await fetchNodeLabels(scenarioId, nodeIds).catch(() => ({}));
+          if (!cancelled) setLabels(fetched);
+        } else {
+          setLabels({});
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        console.error('[dropoff] fetch failed', err);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [scenarioId, period, from, to, day]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDropoffTrend({ scenarioId, period: periodState })
+      .then((res) => {
+        if (!cancelled) setTrend(res.points);
+      })
+      .catch(() => {
+        if (!cancelled) setTrend([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [scenarioId, period, from, to]);
 
-  const total = rows.reduce((acc, r) => acc + r.dropoff_count, 0);
-  const top = rows[0];
+  const visibleRows = useMemo(() => {
+    if (nodeType === 'all') return rows;
+    return rows.filter(r => (labels[r.node_id]?.type ?? 'dialogue') === nodeType);
+  }, [rows, labels, nodeType]);
 
-  const byDay = rows.reduce<Record<string, number>>((acc, r) => {
-    acc[r.day_id] = (acc[r.day_id] ?? 0) + r.dropoff_count;
-    return acc;
-  }, {});
+  const top = visibleRows[0];
+  const aboveThreshold = visibleRows.filter(
+    (r) => r.dropoff_rate >= THRESHOLDS.dropoff.insightRateMin,
+  ).length;
+
+  const avgTimeMs =
+    visibleRows.length > 0
+      ? visibleRows.reduce((acc, r) => acc + (r.avg_time_on_node_ms ?? 0), 0) / visibleRows.length
+      : null;
+  const avgTimeSec = avgTimeMs !== null ? (avgTimeMs / 1000).toFixed(1) : '—';
+
+  const topLabel = top ? (labels[top.node_id]?.title ?? top.node_id) : '—';
+  const topRatePct = top ? `${(top.dropoff_rate * 100).toFixed(1)}%` : undefined;
+  const overallRatePct = `${(totals.rate * 100).toFixed(1)}%`;
+
+  const exportHref = useMemo(() => {
+    const p = new URLSearchParams();
+    p.set('scenarioId', scenarioId);
+    p.set('period', periodState.period);
+    if (periodState.from) p.set('from', periodState.from);
+    if (periodState.to) p.set('to', periodState.to);
+    if (day !== 'all') p.set('day', day);
+    return `/api/admin/dropoff/export?${p.toString()}`;
+  }, [scenarioId, periodState.period, periodState.from, periodState.to, day]);
 
   return (
     <div>
@@ -50,50 +109,87 @@ export default function DropoffClient() {
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
             <PeriodFilter value={periodState} onChange={setPeriod} />
+            <a href={exportHref} className="admin-btn" download title="Экспорт drop-off в CSV" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Download size={12} /> CSV
+            </a>
           </>
         }
       />
 
+      <DropoffFilters
+        day={day}
+        nodeType={nodeType}
+        onDayChange={setDay}
+        onNodeTypeChange={setNodeType}
+      />
+
       <div className="admin-kpi-row">
-        <KpiCard label="Всего drop-off" value={total} accent="orange" />
-        <KpiCard label="Уникальных узлов" value={rows.length} accent="pink" />
         <KpiCard
-          label="Топ узел"
-          value={top ? top.node_id : '—'}
-          hint={top ? `${top.dropoff_count} выпадений` : undefined}
+          label="Общий drop-off"
+          value={overallRatePct}
+          accent={totals.rate >= THRESHOLDS.dropoff.insightRateMin ? 'orange' : 'blue'}
+        />
+        <KpiCard
+          label="Узлов выше порога"
+          value={aboveThreshold}
+          hint={`≥ ${(THRESHOLDS.dropoff.insightRateMin * 100).toFixed(0)}% выпадений`}
+          accent="pink"
+        />
+        <KpiCard
+          label="Худший узел"
+          value={topLabel}
+          hint={topRatePct}
           accent="violet"
         />
         <KpiCard
-          label="Дней с проблемами"
-          value={Object.keys(byDay).length}
-          hint={Object.entries(byDay).map(([d, c]) => `${d}: ${c}`).join(' · ') || undefined}
+          label="Среднее время до выхода"
+          value={`${avgTimeSec}с`}
           accent="blue"
         />
       </div>
 
-      {top && top.dropoff_count >= 5 && (
+      {top && top.dropoff_rate >= THRESHOLDS.dropoff.insightRateMin && (
         <div style={{ marginBottom: 16 }}>
           <InsightCard
             tone="danger"
             title="Критический drop-off"
             body={
               <>
-                Узел <code>{top.node_id}</code> в дне <code>{top.day_id}</code> — {top.dropoff_count} игроков
-                ушли отсюда. Стоит пересмотреть формулировку или добавить подсказку.
+                Худший узел: <strong>{topLabel}</strong> (день {top.day_id}) —{' '}
+                {(top.dropoff_rate * 100).toFixed(1)}% игроков ушли отсюда. Стоит пересмотреть
+                формулировку или добавить подсказку.
               </>
             }
           />
         </div>
       )}
 
-      <div className="admin-card" style={{ padding: 16 }}>
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}>
+          Динамика drop-off по дням
+        </div>
+        <DropoffTrendChart points={trend} />
+      </div>
+
+      <div className="admin-card" style={{ padding: 16 }}>
+        <div
+          style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 12 }}
+        >
           Топ-50 узлов по drop-off
         </div>
         {loading ? (
-          <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>Загружаем…</div>
+          <div style={{ color: 'var(--admin-text-dim)', fontSize: 13, padding: 20 }}>
+            Загружаем…
+          </div>
         ) : rows.length === 0 ? (
-          <div style={{ padding: '24px 20px', color: 'var(--admin-text-dim)', fontSize: 13, textAlign: 'center' }}>
+          <div
+            style={{
+              padding: '24px 20px',
+              color: 'var(--admin-text-dim)',
+              fontSize: 13,
+              textAlign: 'center',
+            }}
+          >
             <div style={{ fontSize: 24, opacity: 0.6, marginBottom: 6 }}>✅</div>
             <strong>Пока никто не выпал из сценария.</strong>
             <div style={{ fontSize: 12, marginTop: 4 }}>
@@ -101,7 +197,17 @@ export default function DropoffClient() {
             </div>
           </div>
         ) : (
-          <DropoffBars rows={rows} />
+          <>
+            <DropoffBars rows={visibleRows} labels={labels} />
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--admin-border)' }}>
+              <a
+                href={`/admin/branch?scenario=${scenarioId}`}
+                style={{ fontSize: 12, color: 'var(--admin-text-muted)', textDecoration: 'none' }}
+              >
+                Перейти на карту сценария →
+              </a>
+            </div>
+          </>
         )}
       </div>
     </div>

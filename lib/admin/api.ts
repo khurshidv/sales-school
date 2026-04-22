@@ -79,10 +79,29 @@ export async function adminGet<T>(path: string, params?: Record<string, string |
   return res.json() as Promise<T>;
 }
 
+export interface OverviewTotals {
+  visitors: number;
+  registered: number;
+  started: number;
+  completed: number;
+  consultations: number;
+}
+
+export interface OverviewSparks {
+  visitors: number[];
+  registered: number[];
+  started: number[];
+  completed: number[];
+  consultations: number[];
+}
+
 export interface OverviewPayload {
+  current: OverviewTotals;
+  prev: OverviewTotals | null;
   trends: DailyTrendRow[];
   utm: UtmFunnelRow[];
   offer: OfferFunnel;
+  sparks: OverviewSparks;
 }
 
 export function fetchOverview(period: Period | PeriodParamState): Promise<OverviewPayload> {
@@ -102,16 +121,51 @@ export function fetchBranch(params: {
   return adminGet<BranchPayload>('/api/admin/branch', { ...rest, ...periodParams(period) });
 }
 
-export interface DropoffPayload { dropoffs: DropoffRow[] }
+export interface DropoffRateRow {
+  node_id: string;
+  day_id: string;
+  dropoff_count: number;
+  entered_count: number;
+  dropoff_rate: number;
+  avg_time_on_node_ms: number | null;
+}
 
-export function fetchDropoff(params: { scenarioId: string; period: Period | PeriodParamState }): Promise<DropoffPayload> {
-  const { period, ...rest } = params;
-  return adminGet<DropoffPayload>('/api/admin/dropoff', { ...rest, ...periodParams(period) });
+export interface DropoffPayload {
+  rows: DropoffRateRow[];
+  totals: { entered: number; dropped: number; rate: number };
+}
+
+export function fetchDropoff(params: {
+  scenarioId: string;
+  period: Period | PeriodParamState;
+  day?: string | null;
+}): Promise<DropoffPayload> {
+  const { scenarioId, period, day } = params;
+  return adminGet<DropoffPayload>('/api/admin/dropoff', {
+    scenarioId,
+    ...periodParams(period),
+    day: day ?? null,
+  });
+}
+
+export interface ThinkingPercentiles {
+  p50_ms: number | null;
+  p90_ms: number | null;
+  p95_ms: number | null;
+  sample_size: number;
+}
+
+export interface RetentionSummary {
+  cohort_size: number;
+  d1_rate: number;
+  d7_rate: number;
 }
 
 export interface EngagementPayload {
   engagement: EngagementBlob;
   stats: NodeStat[];
+  percentiles: ThinkingPercentiles;
+  retention: RetentionSummary;
 }
 
 export function fetchEngagement(params: {
@@ -121,10 +175,78 @@ export function fetchEngagement(params: {
   return adminGet<EngagementPayload>('/api/admin/engagement', { ...rest, ...periodParams(period) });
 }
 
-export interface FunnelPayload { utm: UtmFunnelRow[] }
+export interface EngagementTrendRow {
+  bucket_date: string;
+  started: number;
+  completed: number;
+  avg_thinking_ms: number | null;
+  completion_rate: number;
+}
 
-export function fetchFunnel(period: Period | PeriodParamState): Promise<FunnelPayload> {
-  return adminGet<FunnelPayload>('/api/admin/funnel', periodParams(period));
+export function fetchEngagementTrend(params: {
+  scenarioId: string; period: Period | PeriodParamState;
+}): Promise<{ points: EngagementTrendRow[] }> {
+  const { scenarioId, period } = params;
+  return adminGet<{ points: EngagementTrendRow[] }>('/api/admin/engagement/trend', { scenarioId, ...periodParams(period) });
+}
+
+// ─── Rating Correlation ───
+
+export interface RatingCorrelationCell {
+  day_id: string;
+  rating: 'S' | 'A' | 'B' | 'C' | 'F';
+  count: number;
+  avg_time_seconds: number;
+}
+
+export function fetchRatingCorrelation(params: {
+  scenarioId: string; period: Period | PeriodParamState;
+}): Promise<{ cells: RatingCorrelationCell[] }> {
+  const { scenarioId, period } = params;
+  return adminGet<{ cells: RatingCorrelationCell[] }>('/api/admin/engagement/correlation', { scenarioId, ...periodParams(period) });
+}
+
+// ─── Funnel v2 types (mirrored from server-only funnel-queries.ts) ───
+
+export type UtmDimension = 'utm_source' | 'utm_medium' | 'utm_campaign';
+
+export interface UtmFunnelV2Row {
+  segment: string;
+  visitors: number;
+  registered: number;
+  started: number;
+  completed: number;
+  consultations: number;
+}
+
+export interface UtmSpendRollupRow {
+  utm_source: string;
+  total_kzt: number;
+  days: number;
+}
+
+export interface FunnelPayload {
+  rows: UtmFunnelV2Row[];
+  spend: UtmSpendRollupRow[];
+  dimension: UtmDimension;
+}
+
+type FunnelFetchArg =
+  | (Period | PeriodParamState)
+  | { period: Period | PeriodParamState; dimension?: UtmDimension };
+
+export function fetchFunnel(arg: FunnelFetchArg): Promise<FunnelPayload> {
+  const hasDimension = typeof arg === 'object' && arg !== null && 'dimension' in (arg as object);
+  const period = hasDimension
+    ? (arg as { period: Period | PeriodParamState }).period
+    : (arg as Period | PeriodParamState);
+  const dimension = hasDimension
+    ? (arg as { period: Period | PeriodParamState; dimension?: UtmDimension }).dimension
+    : undefined;
+  return adminGet<FunnelPayload>('/api/admin/funnel', {
+    ...periodParams(period),
+    ...(dimension != null ? { dimension } : {}),
+  });
 }
 
 export interface OfferPayload {
@@ -344,6 +466,45 @@ export async function fetchLeadDedupAndPlayers(phones: string[]): Promise<DedupI
   return res.json();
 }
 
+// ─── UTM Spend ───
+
+export interface UtmSpendRow {
+  id: string;
+  bucket_date: string;
+  utm_source: string;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  amount_kzt: number;
+  note: string | null;
+}
+
+export function fetchUtmSpendList(period?: Period | PeriodParamState): Promise<{ rows: UtmSpendRow[] }> {
+  return adminGet<{ rows: UtmSpendRow[] }>('/api/admin/utm-spend', period ? periodParams(period) : undefined);
+}
+
+export async function upsertUtmSpend(body: {
+  bucket_date: string;
+  utm_source: string;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  amount_kzt: number;
+  note?: string | null;
+}): Promise<{ row: UtmSpendRow }> {
+  const res = await fetch('/api/admin/utm-spend', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new AdminApiError(res.status, (await res.json().catch(() => ({}))).error ?? res.statusText);
+  return res.json();
+}
+
+export async function deleteUtmSpend(id: string): Promise<void> {
+  const res = await fetch(`/api/admin/utm-spend?id=${encodeURIComponent(id)}`, { method: 'DELETE', cache: 'no-store' });
+  if (!res.ok) throw new AdminApiError(res.status, (await res.json().catch(() => ({}))).error ?? res.statusText);
+}
+
 // ─── Offer Trend ───
 
 export interface OfferTrendRow {
@@ -468,6 +629,46 @@ export async function bulkUpdateParticipantsApi(
     throw new Error((err as { error?: string }).error ?? 'bulk update failed');
   }
   return res.json();
+}
+
+// ─── UTM Trend (funnel drill-down) ───
+
+export interface UtmTrendPoint {
+  bucket_date: string;
+  registered: number;
+  completed: number;
+  consultations: number;
+}
+
+export function fetchFunnelTrend(params: {
+  utm_source: string;
+  period: Period | PeriodParamState;
+}): Promise<{ points: UtmTrendPoint[] }> {
+  const { utm_source, period } = params;
+  return adminGet<{ points: UtmTrendPoint[] }>('/api/admin/funnel/trend', {
+    utm_source,
+    ...periodParams(period),
+  });
+}
+
+// ─── Dropoff Trend ───
+
+export interface DropoffTrendPoint {
+  bucket_date: string;
+  entered: number;
+  dropped: number;
+  rate: number;
+}
+
+export function fetchDropoffTrend(params: {
+  scenarioId: string;
+  period: Period | PeriodParamState;
+}): Promise<{ points: DropoffTrendPoint[] }> {
+  const { scenarioId, period } = params;
+  return adminGet<{ points: DropoffTrendPoint[] }>('/api/admin/dropoff/trend', {
+    scenarioId,
+    ...periodParams(period),
+  });
 }
 
 // ─── Node Labels ───

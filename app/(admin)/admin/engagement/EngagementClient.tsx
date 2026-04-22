@@ -8,7 +8,13 @@ import ScenarioSelector from '@/components/admin/ScenarioSelector';
 import PeriodFilter from '@/components/admin/PeriodFilter';
 import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
-import { fetchEngagement } from '@/lib/admin/api';
+import { HeatCurveChart } from '@/components/admin/engagement/HeatCurveChart';
+import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
+import { fetchEngagement, fetchEngagementTrend, fetchNodeLabels, fetchRatingCorrelation } from '@/lib/admin/api';
+import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow, NodeLabelResult, RatingCorrelationCell } from '@/lib/admin/api';
+import { RetentionCard } from '@/components/admin/engagement/RetentionCard';
+import { InterestTrendChart } from '@/components/admin/engagement/InterestTrendChart';
+import { RatingCorrelationChart } from '@/components/admin/engagement/RatingCorrelationChart';
 import { computeInterestIndex } from '@/lib/admin/engagement/computeIndex';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
@@ -23,6 +29,11 @@ export default function EngagementClient() {
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
+  const [labels, setLabels] = useState<Record<string, NodeLabelResult>>({});
+  const [percentiles, setPercentiles] = useState<ThinkingPercentiles | null>(null);
+  const [retention, setRetention] = useState<RetentionSummary | null>(null);
+  const [trend, setTrend] = useState<EngagementTrendRow[]>([]);
+  const [correlationCells, setCorrelationCells] = useState<RatingCorrelationCell[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +41,16 @@ export default function EngagementClient() {
     setLoading(true);
     fetchEngagement({ scenarioId, dayId, period: periodState }).then((res) => {
       if (cancelled) return;
-      setBlob(res.engagement); setStats(res.stats); setLoading(false);
+      setBlob(res.engagement);
+      setStats(res.stats);
+      setPercentiles(res.percentiles ?? null);
+      setRetention(res.retention ?? null);
+      setLoading(false);
+      if (res.stats.length > 0) {
+        fetchNodeLabels(scenarioId, res.stats.map(s => s.node_id))
+          .then((lbls) => { if (!cancelled) setLabels(lbls); })
+          .catch((err) => console.error('[engagement] node-labels fetch failed', err));
+      }
     }).catch((err) => {
       if (cancelled) return;
       console.error('[engagement] fetch failed', err);
@@ -38,6 +58,30 @@ export default function EngagementClient() {
     });
     return () => { cancelled = true; };
   }, [scenarioId, dayId, period, from, to]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchEngagementTrend({ scenarioId, period: periodState }).then((res) => {
+      if (cancelled) return;
+      setTrend(res.points);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[engagement] trend fetch failed', err);
+    });
+    return () => { cancelled = true; };
+  }, [scenarioId, period, from, to]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchRatingCorrelation({ scenarioId, period: periodState }).then((res) => {
+      if (cancelled) return;
+      setCorrelationCells(res.cells);
+    }).catch((err) => {
+      if (cancelled) return;
+      console.error('[engagement] rating correlation fetch failed', err);
+    });
+    return () => { cancelled = true; };
+  }, [scenarioId, period, from, to]);
 
   const idx = useMemo(() => blob ? computeInterestIndex(blob) : null, [blob]);
 
@@ -60,35 +104,121 @@ export default function EngagementClient() {
       />
 
       <div className="admin-kpi-row">
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Interest Index"
+            value={idx ? `${idx.score.toFixed(1)}/10` : '—'}
+            accent="violet"
+            hint="завершаемость + обдумывание + переигровки"
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Interest Index"
+              body="Взвешенная сумма трёх компонентов: Completion×0.5 + Thinking×0.3 + Replay×0.2. Каждый компонент в диапазоне 0–10."
+            />
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Completion"
+            value={blob ? `${(blob.completion_rate * 100).toFixed(1)}%` : '—'}
+            accent="green"
+            hint={idx ? `${idx.components.completion.toFixed(1)}/10` : 'доля начавших, кто завершил день'}
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Completion"
+              body="Процент игроков, завершивших день после старта. 10% → 1 балл, 100% → 10 баллов."
+            />
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Thinking score"
+            value={idx ? `${idx.components.thinking.toFixed(1)}/10` : '—'}
+            accent="pink"
+            hint={blob?.avg_thinking_time_ms ? `avg ${(blob.avg_thinking_time_ms / 1000).toFixed(1)}с` : 'оптимально 5–15 секунд'}
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Thinking"
+              body="Близость среднего времени на выбор к «сладкой зоне» 5–15 сек. <2с или >30с → 0; 5–15с → 10."
+            />
+          </div>
+        </div>
+        <div style={{ position: 'relative' }}>
+          <KpiCard
+            label="Replay score"
+            value={idx ? `${idx.components.replay.toFixed(1)}/10` : '—'}
+            accent="orange"
+            hint={blob ? `${(blob.replay_rate * 100).toFixed(1)}%` : '10–30% — здоровая повторяемость'}
+          />
+          <div style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FormulaPopover
+              title="Формула Replay"
+              body="Здоровый replay rate 10–30%. Ниже — слабая вовлечённость. Выше 50% — игроки застревают."
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="admin-kpi-row" style={{ marginTop: 8 }}>
         <KpiCard
-          label="Interest Index"
-          value={idx ? `${idx.score.toFixed(1)}/10` : '—'}
-          accent="violet"
-          hint="завершаемость + обдумывание + переигровки"
-        />
-        <KpiCard
-          label="% завершивших день"
-          value={blob ? `${(blob.completion_rate * 100).toFixed(0)}%` : '—'}
-          accent="green"
-          hint="доля начавших, кто завершил день"
-        />
-        <KpiCard
-          label="Среднее время выбора"
-          value={blob?.avg_thinking_time_ms ? `${(blob.avg_thinking_time_ms / 1000).toFixed(1)}с` : '—'}
+          label="Время на выбор"
+          value={percentiles?.p50_ms != null ? `${Math.round(percentiles.p50_ms / 1000)} сек` : '—'}
+          hint={
+            percentiles == null
+              ? undefined
+              : percentiles.sample_size < THRESHOLDS.analytics.minSampleForPercentile
+              ? `выборка ${percentiles.sample_size} — мало данных`
+              : `p90 ${Math.round((percentiles.p90_ms ?? 0) / 1000)}с · p95 ${Math.round((percentiles.p95_ms ?? 0) / 1000)}с`
+          }
           accent="pink"
-          hint="оптимально 5–15 секунд"
-        />
-        <KpiCard
-          label="% переигровок"
-          value={blob ? `${(blob.replay_rate * 100).toFixed(0)}%` : '—'}
-          accent="orange"
-          hint="10–30% — здоровая повторяемость"
         />
       </div>
 
       <div style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'center' }}>
         <span style={{ fontSize: 12, color: 'var(--admin-text-muted)' }}>День:</span>
         <DayTabs value={dayId} onChange={setDayId} />
+      </div>
+
+      {retention && (
+        <div style={{ marginBottom: 16 }}>
+          <RetentionCard retention={retention} />
+        </div>
+      )}
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+          Interest Index — тренд по дням
+        </div>
+        <InterestTrendChart points={trend} />
+        <div style={{ fontSize: 10, color: 'var(--admin-text-muted)', marginTop: 6 }}>
+          Replay rate усреднён; полный Interest Index — в KPI выше.
+        </div>
+      </div>
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+          Корреляция с S-рейтингом
+        </div>
+        <RatingCorrelationChart cells={correlationCells} />
+      </div>
+
+      <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--admin-text)', marginBottom: 8 }}>
+          Распределение посещений по узлам ({dayId})
+        </div>
+        <div style={{ fontSize: 10, color: 'var(--admin-text-muted)', marginBottom: 8 }}>
+          Узлы отсортированы по убыванию посещений — кривая показывает drop-off.
+        </div>
+        {loading ? (
+          <div style={{ height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-text-dim)' }}>
+            Загружаем…
+          </div>
+        ) : (
+          <HeatCurveChart stats={stats} labels={labels} height={180} />
+        )}
       </div>
 
       <div className="admin-card" style={{ padding: 16, marginBottom: 16 }}>
@@ -104,7 +234,7 @@ export default function EngagementClient() {
             Нет данных о выборах за период.
           </div>
         ) : (
-          <ThinkingBarChart stats={stats} />
+          <ThinkingBarChart stats={stats} labels={labels} />
         )}
       </div>
 
@@ -114,7 +244,12 @@ export default function EngagementClient() {
           title={`${slowNodes.length} «медленных» узлов`}
           body={
             <>
-              Игроки задумываются &gt;15с на: {slowNodes.map((n) => <code key={n.node_id} style={{ marginRight: 6 }}>{n.node_id}</code>)}
+              Игроки задумываются &gt;15с на:{' '}
+              {slowNodes.map((n) => (
+                <code key={n.node_id} style={{ marginRight: 6 }}>
+                  {labels[n.node_id]?.title ?? n.node_id}
+                </code>
+              ))}
             </>
           }
         />

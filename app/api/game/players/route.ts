@@ -88,11 +88,13 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { phone, displayName, avatarId, deviceFingerprint, utmSource, utmMedium, utmCampaign, referrer } = body;
+  const { phone, displayName, avatarId, deviceFingerprint, utmSource, utmMedium, utmCampaign, referrer, language } = body;
 
   if (!phone || !phone.startsWith('+') || phone.replace(/\D/g, '').length < 8) {
     return NextResponse.json({ error: 'Invalid phone format' }, { status: 400 });
   }
+
+  const validLang = (language === 'uz' || language === 'ru') ? language : null;
 
   const supabase = createAdminClient();
 
@@ -104,11 +106,18 @@ export async function POST(request: Request) {
     .single();
 
   if (existing) {
-    // Update device fingerprint if provided (links this device to existing player)
+    // Update device fingerprint and/or language if they changed
+    const updates: Record<string, unknown> = { last_seen_at: new Date().toISOString() };
     if (deviceFingerprint && existing.device_fingerprint !== deviceFingerprint) {
+      updates.device_fingerprint = deviceFingerprint;
+    }
+    if (validLang && existing.game_language !== validLang) {
+      updates.game_language = validLang;
+    }
+    if (Object.keys(updates).length > 1) {
       supabase
         .from('players')
-        .update({ device_fingerprint: deviceFingerprint, last_seen_at: new Date().toISOString() })
+        .update(updates)
         .eq('id', existing.id)
         .then(() => {});
     }
@@ -127,6 +136,7 @@ export async function POST(request: Request) {
       utm_medium: utmMedium || null,
       utm_campaign: utmCampaign || null,
       referrer: referrer || null,
+      game_language: validLang,
     })
     .select()
     .single();

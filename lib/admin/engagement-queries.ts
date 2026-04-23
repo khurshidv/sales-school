@@ -1,5 +1,6 @@
 import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
+import type { GameLanguage } from './funnel-queries';
 
 export interface RetentionSummary {
   cohort_size: number;
@@ -7,9 +8,9 @@ export interface RetentionSummary {
   d7_rate: number;
 }
 
-export async function getRetentionSummary(from: string | null, to: string | null): Promise<RetentionSummary> {
+export async function getRetentionSummary(from: string | null, to: string | null, language: GameLanguage | null = null): Promise<RetentionSummary> {
   const sb = createAdminClient();
-  const { data, error } = await sb.rpc('get_retention', { p_from: from, p_to: to });
+  const { data, error } = await sb.rpc('get_retention', { p_from: from, p_to: to, p_language: language });
   if (error) { console.warn('[engagement-queries] get_retention', error); return { cohort_size: 0, d1_rate: 0, d7_rate: 0 }; }
   const rows = (data ?? []) as Array<{ cohort_size: number; d1_returned: number; d7_returned: number }>;
   const size = rows.reduce((a, r) => a + Number(r.cohort_size), 0);
@@ -31,11 +32,11 @@ export interface EngagementTrendRow {
 }
 
 export async function getEngagementTrend(params: {
-  scenarioId: string; from: string | null; to: string | null;
+  scenarioId: string; from: string | null; to: string | null; language?: GameLanguage | null;
 }): Promise<EngagementTrendRow[]> {
   const sb = createAdminClient();
   const { data, error } = await sb.rpc('get_engagement_trend', {
-    p_scenario_id: params.scenarioId, p_from: params.from, p_to: params.to,
+    p_scenario_id: params.scenarioId, p_from: params.from, p_to: params.to, p_language: params.language ?? null,
   });
   if (error) { console.warn('[engagement-queries] get_engagement_trend', error); return []; }
   return (data ?? []).map((r: { bucket_date: string; started: number | string; completed: number | string; avg_thinking_ms: number | string | null; completion_rate: number | string }) => ({
@@ -59,6 +60,7 @@ export async function getThinkingPercentiles(params: {
   dayId?: string | null;
   from: string | null;
   to: string | null;
+  language?: GameLanguage | null;
 }): Promise<ThinkingPercentiles> {
   const sb = createAdminClient();
   const { data, error } = await sb.rpc('get_thinking_percentiles', {
@@ -66,6 +68,7 @@ export async function getThinkingPercentiles(params: {
     p_day_id: params.dayId ?? null,
     p_from: params.from,
     p_to: params.to,
+    p_language: params.language ?? null,
   });
   if (error) {
     console.warn('[engagement-queries] get_thinking_percentiles', error);

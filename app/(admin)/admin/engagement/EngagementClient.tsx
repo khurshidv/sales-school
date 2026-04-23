@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PageHeader from '@/components/admin/PageHeader';
 import KpiCard from '@/components/admin/KpiCard';
 import InsightCard from '@/components/admin/InsightCard';
@@ -10,7 +11,7 @@ import DayTabs from '@/components/admin/DayTabs';
 import ThinkingBarChart from '@/components/admin/charts/ThinkingBarChart';
 import { HeatCurveChart } from '@/components/admin/engagement/HeatCurveChart';
 import { FormulaPopover } from '@/components/admin/shared/FormulaPopover';
-import { fetchEngagement, fetchEngagementTrend, fetchNodeLabels, fetchRatingCorrelation } from '@/lib/admin/api';
+import { fetchEngagement, fetchEngagementTrend, fetchNodeLabels, fetchRatingCorrelation, type GameLanguage } from '@/lib/admin/api';
 import type { ThinkingPercentiles, RetentionSummary, EngagementTrendRow, NodeLabelResult, RatingCorrelationCell } from '@/lib/admin/api';
 import { RetentionCard } from '@/components/admin/engagement/RetentionCard';
 import { InterestTrendChart } from '@/components/admin/engagement/InterestTrendChart';
@@ -20,12 +21,27 @@ import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import type { EngagementBlob, NodeStat } from '@/lib/admin/types-v2';
 import { SCENARIOS, DAYS } from '@/lib/admin/types-v2';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
+import { LanguageTabs, type LanguageFilter } from '@/components/admin/shared/LanguageTabs';
 
 export default function EngagementClient() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [scenarioId, setScenarioId] = useState<string>(SCENARIOS[0].id);
   const [dayId, setDayId] = useState<string>(DAYS[0].id);
   const [periodState, setPeriod] = usePeriodParam();
   const { period, from, to } = periodState;
+  const [language, setLanguageState] = useState<LanguageFilter>(() => {
+    const raw = searchParams.get('lang');
+    return raw === 'uz' || raw === 'ru' ? raw : 'all';
+  });
+
+  function setLanguage(next: LanguageFilter) {
+    setLanguageState(next);
+    const sp = new URLSearchParams(searchParams.toString());
+    if (next === 'all') sp.delete('lang');
+    else sp.set('lang', next);
+    router.replace(`?${sp.toString()}`, { scroll: false });
+  }
 
   const [blob, setBlob] = useState<EngagementBlob | null>(null);
   const [stats, setStats] = useState<NodeStat[]>([]);
@@ -38,8 +54,9 @@ export default function EngagementClient() {
 
   useEffect(() => {
     let cancelled = false;
+    const apiLang = language === 'all' ? null : (language as GameLanguage);
     setLoading(true);
-    fetchEngagement({ scenarioId, dayId, period: periodState }).then((res) => {
+    fetchEngagement({ scenarioId, dayId, period: periodState, language: apiLang }).then((res) => {
       if (cancelled) return;
       setBlob(res.engagement);
       setStats(res.stats);
@@ -57,11 +74,12 @@ export default function EngagementClient() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, dayId, period, from, to]);
+  }, [scenarioId, dayId, period, from, to, language]);
 
   useEffect(() => {
     let cancelled = false;
-    fetchEngagementTrend({ scenarioId, period: periodState }).then((res) => {
+    const apiLang = language === 'all' ? null : (language as GameLanguage);
+    fetchEngagementTrend({ scenarioId, period: periodState, language: apiLang }).then((res) => {
       if (cancelled) return;
       setTrend(res.points);
     }).catch((err) => {
@@ -69,7 +87,7 @@ export default function EngagementClient() {
       console.error('[engagement] trend fetch failed', err);
     });
     return () => { cancelled = true; };
-  }, [scenarioId, period, from, to]);
+  }, [scenarioId, period, from, to, language]);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,6 +116,7 @@ export default function EngagementClient() {
         actions={
           <>
             <ScenarioSelector value={scenarioId} onChange={setScenarioId} />
+            <LanguageTabs value={language} onChange={setLanguage} />
             <PeriodFilter value={periodState} onChange={setPeriod} />
           </>
         }

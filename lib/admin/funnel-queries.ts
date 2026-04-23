@@ -2,6 +2,7 @@ import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export type UtmDimension = 'utm_source' | 'utm_medium' | 'utm_campaign';
+export type GameLanguage = 'uz' | 'ru';
 
 export const VALID_UTM_DIMENSIONS: UtmDimension[] = ['utm_source', 'utm_medium', 'utm_campaign'];
 
@@ -31,12 +32,14 @@ export async function getUtmFunnelV2(
   dimension: UtmDimension,
   from: string | null,
   to: string | null,
+  language: GameLanguage | null = null,
 ): Promise<UtmFunnelV2Row[]> {
   const admin = createAdminClient();
   const { data, error } = await admin.rpc('get_utm_funnel_v2', {
     p_dimension: dimension,
     p_from: from,
     p_to: to,
+    p_language: language,
   });
   if (error) {
     console.warn('[funnel-queries] get_utm_funnel_v2', error.message);

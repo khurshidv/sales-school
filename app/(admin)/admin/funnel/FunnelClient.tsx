@@ -14,12 +14,14 @@ import {
   type UtmDimension,
   type UtmSpendRollupRow,
   type RevenueData,
+  type GameLanguage,
 } from '@/lib/admin/api';
 import { usePeriodParam } from '@/lib/admin/usePeriodParam';
 import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { DimensionSelector } from '@/components/admin/funnel/DimensionSelector';
 import { SpendDialog } from '@/components/admin/funnel/SpendDialog';
 import { SourceTrendModal } from '@/components/admin/funnel/SourceTrendModal';
+import { LanguageTabs, type LanguageFilter } from '@/components/admin/shared/LanguageTabs';
 
 type SortKey = 'segment' | 'visitors' | 'registered' | 'completed' | 'consultations' | 'cr';
 
@@ -36,6 +38,10 @@ export default function FunnelClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dimension, setDimensionState] = useState<UtmDimension>(() => toDimension(searchParams.get('dim')));
+  const [language, setLanguageState] = useState<LanguageFilter>(() => {
+    const raw = searchParams.get('lang');
+    return raw === 'uz' || raw === 'ru' ? raw : 'all';
+  });
   const [rows, setRows] = useState<UtmFunnelV2Row[]>([]);
   const [spend, setSpend] = useState<UtmSpendRollupRow[]>([]);
   const [revenue, setRevenue] = useState<RevenueData | null>(null);
@@ -52,11 +58,19 @@ export default function FunnelClient() {
     router.replace(`?${sp.toString()}`, { scroll: false });
   }
 
+  function setLanguage(next: LanguageFilter) {
+    setLanguageState(next);
+    const sp = new URLSearchParams(searchParams.toString());
+    if (next === 'all') sp.delete('lang');
+    else sp.set('lang', next);
+    router.replace(`?${sp.toString()}`, { scroll: false });
+  }
+
   async function loadFunnel() {
     setLoading(true);
     try {
       const [funnelRes, revenueRes] = await Promise.all([
-        fetchFunnel({ period: periodState, dimension }),
+        fetchFunnel({ period: periodState, dimension, language: language === 'all' ? null : (language as GameLanguage) }),
         fetchRevenue({
           period: periodState.period,
           from: periodState.period === 'custom' ? periodState.from : undefined,
@@ -80,7 +94,7 @@ export default function FunnelClient() {
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [periodState.period, periodState.from, periodState.to, dimension]);
+  }, [periodState.period, periodState.from, periodState.to, dimension, language]);
 
   const sorted = useMemo<RowWithCr[]>(() => {
     const withCr: RowWithCr[] = rows.map(r => ({
@@ -116,8 +130,9 @@ export default function FunnelClient() {
     if (periodState.from) p.set('from', periodState.from);
     if (periodState.to) p.set('to', periodState.to);
     p.set('dimension', dimension);
+    if (language !== 'all') p.set('lang', language);
     return `/api/admin/funnel/export?${p.toString()}`;
-  }, [periodState.period, periodState.from, periodState.to, dimension]);
+  }, [periodState.period, periodState.from, periodState.to, dimension, language]);
 
   const totalSpend = useMemo(() => spend.reduce((acc, s) => acc + s.total_kzt, 0), [spend]);
 
@@ -150,6 +165,7 @@ export default function FunnelClient() {
               Ввести расходы
             </button>
             <DimensionSelector value={dimension} onChange={setDimension} />
+            <LanguageTabs value={language} onChange={setLanguage} />
             <PeriodFilter value={periodState} onChange={setPeriod} />
             <a href={exportHref} className="admin-btn" download title="Экспорт текущей воронки в CSV" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <Download size={12} /> CSV

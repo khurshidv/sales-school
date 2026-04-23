@@ -32,9 +32,11 @@ export async function GET(req: NextRequest) {
   const from = sp.get('from');
   const to = sp.get('to');
   const range = periodToRange(period === 'custom' ? { period, from, to } : period);
+  const langRaw = sp.get('language');
+  const language = langRaw === 'uz' || langRaw === 'ru' ? langRaw : null;
 
   const [rows, spend] = await Promise.all([
-    getUtmFunnelV2(dimension, range.from, range.to),
+    getUtmFunnelV2(dimension, range.from, range.to, language),
     getUtmSpendRollup(range.from, range.to),
   ]);
 

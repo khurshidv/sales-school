@@ -181,10 +181,10 @@ export interface EngagementPayload {
 }
 
 export function fetchEngagement(params: {
-  scenarioId: string; dayId: string; period: Period | PeriodParamState;
+  scenarioId: string; dayId: string; period: Period | PeriodParamState; language?: GameLanguage | null;
 }): Promise<EngagementPayload> {
-  const { period, ...rest } = params;
-  return adminGet<EngagementPayload>('/api/admin/engagement', { ...rest, ...periodParams(period) });
+  const { period, language, ...rest } = params;
+  return adminGet<EngagementPayload>('/api/admin/engagement', { ...rest, ...periodParams(period), language: language ?? null });
 }
 
 export interface EngagementTrendRow {
@@ -196,10 +196,10 @@ export interface EngagementTrendRow {
 }
 
 export function fetchEngagementTrend(params: {
-  scenarioId: string; period: Period | PeriodParamState;
+  scenarioId: string; period: Period | PeriodParamState; language?: GameLanguage | null;
 }): Promise<{ points: EngagementTrendRow[] }> {
-  const { scenarioId, period } = params;
-  return adminGet<{ points: EngagementTrendRow[] }>('/api/admin/engagement/trend', { scenarioId, ...periodParams(period) });
+  const { scenarioId, period, language } = params;
+  return adminGet<{ points: EngagementTrendRow[] }>('/api/admin/engagement/trend', { scenarioId, ...periodParams(period), language: language ?? null });
 }
 
 // ─── Rating Correlation ───
@@ -221,6 +221,7 @@ export function fetchRatingCorrelation(params: {
 // ─── Funnel v2 types (mirrored from server-only funnel-queries.ts) ───
 
 export type UtmDimension = 'utm_source' | 'utm_medium' | 'utm_campaign';
+export type GameLanguage = 'uz' | 'ru';
 
 export interface UtmFunnelV2Row {
   segment: string;
@@ -245,7 +246,7 @@ export interface FunnelPayload {
 
 type FunnelFetchArg =
   | (Period | PeriodParamState)
-  | { period: Period | PeriodParamState; dimension?: UtmDimension };
+  | { period: Period | PeriodParamState; dimension?: UtmDimension; language?: GameLanguage | null };
 
 export function fetchFunnel(arg: FunnelFetchArg): Promise<FunnelPayload> {
   const hasDimension = typeof arg === 'object' && arg !== null && 'dimension' in (arg as object);
@@ -255,9 +256,13 @@ export function fetchFunnel(arg: FunnelFetchArg): Promise<FunnelPayload> {
   const dimension = hasDimension
     ? (arg as { period: Period | PeriodParamState; dimension?: UtmDimension }).dimension
     : undefined;
+  const language = hasDimension
+    ? (arg as { language?: GameLanguage | null }).language ?? null
+    : null;
   return adminGet<FunnelPayload>('/api/admin/funnel', {
     ...periodParams(period),
     ...(dimension != null ? { dimension } : {}),
+    language: language ?? null,
   });
 }
 

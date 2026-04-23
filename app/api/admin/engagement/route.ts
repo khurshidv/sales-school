@@ -24,12 +24,14 @@ export async function GET(req: NextRequest) {
   const from = sp.get('from');
   const to = sp.get('to');
   const range = periodToRange(period === 'custom' ? { period, from, to } : period);
+  const langRaw = sp.get('language');
+  const language = langRaw === 'uz' || langRaw === 'ru' ? langRaw : null;
 
   const [engagement, stats, percentiles, retention] = await Promise.all([
     getEngagementIndexRaw({ scenarioId, ...range }),
     getNodeStats({ scenarioId, dayId, ...range }),
-    getThinkingPercentiles({ scenarioId, dayId, ...range }),
-    getRetentionSummary(range.from, range.to),
+    getThinkingPercentiles({ scenarioId, dayId, ...range, language }),
+    getRetentionSummary(range.from, range.to, language),
   ]);
 
   return NextResponse.json({ engagement, stats, percentiles, retention });

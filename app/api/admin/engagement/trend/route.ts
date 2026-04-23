@@ -18,6 +18,8 @@ export async function GET(req: NextRequest) {
   const from = sp.get('from');
   const to = sp.get('to');
   const range = periodToRange(period === 'custom' ? { period, from, to } : period);
-  const points = await getEngagementTrend({ scenarioId, from: range.from, to: range.to });
+  const langRaw = sp.get('language');
+  const language = langRaw === 'uz' || langRaw === 'ru' ? langRaw : null;
+  const points = await getEngagementTrend({ scenarioId, from: range.from, to: range.to, language });
   return NextResponse.json({ points });
 }

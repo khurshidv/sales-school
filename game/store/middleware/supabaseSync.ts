@@ -26,6 +26,7 @@ export async function syncCreatePlayer(
   phone: string,
   displayName: string,
   deviceFingerprint?: string,
+  language: 'uz' | 'ru' | null = null,
   utm?: { source?: string; medium?: string; campaign?: string; referrer?: string },
 ): Promise<string | null> {
   // Returns server-side player ID or null on error
@@ -38,6 +39,7 @@ export async function syncCreatePlayer(
         displayName,
         avatarId: 'male',
         deviceFingerprint: deviceFingerprint || undefined,
+        language,
         utmSource: utm?.source,
         utmMedium: utm?.medium,
         utmCampaign: utm?.campaign,

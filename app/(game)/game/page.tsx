@@ -126,7 +126,7 @@ function GameHubInner() {
       const deviceFingerprint = await getDeviceId();
 
       // Create player in Supabase first (source of truth)
-      const serverId = await syncCreatePlayer(phone, name, deviceFingerprint);
+      const serverId = await syncCreatePlayer(phone, name, deviceFingerprint, selectedLang);
       if (!serverId) {
         setSubmitError(selectedLang === 'uz'
           ? 'Serverga ulanib bo\'lmadi. Qaytadan urinib ko\'ring.'

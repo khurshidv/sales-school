@@ -5,9 +5,15 @@ import type { QuizQuestion } from './types';
 export const QUIZZES: QuizQuestion[] = [
   {
     lesson: 1,
-    question: "Dars 1 bo'yicha savol (joy qoldirgich)",
-    options: ['Variant A', 'Variant B', 'Variant C', 'Variant D'],
-    correctIndex: 0,
+    question:
+      "Videodagi ma'lumotlarga ko'ra, hozirgi paytda \"ekologik sotuv\" nima degani?",
+    options: [
+      'Insonga nimadirni bosim asosida tiqishtirib sotish.',
+      "Insonning ehtiyojini inobatga olgan holda unga to'g'ri maslahat berish.",
+      "Xaridorga dezinformatsiya berib bo'lsa ham mahsulotni sotish.",
+      "Mijozning ehtiyojini so'ramasdan turib, unga xohlagan narsani taklif qilish.",
+    ],
+    correctIndex: 1,
   },
   {
     lesson: 2,

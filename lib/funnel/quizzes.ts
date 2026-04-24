@@ -29,8 +29,14 @@ export const QUIZZES: QuizQuestion[] = [
   },
   {
     lesson: 3,
-    question: "Dars 3 bo'yicha savol (joy qoldirgich)",
-    options: ['Variant A', 'Variant B', 'Variant C', 'Variant D'],
+    question:
+      "Videoga ko'ra, mijozga mahsulotni (masalan, noutbukni) taklif qilayotganda nima uchun faqat murakkab texnik atamalardan (SSD, HDD va hokazo) foydalanmaslik tavsiya etiladi?",
+    options: [
+      "Mijoz tushunmaydi, diskomfortga tushib ishonchi yo'qoladi va bu xaridga olib kelmaydi.",
+      "Texnik atamalar mahsulotning narxini sun'iy ravishda oshirib ko'rsatadi.",
+      "Sotuvchining o'zi texnik ma'lumotlarda adashib ketishi ehtimoli yuqori bo'ladi.",
+      'Barcha mijozlar texnik xususiyatlarni sotuvchidan ham yaxshiroq bilishadi.',
+    ],
     correctIndex: 0,
   },
   {

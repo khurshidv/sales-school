@@ -5,7 +5,7 @@ import type { FunnelLesson } from './types';
 export const LESSONS: FunnelLesson[] = [
   { index: 1, title: 'Dars 1', youtubeId: 'u_DUKA7_HXQ' },
   { index: 2, title: 'Dars 2', youtubeId: 'wUuWaQym0wA' },
-  { index: 3, title: 'Dars 3', youtubeId: 'PLACEHOLDER_LESSON_3' },
+  { index: 3, title: 'Dars 3', youtubeId: 'AgUI2qFOmGY' },
   { index: 4, title: 'Dars 4', youtubeId: 'PLACEHOLDER_LESSON_4' },
 ];
 

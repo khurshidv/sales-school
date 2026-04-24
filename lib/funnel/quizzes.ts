@@ -9,7 +9,7 @@ export const QUIZZES: QuizQuestion[] = [
       "Videodagi ma'lumotlarga ko'ra, hozirgi paytda \"ekologik sotuv\" nima degani?",
     options: [
       'Insonga nimadirni bosim asosida tiqishtirib sotish.',
-      "Insonning ehtiyojini inobatga olgan holda unga to'g'ri maslahat berish.",
+      'Insonning ehtiyojini inobatga olgan holda unga toʻgʻri maslahat berish.',
       "Xaridorga dezinformatsiya berib bo'lsa ham mahsulotni sotish.",
       "Mijozning ehtiyojini so'ramasdan turib, unga xohlagan narsani taklif qilish.",
     ],

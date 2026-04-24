@@ -984,6 +984,56 @@ const translations = {
     ru: "KPI, зарплата и карьерные пути: Junior → Senior → Manager → Свой бизнес. Финальный экзамен + сертификат",
     uz: "KPI, maosh va martaba yo'llari: Junior → Senior → Manager → O'z biznesi. Yakuniy imtihon + sertifikat",
   },
+
+  /* ══════════════════════════ FINAL OFFER PAGE ══════════════════════════ */
+  "final.hero.badge": {
+    ru: "4/4 урок пройден — поздравляем",
+    uz: "4/4 dars bajarildi — tabriklaymiz",
+  },
+  "final.hero.heading": {
+    ru: "Теперь время практики",
+    uz: "Endi amaliyot vaqti",
+  },
+  "final.hero.subheading": {
+    ru: "Вы прошли 4 урока. Попробуйте симулятор или узнайте больше о полном обучении и трудоустройстве.",
+    uz: "Siz 4 ta darsni tamomladingiz. Endi simulyatorni sinab ko'ring yoki to'liq o'qish va ishga joylashuv haqida ko'proq bilib oling.",
+  },
+  "final.hero.cta_simulator": {
+    ru: "Начать симулятор",
+    uz: "Simulyatorni boshlash",
+  },
+  "final.hero.cta_learn_more": {
+    ru: "Узнать больше",
+    uz: "Ko'proq bilib olish",
+  },
+  "final.final_cta.heading": {
+    ru: "Есть вопросы?",
+    uz: "Savollaringiz bormi?",
+  },
+  "final.final_cta.body": {
+    ru: "Наш менеджер бесплатно проконсультирует вас и поможет выбрать подходящий курс.",
+    uz: "Menejerimiz bepul konsultatsiya berib, sizga mos kursni tanlashga yordam beradi.",
+  },
+  "final.final_cta.button": {
+    ru: "Получить консультацию",
+    uz: "Konsultatsiya olish",
+  },
+  "final.sticky.button": {
+    ru: "Получить консультацию",
+    uz: "Konsultatsiya olish",
+  },
+  "modal.final.heading": {
+    ru: "Получить бесплатную консультацию",
+    uz: "Bepul konsultatsiya oling",
+  },
+  "modal.final.subtitle": {
+    ru: "Оставьте контакты — менеджер свяжется с вами в Telegram и ответит на все вопросы.",
+    uz: "Kontaktlaringizni qoldiring — menejer Telegramda bog'lanib, barcha savollarga javob beradi.",
+  },
+  "modal.final.submit": {
+    ru: "Записаться на консультацию",
+    uz: "Konsultatsiyaga yozilish",
+  },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

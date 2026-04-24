@@ -2,19 +2,27 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useModal } from "@/lib/modal-context";
-import { useT } from "@/lib/i18n";
+import { useT, type TranslationKey } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { getUTMParams } from "@/lib/analytics/utm";
 import { detectDeviceType, detectBrowser } from "@/lib/analytics/device";
 import PhoneInput from "@/components/ui/PhoneInput";
 import { getCountryById, DEFAULT_COUNTRY_ID } from "@/lib/phone-countries";
+import { postFunnelEvent, readIdentity } from "@/lib/funnel/progress-client";
 
 function getSourcePage(): string {
   if (typeof window === 'undefined') return 'home';
   const path = window.location.pathname;
+  if (path.startsWith('/start/final')) return 'final';
   if (path.startsWith('/target')) return 'target';
   if (path.startsWith('/game')) return 'game';
   return 'home';
+}
+
+function keyPrefixFor(source: string): 'modal' | 'modal.target' | 'modal.final' {
+  if (source === 'final') return 'modal.final';
+  if (source !== 'home') return 'modal.target';
+  return 'modal';
 }
 
 export default function RegistrationModal() {
@@ -82,10 +90,10 @@ export default function RegistrationModal() {
 
         {/* Heading */}
         <h3 className="font-[family-name:var(--font-heading)] text-2xl md:text-3xl text-on-surface mb-2 pr-10">
-          {getSourcePage() !== 'home' ? t("modal.target.heading") : t("modal.heading")}
+          {t(`${keyPrefixFor(getSourcePage())}.heading` as TranslationKey)}
         </h3>
         <p className="text-on-surface-variant text-sm mb-8">
-          {getSourcePage() !== 'home' ? t("modal.target.subtitle") : t("modal.subtitle")}
+          {t(`${keyPrefixFor(getSourcePage())}.subtitle` as TranslationKey)}
         </p>
 
         {/* Form */}
@@ -139,6 +147,14 @@ export default function RegistrationModal() {
               }).catch(() => null);
 
               await Promise.allSettled([supabaseInsert, bitrixPost]);
+
+              if (sourcePage === 'final') {
+                const id = readIdentity();
+                postFunnelEvent('final_consultation_submitted', {
+                  leadId: id?.leadId,
+                  token: id?.token,
+                });
+              }
             } catch {
               // fire-and-forget, don't block Telegram redirect
             }
@@ -180,7 +196,7 @@ export default function RegistrationModal() {
                 : 'hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            {getSourcePage() !== 'home' ? t("modal.target.submit") : t("modal.submit")}
+            {t(`${keyPrefixFor(getSourcePage())}.submit` as TranslationKey)}
           </button>
         </form>
 

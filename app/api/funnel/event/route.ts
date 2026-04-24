@@ -15,6 +15,11 @@ const ALL_TYPES: ReadonlySet<FunnelEventType> = new Set([
   'quiz_passed',
   'funnel_completed',
   'simulator_redirected',
+  'final_page_viewed',
+  'final_cta_simulator_clicked',
+  'final_cta_learn_more_clicked',
+  'final_consultation_opened',
+  'final_consultation_submitted',
 ]);
 
 interface Body {

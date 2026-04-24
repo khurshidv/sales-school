@@ -32,6 +32,7 @@ export const copy = {
   lesson: {
     stepCaption: (n: number, total: number) => `Dars ${n} / ${total}`,
     nextCta: "Keyingi darsga o'tish",
+    finalStepCta: "Keyingi qadamga o'tish",
     watchHint: "Keyingi darsga o'tish uchun bu darsni oxirigacha ko'ring",
     loadingVideo: 'Video yuklanmoqda...',
   },

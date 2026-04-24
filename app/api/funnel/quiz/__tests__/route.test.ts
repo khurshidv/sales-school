@@ -115,11 +115,12 @@ describe('POST /api/funnel/quiz', () => {
       return {};
     });
 
-    const res = await POST(req({ lead_id: 'l', token: 't', lesson: 4, answer_index: 0 }));
+    // Lesson 4 correctIndex is 2 (see lib/funnel/quizzes.ts).
+    const res = await POST(req({ lead_id: 'l', token: 't', lesson: 4, answer_index: 2 }));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(body.next_url).toBe('/game?lead_token=tok');
+    expect(body.next_url).toBe('/start/final?lead_token=tok');
   });
 
   it('correct answer on lesson 4 links existing player when phone already registered', async () => {
@@ -161,11 +162,12 @@ describe('POST /api/funnel/quiz', () => {
       return {};
     });
 
-    const res = await POST(req({ lead_id: 'l', token: 't', lesson: 4, answer_index: 0 }));
+    // Lesson 4 correctIndex is 2 (see lib/funnel/quizzes.ts).
+    const res = await POST(req({ lead_id: 'l', token: 't', lesson: 4, answer_index: 2 }));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(body.next_url).toBe('/game?lead_token=tok');
+    expect(body.next_url).toBe('/start/final?lead_token=tok');
     expect(playersChain.insert).not.toHaveBeenCalled();
   });
 });

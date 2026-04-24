@@ -51,11 +51,13 @@ export default function YouTubeLesson({
   preCompleted,
   onReadyToProceed,
   onProceedClick,
+  ctaLabel,
 }: {
   videoId: string;
   preCompleted: boolean;
   onReadyToProceed?: () => void;
   onProceedClick: () => void;
+  ctaLabel?: string;
 }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
@@ -128,7 +130,7 @@ export default function YouTubeLesson({
       </div>
       {canProceed ? (
         <FadeUp>
-          <FunnelCtaButton text={copy.lesson.nextCta} onClick={onProceedClick} />
+          <FunnelCtaButton text={ctaLabel ?? copy.lesson.nextCta} onClick={onProceedClick} />
         </FadeUp>
       ) : (
         <p className="text-sm md:text-base text-center text-[color:var(--color-on-surface-variant)] max-w-xl px-4">

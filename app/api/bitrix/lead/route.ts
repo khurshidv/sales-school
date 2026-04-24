@@ -26,7 +26,7 @@ async function writeBackBitrixIds(phone: string, dealId: number, contactId: numb
 // so it is visible on the kanban card without opening it, and also into
 // standard SOURCE_ID / UTM_* fields so list-view filtering works.
 
-type SourcePage = 'home' | 'target' | 'game' | 'funnel';
+type SourcePage = 'home' | 'target' | 'game' | 'funnel' | 'final';
 type GameStage = 'onboarding' | 'consultation';
 
 const SALES_UP_CATEGORY_ID = Number(process.env.BITRIX_SALES_UP_CATEGORY_ID ?? 334);
@@ -50,6 +50,7 @@ const SOURCE_ID_BY_PAGE: Record<SourcePage, string> = {
   home: 'SALESUP_HOME',
   game: 'SALESUP_GAME',
   funnel: 'SALESUP_FUNNEL',
+  final: 'SALESUP_FINAL',
 };
 
 const SOURCE_LABEL: Record<SourcePage, string> = {
@@ -57,6 +58,7 @@ const SOURCE_LABEL: Record<SourcePage, string> = {
   home: 'Вебинар',
   game: 'RPG игра',
   funnel: '4 darslik voronka',
+  final: 'Final offer (после dars 4)',
 };
 
 const SOURCE_PATH: Record<SourcePage, string> = {
@@ -64,6 +66,7 @@ const SOURCE_PATH: Record<SourcePage, string> = {
   home: '/',
   game: '/game',
   funnel: '/start',
+  final: '/start/final',
 };
 
 type Body = {
@@ -83,7 +86,7 @@ type Body = {
 };
 
 function isSourcePage(v: unknown): v is SourcePage {
-  return v === 'home' || v === 'target' || v === 'game' || v === 'funnel';
+  return v === 'home' || v === 'target' || v === 'game' || v === 'funnel' || v === 'final';
 }
 
 function isGameStage(v: unknown): v is GameStage {
@@ -93,6 +96,7 @@ function isGameStage(v: unknown): v is GameStage {
 function stageFor(sourcePage: SourcePage, gameStage: GameStage | null): string {
   if (sourcePage === 'game' && gameStage === 'onboarding') return STAGE_GAME_ONB;
   if (sourcePage === 'game' && gameStage === 'consultation') return STAGE_GAME_CONS;
+  if (sourcePage === 'final') return STAGE_GAME_CONS;
   return STAGE_NEW;
 }
 

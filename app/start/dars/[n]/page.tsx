@@ -124,6 +124,7 @@ export default function LessonPage({
         videoId={lesson.youtubeId}
         preCompleted={preCompleted}
         onProceedClick={handleProceed}
+        ctaLabel={lessonNumber === TOTAL_LESSONS ? copy.lesson.finalStepCta : undefined}
       />
       {quizOpen && (
         <QuizModal

@@ -76,7 +76,9 @@ export default function LessonPage({
   const handleProceed = () => {
     if (preCompleted) {
       if (lessonNumber >= TOTAL_LESSONS) {
-        router.replace('/');
+        const id = readIdentity();
+        const token = id?.token ?? '';
+        router.replace(`/start/final?lead_token=${encodeURIComponent(token)}`);
         return;
       }
       router.push(`/start/dars/${lessonNumber + 1}`);

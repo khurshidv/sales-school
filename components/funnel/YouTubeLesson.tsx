@@ -118,7 +118,6 @@ export default function YouTubeLesson({
     <div className="flex flex-col items-center gap-6 w-full">
       <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden bg-black shadow-xl">
         <iframe
-          key={videoId}
           ref={iframeRef}
           src={src}
           title="Sales Up — dars"

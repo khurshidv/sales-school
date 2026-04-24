@@ -120,6 +120,7 @@ export default function LessonPage({
       </p>
       <FunnelStepper currentLesson={currentLesson} completedLessons={completed} />
       <YouTubeLesson
+        key={`${lessonNumber}-${preCompleted ? 'done' : 'live'}`}
         videoId={lesson.youtubeId}
         preCompleted={preCompleted}
         onProceedClick={handleProceed}

@@ -49,9 +49,13 @@ export default function FunnelStepper({
         };
         const content =
           state === 'done' ? (
-            <span className="material-symbols-outlined text-base">check</span>
+            <svg aria-hidden viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+              <path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
           ) : state === 'locked' ? (
-            <span className="material-symbols-outlined text-base">lock</span>
+            <svg aria-hidden viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+              <path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0z" />
+            </svg>
           ) : (
             <span>{n}</span>
           );

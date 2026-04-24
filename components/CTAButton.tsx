@@ -11,6 +11,7 @@ export default function CTAButton({
   fullWidth = false,
   trackSlug,
   trackSection,
+  onClickOverride,
 }: {
   text: string;
   size?: "default" | "large";
@@ -19,6 +20,7 @@ export default function CTAButton({
   fullWidth?: boolean;
   trackSlug?: string;
   trackSection?: string;
+  onClickOverride?: () => void;
 }) {
   const { openModal } = useModal();
   const isLarge = size === "large";
@@ -26,6 +28,10 @@ export default function CTAButton({
   const handleClick = () => {
     if (trackSlug) {
       trackCTAClick(trackSlug, 'cta_button', text, trackSection);
+    }
+    if (onClickOverride) {
+      onClickOverride();
+      return;
     }
     openModal();
   };

@@ -12,9 +12,14 @@ export default function StartLayout({ children }: { children: React.ReactNode })
       lang="uz"
       className="min-h-dvh bg-[color:var(--color-background)] text-[color:var(--color-on-surface)]"
     >
+      {/* Speed up third-party requests kicked off after interaction. */}
+      <link rel="preconnect" href="https://i.ytimg.com" crossOrigin="anonymous" />
+      <link rel="dns-prefetch" href="https://www.youtube-nocookie.com" />
+      <link rel="dns-prefetch" href="https://www.youtube.com" />
+
       <header className="flex justify-center pt-8 pb-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="Sales Up" className="h-7 md:h-8 w-auto" />
+        <img src="/logo.svg" alt="Sales Up" width={148} height={28} className="h-7 md:h-8 w-auto" />
       </header>
       {children}
     </div>

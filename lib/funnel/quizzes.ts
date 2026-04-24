@@ -17,9 +17,15 @@ export const QUIZZES: QuizQuestion[] = [
   },
   {
     lesson: 2,
-    question: "Dars 2 bo'yicha savol (joy qoldirgich)",
-    options: ['Variant A', 'Variant B', 'Variant C', 'Variant D'],
-    correctIndex: 0,
+    question:
+      "Videoga ko'ra, sotuv jarayonida mijozga beriladigan savollar qanday ikkita asosiy turga bo'linadi?",
+    options: [
+      'Ochiq savol va yopiq savol',
+      'Umumiy savol va aniqlik kirituvchi savol',
+      "Asosiy savol va qo'shimcha savol",
+      'Mantiqiy savol va hissiy savol',
+    ],
+    correctIndex: 1,
   },
   {
     lesson: 3,

@@ -57,7 +57,7 @@
 
 | Path | Change |
 |---|---|
-| `app/api/bitrix/lead/route.ts` | Extend `SourcePage` union with `'funnel'`; add `SALESUP_FUNNEL` to `SOURCE_ID_BY_PAGE`; default stage for `funnel` = `STAGE_NEW`. |
+| `app/api/bitrix/lead/route.ts` | Extend `SourcePage` union with `'funnel'`; extend `isSourcePage`, `SOURCE_ID_BY_PAGE`, `SOURCE_LABEL`, `SOURCE_PATH`. `stageFor('funnel', …)` returns `STAGE_NEW`. All existing deal-dedup logic continues to apply for funnel leads. |
 | `app/(game)/game/page.tsx` | On mount, read `?lead_token=...`; if present, POST `/api/funnel/link-player`; on success, populate `usePlayerStore` and skip onboarding screens. |
 
 No changes to `components/RegistrationModal.tsx`, `components/ui/PhoneInput.tsx`, `lib/bitrix/client.ts`, `lib/supabase/*` — all reused as-is.
@@ -781,47 +781,69 @@ Expected: 7 tests pass.
 **Files:**
 - Modify: `app/api/bitrix/lead/route.ts`
 
-- [ ] **Step 1: Read the current SourcePage type and SOURCE_ID constants**
+The existing route (~275 lines) already handles contact dedup, deal dedup, early-vs-manager stage protection, and UTM enrichment. We extend its `SourcePage` union with `'funnel'` and add the new source to **every** lookup map. `stageFor('funnel', null)` returns `STAGE_NEW` — funnel leads enter the same NEW column as home/target leads.
 
-```bash
-grep -n "type SourcePage\|SOURCE_ID_BY_PAGE\|gameStage" app/api/bitrix/lead/route.ts
-```
+- [ ] **Step 1: Apply the edits**
 
-Capture the line ranges before editing.
+Make the following four edits in `app/api/bitrix/lead/route.ts` (preserving all other code):
 
-- [ ] **Step 2: Extend the union and map**
+1. Line ~29, replace:
+   ```ts
+   type SourcePage = 'home' | 'target' | 'game';
+   ```
+   with:
+   ```ts
+   type SourcePage = 'home' | 'target' | 'game' | 'funnel';
+   ```
 
-Edit `app/api/bitrix/lead/route.ts`:
-- Change `type SourcePage = 'home' | 'target' | 'game';` to
-  ```ts
-  type SourcePage = 'home' | 'target' | 'game' | 'funnel';
-  ```
-- Add to `SOURCE_ID_BY_PAGE`:
-  ```ts
-  funnel: 'SALESUP_FUNNEL',
-  ```
-- In the stage-selection logic, treat `sourcePage === 'funnel'` as `STAGE_NEW` (the existing default); no `UC_GAME_*` handling for funnel. If the current code uses a switch, add a `case 'funnel': return STAGE_NEW;` branch. If it uses an if-chain, add `if (sourcePage === 'funnel') return STAGE_NEW;` before the generic fallback.
+2. Inside `SOURCE_ID_BY_PAGE` (line ~48) add:
+   ```ts
+   funnel: 'SALESUP_FUNNEL',
+   ```
 
-- [ ] **Step 3: Typecheck**
+3. Inside `SOURCE_LABEL` (line ~54) add:
+   ```ts
+   funnel: '4 darslik voronka',
+   ```
+
+4. Inside `SOURCE_PATH` (line ~60) add:
+   ```ts
+   funnel: '/start',
+   ```
+
+5. In `isSourcePage` (line ~82), replace:
+   ```ts
+   return v === 'home' || v === 'target' || v === 'game';
+   ```
+   with:
+   ```ts
+   return v === 'home' || v === 'target' || v === 'game' || v === 'funnel';
+   ```
+
+`stageFor()` already falls through to `STAGE_NEW` for anything that is not `'game'` with a specific `gameStage`, so funnel leads automatically land in `STAGE_NEW`. No change needed there.
+
+- [ ] **Step 2: Typecheck**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Expected: no new errors originating from `app/api/bitrix/lead/route.ts`.
 
-- [ ] **Step 4: Run existing bitrix/lead tests (if any)**
+- [ ] **Step 3: Run existing bitrix tests (if any)**
 
 ```bash
 npm run test -- --run app/api/bitrix 2>&1 | tail -10
 ```
 
-Expected: either no tests (file didn't exist) or all pass. If failing, fix before committing.
+Expected: no tests for this path exist today; the command reports "No test files found" which is fine.
 
 ### Task 3.4: Lead payload builder
 
 **Files:**
 - Create: `lib/funnel/lead-payload.ts`
+
+Responsibility: validate incoming request body, build the row we insert into `leads`, and build the body we forward to the existing `/api/bitrix/lead` handler. Phone validation matches `/api/bitrix/lead`'s rule (`+` prefix, ≥ 8 digits).
 
 - [ ] **Step 1: Write the file**
 
@@ -859,7 +881,8 @@ export function buildLeadDbRow(input: FunnelLeadInput, funnelToken: string) {
   };
 }
 
-export function buildBitrixBody(input: FunnelLeadInput) {
+export function buildBitrixForwardBody(input: FunnelLeadInput) {
+  // Shape matches the Body type in app/api/bitrix/lead/route.ts.
   return {
     name: input.name.trim(),
     phone: input.phone.trim(),
@@ -881,7 +904,10 @@ export function isValidFunnelLeadInput(input: unknown): input is FunnelLeadInput
   if (typeof input !== 'object' || input === null) return false;
   const r = input as Record<string, unknown>;
   if (typeof r.name !== 'string' || r.name.trim().length < 2) return false;
-  if (typeof r.phone !== 'string' || r.phone.trim().length < 7) return false;
+  if (typeof r.phone !== 'string') return false;
+  const phone = r.phone.trim();
+  if (!phone.startsWith('+')) return false;
+  if (phone.replace(/\D/g, '').length < 8) return false;
   return true;
 }
 ```
@@ -904,6 +930,8 @@ git commit -m "feat(funnel): add server helpers and extend bitrix lead route"
 **Files:**
 - Create: `app/api/funnel/lead/route.ts`
 - Create: `app/api/funnel/lead/__tests__/route.test.ts`
+
+The route does not call Bitrix directly. It forwards to the existing `/api/bitrix/lead` endpoint to reuse the contact-dedup/deal-dedup logic. Fail-open: if the forward fails, the lead still persists in Supabase.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -935,14 +963,13 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
-vi.mock('@/lib/bitrix/client', () => ({
-  bitrixCall: vi.fn().mockResolvedValue(1234),
-}));
+const fetchMock = vi.fn();
+vi.stubGlobal('fetch', fetchMock);
 
 import { POST } from '../route';
 
 function req(body: unknown): Request {
-  return new Request('http://localhost/api/funnel/lead', {
+  return new Request('http://localhost:3000/api/funnel/lead', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -953,15 +980,22 @@ beforeEach(() => {
   insertLeadSingle.mockReset();
   insertProgress.mockClear();
   logEventInsert.mockClear();
+  fetchMock.mockReset();
+  fetchMock.mockResolvedValue({ ok: true, json: async () => ({ ok: true }) });
 });
 
 describe('POST /api/funnel/lead', () => {
-  it('returns 400 on invalid payload', async () => {
-    const res = await POST(req({ name: '', phone: '' }));
+  it('returns 400 on invalid payload (missing +)', async () => {
+    const res = await POST(req({ name: 'Ali', phone: '998901112233' }));
     expect(res.status).toBe(400);
   });
 
-  it('creates lead, progress row, event, and returns token+next_url on 201', async () => {
+  it('returns 400 when name is empty', async () => {
+    const res = await POST(req({ name: '', phone: '+998901112233' }));
+    expect(res.status).toBe(400);
+  });
+
+  it('creates lead, progress row, event, forwards to bitrix, returns 201', async () => {
     insertLeadSingle.mockResolvedValue({
       data: { id: 'lead-uuid', funnel_token: 'tok-uuid' },
       error: null,
@@ -976,13 +1010,15 @@ describe('POST /api/funnel/lead', () => {
     expect(body.next_url).toBe('/start/dars/1');
     expect(insertProgress).toHaveBeenCalledWith({ lead_id: 'lead-uuid' });
     expect(logEventInsert).toHaveBeenCalled();
+    // Bitrix forward was called with sourcePage=funnel
+    expect(fetchMock).toHaveBeenCalled();
+    const [, init] = fetchMock.mock.calls[0];
+    const forwarded = JSON.parse((init as RequestInit).body as string);
+    expect(forwarded.sourcePage).toBe('funnel');
   });
 
-  it('still returns 201 if bitrix call throws (fail-open)', async () => {
-    const bitrix = await import('@/lib/bitrix/client');
-    (bitrix.bitrixCall as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-      new Error('bitrix down'),
-    );
+  it('still returns 201 if bitrix forward fails (fail-open)', async () => {
+    fetchMock.mockRejectedValueOnce(new Error('bitrix down'));
     insertLeadSingle.mockResolvedValue({
       data: { id: 'lead-uuid', funnel_token: 'tok-uuid' },
       error: null,
@@ -1014,10 +1050,9 @@ Expected: fails — route file does not exist yet.
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { bitrixCall } from '@/lib/bitrix/client';
 import {
   buildLeadDbRow,
-  buildBitrixBody,
+  buildBitrixForwardBody,
   isValidFunnelLeadInput,
 } from '@/lib/funnel/lead-payload';
 
@@ -1050,20 +1085,19 @@ export async function POST(request: Request): Promise<Response> {
 
   const leadId = leadRow.id as string;
 
-  // Best-effort Bitrix. Fail-open: log but don't block the user.
+  // Reuse the existing /api/bitrix/lead endpoint to get contact + deal dedup
+  // and stage-protection logic for free. Fail-open: if this forward fails
+  // (network, Bitrix down, etc.) the Supabase lead still persists and the
+  // user continues into the funnel.
   try {
-    await bitrixCall('crm.lead.add', {
-      fields: {
-        TITLE: `SalesUp Funnel · ${body.name}`,
-        NAME: body.name,
-        PHONE: [{ VALUE: body.phone, VALUE_TYPE: 'WORK' }],
-        SOURCE_ID: 'SALESUP_FUNNEL',
-        CATEGORY_ID: Number(process.env.BITRIX_SALES_UP_CATEGORY_ID ?? 334),
-        COMMENTS: JSON.stringify(buildBitrixBody(body)),
-      },
+    const forwardUrl = new URL('/api/bitrix/lead', request.url);
+    await fetch(forwardUrl.toString(), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(buildBitrixForwardBody(body)),
     });
   } catch (err) {
-    console.error('[funnel/lead] bitrix failed (non-fatal):', err);
+    console.error('[funnel/lead] bitrix forward failed (non-fatal):', err);
   }
 
   await admin.from('funnel_progress').insert({ lead_id: leadId });

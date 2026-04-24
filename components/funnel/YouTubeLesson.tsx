@@ -127,10 +127,14 @@ export default function YouTubeLesson({
           className="w-full h-full"
         />
       </div>
-      {canProceed && (
+      {canProceed ? (
         <FadeUp>
           <FunnelCtaButton text={copy.lesson.nextCta} onClick={onProceedClick} />
         </FadeUp>
+      ) : (
+        <p className="text-sm md:text-base text-center text-[color:var(--color-on-surface-variant)] max-w-xl px-4">
+          {copy.lesson.watchHint}
+        </p>
       )}
     </div>
   );

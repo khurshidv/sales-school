@@ -118,7 +118,7 @@ describe('POST /api/funnel/quiz', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(body.next_url).toBe('/game/play?lead_token=tok');
+    expect(body.next_url).toBe('/game?lead_token=tok');
   });
 
   it('correct answer on lesson 4 links existing player when phone already registered', async () => {
@@ -164,7 +164,7 @@ describe('POST /api/funnel/quiz', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(body.next_url).toBe('/game/play?lead_token=tok');
+    expect(body.next_url).toBe('/game?lead_token=tok');
     expect(playersChain.insert).not.toHaveBeenCalled();
   });
 });

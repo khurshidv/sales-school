@@ -115,6 +115,48 @@ function GameHubInner() {
   // Hydrate player from Supabase on mount (waits for reset to finish).
   usePlayerInit(resetDone);
 
+  // ?lead_token=... → came from /start funnel. Resolve to a linked player
+  // and bootstrap the store, skipping the onboarding form. Falls back to
+  // the normal onboarding UI on any failure.
+  useEffect(() => {
+    const leadToken = searchParams.get('lead_token');
+    if (!leadToken) return;
+    if (!isInitialized) return;
+    if (player) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const linkRes = await fetch('/api/funnel/link-player', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ lead_token: leadToken }),
+        });
+        if (!linkRes.ok || cancelled) return;
+        const linked = (await linkRes.json()) as {
+          player_id: string;
+          name: string;
+          phone: string;
+        };
+        setStoredPhone(linked.phone);
+        const playerRes = await fetch(
+          `/api/game/players?phone=${encodeURIComponent(linked.phone)}`,
+        );
+        if (!playerRes.ok || cancelled) return;
+        const data = await playerRes.json();
+        if (data.player && !cancelled) {
+          loadPlayer(data.player);
+          setInitialized();
+          trackEvent(data.player.id, 'game_started');
+        }
+      } catch {
+        /* fall back to onboarding */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isInitialized, searchParams, player, loadPlayer, setInitialized]);
+
   const handleFormSubmit = async (name: string, phone: string, selectedLang: Language) => {
     if (isSubmitting) return;
     setIsSubmitting(true);

@@ -105,7 +105,7 @@ export async function POST(request: Request): Promise<Response> {
     await logEvent({ leadId: v.leadId, eventType: 'funnel_completed' });
     return NextResponse.json({
       ok: true,
-      next_url: `/game/play?lead_token=${encodeURIComponent(player.token)}`,
+      next_url: `/game?lead_token=${encodeURIComponent(player.token)}`,
     });
   }
 

@@ -26,7 +26,7 @@ async function writeBackBitrixIds(phone: string, dealId: number, contactId: numb
 // so it is visible on the kanban card without opening it, and also into
 // standard SOURCE_ID / UTM_* fields so list-view filtering works.
 
-type SourcePage = 'home' | 'target' | 'game';
+type SourcePage = 'home' | 'target' | 'game' | 'funnel';
 type GameStage = 'onboarding' | 'consultation';
 
 const SALES_UP_CATEGORY_ID = Number(process.env.BITRIX_SALES_UP_CATEGORY_ID ?? 334);
@@ -49,18 +49,21 @@ const SOURCE_ID_BY_PAGE: Record<SourcePage, string> = {
   target: 'SALESUP_TARGET',
   home: 'SALESUP_HOME',
   game: 'SALESUP_GAME',
+  funnel: 'SALESUP_FUNNEL',
 };
 
 const SOURCE_LABEL: Record<SourcePage, string> = {
   target: 'Sales Up лендинг',
   home: 'Вебинар',
   game: 'RPG игра',
+  funnel: '4 darslik voronka',
 };
 
 const SOURCE_PATH: Record<SourcePage, string> = {
   target: '/target',
   home: '/',
   game: '/game',
+  funnel: '/start',
 };
 
 type Body = {
@@ -80,7 +83,7 @@ type Body = {
 };
 
 function isSourcePage(v: unknown): v is SourcePage {
-  return v === 'home' || v === 'target' || v === 'game';
+  return v === 'home' || v === 'target' || v === 'game' || v === 'funnel';
 }
 
 function isGameStage(v: unknown): v is GameStage {

@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import FunnelHero from '@/components/funnel/FunnelHero';
 import FunnelStepper from '@/components/funnel/FunnelStepper';
 import RegistrationGateModal from '@/components/funnel/RegistrationGateModal';
-import FunnelCtaButton from '@/components/funnel/FunnelCtaButton';
 import { LESSONS } from '@/lib/funnel/lessons';
 import { copy } from '@/lib/funnel/copy';
 import { postFunnelEvent, readIdentity } from '@/lib/funnel/progress-client';
@@ -42,11 +40,14 @@ export default function StartPage() {
 
   return (
     <>
-      <main className="flex flex-col items-center gap-8 pb-16">
-        <FunnelHero />
+      <main className="flex flex-col items-center gap-8 pt-8 pb-16 px-5">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="Sales Up" className="h-7 md:h-8 w-auto" />
+
         <FunnelStepper currentLesson={1} completedLessons={[]} />
 
-        <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden bg-black/80 shadow-xl mx-5">
+        <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden bg-black/80 shadow-xl">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`https://img.youtube.com/vi/${firstVideoId}/maxresdefault.jpg`}
             alt="Dars 1 preview"
@@ -65,8 +66,6 @@ export default function StartPage() {
             </span>
           </button>
         </div>
-
-        <FunnelCtaButton text={copy.landing.playHint} onClick={handlePlay} />
       </main>
       <RegistrationGateModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>

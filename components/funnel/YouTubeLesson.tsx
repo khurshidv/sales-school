@@ -76,12 +76,11 @@ export default function YouTubeLesson({
       // @ts-expect-error — YT typings are provided as a minimal declare global
       playerRef.current = new window.YT.Player(containerId.current, {
         videoId,
+        host: 'https://www.youtube-nocookie.com',
         playerVars: {
           rel: 0,
           modestbranding: 1,
           playsinline: 1,
-          enablejsapi: 1,
-          host: 'https://www.youtube-nocookie.com',
         },
         events: {
           onStateChange: (e: { data: number }) => {

@@ -67,7 +67,8 @@ export default function RegistrationGateModal({
       }
       const body = (await res.json()) as { lead_id: string; token: string; next_url: string };
       writeIdentity({ leadId: body.lead_id, token: body.token });
-      await postFunnelEvent('lead_created', { leadId: body.lead_id, token: body.token });
+      // Fire-and-forget: don't block the redirect on the event log.
+      void postFunnelEvent('lead_created', { leadId: body.lead_id, token: body.token });
       router.push(body.next_url);
     } catch {
       setError(copy.gate.errorGeneric);

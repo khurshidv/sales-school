@@ -65,7 +65,8 @@ describe('POST /api/funnel/quiz', () => {
       completedLessons: [1],
       finishedAt: null,
     });
-    const res = await POST(req({ lead_id: 'l', token: 't', lesson: 1, answer_index: 0 }));
+    // Lesson 1 correctIndex is 1 (see lib/funnel/quizzes.ts).
+    const res = await POST(req({ lead_id: 'l', token: 't', lesson: 1, answer_index: 1 }));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toEqual({ ok: true, next_url: '/start/dars/2' });

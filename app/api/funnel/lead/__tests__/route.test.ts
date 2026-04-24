@@ -25,6 +25,26 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
+// Next.js `after()` runs a callback after the response is sent. For tests
+// we execute it inline so we can still assert on the side effects.
+const afterCallbacks: Array<() => unknown | Promise<unknown>> = [];
+vi.mock('next/server', async () => {
+  const actual = await vi.importActual<typeof import('next/server')>('next/server');
+  return {
+    ...actual,
+    after: (cb: () => unknown | Promise<unknown>) => {
+      afterCallbacks.push(cb);
+    },
+  };
+});
+
+async function flushAfter(): Promise<void> {
+  while (afterCallbacks.length > 0) {
+    const cb = afterCallbacks.shift()!;
+    await cb();
+  }
+}
+
 const fetchMock = vi.fn();
 vi.stubGlobal('fetch', fetchMock);
 
@@ -44,6 +64,7 @@ beforeEach(() => {
   logEventInsert.mockClear();
   fetchMock.mockReset();
   fetchMock.mockResolvedValue({ ok: true, json: async () => ({ ok: true }) });
+  afterCallbacks.length = 0;
 });
 
 describe('POST /api/funnel/lead', () => {
@@ -71,6 +92,8 @@ describe('POST /api/funnel/lead', () => {
     expect(body.token).toBe('tok-uuid');
     expect(body.next_url).toBe('/start/dars/1');
     expect(insertProgress).toHaveBeenCalledWith({ lead_id: 'lead-uuid' });
+    // bitrix + event log deferred to after(); flush and assert.
+    await flushAfter();
     expect(logEventInsert).toHaveBeenCalled();
     expect(fetchMock).toHaveBeenCalled();
     const [, init] = fetchMock.mock.calls[0];
@@ -78,7 +101,7 @@ describe('POST /api/funnel/lead', () => {
     expect(forwarded.sourcePage).toBe('funnel');
   });
 
-  it('still returns 201 if bitrix forward fails (fail-open)', async () => {
+  it('still returns 201 even if bitrix forward fails (fail-open)', async () => {
     fetchMock.mockRejectedValueOnce(new Error('bitrix down'));
     insertLeadSingle.mockResolvedValue({
       data: { id: 'lead-uuid', funnel_token: 'tok-uuid' },
@@ -86,6 +109,7 @@ describe('POST /api/funnel/lead', () => {
     });
     const res = await POST(req({ name: 'Ali', phone: '+998901112233' }));
     expect(res.status).toBe(201);
+    await flushAfter(); // catches the bitrix reject inside after()
   });
 
   it('returns 500 if lead insert fails', async () => {

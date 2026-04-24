@@ -6,32 +6,33 @@ import FadeUp from '@/components/FadeUp';
 import { copy } from '@/lib/funnel/copy';
 import { WATCH_THRESHOLD } from '@/lib/funnel/lessons';
 
+interface YTPlayer {
+  getCurrentTime: () => number;
+  getDuration: () => number;
+  destroy?: () => void;
+}
+
+interface YTGlobal {
+  Player: new (
+    target: HTMLIFrameElement | string,
+    opts: { events?: { onStateChange?: (e: { data: number }) => void } },
+  ) => YTPlayer;
+  PlayerState: { ENDED: number; PLAYING: number };
+}
+
 declare global {
   interface Window {
-    YT?: {
-      Player: new (id: string, opts: unknown) => unknown;
-      PlayerState: { ENDED: number; PLAYING: number };
-    };
+    YT?: YTGlobal;
     onYouTubeIframeAPIReady?: () => void;
   }
 }
 
-let ytApiLoaded = false;
+let ytApiPromise: Promise<void> | null = null;
 function loadYouTubeApi(): Promise<void> {
   if (typeof window === 'undefined') return Promise.resolve();
   if (window.YT?.Player) return Promise.resolve();
-  if (ytApiLoaded) {
-    return new Promise<void>((resolve) => {
-      const t = setInterval(() => {
-        if (window.YT?.Player) {
-          clearInterval(t);
-          resolve();
-        }
-      }, 50);
-    });
-  }
-  ytApiLoaded = true;
-  return new Promise<void>((resolve) => {
+  if (ytApiPromise) return ytApiPromise;
+  ytApiPromise = new Promise<void>((resolve) => {
     const prev = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = () => {
       if (prev) prev();
@@ -42,6 +43,7 @@ function loadYouTubeApi(): Promise<void> {
     s.async = true;
     document.head.appendChild(s);
   });
+  return ytApiPromise;
 }
 
 export default function YouTubeLesson({
@@ -55,12 +57,8 @@ export default function YouTubeLesson({
   onReadyToProceed?: () => void;
   onProceedClick: () => void;
 }) {
-  const containerId = useRef(`yt-${Math.random().toString(36).slice(2)}`);
-  const playerRef = useRef<{
-    getCurrentTime: () => number;
-    getDuration: () => number;
-    destroy?: () => void;
-  } | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
   const [canProceed, setCanProceed] = useState(preCompleted);
 
   useEffect(() => {
@@ -68,22 +66,15 @@ export default function YouTubeLesson({
   }, [preCompleted]);
 
   useEffect(() => {
+    if (preCompleted) return;
     let cancelled = false;
     let interval: ReturnType<typeof setInterval> | null = null;
 
     loadYouTubeApi().then(() => {
-      if (cancelled) return;
-      // @ts-expect-error — YT typings are provided as a minimal declare global
-      playerRef.current = new window.YT.Player(containerId.current, {
-        videoId,
-        host: 'https://www.youtube-nocookie.com',
-        playerVars: {
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-        },
+      if (cancelled || !iframeRef.current || !window.YT) return;
+      playerRef.current = new window.YT.Player(iframeRef.current, {
         events: {
-          onStateChange: (e: { data: number }) => {
+          onStateChange: (e) => {
             if (e.data === window.YT?.PlayerState.ENDED) {
               setCanProceed(true);
               onReadyToProceed?.();
@@ -104,7 +95,7 @@ export default function YouTubeLesson({
         } catch {
           /* player not ready yet */
         }
-      }, 500);
+      }, 1000);
     });
 
     return () => {
@@ -115,13 +106,23 @@ export default function YouTubeLesson({
       } catch {
         /* noop */
       }
+      playerRef.current = null;
     };
-  }, [videoId, onReadyToProceed]);
+  }, [videoId, preCompleted, onReadyToProceed]);
+
+  const src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&modestbranding=1&rel=0&playsinline=1`;
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
-      <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden bg-black/80 shadow-xl">
-        <div id={containerId.current} className="w-full h-full" />
+      <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden bg-black shadow-xl">
+        <iframe
+          ref={iframeRef}
+          src={src}
+          title="Sales Up — dars"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          className="w-full h-full"
+        />
       </div>
       {canProceed && (
         <FadeUp>

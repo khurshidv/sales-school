@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import CTAButton from '@/components/CTAButton';
+import FunnelCtaButton from './FunnelCtaButton';
 import FadeUp from '@/components/FadeUp';
 import { copy } from '@/lib/funnel/copy';
 import { WATCH_THRESHOLD } from '@/lib/funnel/lessons';
@@ -126,7 +126,7 @@ export default function YouTubeLesson({
       </div>
       {canProceed && (
         <FadeUp>
-          <CTAButton text={copy.lesson.nextCta} onClickOverride={onProceedClick} />
+          <FunnelCtaButton text={copy.lesson.nextCta} onClick={onProceedClick} />
         </FadeUp>
       )}
     </div>

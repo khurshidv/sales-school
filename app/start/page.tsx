@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import FunnelHero from '@/components/funnel/FunnelHero';
 import FunnelStepper from '@/components/funnel/FunnelStepper';
 import RegistrationGateModal from '@/components/funnel/RegistrationGateModal';
-import CTAButton from '@/components/CTAButton';
+import FunnelCtaButton from '@/components/funnel/FunnelCtaButton';
 import { LESSONS } from '@/lib/funnel/lessons';
 import { copy } from '@/lib/funnel/copy';
 import { postFunnelEvent, readIdentity } from '@/lib/funnel/progress-client';
@@ -66,7 +66,7 @@ export default function StartPage() {
           </button>
         </div>
 
-        <CTAButton text={copy.landing.playHint} onClickOverride={handlePlay} />
+        <FunnelCtaButton text={copy.landing.playHint} onClick={handlePlay} />
       </main>
       <RegistrationGateModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>

@@ -41,7 +41,7 @@ Business goal: warm leads with content, qualify them with quizzes, and deliver t
 - Registration modal (not full-screen) with game teaser block under submit.
 - Lesson pages `/start/dars/[n]` for n in 1..4, YouTube embed, gated CTA at 88% playback.
 - Fullscreen quiz modal (4 options, 1 correct, unlimited retries, no hints).
-- Supabase schema: new `funnel_progress`, `funnel_events` tables; `leads` gets `funnel_token` + `player_id`; `players` gets `lead_id`.
+- Supabase schema: new `funnel_progress`, `funnel_events` tables (migrations `034`, `035`); `leads` gets `funnel_token` + `player_id`; `players` gets `lead_id`.
 - Bitrix lead creation with new `SOURCE_ID = SALESUP_FUNNEL`, category `334`.
 - Progress persistence across reloads (LS + server).
 - Navigation back to completed lessons (stepper).
@@ -125,8 +125,8 @@ lib/funnel/
 └── progress-server.ts             # Supabase progress read/write, token validation
 
 supabase/migrations/
-├── 033_funnel_schema.sql          # funnel_progress, funnel_events, leads.funnel_token, leads.player_id, players.lead_id
-└── 034_funnel_rls.sql             # RLS: anon no access; service role full
+├── 034_funnel_schema.sql          # funnel_progress, funnel_events, leads.funnel_token, leads.player_id, players.lead_id
+└── 035_funnel_rls.sql             # RLS: anon no access; service role full
 ```
 
 ### 4.5 Files to modify
@@ -139,7 +139,7 @@ supabase/migrations/
 
 ## 5. Database schema
 
-### Migration `033_funnel_schema.sql`
+### Migration `034_funnel_schema.sql`
 
 ```sql
 alter table public.leads
@@ -202,7 +202,7 @@ create index if not exists idx_funnel_events_lead on public.funnel_events(lead_i
 create index if not exists idx_funnel_events_type_time on public.funnel_events(event_type, created_at desc);
 ```
 
-### Migration `034_funnel_rls.sql`
+### Migration `035_funnel_rls.sql`
 
 RLS: all funnel tables are server-only. `anon` has no access; `service_role` has full access. All reads/writes from the browser go through Next.js API routes that validate `{ lead_id, token }`.
 

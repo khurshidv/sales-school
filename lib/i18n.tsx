@@ -473,6 +473,158 @@ const translations = {
     uz: "12 oy",
   },
 
+  /* --- Target Why Sales (savdo jamoasi) --- */
+  "target.why.label": {
+    ru: "Почему продажи?",
+    uz: "Nega sotuv?",
+  },
+  "target.why.heading": {
+    ru: "Почему отдел продаж — самое ценное в любой компании",
+    uz: "Nima uchun katta kompaniyalarda savdo jamoasi eng muhim bo'lim?",
+  },
+  "target.why.subheading": {
+    ru: "Без продавца продукт не продаётся. Именно поэтому компании готовы платить хорошим продажникам в 3–5 раз больше рынка.",
+    uz: "Sotuvchisiz mahsulot sotilmaydi. Aynan shuning uchun kompaniyalar yaxshi savdochilarga bozordan 3–5 baravar ko'p to'lashga tayyor.",
+  },
+
+  "target.why.stat1.value": { ru: "~2x", uz: "~2x" },
+  "target.why.stat1.label": {
+    ru: "Средний рост компании без отдела продаж",
+    uz: "Savdo jamoasisiz o'rtacha o'sish",
+  },
+  "target.why.stat2.value": { ru: "~7x", uz: "~7x" },
+  "target.why.stat2.label": {
+    ru: "Рост с сильным отделом продаж",
+    uz: "Kuchli savdo jamoasi bilan o'sish",
+  },
+  "target.why.stat3.value": { ru: "70%", uz: "70%" },
+  "target.why.stat3.label": {
+    ru: "Доли выручки приносят продажи",
+    uz: "Daromad ulushini savdo keltiradi",
+  },
+
+  "target.why.chart.title": {
+    ru: "Рост выручки компании за 5 лет (старт = 100)",
+    uz: "Yillar davomida daromad o'sishi (boshlang'ich = 100)",
+  },
+  "target.why.chart.axis": {
+    ru: "Индекс дохода",
+    uz: "Daromad indeksi",
+  },
+  "target.why.chart.with": {
+    ru: "С сильным отделом продаж",
+    uz: "Savdo jamoasi bor kompaniya",
+  },
+  "target.why.chart.without": {
+    ru: "Без отдела продаж",
+    uz: "Savdo jamoasi yo'q",
+  },
+  "target.why.chart.year": { ru: "год", uz: "yil" },
+
+  "target.why.reasons_title": {
+    ru: "5 причин, почему сильные продавцы — золото для любой компании",
+    uz: "5 ta sabab, nega kuchli savdochilar har qanday kompaniya uchun oltin",
+  },
+  "target.why.reason.1.title": { ru: "Приносят доход", uz: "Daromad keltiradi" },
+  "target.why.reason.1.desc": {
+    ru: "Продукт сам себя не продаёт. Без отдела продаж не продаётся ничего.",
+    uz: "Mahsulot o'zini sotmaydi. Savdo jamoasi bo'lmasa — hech narsa sotilmaydi.",
+  },
+  "target.why.reason.2.title": { ru: "Открывают рынки", uz: "Bozorga kiradi" },
+  "target.why.reason.2.desc": {
+    ru: "Новые клиенты, регионы и отрасли — это всё работа отдела продаж.",
+    uz: "Yangi mijozlar, yangi hududlar, yangi sohalar — bularni savdo jamoasi ochadi.",
+  },
+  "target.why.reason.3.title": { ru: "Знают клиента", uz: "Mijozni biladi" },
+  "target.why.reason.3.desc": {
+    ru: "Продавцы говорят с клиентами напрямую — это золото для стратегии бизнеса.",
+    uz: "Savdochilar mijozlar bilan to'g'ridan-to'g'ri gaplashadi — bu strategiya uchun oltin.",
+  },
+  "target.why.reason.4.title": { ru: "Дают прогноз", uz: "Prognoz beradi" },
+  "target.why.reason.4.desc": {
+    ru: "Хорошая система продаж позволяет видеть выручку наперёд и строить план роста.",
+    uz: "Yaxshi savdo tizimi har oylik daromadni oldindan ko'rish imkonini beradi.",
+  },
+  "target.why.reason.5.title": {
+    ru: "Отстраивают от конкурентов",
+    uz: "Raqibdan ajratadi",
+  },
+  "target.why.reason.5.desc": {
+    ru: "Когда продукты одинаковые — побеждает тот, у кого сильнее отдел продаж.",
+    uz: "Mahsulotlar bir xil bo'lganda — savdo jamoasining kuchi g'olibni belgilaydi.",
+  },
+  "target.why.quote": {
+    ru: "Без отдела продаж компания не растёт. Хороший продукт + сильные продажи = рост. Одного продукта мало.",
+    uz: "Savdo jamoasiz kompaniya o'smaydi. Yaxshi mahsulot + kuchli savdo = o'sish. Faqat birinchisi yetarli emas.",
+  },
+
+  /* --- Target Pricing --- */
+  "target.pricing.label": { ru: "Стоимость", uz: "Narxi" },
+  "target.pricing.heading": {
+    ru: "Один курс — одна цена. Без скрытых доплат.",
+    uz: "Bitta kurs — bitta narx. Yashirin to'lovlarsiz.",
+  },
+  "target.pricing.subheading": {
+    ru: "Полная программа Sales Up: обучение, практика и трудоустройство в одной упаковке.",
+    uz: "Sales Up to'liq dasturi: o'qish, amaliyot va ishga joylashish — bitta paketda.",
+  },
+  "target.pricing.card.badge": { ru: "Полный курс", uz: "To'liq kurs" },
+  "target.pricing.card.title": { ru: "Sales Up Full", uz: "Sales Up Full" },
+  "target.pricing.card.price": { ru: "8 000 000", uz: "8 000 000" },
+  "target.pricing.card.currency": { ru: "сум", uz: "so'm" },
+  "target.pricing.card.note": {
+    ru: "за весь курс · доступна рассрочка",
+    uz: "butun kurs uchun · bo'lib to'lash mavjud",
+  },
+  "target.pricing.feat.1": {
+    ru: "4 недели интенсивного обучения офлайн",
+    uz: "4 hafta intensiv offline o'qish",
+  },
+  "target.pricing.feat.2": {
+    ru: "15 практических уроков и живые ролевые игры",
+    uz: "15 ta amaliy dars va jonli rol o'yinlar",
+  },
+  "target.pricing.feat.3": {
+    ru: "Скрипты, шаблоны и техники закрытия сделок",
+    uz: "Skriptlar, shablonlar va bitimlarni yopish texnikalari",
+  },
+  "target.pricing.feat.4": {
+    ru: "Работа с возражениями: «дорого», «подумаю», «нет»",
+    uz: "E'tirozlar bilan ishlash: «qimmat», «o'ylab ko'raman», «yo'q»",
+  },
+  "target.pricing.feat.5": {
+    ru: "Личный ментор и обратная связь по домашним заданиям",
+    uz: "Shaxsiy mentor va uy vazifalariga teskari aloqa",
+  },
+  "target.pricing.feat.6": {
+    ru: "Доступ в закрытое комьюнити выпускников",
+    uz: "Bitiruvchilarning yopiq jamoasiga kirish",
+  },
+  "target.pricing.feat.7": {
+    ru: "Сертификат об окончании курса",
+    uz: "Kursni tugatganlik haqida sertifikat",
+  },
+  "target.pricing.feat.8": {
+    ru: "Подготовка к собеседованию: резюме, тест-офферы, интервью",
+    uz: "Suhbatga tayyorgarlik: rezyume, test offerlar, intervyu",
+  },
+  "target.pricing.feat.9": {
+    ru: "Доступ к базе вакансий компаний-партнёров",
+    uz: "Hamkor kompaniyalar vakansiya bazasiga kirish",
+  },
+  "target.pricing.feat.10": {
+    ru: "Гарантия трудоустройства 100%",
+    uz: "100% ishga joylashish kafolati",
+  },
+  "target.pricing.cta": {
+    ru: "Записаться на курс",
+    uz: "Kursga yozilish",
+  },
+  "target.pricing.guarantee": {
+    ru: "Группы до 30 человек — места ограничены.",
+    uz: "30 kishigacha guruhlar — joylar cheklangan.",
+  },
+
   /* --- Target Cases --- */
   "target.cases.heading": {
     ru: "Как наши ученики вышли на доход 10 млн сум+",

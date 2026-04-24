@@ -5,10 +5,12 @@ import ContrastBar from "@/components/target/ContrastBar";
 import TrustBar from "@/components/target/TrustBar";
 import PainPoints from "@/components/target/PainPoints";
 import MythReframe from "@/components/target/MythReframe";
+import WhySales from "@/components/target/WhySales";
 import LossAversion from "@/components/target/LossAversion";
 import CasesSection from "@/components/target/CasesSection";
 import ProductBenefits from "@/components/target/ProductBenefits";
 import ProgramAccordion from "@/components/target/ProgramAccordion";
+import PricingSection from "@/components/target/PricingSection";
 import ForWhom from "@/components/target/ForWhom";
 import StatsSection from "@/components/target/StatsSection";
 import TargetFAQ from "@/components/target/TargetFAQ";
@@ -41,10 +43,12 @@ export default function TargetPage() {
         <TrustBar />
         <PainPoints />
         <MythReframe />
+        <WhySales />
         <LossAversion />
         <CasesSection />
         <ProductBenefits />
         <ProgramAccordion />
+        <PricingSection />
         <ForWhom />
         <StatsSection />
 <TargetFAQ />

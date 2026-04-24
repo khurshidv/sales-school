@@ -41,9 +41,15 @@ export const QUIZZES: QuizQuestion[] = [
   },
   {
     lesson: 4,
-    question: "Dars 4 bo'yicha savol (joy qoldirgich)",
-    options: ['Variant A', 'Variant B', 'Variant C', 'Variant D'],
-    correctIndex: 0,
+    question:
+      "Videoga ko'ra, agar mijoz sotuvchiga ko'plab savollar bersa va e'tirozlar bildirsa, bu nima deb qabul qilinishi kerak?",
+    options: [
+      "Bu mijozning umuman xarid qilmasligini anglatadi, u shunchaki vaqt olyapti.",
+      "Mijoz faqat asabga tegish yoki bahslashish maqsadida savol beryapti.",
+      "Bu mijozning mahsulotga bo'lgan qiziqishi belgisi bo'lib, unga to'g'ri javob berish xaridga olib keladi.",
+      "E'tirozlar mijozning sotuvchiga nisbatan shaxsiy adovati borligini ko'rsatadi.",
+    ],
+    correctIndex: 2,
   },
 ];
 

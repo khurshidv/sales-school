@@ -6,7 +6,7 @@ export const LESSONS: FunnelLesson[] = [
   { index: 1, title: 'Dars 1', youtubeId: 'u_DUKA7_HXQ' },
   { index: 2, title: 'Dars 2', youtubeId: 'wUuWaQym0wA' },
   { index: 3, title: 'Dars 3', youtubeId: 'AgUI2qFOmGY' },
-  { index: 4, title: 'Dars 4', youtubeId: 'PLACEHOLDER_LESSON_4' },
+  { index: 4, title: 'Dars 4', youtubeId: 'H-8ZMNw762I' },
 ];
 
 export function getLesson(n: number): FunnelLesson | null {

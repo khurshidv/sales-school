@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PhoneInput from '@/components/ui/PhoneInput';
+import { getCountryById, DEFAULT_COUNTRY_ID } from '@/lib/phone-countries';
 import GameTeaserBlock from './GameTeaserBlock';
 import { copy } from '@/lib/funnel/copy';
 import { writeIdentity, postFunnelEvent } from '@/lib/funnel/progress-client';
@@ -16,10 +17,14 @@ export default function RegistrationGateModal({
 }) {
   const router = useRouter();
   const [name, setName] = useState('');
+  const [phoneDigits, setPhoneDigits] = useState('');
+  const [countryId, setCountryId] = useState(DEFAULT_COUNTRY_ID);
   const [fullPhone, setFullPhone] = useState('');
-  const [countryId, setCountryId] = useState<string>('uz');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const country = getCountryById(countryId);
+  const isValid = name.trim().length > 0 && phoneDigits.length === country.digits;
 
   useEffect(() => {
     if (!open) return;
@@ -30,7 +35,8 @@ export default function RegistrationGateModal({
     };
   }, [open]);
 
-  const handlePhoneChange = useCallback((_: string, cId: string, full: string) => {
+  const handlePhoneChange = useCallback((digits: string, cId: string, full: string) => {
+    setPhoneDigits(digits);
     setCountryId(cId);
     setFullPhone(full);
   }, []);
@@ -38,12 +44,8 @@ export default function RegistrationGateModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (name.trim().length < 2) {
-      setError(copy.gate.errorName);
-      return;
-    }
-    if (!fullPhone.startsWith('+') || fullPhone.replace(/\D/g, '').length < 8) {
-      setError(copy.gate.errorPhone);
+    if (!isValid) {
+      setError(copy.gate.errorGeneric);
       return;
     }
     setSubmitting(true);
@@ -80,73 +82,74 @@ export default function RegistrationGateModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="funnel-gate-title"
-      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 animate-fade-up"
+      style={{ animationDuration: '300ms' }}
       onClick={onClose}
     >
-      <form
-        onSubmit={handleSubmit}
+      <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-[440px] rounded-3xl bg-[color:var(--color-surface)] shadow-2xl p-6 md:p-7 flex flex-col gap-5 animate-[scale-in_300ms_cubic-bezier(0.32,0.72,0,1)_forwards]"
+        className="relative w-full max-w-md bg-[#fbf9f5] rounded-3xl p-8 md:p-10 shadow-2xl border border-outline-variant/15"
       >
-        <div className="flex items-start justify-between">
-          <h2
-            id="funnel-gate-title"
-            className="text-xl md:text-2xl font-[family-name:var(--font-heading)] font-bold text-[color:var(--color-on-surface)] leading-tight"
-          >
-            {copy.gate.title}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={copy.gate.close}
-            className="shrink-0 size-9 rounded-full hover:bg-black/5 flex items-center justify-center"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-[color:var(--color-on-surface)]/80">
-            {copy.gate.nameLabel}
-          </span>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={copy.gate.namePlaceholder}
-            autoComplete="name"
-            required
-            className="rounded-xl border border-[color:var(--color-on-surface-variant)]/30 px-4 py-3 bg-white focus:outline-none focus:border-[color:var(--color-primary)]"
-          />
-        </label>
-
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-[color:var(--color-on-surface)]/80">
-            {copy.gate.phoneLabel}
-          </span>
-          <PhoneInput
-            value={fullPhone}
-            countryId={countryId}
-            onChange={handlePhoneChange}
-          />
-        </label>
-
-        {error && (
-          <p role="alert" className="text-sm text-red-600">
-            {error}
-          </p>
-        )}
-
         <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-full bg-[color:var(--color-primary)] text-white font-bold px-6 py-4 disabled:opacity-60"
+          type="button"
+          onClick={onClose}
+          aria-label={copy.gate.close}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors"
         >
-          {submitting ? copy.gate.submitting : copy.gate.submit}
+          <span className="material-symbols-outlined text-xl">close</span>
         </button>
 
-        <GameTeaserBlock />
-      </form>
+        <h3
+          id="funnel-gate-title"
+          className="font-[family-name:var(--font-heading)] text-2xl md:text-3xl text-on-surface mb-6 pr-10 leading-tight"
+        >
+          {copy.gate.title}
+        </h3>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder={copy.gate.namePlaceholder}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+            required
+            className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-2 focus:ring-primary-container/40 focus:border-primary-container/40 focus:outline-none transition-all"
+          />
+
+          <PhoneInput
+            value={phoneDigits}
+            countryId={countryId}
+            onChange={handlePhoneChange}
+            placeholder={copy.gate.phoneLabel}
+            className="w-full rounded-2xl border border-outline-variant/30 bg-white px-5 py-4 text-on-surface focus-within:ring-2 focus-within:ring-primary-container/40 focus-within:border-primary-container/40 transition-all"
+            inputClassName="text-on-surface placeholder:text-on-surface-variant/50"
+            dropdownClassName="bg-white border-outline-variant/20 shadow-xl"
+          />
+
+          {error && (
+            <p role="alert" className="text-sm text-red-600">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={!isValid || submitting}
+            className={`cta-btn w-full rounded-full px-8 py-4 text-white font-bold tracking-wide text-base mt-2 transition-all duration-200 ${
+              !isValid || submitting
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:scale-[1.02] active:scale-[0.98]'
+            }`}
+          >
+            {submitting ? copy.gate.submitting : copy.gate.submit}
+          </button>
+        </form>
+
+        <div className="mt-5">
+          <GameTeaserBlock />
+        </div>
+      </div>
     </div>
   );
 }

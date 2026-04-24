@@ -1015,12 +1015,20 @@ const translations = {
     uz: "Menejerimiz bepul konsultatsiya berib, sizga mos kursni tanlashga yordam beradi.",
   },
   "final.final_cta.button": {
-    ru: "Получить консультацию",
-    uz: "Konsultatsiya olish",
+    ru: "Получить бесплатную консультацию",
+    uz: "Bepul konsultatsiya olish",
   },
   "final.sticky.button": {
-    ru: "Получить консультацию",
-    uz: "Konsultatsiya olish",
+    ru: "Получить бесплатную консультацию",
+    uz: "Bepul konsultatsiya olish",
+  },
+  "final.block_cta.hint": {
+    ru: "Бесплатная консультация от нашего менеджера",
+    uz: "Menejerimizdan bepul konsultatsiya",
+  },
+  "final.block_cta.button": {
+    ru: "Получить бесплатную консультацию",
+    uz: "Bepul konsultatsiya olish",
   },
   "modal.final.heading": {
     ru: "Получить бесплатную консультацию",

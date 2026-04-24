@@ -24,7 +24,6 @@ export default function LessonPage({
 
   const [currentLesson, setCurrentLesson] = useState<number>(lessonNumber);
   const [completed, setCompleted] = useState<LessonIndex[]>([]);
-  const [stateLoaded, setStateLoaded] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
 
   useEffect(() => {
@@ -57,7 +56,6 @@ export default function LessonPage({
         if (!state) return;
         setCurrentLesson(state.current_lesson);
         setCompleted(state.completed_lessons ?? []);
-        setStateLoaded(true);
         if (lessonNumber > state.current_lesson) {
           router.replace(`/start/dars/${state.current_lesson}`);
         }
@@ -121,13 +119,11 @@ export default function LessonPage({
         {copy.lesson.stepCaption(lessonNumber, TOTAL_LESSONS)}
       </p>
       <FunnelStepper currentLesson={currentLesson} completedLessons={completed} />
-      {stateLoaded && (
-        <YouTubeLesson
-          videoId={lesson.youtubeId}
-          preCompleted={preCompleted}
-          onProceedClick={handleProceed}
-        />
-      )}
+      <YouTubeLesson
+        videoId={lesson.youtubeId}
+        preCompleted={preCompleted}
+        onProceedClick={handleProceed}
+      />
       {quizOpen && (
         <QuizModal
           quiz={quiz}

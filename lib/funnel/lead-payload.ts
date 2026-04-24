@@ -23,8 +23,6 @@ export function buildLeadDbRow(input: FunnelLeadInput, funnelToken: string) {
     utm_source: input.utmSource ?? null,
     utm_medium: input.utmMedium ?? null,
     utm_campaign: input.utmCampaign ?? null,
-    utm_content: input.utmContent ?? null,
-    utm_term: input.utmTerm ?? null,
     referrer: input.referrer ?? null,
     device_type: input.deviceType ?? null,
     browser: input.browser ?? null,

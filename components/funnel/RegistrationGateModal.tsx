@@ -136,13 +136,17 @@ export default function RegistrationGateModal({
           <button
             type="submit"
             disabled={!isValid || submitting}
-            className={`cta-btn w-full rounded-full px-8 py-4 text-white font-bold tracking-wide text-base mt-2 transition-all duration-200 ${
+            className={`cta-btn group w-full rounded-full px-8 py-4 text-white font-bold tracking-wide text-base mt-2 inline-flex items-center justify-center gap-3 transition-all duration-200 ${
               !isValid || submitting
                 ? 'opacity-50 cursor-not-allowed'
                 : 'hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
-            {submitting ? copy.gate.submitting : copy.gate.submit}
+            <span className="w-8 shrink-0" aria-hidden="true" />
+            <span>{submitting ? copy.gate.submitting : copy.gate.submit}</span>
+            <span className="bg-white/20 group-hover:bg-white/32 w-8 h-8 rounded-full flex items-center justify-center shrink-0 group-hover:translate-x-1 transition-all duration-200">
+              <span className="material-symbols-outlined leading-none text-lg">arrow_forward</span>
+            </span>
           </button>
         </form>
 

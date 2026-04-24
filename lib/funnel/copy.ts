@@ -18,7 +18,7 @@ export const copy = {
     nameLabel: 'Ismingiz',
     namePlaceholder: 'Ismingizni kiriting',
     phoneLabel: 'Telefon raqamingiz',
-    submit: 'Darsni boshlash',
+    submit: "Darslikni ko'rish",
     submitting: 'Yuborilmoqda...',
     teaser: {
       heading: 'Barcha darslarni tamomlasangiz',

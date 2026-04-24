@@ -110,12 +110,15 @@ export default function YouTubeLesson({
     };
   }, [videoId, preCompleted, onReadyToProceed]);
 
-  const src = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&modestbranding=1&rel=0&playsinline=1`;
+  const origin =
+    typeof window !== 'undefined' ? `&origin=${encodeURIComponent(window.location.origin)}` : '';
+  const src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&modestbranding=1&rel=0&playsinline=1${origin}`;
 
   return (
     <div className="flex flex-col items-center gap-6 w-full">
       <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden bg-black shadow-xl">
         <iframe
+          key={videoId}
           ref={iframeRef}
           src={src}
           title="Sales Up — dars"

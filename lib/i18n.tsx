@@ -480,27 +480,31 @@ const translations = {
   },
   "target.why.heading": {
     ru: "Почему отдел продаж — самое ценное в любой компании",
-    uz: "Nima uchun katta kompaniyalarda savdo jamoasi eng muhim bo'lim?",
+    uz: "Nima uchun katta kompaniyalarda sotuv jamoasi eng muhim bo'lim?",
   },
   "target.why.subheading": {
-    ru: "Без продавца продукт не продаётся. Именно поэтому компании готовы платить хорошим продажникам в 3–5 раз больше рынка.",
-    uz: "Sotuvchisiz mahsulot sotilmaydi. Aynan shuning uchun kompaniyalar yaxshi savdochilarga bozordan 3–5 baravar ko'p to'lashga tayyor.",
+    ru: "Без продавца продукт не продаётся. Именно поэтому компании готовы платить хорошим менеджерам по продажам в 3–5 раз больше рынка.",
+    uz: "Sotuvchisiz mahsulot sotilmaydi. Aynan shuning uchun kompaniyalar yaxshi sotuv managerlariga bozordan 3–5 baravar ko'p to'lashga tayyor.",
   },
 
   "target.why.stat1.value": { ru: "~2x", uz: "~2x" },
   "target.why.stat1.label": {
     ru: "Средний рост компании без отдела продаж",
-    uz: "Savdo jamoasisiz o'rtacha o'sish",
+    uz: "Sotuv jamoasisiz o'rtacha o'sish",
   },
   "target.why.stat2.value": { ru: "~7x", uz: "~7x" },
   "target.why.stat2.label": {
     ru: "Рост с сильным отделом продаж",
-    uz: "Kuchli savdo jamoasi bilan o'sish",
+    uz: "Kuchli sotuv jamoasi o'rtacha o'sish",
   },
   "target.why.stat3.value": { ru: "70%", uz: "70%" },
   "target.why.stat3.label": {
     ru: "Доли выручки приносят продажи",
-    uz: "Daromad ulushini savdo keltiradi",
+    uz: "Daromad ulushi sotuvdan keladi",
+  },
+  "target.why.source": {
+    ru: "Источник: HubSpot State of Sales Report; McKinsey & Company, «Growth through sales force effectiveness»; Salesforce State of Sales (2023)",
+    uz: "Manba: HubSpot State of Sales Report; McKinsey & Company, «Growth through sales force effectiveness»; Salesforce State of Sales (2023)",
   },
 
   "target.why.chart.title": {
@@ -513,49 +517,44 @@ const translations = {
   },
   "target.why.chart.with": {
     ru: "С сильным отделом продаж",
-    uz: "Savdo jamoasi bor kompaniya",
+    uz: "Sotuv jamoasi bor kompaniya",
   },
   "target.why.chart.without": {
     ru: "Без отдела продаж",
-    uz: "Savdo jamoasi yo'q",
+    uz: "Sotuv jamoasi yo'q",
   },
   "target.why.chart.year": { ru: "год", uz: "yil" },
 
   "target.why.reasons_title": {
-    ru: "5 причин, почему сильные продавцы — золото для любой компании",
-    uz: "5 ta sabab, nega kuchli savdochilar har qanday kompaniya uchun oltin",
+    ru: "4 причины, почему сильные менеджеры по продажам — золото для любой компании",
+    uz: "4 ta sabab, nega kuchli sotuv managerlari har qanday kompaniya uchun oltin",
   },
   "target.why.reason.1.title": { ru: "Приносят доход", uz: "Daromad keltiradi" },
   "target.why.reason.1.desc": {
     ru: "Продукт сам себя не продаёт. Без отдела продаж не продаётся ничего.",
-    uz: "Mahsulot o'zini sotmaydi. Savdo jamoasi bo'lmasa — hech narsa sotilmaydi.",
+    uz: "Mahsulot o'zini sotmaydi. Sotuv jamoasi bo'lmasa — hech narsa sotilmaydi.",
   },
   "target.why.reason.2.title": { ru: "Открывают рынки", uz: "Bozorga kiradi" },
   "target.why.reason.2.desc": {
-    ru: "Новые клиенты, регионы и отрасли — это всё работа отдела продаж.",
-    uz: "Yangi mijozlar, yangi hududlar, yangi sohalar — bularni savdo jamoasi ochadi.",
+    ru: "Новые клиенты, новые регионы, новые отрасли — это всё открывают менеджеры по продажам.",
+    uz: "Yangi mijozlar, yangi hududlar, yangi sohalar — bularni sotuv managerlari ochadi.",
   },
-  "target.why.reason.3.title": { ru: "Знают клиента", uz: "Mijozni biladi" },
+  "target.why.reason.3.title": { ru: "Дают прогноз", uz: "Prognoz beradi" },
   "target.why.reason.3.desc": {
-    ru: "Продавцы говорят с клиентами напрямую — это золото для стратегии бизнеса.",
-    uz: "Savdochilar mijozlar bilan to'g'ridan-to'g'ri gaplashadi — bu strategiya uchun oltin.",
-  },
-  "target.why.reason.4.title": { ru: "Дают прогноз", uz: "Prognoz beradi" },
-  "target.why.reason.4.desc": {
     ru: "Хорошая система продаж позволяет видеть выручку наперёд и строить план роста.",
-    uz: "Yaxshi savdo tizimi har oylik daromadni oldindan ko'rish imkonini beradi.",
+    uz: "Yaxshi sotuv tizimi — har oylik daromadni oldindan ko'rish imkonini beradi.",
   },
-  "target.why.reason.5.title": {
+  "target.why.reason.4.title": {
     ru: "Отстраивают от конкурентов",
-    uz: "Raqibdan ajratadi",
+    uz: "Raqibdan ajraladi",
   },
-  "target.why.reason.5.desc": {
-    ru: "Когда продукты одинаковые — побеждает тот, у кого сильнее отдел продаж.",
-    uz: "Mahsulotlar bir xil bo'lganda — savdo jamoasining kuchi g'olibni belgilaydi.",
+  "target.why.reason.4.desc": {
+    ru: "Когда продукты одинаковые — побеждает сила менеджеров по продажам.",
+    uz: "Mahsulotlar bir xil bo'lganda — sotuv managerlarining kuchi g'olibni belgilaydi.",
   },
   "target.why.quote": {
-    ru: "Без отдела продаж компания не растёт. Хороший продукт + сильные продажи = рост. Одного продукта мало.",
-    uz: "Savdo jamoasiz kompaniya o'smaydi. Yaxshi mahsulot + kuchli savdo = o'sish. Faqat birinchisi yetarli emas.",
+    ru: "Без отдела продаж компания не растёт. Хороший продукт + сильные менеджеры по продажам = рост.",
+    uz: "Sotuv jamoasiz kompaniya o'smaydi. Yaxshi mahsulot + kuchli sotuv managerlari = o'sish.",
   },
 
   /* --- Target Pricing --- */

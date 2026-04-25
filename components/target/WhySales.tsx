@@ -13,12 +13,12 @@ const CHART_DATA = [
 const CHART_MAX = 700;
 const Y_TICKS = [700, 500, 300, 100];
 
-const REASON_ICONS = ["payments", "public", "person_search", "trending_up", "military_tech"];
+const REASON_ICONS = ["payments", "public", "trending_up", "military_tech"];
 
 export default function WhySales() {
   const { t } = useT();
 
-  const reasons = [1, 2, 3, 4, 5].map((n) => ({
+  const reasons = [1, 2, 3, 4].map((n) => ({
     icon: REASON_ICONS[n - 1],
     title: t(`target.why.reason.${n}.title` as TranslationKey),
     desc: t(`target.why.reason.${n}.desc` as TranslationKey),
@@ -48,7 +48,7 @@ export default function WhySales() {
         </FadeUp>
 
         {/* Stats row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-10 md:mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
           {stats.map((s, i) => (
             <FadeUp key={i} delay={i * 80}>
               <div className="bg-white rounded-2xl p-6 md:p-8 double-bezel">
@@ -60,6 +60,12 @@ export default function WhySales() {
             </FadeUp>
           ))}
         </div>
+
+        <FadeUp delay={200}>
+          <p className="text-xs md:text-sm text-on-surface-variant/70 italic mb-10 md:mb-14">
+            {t("target.why.source")}
+          </p>
+        </FadeUp>
 
         {/* Chart */}
         <FadeUp delay={100}>
@@ -152,7 +158,7 @@ export default function WhySales() {
           </h3>
         </FadeUp>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {reasons.map((r, i) => (
             <FadeUp key={i} delay={i * 60}>
               <div className="h-full bg-white rounded-2xl p-6 md:p-7 double-bezel flex flex-col gap-3">

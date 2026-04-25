@@ -43,7 +43,7 @@ async function resolvePlayerForLead(leadId: string): Promise<{ playerId: string;
   } else {
     const { data: created, error: createErr } = await admin
       .from('players')
-      .insert({ name: lead.name, phone: lead.phone, lead_id: leadId })
+      .insert({ display_name: lead.name, phone: lead.phone, lead_id: leadId })
       .select('id')
       .single();
     if (createErr || !created) return null;

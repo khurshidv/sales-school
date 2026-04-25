@@ -772,3 +772,47 @@ export async function fetchNodeLabels(
   const data = await res.json();
   return data.labels;
 }
+
+/* ────────── Lessons funnel (4-lesson + final offer) ────────── */
+
+export interface LessonsFunnelStep {
+  step: string;
+  uniqueLeads: number;
+  totalEvents: number;
+}
+
+export interface FinalOfferBreakdownRow {
+  location: string;
+  opens: number;
+  uniqueLeads: number;
+}
+
+export interface RecentFunnelEvent {
+  id: string;
+  createdAt: string;
+  eventType: string;
+  lessonIndex: number | null;
+  leadId: string | null;
+  leadName: string | null;
+  leadPhone: string | null;
+  meta: Record<string, unknown>;
+}
+
+export interface LessonsResponse {
+  summary: LessonsFunnelStep[];
+  breakdown: FinalOfferBreakdownRow[];
+  events: RecentFunnelEvent[];
+}
+
+export async function fetchLessons(
+  period: Period | PeriodParamState,
+): Promise<LessonsResponse> {
+  const qs = new URLSearchParams();
+  const params = periodParams(period);
+  for (const [k, v] of Object.entries(params)) {
+    if (v != null) qs.set(k, v);
+  }
+  const res = await fetch(`/api/admin/lessons?${qs}`);
+  if (!res.ok) throw new Error(`lessons fetch failed: ${res.status}`);
+  return res.json();
+}

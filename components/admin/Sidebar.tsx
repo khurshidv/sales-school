@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Radio, LayoutDashboard, GitBranch, Sparkles, AlertTriangle,
-  TrendingUp, Globe, Target, Users, Trophy, Menu, Mail,
+  TrendingUp, Globe, Target, Users, Trophy, Menu, Mail, BookOpen,
 } from 'lucide-react';
 
 interface NavItem {
@@ -40,6 +40,7 @@ const GROUPS: NavGroup[] = [
     label: 'Маркетинг',
     items: [
       { href: '/admin/funnel', label: 'Воронка и источники', Icon: TrendingUp },
+      { href: '/admin/lessons', label: 'Воронка уроков', Icon: BookOpen },
       { href: '/admin/leads', label: 'Заявки', Icon: Mail },
       { href: '/admin/pages', label: 'Аналитика лендингов', Icon: Globe },
       { href: '/admin/offer', label: 'Конверсия оффера', Icon: Target },

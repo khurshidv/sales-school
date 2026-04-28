@@ -30,6 +30,7 @@ type SourcePage = 'home' | 'target' | 'game' | 'funnel' | 'final';
 type GameStage = 'onboarding' | 'consultation';
 
 const SALES_UP_CATEGORY_ID = Number(process.env.BITRIX_SALES_UP_CATEGORY_ID ?? 334);
+const SALES_UP_ASSIGNED_BY_ID = Number(process.env.BITRIX_SALES_UP_ASSIGNED_BY_ID ?? 1);
 const C = (id: string) => `C${SALES_UP_CATEGORY_ID}:${id}`;
 
 const STAGE_NEW = C('NEW');
@@ -263,7 +264,7 @@ export async function POST(request: Request) {
         SOURCE_DESCRIPTION: description,
         CONTACT_IDS: [contactId],
         OPENED: 'Y',
-        ASSIGNED_BY_ID: 1,
+        ASSIGNED_BY_ID: SALES_UP_ASSIGNED_BY_ID,
         UTM_SOURCE: body.utmSource ?? undefined,
         UTM_MEDIUM: body.utmMedium ?? undefined,
         UTM_CAMPAIGN: body.utmCampaign ?? undefined,

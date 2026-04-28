@@ -14,7 +14,7 @@ import { SortSelector } from '@/components/admin/leaderboard/SortSelector';
 const PERIODS: LeaderboardPeriod[] = ['week', 'month', 'all'];
 const SORTS: LeaderboardSort[] = ['total_score', 'completion_time', 's_rating_count'];
 const SIZES = [10, 25, 50, 100] as const;
-const REFRESH_MS = 30_000;
+const REFRESH_MS = 300_000;
 
 function toPeriod(raw: string | null): LeaderboardPeriod {
   return PERIODS.includes(raw as LeaderboardPeriod) ? (raw as LeaderboardPeriod) : 'all';
@@ -73,7 +73,7 @@ export default function LeaderboardClient() {
     <div>
       <PageHeader
         title="Таблица лидеров"
-        subtitle={`Топ игроков · обновляется каждые ${REFRESH_MS / 1000} сек · всего ${total.toLocaleString('ru-RU')}`}
+        subtitle={`Топ игроков · обновляется каждые ${REFRESH_MS / 60000} мин · всего ${total.toLocaleString('ru-RU')}`}
         actions={
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <LeaderboardTabs value={period} onChange={setPeriod} />

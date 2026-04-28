@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import LeaderboardClient from './LeaderboardClient';
 
-export const revalidate = 30;
+export const revalidate = 300;
 export const metadata = { title: 'Leaderboard — Sales School' };
 
 export default function LeaderboardPage() {

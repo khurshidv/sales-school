@@ -16,10 +16,11 @@ import { THRESHOLDS } from '@/lib/admin/thresholds';
 import { notificationsEnabled, notify } from '@/lib/admin/realtime/notify';
 import { NotificationToggle } from '@/components/admin/realtime/NotificationToggle';
 
-// Polling every 5s through the admin API (service_role, bypasses RLS).
+// Polling through the admin API (service_role, bypasses RLS).
 // Supabase Realtime subscription was removed — it relied on anon client,
 // and game_events has no SELECT policy for anon by design (no data leak).
-const REFRESH_MS = 5_000;
+// Interval kept long to spare egress; Pause button stops it entirely.
+const REFRESH_MS = 60_000;
 
 function eventKey(e: RecentGameEvent): string {
   return `${e.created_at}|${e.player_id}|${e.event_type}`;

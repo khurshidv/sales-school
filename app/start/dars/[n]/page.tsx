@@ -9,6 +9,7 @@ import { getLesson, TOTAL_LESSONS } from '@/lib/funnel/lessons';
 import { getQuiz } from '@/lib/funnel/quizzes';
 import { copy } from '@/lib/funnel/copy';
 import { readIdentity, postFunnelEvent } from '@/lib/funnel/progress-client';
+import { trackFB } from '@/lib/analytics/fbpixel';
 import type { LessonIndex } from '@/lib/funnel/types';
 
 export default function LessonPage({
@@ -36,6 +37,11 @@ export default function LessonPage({
       leadId: id.leadId,
       token: id.token,
       lessonIndex: lessonNumber,
+    });
+    trackFB('ViewContent', {
+      content_name: `lesson_${lessonNumber}`,
+      content_category: 'lesson',
+      content_ids: [`lesson_${lessonNumber}`],
     });
     fetch('/api/funnel/state', {
       method: 'POST',

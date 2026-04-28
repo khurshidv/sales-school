@@ -7,6 +7,7 @@ import { getCountryById, DEFAULT_COUNTRY_ID } from '@/lib/phone-countries';
 import GameTeaserBlock from './GameTeaserBlock';
 import { copy } from '@/lib/funnel/copy';
 import { writeIdentity, postFunnelEvent } from '@/lib/funnel/progress-client';
+import { trackFB } from '@/lib/analytics/fbpixel';
 
 export default function RegistrationGateModal({
   open,
@@ -30,6 +31,10 @@ export default function RegistrationGateModal({
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    trackFB('ViewContent', {
+      content_name: 'registration_modal',
+      content_category: 'funnel_gate',
+    });
     return () => {
       document.body.style.overflow = prev;
     };
@@ -69,6 +74,12 @@ export default function RegistrationGateModal({
       writeIdentity({ leadId: body.lead_id, token: body.token });
       // Fire-and-forget: don't block the redirect on the event log.
       void postFunnelEvent('lead_created', { leadId: body.lead_id, token: body.token });
+      trackFB('Lead', {
+        content_name: 'funnel_registration',
+        content_category: 'free_funnel',
+        currency: 'UZS',
+        value: 0,
+      });
       router.push(body.next_url);
     } catch {
       setError(copy.gate.errorGeneric);

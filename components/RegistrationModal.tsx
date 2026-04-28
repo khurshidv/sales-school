@@ -9,6 +9,7 @@ import { detectDeviceType, detectBrowser } from "@/lib/analytics/device";
 import PhoneInput from "@/components/ui/PhoneInput";
 import { getCountryById, DEFAULT_COUNTRY_ID } from "@/lib/phone-countries";
 import { postFunnelEvent, readIdentity } from "@/lib/funnel/progress-client";
+import { trackFB } from "@/lib/analytics/fbpixel";
 
 function getSourcePage(): string {
   if (typeof window === 'undefined') return 'home';
@@ -153,6 +154,14 @@ export default function RegistrationModal() {
                 postFunnelEvent('final_consultation_submitted', {
                   leadId: id?.leadId,
                   token: id?.token,
+                });
+                // Pixel грузится только на /start*, на /game window.fbq не определён —
+                // helper сам обработает no-op. Отдельный Lead для финальной консультации.
+                trackFB('Lead', {
+                  content_name: 'final_consultation',
+                  content_category: 'paid_funnel',
+                  currency: 'UZS',
+                  value: 0,
                 });
               }
             } catch {

@@ -10,6 +10,7 @@ import FinalOfferCta from "@/components/final/FinalOfferCta";
 import StickyConsultationBar from "@/components/final/StickyConsultationBar";
 import { useT } from "@/lib/i18n";
 import { readIdentity, postFunnelEvent } from "@/lib/funnel/progress-client";
+import { trackFB } from "@/lib/analytics/fbpixel";
 
 function FinalPageInner() {
   const router = useRouter();
@@ -45,6 +46,10 @@ function FinalPageInner() {
           leadId: id.leadId,
           token: id.token,
         });
+        trackFB('ViewContent', {
+          content_name: 'final_offer',
+          content_category: 'offer',
+        });
       })
       .catch(() => router.replace('/start'));
   }, [router]);
@@ -56,6 +61,10 @@ function FinalPageInner() {
     postFunnelEvent('final_cta_simulator_clicked', {
       leadId: id?.leadId,
       token: id?.token,
+    });
+    trackFB('InitiateCheckout', {
+      content_name: 'simulator_start',
+      content_category: 'game',
     });
     window.location.href = `/game?lead_token=${encodeURIComponent(token)}`;
   };
